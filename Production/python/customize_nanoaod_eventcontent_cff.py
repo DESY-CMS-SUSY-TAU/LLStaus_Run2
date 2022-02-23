@@ -60,10 +60,10 @@ def customize_process_and_associate(process) :
     process.custom_nanoaod_task = cms.Task(
         myfinalTaus,
         
-        #process.lostTrackTable,
+        process.lostTrackTable,
         
-        #process.isFromTauForPfCand,
-        #process.pfCandTable,
+        process.isFromTauForPfCand,
+        process.pfCandTable,
     )
     
     # Associate the task to the associate
