@@ -47,7 +47,7 @@
 <use name="SimDataFormats/TrackingHit"/>
 <use name="TrackingTools/TrackAssociator"/>
 
-<use name="LLStauProduction/Modules"/>
+<use name="LLStaus_Run2/Production"/>
 
 <use name="boost"/>
 <use name="fastjet"/>
