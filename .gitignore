@@ -1,0 +1,18 @@
+*.pyc
+*.root
+*__pycache__*
+*~
+.#*
+.*.swp
+
+# We probaly do not want to push plots
+*plots*
+*.pdf
+*.png
+
+# Just some stuff one might have for local tests
+*debug*
+*tmp*
+*temp*
+*log*
+*misc*
