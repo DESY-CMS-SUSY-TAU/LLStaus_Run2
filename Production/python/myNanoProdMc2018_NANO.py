@@ -22,7 +22,7 @@ process.load("PhysicsTools.NanoAOD.nano_cff")
 process.load("Configuration.StandardSequences.EndOfProcess_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 
-from LLStauProduction.Modules.arg_config import *
+from LLStaus_Run2.Production.arg_config import *
 args = get_args()
 
 process.maxEvents = cms.untracked.PSet(
@@ -83,7 +83,7 @@ from PhysicsTools.NanoAOD.nano_cff import nanoAOD_customizeMC
 #call to customisation function nanoAOD_customizeMC imported from PhysicsTools.NanoAOD.nano_cff
 process = nanoAOD_customizeMC(process)
 
-from LLStauProduction.Modules.customize_nanoaod_eventcontent_cff import *
+from LLStaus_Run2.Production.customize_nanoaod_eventcontent_cff import *
 customize_process_and_associate(process)
 
 # End of customisation functions
