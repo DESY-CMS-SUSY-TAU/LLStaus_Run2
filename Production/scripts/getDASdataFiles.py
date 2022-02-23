@@ -197,7 +197,7 @@ for iSample, sampleName in enumerate(l_sampleName) :
         
         outFile = "%s/%s.txt" %(outDir_mod, sampleName_mod)
         
-        command = "dasgoclient -query=\"file dataset=%s %s\" > %s" %(sampleName, instance_str, outFile)
+        command = "dasgoclient -query=\"file dataset=%s %s\" | sort -V > %s" %(sampleName, instance_str, outFile)
         print "Command:", command
         print ""
         os.system(command)

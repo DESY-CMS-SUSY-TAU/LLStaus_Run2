@@ -11,6 +11,7 @@
 *.png
 
 # Just some stuff one might have for local tests
+*.bak
 *debug*
 *tmp*
 *temp*
