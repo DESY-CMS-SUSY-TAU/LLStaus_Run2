@@ -1,0 +1,6 @@
+isData=True year=2018 period=UL2018 isSingleMuonData=True
+
+SingleMuon-Run2018A-UL2018 /SingleMuon/Run2018A-UL2018_MiniAODv2-v2/MINIAOD
+SingleMuon-Run2018B-UL2018 /SingleMuon/Run2018B-UL2018_MiniAODv2-v2/MINIAOD
+SingleMuon-Run2018C-UL2018 /SingleMuon/Run2018C-UL2018_MiniAODv2-v2/MINIAOD
+SingleMuon-Run2018D-UL2018 /SingleMuon/Run2018D-UL2018_MiniAODv2-v3/MINIAOD

@@ -1,0 +1,5 @@
+isData=False year=2018 period=UL2018
+
+ggbbhtt-ul-500k     /ggbbhtt-ul-500k/adewit-crab_ggbbhtt-ul-500k-c69f5ab5f7996c9a3a8f212ee3847aea/USER
+ggbbhtt-ul-800k-ext /ggbbhtt-ul-500k/adewit-crab_ggbbhtt-ul-800k-ext-c69f5ab5f7996c9a3a8f212ee3847aea/USER
+ggbbhtt-ul-ext2     /ggbbhtt-ul-500k/adewit-crab_ggbbhtt-ul-ext2-c69f5ab5f7996c9a3a8f212ee3847aea/USER
