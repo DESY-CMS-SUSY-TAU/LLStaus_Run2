@@ -1,3 +1,4 @@
+lumiMask=
 isMC=False
 
 MuonEG-Run2018A-UL2018 /MuonEG/Run2018A-UL2018_MiniAODv2-v1/MINIAOD
