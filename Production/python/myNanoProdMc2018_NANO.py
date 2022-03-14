@@ -30,14 +30,27 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 # Input source
-process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring(args.inputFiles),
+process.source = cms.Source('PoolSource',
+    fileNames = cms.untracked.vstring(),
     secondaryFileNames = cms.untracked.vstring()
-)
+    )
+from LLStaus_Run2.Production.readFileList import *
+if len(args.inputFiles) > 0:
+    addList(process.source.fileNames, args.inputFiles, fileNamePrefix=args.fileNamePrefix)
+elif len(args.sourceFile) > 0:
+    addList(process.source.fileNames, args.inputFiles, fileNamePrefix=None)
 
-process.options = cms.untracked.PSet(
+if len(args.lumiFile) > 0:
+    import FWCore.PythonUtilities.LumiList as LumiList
+    process.source.lumisToProcess = LumiList.LumiList(filename = args.lumiFile).getVLuminosityBlockRange()
 
-)
+if args.eventRange != '':
+    process.source.eventsToProcess = cms.untracked.VEventRange(re.split(',', args.eventRange))
+
+if args.maxEvents > 0:
+    process.maxEvents.input = args.maxEvents
+
+process.options = cms.untracked.PSet()
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
