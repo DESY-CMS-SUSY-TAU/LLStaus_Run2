@@ -1,16 +1,8 @@
-import aghast
 import awkward as ak
-import boost_histogram
 import coffea
 import coffea.hist
 import coffea.processor
-import dataclasses
-import logging
-import numba
-import numpy
 import os
-import sortedcontainers
-import uproot3
 
 import glob
 from omegaconf import DictConfig, OmegaConf
@@ -23,12 +15,6 @@ import utils
 
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 
-import matplotlib.pyplot as plt
-# import matplotlib as mpl
-
-# import mplhep
-# plt.style.use(mplhep.style.ROOT)
-
 class JetMatching(coffea.processor.ProcessorABC):
     def __init__(self):
         self.hists = {}
@@ -36,15 +22,15 @@ class JetMatching(coffea.processor.ProcessorABC):
         self.hists["dRJetSTau"] = coffea.hist.Hist(
                 "Events",
                 coffea.hist.Cat("dataset", "Dataset"),
-                coffea.hist.Bin("dRTauSTau", "dR(Tau,STau)", 100, -1.1, 2.5),
-                coffea.hist.Bin("dRJetSTau", "dR(Jet,STau)", 100, -1.1, 2.5),
+                coffea.hist.Bin("dRTauSTau", "dR(STau,Tau)", 100, 0.0, 3.5),
+                coffea.hist.Bin("dRJetSTau", "dR(STau,Jet)", 100, 0.0, 3.5),
             )
         
         self.hists["dRJetTau"] = coffea.hist.Hist(
                 "Events",
                 coffea.hist.Cat("dataset", "Dataset"),
-                coffea.hist.Bin("dRTauSTau", "dR(Tau,STau)", 100, -1.1, 2.5),
-                coffea.hist.Bin("dRJetTau", "dR(Jet,Tau)", 100, -1.1, 2.5),
+                coffea.hist.Bin("dRTauSTau", "dR(Tau,STau)", 100, 0.0, 3.5),
+                coffea.hist.Bin("dRJetTau", "dR(Tau,Jet)", 100, 0.0, 3.5),
             )
 
         self._accumulator = coffea.processor.dict_accumulator(self.hists)
@@ -64,34 +50,12 @@ class JetMatching(coffea.processor.ProcessorABC):
         # ]
         # objects["STaus_susy"] = objects["Taus_susy"].parent.parent.parent
 
-        events["GenPart", "motherPdgId"] = events.GenPart.pdgId[events.GenPart.genPartIdxMother]
-
-        print(events.GenPart.motherPdgId)
-        print(len(events.GenPart.motherPdgId))
-        print(len(events.GenPart.pdgId[0]))
-        print(len(events.GenPart.motherPdgId[0]))
-        print(len(ak.flatten(events.GenPart.pdgId)))
-        print(len(ak.flatten(events.GenPart.motherPdgId)))
-        #print( abs(events.GenPart.pdgId) == 1000015 & abs(events.GenPart.motherPdgId) != 1000015)
-        print(events.GenPart.hasFlags(["isHardProcess"]))
-        print(len(events.GenPart.hasFlags(["isHardProcess"])))
-        print(len(events.GenPart.hasFlags(["isHardProcess"])[0]))
-
         # Second way of calculating pairs
         objects["Taus_susy"] = events.GenVisTau
-
         objects["STaus_susy"] = events.GenPart[
-            abs(events.GenPart.pdgId) == 1000015
-            # & events.GenPart.hasFlags(["isHardProcess"])
-            #& ak.all(abs(events.GenPart.parent.pdgId) != 1000015, axis=-1)
-            #& abs(events.GenPart.pdgId[events.GenPart.genPartIdxMother]) != 1000015
-            & abs(events.GenPart.motherPdgId) != 1000015
+            (abs(events.GenPart.pdgId) == 1000015)
+            & (events.GenPart.hasFlags(["isLastCopy"]))
         ]
-        #print(len(ak.all(abs(events.GenPart.children.pdgId) != 1000015, axis=-1)))
-        print(len(objects["STaus_susy"]))
-        print(len(ak.flatten(objects["STaus_susy"])))
-        exit()
-
 
         # objects["dRTauSTau"] = objects["STaus_susy"].delta_r(objects["Taus_susy"])
         objects["dRTauSTau"] = objects["Taus_susy"].nearest(objects["STaus_susy"], return_metric=True, threshold=None)[1]
@@ -100,12 +64,10 @@ class JetMatching(coffea.processor.ProcessorABC):
         objects["dRJetSTau"] = objects["STaus_susy"].nearest(events.Jet, return_metric=True, threshold=None)[1]
         objects["dRJetTau"] = objects["Taus_susy"].nearest(events.Jet, return_metric=True, threshold=None)[1]
 
-
         objects["dRTauSTau"] = ak.flatten(objects["dRTauSTau"])
         objects["dRSTauTau"] = ak.flatten(objects["dRSTauTau"])
         objects["dRJetSTau"] = ak.flatten(objects["dRJetSTau"])
         objects["dRJetTau"] = ak.flatten(objects["dRJetTau"])
-
 
         objects["dRTauSTau"] = ak.fill_none(objects["dRTauSTau"], -1)
         objects["dRSTauTau"] = ak.fill_none(objects["dRSTauTau"], -1)
@@ -139,7 +101,6 @@ def regionStudy(cfg: DictConfig) -> None:
     The following script is performing the region study
     for the stau signal nanoAOD sample
     '''
-
     samples = {}
     for name in cfg.input:
         if cfg.n_files > 0:
@@ -157,16 +118,20 @@ def regionStudy(cfg: DictConfig) -> None:
         {"schema": NanoAODSchema},
     )
 
+    import matplotlib.pyplot as plt
     import matplotlib.colors as colors
-    # norm=colors.LogNorm(vmin=Z.min(), vmax=Z.max())
 
-    ax = coffea.hist.plot2d(result_JetMatching["dRJetSTau"].sum("dataset"), xaxis='dRJetSTau', patch_opts={"norm":colors.LogNorm(vmin=1, vmax=10000)})
-    plt.show()
-    plt.savefig(cfg.output+'/dRJetSTau.png')
+    for dataset in samples:
 
-    ax = coffea.hist.plot2d(result_JetMatching["dRJetTau"].sum("dataset"), xaxis='dRJetTau', patch_opts={"norm":colors.LogNorm(vmin=1, vmax=10000)})
-    plt.show()
-    plt.savefig(cfg.output+'/dRJetTau.png')
+        hist_dRJetSTau = result_JetMatching["dRJetSTau"].integrate("dataset", dataset)
+        ax = coffea.hist.plot2d(hist_dRJetSTau, xaxis='dRJetSTau', patch_opts={"norm":colors.LogNorm()})
+        plt.show()
+        plt.savefig(cfg.output+f'/dRJetSTau_{dataset}.png')
+
+        hist_dRJetTau = result_JetMatching["dRJetTau"].integrate("dataset", dataset)
+        ax = coffea.hist.plot2d(hist_dRJetTau, xaxis='dRJetTau', patch_opts={"norm":colors.LogNorm()})
+        plt.show()
+        plt.savefig(cfg.output+f'/dRJetTau_{dataset}.png')
 
 if __name__ == "__main__":
     regionStudy()

@@ -1,9 +1,9 @@
 
 input:
   stau100_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4
-  # stau250_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4
-  # stau400_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4
+  stau250_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4
+  stau400_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4
 
-n_files: 1 #per dataset
+n_files: 3 #per dataset
 
-output: ../../plots/region_study
+output: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/plots/region_study
