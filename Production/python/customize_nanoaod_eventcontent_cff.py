@@ -60,11 +60,11 @@ def customize_process_and_associate(process) :
     from PhysicsTools.NanoAOD.genparticles_cff import *
     
     myGenParticleTable = genParticleTable.clone()
-    myGenParticleTable.variables.vertexX =      Var("vertex.X"      , float)
-    myGenParticleTable.variables.vertexY =      Var("vertex.Y"      , float)
-    myGenParticleTable.variables.vertexZ =      Var("vertex.Z"      , float)
-    myGenParticleTable.variables.vertexRho =    Var("vertex.Rho"    , float)
-    myGenParticleTable.variables.vertexR =      Var("vertex.R"      , float)
+    myGenParticleTable.variables.vertexX        = Var("vertex.X"      , float)
+    myGenParticleTable.variables.vertexY        = Var("vertex.Y"      , float)
+    myGenParticleTable.variables.vertexZ        = Var("vertex.Z"      , float)
+    myGenParticleTable.variables.vertexRho      = Var("vertex.Rho"    , float)
+    myGenParticleTable.variables.vertexR        = Var("vertex.R"      , float)
     
     process.globalReplace("genParticleTable", myGenParticleTable)
     
