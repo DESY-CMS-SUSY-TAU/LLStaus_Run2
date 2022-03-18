@@ -7,5 +7,5 @@ def addList(fileList, inputFiles, fileNamePrefix=None):
     else:
         for name in inputFiles:
             if len(name) > 0 and name[0] != '#':
-                print(fileNamePrefix + name)
+                #print(fileNamePrefix + name)
                 fileList.append(fileNamePrefix + name)
