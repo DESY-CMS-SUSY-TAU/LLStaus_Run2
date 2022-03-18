@@ -85,9 +85,9 @@ def get_args() :
     
     elif (len(args.sourceFile)) :
         with open(args.sourceFile) as f:
-            args.fileList = f.readlines()
-            args.fileList = [_fname.strip() for _fname in args.inputFiles]
-            args.fileList = [_fname for _fname in args.inputFiles if _fname[0] != "#"]
+            args.inputFiles = f.readlines()
+            args.inputFiles = [_fname.strip() for _fname in args.inputFiles]
+            args.inputFiles = [_fname for _fname in args.inputFiles if _fname[0] != "#"]
     
     if ("/" in args.outFile) :
         outDir = args.outFile[0: args.outFile.rfind("/")]
