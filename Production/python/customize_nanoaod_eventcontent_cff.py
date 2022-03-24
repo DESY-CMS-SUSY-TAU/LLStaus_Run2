@@ -41,9 +41,9 @@ def customize_process_and_associate(process) :
             CandVars,
         ),
         externalVariables = cms.PSet(
-            isTauSignalCand     = ExtVar("isFromTauForPfCand:isTauSignalCand"       , int, doc = "Belongs to pat::Tau::signalCands()"),
-            isTauIsoCand        = ExtVar("isFromTauForPfCand:isTauIsoCand"          , int, doc = "Belongs to pat::Tau::isolationCands()"),
-            isTauLeadChHadCand  = ExtVar("isFromTauForPfCand:isTauLeadChHadCand"    , int, doc = "Is pat::Tau::leadChargedHadrCand()"),
+            isTauIdxSignalCand     = ExtVar("isFromTauForPfCand:isTauIdxSignalCand"       , int, doc = "Index of the tau if it belongs to pat::Tau::signalCands(); else -1"),
+            isTauIdxIsoCand        = ExtVar("isFromTauForPfCand:isTauIdxIsoCand"          , int, doc = "Index of the tau if it belongs to pat::Tau::isolationCands(); else -1"),
+            isTauIdxLeadChHadCand  = ExtVar("isFromTauForPfCand:isTauIdxLeadChHadCand"    , int, doc = "Index of the tau if it is pat::Tau::leadChargedHadrCand(); else -1"),
         )
     )
     
