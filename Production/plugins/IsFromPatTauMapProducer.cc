@@ -47,9 +47,9 @@ class IsFromPatTauMapProducer : public edm::global::EDProducer<>
             pc_(consumes<pat::PackedCandidateCollection>(iConfig.getParameter<edm::InputTag>("packedPFCandidates"))), // pf candidates
             tt_(consumes<pat::TauCollection>(iConfig.getParameter<edm::InputTag>("patTaus"))) // taus
         {
-            produces<edm::ValueMap<int>>("isTauSignalCand"); // name of the value map that I want to actually produce
-            produces<edm::ValueMap<int>>("isTauIsoCand"); // name of the value map that I want to actually produce
-            produces<edm::ValueMap<int>>("isTauLeadChHadCand"); // name of the value map that I want to actually produce
+            produces<edm::ValueMap<int>>("isTauIdxSignalCand"); // name of the value map that I want to actually produce
+            produces<edm::ValueMap<int>>("isTauIdxIsoCand"); // name of the value map that I want to actually produce
+            produces<edm::ValueMap<int>>("isTauIdxLeadChHadCand"); // name of the value map that I want to actually produce
         }
         ~IsFromPatTauMapProducer() override {};
         
@@ -90,9 +90,9 @@ void IsFromPatTauMapProducer::produce(edm::StreamID streamID, edm::Event& iEvent
     
     // the map cannot be filled straight away, so create an intermediate vector
     unsigned int Npc = pc_handle->size();
-    std::vector<int> v_isTauSignalCand(Npc, -1);
-    std::vector<int> v_isTauIsoCand(Npc, -1);
-    std::vector<int> v_isTauLeadChHadCand(Npc, -1);
+    std::vector<int> v_isTauIdxSignalCand(Npc, -1);
+    std::vector<int> v_isTauIdxIsoCand(Npc, -1);
+    std::vector<int> v_isTauIdxLeadChHadCand(Npc, -1);
     
     unsigned int Ntau = tau_handle->size();
     
@@ -100,61 +100,61 @@ void IsFromPatTauMapProducer::produce(edm::StreamID streamID, edm::Event& iEvent
     {
         const auto &pc = pc_handle->at(ipc);
         
-        int isTauSignalCand = -1;
-        int isTauIsoCand = -1;
-        int isTauLeadChHadCand = -1;
+        int isTauIdxSignalCand = -1;
+        int isTauIdxIsoCand = -1;
+        int isTauIdxLeadChHadCand = -1;
         
         for (unsigned int itau=0; itau<Ntau; itau++)
         {
             const auto &tau = tau_handle->at(itau);
             
             // Only check if not already matched
-            if (isTauSignalCand < 0 && Utils::isTauSignalCand(tau, pc))
+            if (isTauIdxSignalCand < 0 && Utils::isTauSignalCand(tau, pc))
             {
-                isTauSignalCand = itau;
+                isTauIdxSignalCand = itau;
             }
             
-            if (isTauIsoCand < 0 && Utils::isTauIsoCand(tau, pc))
+            if (isTauIdxIsoCand < 0 && Utils::isTauIsoCand(tau, pc))
             {
-                isTauIsoCand = -1;
+                isTauIdxIsoCand = itau;
             }
             
-            if (isTauLeadChHadCand < 0 && Utils::isTauLeadChHadCand(tau, pc))
+            if (isTauIdxLeadChHadCand < 0 && Utils::isTauLeadChHadCand(tau, pc))
             {
-                isTauLeadChHadCand = -1;
+                isTauIdxLeadChHadCand = itau;
             }
         }
         
-        //if (isTauSignalCand >= 0 || isTauIsoCand >= 0 || isTauLeadChHadCand >= 0)
+        //if (isTauIdxSignalCand >= 0 || isTauIdxIsoCand >= 0 || isTauIdxLeadChHadCand >= 0)
         //{
-        //    printf("Ntau %d, ipc %d, isTauSignalCand %d, isTauIsoCand %d, isTauLeadChHadCand %d \n", (int) Ntau, (int) ipc, isTauSignalCand, isTauIsoCand, isTauLeadChHadCand);
+        //    printf("Ntau %d, ipc %d, isTauIdxSignalCand %d, isTauIdxIsoCand %d, isTauIdxLeadChHadCand %d \n", (int) Ntau, (int) ipc, isTauIdxSignalCand, isTauIdxIsoCand, isTauIdxLeadChHadCand);
         //}
         
-        v_isTauSignalCand[ipc] = isTauSignalCand;
-        v_isTauIsoCand[ipc] = isTauIsoCand;
-        v_isTauLeadChHadCand[ipc] = isTauLeadChHadCand;
+        v_isTauIdxSignalCand[ipc] = isTauIdxSignalCand;
+        v_isTauIdxIsoCand[ipc] = isTauIdxIsoCand;
+        v_isTauIdxLeadChHadCand[ipc] = isTauIdxLeadChHadCand;
     }
     
     
-    std::unique_ptr<edm::ValueMap<int>> vm_isTauSignalCand(new edm::ValueMap<int>());
-    edm::ValueMap<int>::Filler filler_isTauSignalCand(*vm_isTauSignalCand);
-    filler_isTauSignalCand.insert(pc_handle, v_isTauSignalCand.begin(), v_isTauSignalCand.end());
-    filler_isTauSignalCand.fill();
-    iEvent.put(std::move(vm_isTauSignalCand), "isTauSignalCand");
+    std::unique_ptr<edm::ValueMap<int>> vm_isTauIdxSignalCand(new edm::ValueMap<int>());
+    edm::ValueMap<int>::Filler filler_isTauIdxSignalCand(*vm_isTauIdxSignalCand);
+    filler_isTauIdxSignalCand.insert(pc_handle, v_isTauIdxSignalCand.begin(), v_isTauIdxSignalCand.end());
+    filler_isTauIdxSignalCand.fill();
+    iEvent.put(std::move(vm_isTauIdxSignalCand), "isTauIdxSignalCand");
     
     
-    std::unique_ptr<edm::ValueMap<int>> vm_isTauIsoCand(new edm::ValueMap<int>());
-    edm::ValueMap<int>::Filler filler_isTauIsoCand(*vm_isTauIsoCand);
-    filler_isTauIsoCand.insert(pc_handle, v_isTauIsoCand.begin(), v_isTauIsoCand.end());
-    filler_isTauIsoCand.fill();
-    iEvent.put(std::move(vm_isTauIsoCand), "isTauIsoCand");
+    std::unique_ptr<edm::ValueMap<int>> vm_isTauIdxIsoCand(new edm::ValueMap<int>());
+    edm::ValueMap<int>::Filler filler_isTauIdxIsoCand(*vm_isTauIdxIsoCand);
+    filler_isTauIdxIsoCand.insert(pc_handle, v_isTauIdxIsoCand.begin(), v_isTauIdxIsoCand.end());
+    filler_isTauIdxIsoCand.fill();
+    iEvent.put(std::move(vm_isTauIdxIsoCand), "isTauIdxIsoCand");
     
     
-    std::unique_ptr<edm::ValueMap<int>> vm_isTauLeadChHadCand(new edm::ValueMap<int>());
-    edm::ValueMap<int>::Filler filler_isTauLeadChHadCand(*vm_isTauLeadChHadCand);
-    filler_isTauLeadChHadCand.insert(pc_handle, v_isTauLeadChHadCand.begin(), v_isTauLeadChHadCand.end());
-    filler_isTauLeadChHadCand.fill();
-    iEvent.put(std::move(vm_isTauLeadChHadCand), "isTauLeadChHadCand");
+    std::unique_ptr<edm::ValueMap<int>> vm_isTauIdxLeadChHadCand(new edm::ValueMap<int>());
+    edm::ValueMap<int>::Filler filler_isTauIdxLeadChHadCand(*vm_isTauIdxLeadChHadCand);
+    filler_isTauIdxLeadChHadCand.insert(pc_handle, v_isTauIdxLeadChHadCand.begin(), v_isTauIdxLeadChHadCand.end());
+    filler_isTauIdxLeadChHadCand.fill();
+    iEvent.put(std::move(vm_isTauIdxLeadChHadCand), "isTauIdxLeadChHadCand");
     
 }
 
