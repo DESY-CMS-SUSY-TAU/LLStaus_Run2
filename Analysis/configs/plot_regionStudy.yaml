@@ -1,20 +1,22 @@
 
 input:
   stau100_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4
-  # stau250_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4
-  # stau400_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4
+  stau250_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4
+  stau400_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4
 
-n_files: 500 #per dataset
+n_files: -1 #per dataset
+
+# JetCollection: CaloJet
+JetCollection: Jet
 
 bin_setups:
-    dR_bins  : [70, 0.0, 0.8] # n_bins, dR_min, dR_max
+    dR_bins  : [70, 0.0, 0.8]  # n_bins, dR_min, dR_max
     Lxy_bins : [100, 0.0, 100] # n_bins, dR_min, dR_max
-    Lxy_slice: [ # bin_min, bin_max
-                [0, 100], 
-                [0, 10],
-                [10,100],
-                [10,50],
-                [50,100]
+    Lxy_slice: [
+                [0, 100],  # bin_min, bin_max
+                [0, 10],   # bin_min, bin_max
+                [10,50],   # bin_min, bin_max
+                [50,100]   # bin_min, bin_max
                ]
 
-output: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/plots/region_study
+output: ../../plots/region_study

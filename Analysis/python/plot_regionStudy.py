@@ -16,8 +16,9 @@ import utils
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 
 class JetMatching(coffea.processor.ProcessorABC):
-    def __init__(self, setups={}):
-
+    def __init__(self, JetCollection="Jet", setups={}):
+        
+        self.jet_collection = JetCollection
         self.hists = {}
 
         self.hists["dR_STau_Jet"] = coffea.hist.Hist(
@@ -81,16 +82,17 @@ class JetMatching(coffea.processor.ProcessorABC):
         ]
         objects["Taus_susy","disp"] = objects["Taus_susy"].parent.vertexRho
         objects["STaus_susy","disp"] = objects["STaus_susy"].children[:,:,0].vertexRho
+        objects["jets"] = events[self.jet_collection]
         
 
         # objects["dRTauSTau"] = objects["STaus_susy"].delta_r(objects["Taus_susy"])
         objects["dR_STau_Tau"] = objects["STaus_susy"].nearest(objects["Taus_susy"], return_metric=True, threshold=None)[1]
-        objects["dR_STau_Jet"] = objects["STaus_susy"].nearest(events.Jet, return_metric=True, threshold=None)[1]
+        objects["dR_STau_Jet"] = objects["STaus_susy"].nearest(objects["jets"], return_metric=True, threshold=None)[1]
         objects['dR_STau_lostTrack'] = objects["STaus_susy"].nearest(events.LostTrack, return_metric=True, threshold=None)[1]
         objects['dR_STau_pfCand'] = objects["STaus_susy"].nearest(events.PFCandidate, return_metric=True, threshold=None)[1]
 
         objects["dR_Tau_STau"] = objects["Taus_susy"].nearest(objects["STaus_susy"], return_metric=True, threshold=None)[1]
-        objects["dR_Tau_Jet"]  = objects["Taus_susy"].nearest(events.Jet, return_metric=True, threshold=None)[1]
+        objects["dR_Tau_Jet"]  = objects["Taus_susy"].nearest(objects["jets"], return_metric=True, threshold=None)[1]
 
         # print(objects['dR_STau_lostTrack'],objects['dR_STau_pfCand'])
         # exit()
@@ -170,7 +172,7 @@ def regionStudy(cfg: DictConfig) -> None:
     result_JetMatching = coffea.processor.run_uproot_job(
         samples,
         "Events",
-        JetMatching(setups=cfg.bin_setups),
+        JetMatching(cfg.JetCollection, setups=cfg.bin_setups),
         coffea.processor.iterative_executor,
         {"schema": NanoAODSchema},
     )
@@ -178,8 +180,11 @@ def regionStudy(cfg: DictConfig) -> None:
     import matplotlib.pyplot as plt
     import matplotlib.colors as colors
 
-    os.makedirs(cfg.output+"/match_jet", exist_ok=True)
-    os.makedirs(cfg.output+"/match_pfcand", exist_ok=True)  
+    path_jet = cfg.output+"/match_"+cfg.JetCollection
+    os.makedirs(path_jet, exist_ok=True)
+
+    path_pfCand = cfg.output+"/match_pfcand"
+    os.makedirs(path_pfCand, exist_ok=True)  
 
     for dataset in samples:
         
@@ -187,19 +192,19 @@ def regionStudy(cfg: DictConfig) -> None:
 
             hist_dRJetSTau = result_JetMatching["dR_STau_Jet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
             ax = coffea.hist.plot2d(hist_dRJetSTau, xaxis='dR_STau_Jet', patch_opts={"norm":colors.LogNorm()})
-            plt.savefig(cfg.output+f'/match_jet/dR_STau_Jet_dataset({dataset})_Nxy({Lxy_slice[0]}-{Lxy_slice[1]}).png')
+            plt.savefig(path_jet+f'/dR_STau_Jet_dataset({dataset})_Nxy({Lxy_slice[0]}-{Lxy_slice[1]}).png')
 
             hist_dRJetTau = result_JetMatching["dR_Tau_Jet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
             ax = coffea.hist.plot2d(hist_dRJetTau, xaxis='dR_Tau_Jet', patch_opts={"norm":colors.LogNorm()})
-            plt.savefig(cfg.output+f'/match_jet/dR_Tau_Jet_dataset({dataset})_Nxy({Lxy_slice[0]}-{Lxy_slice[1]}).png')
+            plt.savefig(path_jet+f'/dR_Tau_Jet_dataset({dataset})_Nxy({Lxy_slice[0]}-{Lxy_slice[1]}).png')
 
             hist_dRJetSTau = result_JetMatching["dR_STau_Track"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
             ax = coffea.hist.plot2d(hist_dRJetSTau, xaxis='dR_STau_lostTrack', patch_opts={"norm":colors.LogNorm()})
-            plt.savefig(cfg.output+f'/match_pfcand/dR_STau_lostTrack_dataset({dataset})_Nxy({Lxy_slice[0]}-{Lxy_slice[1]}).png')
+            plt.savefig(path_pfCand+f'/dR_STau_lostTrack_dataset({dataset})_Nxy({Lxy_slice[0]}-{Lxy_slice[1]}).png')
 
             hist_dRJetSTau = result_JetMatching["dR_STau_pfCand"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
             ax = coffea.hist.plot2d(hist_dRJetSTau, xaxis='dR_STau_pfCand', patch_opts={"norm":colors.LogNorm()})
-            plt.savefig(cfg.output+f'/match_pfcand/dR_STau_pfCand_dataset({dataset})_Nxy({Lxy_slice[0]}-{Lxy_slice[1]}).png')
+            plt.savefig(path_pfCand+f'/dR_STau_pfCand_dataset({dataset})_Nxy({Lxy_slice[0]}-{Lxy_slice[1]}).png')
 
 if __name__ == "__main__":
     regionStudy()
