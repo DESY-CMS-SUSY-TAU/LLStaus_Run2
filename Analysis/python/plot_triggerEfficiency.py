@@ -95,64 +95,6 @@ def find_objpair(events_obj1, events_obj2, areSameObjs, builder) :
     return builder
 
 
-@numba.njit
-def find_taupair(events_taus, builder):
-    
-    for taus in events_taus :
-        
-        builder.begin_list()
-        
-        nTau = len(taus)
-        
-        tau1_idx = -1
-        tau2_idx = -1
-        
-        sum_pt_max = 0
-        
-        for iTau1 in range(nTau):
-            
-            if (not (taus[iTau1].pt > 20 and abs(taus[iTau1].eta) < 2.5)) :
-                
-                continue
-            
-            for iTau2 in range(iTau1+1, nTau) :
-                
-                if (not (taus[iTau2].pt > 20 and abs(taus[iTau2].eta) < 2.5)) :
-                    
-                    continue
-                
-                if (taus[iTau1].charge * taus[iTau2].charge > 0) :
-                    
-                    continue
-                
-                sum_pt = taus[iTau1].pt + taus[iTau2].pt
-                
-                if (
-                    (tau1_idx < 0 and tau2_idx < 0) or
-                    sum_pt > sum_pt_max
-                ) :
-                    
-                    tau1_idx = iTau1
-                    tau2_idx = iTau2
-                    
-                    sum_pt_max = sum_pt
-        
-        if (tau1_idx >= 0 and tau2_idx >= 0) :
-            
-            if (taus[tau2_idx].pt > taus[tau1_idx].pt) :
-                
-                tau1_idx, tau2_idx = tau2_idx, tau1_idx
-            
-            #print(tau1_idx, tau2_idx)
-            
-            builder.integer(tau1_idx)
-            builder.integer(tau2_idx)
-        
-        
-        builder.end_list()
-    
-    return builder
-
 
 @dataclasses.dataclass
 class MyProcessor(coffea.processor.ProcessorABC) :
@@ -176,7 +118,19 @@ class MyProcessor(coffea.processor.ProcessorABC) :
             "GenMET_pt": coffea.hist.Hist(
                 "Counts",
                 self.dataset_axis,
-                coffea.hist.Bin("MET_pt", "MET_pt", 100, 0, 1000),
+                coffea.hist.Bin("GenMET_pt", "GenMET_pt", 100, 0, 1000),
+            ),
+            
+            "GenPart_vertexR_1": coffea.hist.Hist(
+                "Counts",
+                self.dataset_axis,
+                coffea.hist.Bin("GenPart_vertexR_1", "GenPart_vertexR_1", 200, 0, 2000),
+            ),
+            
+            "GenPart_vertexR_2": coffea.hist.Hist(
+                "Counts",
+                self.dataset_axis,
+                coffea.hist.Bin("GenPart_vertexR_2", "GenPart_vertexR_2", 200, 0, 2000),
             ),
         })
     
@@ -190,10 +144,30 @@ class MyProcessor(coffea.processor.ProcessorABC) :
     # we will receive a NanoEvents instead of a coffea DataFrame
     def process(self, events) :
         
+        genStau = events.GenPart[
+            (abs(events.GenPart.pdgId) == 1000015)
+            #& (events.GenPart.genPartIdxMother >= 0)
+            & (abs(events.GenPart.pdgId[events.GenPart.genPartIdxMother]) != 1000015)
+        ]
+        
+        print(genStau.pdgId)
+        
+        #print(len(genStau))
+        #print(len(awkward.flatten(genStau)))
+        #print(awkward.flatten(events.GenPart.pdgId[events.GenPart.genPartIdxMother < 0]))
+        
+        
+        if (self.trigger_str is not None and len(self.trigger_str)) :
+            
+            #events = events[events.HLT.PFMETNoMu110_PFMHTNoMu110_IDTight | events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight | ]
+            events = events[eval(self.trigger_str)]
+        
         output = self.accumulator.identity()
         
         # Will only work for leptons
         events["GenPart", "charge"] = -events.GenPart.pdgId
+        events["GenVisTau", "vertexR"] = events.GenPart.vertexR[events.GenVisTau.genPartIdxMother]
+        print(events.GenVisTau.vertexR)
         
         d_events_obj = {}
         
@@ -227,17 +201,25 @@ class MyProcessor(coffea.processor.ProcessorABC) :
             builder = awkward.ArrayBuilder(),
         ).snapshot()
         
+        print("objPair_idx", len(objPair_idx), objPair_idx)
+        
         # Skip processing as it is an EmptyArray
         if awkward.all(awkward.num(objPair_idx) == 0) :
             
             return output
         
-        events = events[awkward.num(objPair_idx, axis = 1) >= 2]
+        sel_idx = awkward.num(objPair_idx, axis = 1) >= 2
         
-        if (self.trigger_str is not None and len(self.trigger_str)) :
+        events = events[sel_idx]
+        objPair_idx = objPair_idx[sel_idx]
+        
+        print("objPair_idx[sel_idx]", len(objPair_idx), objPair_idx)
+        
+        for objOpt in set([self.genObj1opt, self.genObj2opt]) :
             
-            #events = events[events.HLT.PFMETNoMu110_PFMHTNoMu110_IDTight | events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight | ]
-            events = events[eval(self.trigger_str)]
+            print("d_events_obj[%s]" %(objOpt), len(d_events_obj[objOpt]), d_events_obj[objOpt])
+            
+            d_events_obj[objOpt] = d_events_obj[objOpt][sel_idx]
         
         output["MET_pt"].fill(
             dataset = events.metadata["dataset"],
@@ -247,9 +229,41 @@ class MyProcessor(coffea.processor.ProcessorABC) :
         
         output["GenMET_pt"].fill(
             dataset = events.metadata["dataset"],
-            MET_pt = events.GenMET.pt,  
+            GenMET_pt = events.GenMET.pt,
             weight = numpy.ones(len(events)),
         )
+        
+        
+        for iEvent in range(0, len(objPair_idx)) :
+            
+            idx1 = objPair_idx[iEvent][0]
+            idx2 = objPair_idx[iEvent][1]
+            
+            #print(d_events_obj[self.genObj1opt].vertexR)
+            #print(d_events_obj[self.genObj2opt].vertexR)
+            
+            vtxR1 = d_events_obj[self.genObj1opt].vertexR[iEvent][idx1]
+            vtxR2 = d_events_obj[self.genObj2opt].vertexR[iEvent][idx2]
+            
+            #print(idx1, idx2, vtxR1, vtxR2)
+            
+            if (vtxR2 > vtxR1) :
+                
+                vtxR1, vtxR2 = vtxR2, vtxR1
+            
+            
+            output["GenPart_vertexR_1"].fill(
+                dataset = events.metadata["dataset"],
+                GenPart_vertexR_1 = vtxR1,
+                weight = 1.0,
+            )
+            
+            output["GenPart_vertexR_2"].fill(
+                dataset = events.metadata["dataset"],
+                GenPart_vertexR_2 = vtxR2,
+                weight = 1.0,
+            )
+        
         
         #print(len(events))
         
@@ -345,11 +359,23 @@ def main() :
     
     d_hist = {
         "MET_pt": {
+            "xrange": (0, 500),
             "xtitle": "p^{miss}_{T} [GeV]"
         },
         
         "GenMET_pt": {
+            "xrange": (0, 500),
             "xtitle": "p^{miss}_{T, gen} [GeV]"
+        },
+        
+        "GenPart_vertexR_1": {
+            "xrange": (0, 1000),
+            "xtitle": "r^{vtx}_{1} [cm]"
+        },
+        
+        "GenPart_vertexR_2": {
+            "xrange": (0, 1000),
+            "xtitle": "r^{vtx}_{2} [cm]"
         },
     }
     
@@ -401,7 +427,7 @@ def main() :
                 l_hist = l_hist,
                 ratio_num_den_pairs = [(h1_num, h1_den)],
                 outfile = outfile,
-                xrange = (0, 500),
+                xrange = d_hist[histName]["xrange"],
                 yrange = (0, max([_h.GetMaximum() for _h in l_hist])),
                 logx = False, logy = False,
                 ytitle = "Counts",
