@@ -262,25 +262,32 @@ def get_p4_shiftVertex(
                 vvv1s = vv1s[iv]
                 vvv2s = vv2s[iv]
                 
+                #print("vvv1s:", vvv1s)
+                #print("vvv2s:", vvv2s)
+                
                 assert(len(vvv1s) == len(vvv2s))
                 
-                v2_in = awkward.to_list(awkward.zip([vvv2s.x, vvv2s.y, vvv2s.z, vvv2s.t]))
-                oldVtxs = oldVertex
-                newVtxs = newVertex
+                v2_shifted = []
                 
-                if (oldVtxs is None) :
+                if (len(vvv2s)) :
                     
-                    oldVtxs = awkward.to_list(awkward.zip([vvv2s.vertexX, vvv2s.vertexY, vvv2s.vertexZ]))
-                
-                if (newVtxs is None) :
+                    v2_in = awkward.to_list(awkward.zip([vvv2s.x, vvv2s.y, vvv2s.z, vvv2s.t]))
+                    oldVtxs = oldVertex
+                    newVtxs = newVertex
                     
-                    newVtxs = awkward.to_list(awkward.zip([vvv1s.vertexX, vvv1s.vertexY, vvv1s.vertexZ]))
-                
-                v2_shifted = vphysicsP4(
-                    inParticle = v2_in,
-                    oldVertex = oldVertex,
-                    newVertex = newVtxs,
-                )
+                    if (oldVtxs is None) :
+                        
+                        oldVtxs = awkward.to_list(awkward.zip([vvv2s.vertexX, vvv2s.vertexY, vvv2s.vertexZ]))
+                    
+                    if (newVtxs is None) :
+                        
+                        newVtxs = awkward.to_list(awkward.zip([vvv1s.vertexX, vvv1s.vertexY, vvv1s.vertexZ]))
+                    
+                    v2_shifted = vphysicsP4(
+                        inParticle = v2_in,
+                        oldVertex = oldVertex,
+                        newVertex = newVtxs,
+                    )
                 
                 with builder.list() :
                     
