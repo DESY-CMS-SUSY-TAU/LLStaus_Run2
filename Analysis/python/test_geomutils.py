@@ -128,8 +128,12 @@ class MyProcessor(coffea.processor.ProcessorABC) :
         print("%"*10, len(events.GenVisTau[1]))
         print("%"*10, len(events.CaloJet[1]))
         
+        myCaloJets = events.CaloJet[events.CaloJet.pt > 100]
+        
         nearest = events.GenVisTau.nearest(
-            events.CaloJet,
+            #events.CaloJet,
+            myCaloJets,
+            
             #axis=1,
             #metric = lambda v1, v2: geometry_utils.get_deltaR_shiftVertex(v1s = v1, v2s = v2, oldVertex = (0.0, 0.0, 0.0), newVertex = (10.0, -10.0, 0.0)),
             
