@@ -12,6 +12,8 @@ import ROOT
 ROOT.gROOT.SetBatch(True)
 
 import utils
+import geometry_utils_jit
+import geometry_utils
 
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 
@@ -67,6 +69,11 @@ class JetMatching(coffea.processor.ProcessorABC):
         out = self.accumulator.identity()
 
         objects = {}
+        # events = events[0: 1000]
+
+        events["GenVisTau", "vertexX"] = events.GenPart.vertexX[events.GenVisTau.genPartIdxMother]
+        events["GenVisTau", "vertexY"] = events.GenPart.vertexY[events.GenVisTau.genPartIdxMother]
+        events["GenVisTau", "vertexZ"] = events.GenPart.vertexZ[events.GenVisTau.genPartIdxMother]
 
         # First way of finding pairs
         # objects["Taus_susy"] = events.GenVisTau[
@@ -80,22 +87,29 @@ class JetMatching(coffea.processor.ProcessorABC):
             (abs(events.GenPart.pdgId) == 1000015)
             & (events.GenPart.hasFlags(["isLastCopy"]))
         ]
+
         objects["Taus_susy","disp"] = objects["Taus_susy"].parent.vertexRho
         objects["STaus_susy","disp"] = objects["STaus_susy"].children[:,:,0].vertexRho
-        objects["jets"] = events[self.jet_collection]
+
+        events[self.jet_collection,"px"] = events[self.jet_collection].x
+        events[self.jet_collection,"py"] = events[self.jet_collection].y
+        events[self.jet_collection,"pz"] = events[self.jet_collection].z
+        events[self.jet_collection,"E"]  = events[self.jet_collection].t
         
+        objects["jets"] = events[self.jet_collection]
 
         # objects["dRTauSTau"] = objects["STaus_susy"].delta_r(objects["Taus_susy"])
         objects["dR_STau_Tau"] = objects["STaus_susy"].nearest(objects["Taus_susy"], return_metric=True, threshold=None)[1]
-        objects["dR_STau_Jet"] = objects["STaus_susy"].nearest(objects["jets"], return_metric=True, threshold=None)[1]
+        objects["dR_STau_Jet"] = objects["STaus_susy"].nearest(objects["jets"], 
+            metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2),
+            return_metric=True, threshold=None)[1]
         objects['dR_STau_lostTrack'] = objects["STaus_susy"].nearest(events.LostTrack, return_metric=True, threshold=None)[1]
         objects['dR_STau_pfCand'] = objects["STaus_susy"].nearest(events.PFCandidate, return_metric=True, threshold=None)[1]
 
         objects["dR_Tau_STau"] = objects["Taus_susy"].nearest(objects["STaus_susy"], return_metric=True, threshold=None)[1]
-        objects["dR_Tau_Jet"]  = objects["Taus_susy"].nearest(objects["jets"], return_metric=True, threshold=None)[1]
-
-        # print(objects['dR_STau_lostTrack'],objects['dR_STau_pfCand'])
-        # exit()
+        objects["dR_Tau_Jet"]  = objects["Taus_susy"].nearest(objects["jets"], 
+            metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2),
+            return_metric=True, threshold=None)[1]
 
         objects["dR_STau_Tau"] = ak.flatten(objects["dR_STau_Tau"])
         objects["dR_STau_Jet"] = ak.flatten(objects["dR_STau_Jet"])
@@ -116,9 +130,6 @@ class JetMatching(coffea.processor.ProcessorABC):
         objects["dR_Tau_STau"] = ak.fill_none(objects["dR_Tau_STau"], -1)
         objects["dR_Tau_Jet"]  = ak.fill_none(objects["dR_Tau_Jet"], -1)
         objects['tau_disp'] = ak.fill_none(objects['tau_disp'],-1)
-
-        # print(len(objects["dRSTauTau"]), len(objects["dRJetSTau"]), len(objects["dRTauSTau"]), len(objects["dRJetTau"]))
-        # exit()
 
         out["dR_STau_Jet"].fill(
             dataset = events.metadata["dataset"],
@@ -169,12 +180,18 @@ def regionStudy(cfg: DictConfig) -> None:
 
     os.makedirs(cfg.output, exist_ok=True)
 
+    mySchema = NanoAODSchema
+
+    mySchema.mixins.update({
+        "CaloJet": "PtEtaPhiMCollection",
+    })
+
     result_JetMatching = coffea.processor.run_uproot_job(
         samples,
         "Events",
         JetMatching(cfg.JetCollection, setups=cfg.bin_setups),
         coffea.processor.iterative_executor,
-        {"schema": NanoAODSchema},
+        {"schema": mySchema},
     )
 
     import matplotlib.pyplot as plt
