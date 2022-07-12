@@ -2,7 +2,8 @@
 
 if [ $# -ne 1 ] ; then
     echo "To run: source setup.sh mode"
-    echo "Supported modes: NanoAOD_UL2018 conda "
+    echo "e.g: source setup.sh NanoAOD_UL2018"
+    echo "Supported modes: 1) NanoAOD_UL2018, 2) conda "
     return 1
 fi
 
