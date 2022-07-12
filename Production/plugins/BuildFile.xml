@@ -57,4 +57,9 @@
 <use name="rootmath"/>
 <use name="rootrflx"/>
 
+<use name="SimGeneral/HepPDTRecord"/>
+<use name="PhysicsTools/TensorFlow" />
+<use name="boost_program_options"/>
+<use name="boost_filesystem"/>
+
 <flags EDM_PLUGIN="1"/>
