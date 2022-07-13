@@ -100,6 +100,17 @@ def customize_process_and_associate(process) :
     process.globalReplace("genParticleTable", myGenParticleTable)
     
     
+    ## GenVisTau
+    #myGenVisTauTable = genVisTauTable.clone()
+    #myGenVisTauTable.variables.vertexX        = Var("vertex.X"      , float)
+    #myGenVisTauTable.variables.vertexY        = Var("vertex.Y"      , float)
+    #myGenVisTauTable.variables.vertexZ        = Var("vertex.Z"      , float)
+    #myGenVisTauTable.variables.vertexRho      = Var("vertex.Rho"    , float)
+    #myGenVisTauTable.variables.vertexR        = Var("vertex.R"      , float)
+    #
+    #process.globalReplace("genVisTauTable", myGenVisTauTable)
+    
+    
     # Create the task
     process.custom_nanoaod_task = cms.Task(
         process.lostTrackTable,

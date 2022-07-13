@@ -167,9 +167,9 @@ def physicsP4(
     pt = numpy.sqrt(p3[0]*p3[0]+p3[1]*p3[1])
 
     return numpy.array([
-                        numpy.arcsinh(p3[2]/pt),
-                        numpy.arcsin(p3[1]/pt)
-                       ])
+        numpy.arcsinh(p3[2]/pt),
+        numpy.arcsin(p3[1]/pt)
+    ])
 
 
 vphysicsP4 = numpy.vectorize(
@@ -214,14 +214,14 @@ def coffea_nearest_metric_deltaR_shiftVertex(
     result_np = np_delta_r2(v1_eta, v1_phi, v2_shifted[:,0], v2_shifted[:,1])
 
     results =  awkward.Array(
-                    awkward.layout.ListOffsetArray64(
-                        awkward.layout.Index64(offsets_v2),
-                        awkward.layout.ListOffsetArray64(
-                            awkward.layout.Index64(offsets_v2_sub),
-                            awkward.layout.NumpyArray(result_np)
-                        )
-                    )
-                )
+        awkward.layout.ListOffsetArray64(
+            awkward.layout.Index64(offsets_v2),
+            awkward.layout.ListOffsetArray64(
+                awkward.layout.Index64(offsets_v2_sub),
+                awkward.layout.NumpyArray(result_np)
+            )
+        )
+    )
 
     return results
 

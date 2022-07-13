@@ -96,7 +96,7 @@ class MyProcessor(coffea.processor.ProcessorABC) :
             #events = events[events.HLT.PFMETNoMu110_PFMHTNoMu110_IDTight | events.HLT.PFMETNoMu120_PFMHTNoMu120_IDTight | ]
             events = events[eval(self.trigger_str)]
         
-        events = events[0: 5]
+        #events = events[0: 5]
         
         events["GenVisTau", "vertexX"] = events.GenPart.vertexX[events.GenVisTau.genPartIdxMother]
         events["GenVisTau", "vertexY"] = events.GenPart.vertexY[events.GenVisTau.genPartIdxMother]
