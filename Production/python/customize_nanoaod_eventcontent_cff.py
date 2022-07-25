@@ -3,6 +3,7 @@ import FWCore.ParameterSet.Config as cms
 from PhysicsTools.NanoAOD.common_cff import *
 from PhysicsTools.NanoAOD.genparticles_cff import *
 from PhysicsTools.NanoAOD.taus_cff import *
+from PhysicsTools.NanoAOD.jetsAK4_CHS_cff import *
 
 def customize_process_and_associate(process) :
     
@@ -50,7 +51,8 @@ def customize_process_and_associate(process) :
     
     # Unfiltered taus
     myfinalTaus = finalTaus.clone(
-        src = cms.InputTag("slimmedTausUpdated"),
+        #src = cms.InputTag("slimmedTausUpdated"),
+        src = cms.InputTag("slimmedTaus"),
         cut = cms.string("pt > 18"),
     )
     
@@ -100,6 +102,29 @@ def customize_process_and_associate(process) :
     process.globalReplace("genParticleTable", myGenParticleTable)
     
     
+    ## GenVisTau
+    #myGenVisTauTable = genVisTauTable.clone()
+    #myGenVisTauTable.variables.vertexX        = Var("vertex.X"      , float)
+    #myGenVisTauTable.variables.vertexY        = Var("vertex.Y"      , float)
+    #myGenVisTauTable.variables.vertexZ        = Var("vertex.Z"      , float)
+    #myGenVisTauTable.variables.vertexRho      = Var("vertex.Rho"    , float)
+    #myGenVisTauTable.variables.vertexR        = Var("vertex.R"      , float)
+    #
+    #process.globalReplace("genVisTauTable", myGenVisTauTable)
+    
+    process.disTauTag = cms.EDProducer(
+        "DisTauTag",
+        graphPath = cms.string("LLStaus_Run2/Production/data/models/particlenet_v1_a27159734e304ea4b7f9e0042baa9e22.pb"),
+        #jets = cms.InputTag("finalJets"),
+        jets = process.jetTable.src,
+    )
+    
+    process.jetTable.externalVariables = process.jetTable.externalVariables.clone(
+        disTauTag_score0         = ExtVar("disTauTag:score0"       , float, doc = "Score 0"),
+        disTauTag_score1         = ExtVar("disTauTag:score1"       , float, doc = "Score 1"),
+    )
+    
+    
     # Create the task
     process.custom_nanoaod_task = cms.Task(
         process.lostTrackTable,
@@ -108,7 +133,10 @@ def customize_process_and_associate(process) :
         process.pfCandTable,
         
         process.caloJetTable,
+        
+        process.disTauTag,
     )
+    
     
     # Associate the task to the associate
     process.schedule.associate(process.custom_nanoaod_task)

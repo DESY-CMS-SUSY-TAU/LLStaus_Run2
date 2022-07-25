@@ -7,15 +7,17 @@
 #include <boost/filesystem.hpp>
 #include <boost/math/constants/constants.hpp>
 
+#include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
-#include "FWCore/Framework/interface/one/EDAnalyzer.h"
+//#include "FWCore/Framework/interface/one/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
+//#include "FWCore/Framework/interface/global/EDProducer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Utilities/interface/StreamID.h"
 #include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
-
-#include "DataFormats/PatCandidates/interface/Jet.h"
-#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 
 #include "LLStaus_Run2/Production/interface/DisTauTag_input.h"
 
@@ -29,7 +31,7 @@ namespace {
     }
 }
 
-class DisTauTag : public edm::one::EDAnalyzer<> {
+class DisTauTag : public edm::stream::EDProducer<> {
 public:
     explicit DisTauTag(const edm::ParameterSet&);
     ~DisTauTag(){};
@@ -42,9 +44,9 @@ public:
     static void fill_zero(tensorflow::Tensor&);
 
 private:
-    void beginJob();
-    void analyze(const edm::Event&, const edm::EventSetup&);
-    void endJob();
+    void beginStream(edm::StreamID) override;
+    void produce(edm::Event&, const edm::EventSetup&) override;
+    void endStream() override;
 
     template <typename FeatureT>
     const float Scale(const Int_t, const Float_t, const bool);
@@ -56,7 +58,7 @@ private:
 
     tensorflow::GraphDef* graphDef_;
     tensorflow::Session* session_;
-
+    
 };
 
 void DisTauTag::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
@@ -74,11 +76,14 @@ DisTauTag::DisTauTag(const edm::ParameterSet& config)
       cands_token(consumes<pat::PackedCandidateCollection>(config.getParameter<edm::InputTag>("pfCandidates"))),
       graphDef_(nullptr),
       session_(nullptr) {
-
+  
+  produces<edm::ValueMap<float>>("score0");
+  produces<edm::ValueMap<float>>("score1");
+  
   tensorflow::setLogging("2");
 }
 
-void DisTauTag::beginJob() {
+void DisTauTag::beginStream(edm::StreamID) {
 
     using boost::filesystem::is_regular_file;
 
@@ -92,7 +97,7 @@ void DisTauTag::beginJob() {
 
 }
 
-void DisTauTag::endJob() {
+void DisTauTag::endStream() {
     // close the session
     tensorflow::closeSession(session_);
 
@@ -131,13 +136,17 @@ const float DisTauTag::Scale(const Int_t idx, const Float_t value, const bool in
                         FeatureT::lim_min.at(idx).at(inner), FeatureT::lim_max.at(idx).at(inner));
 }
 
-void DisTauTag::analyze(const edm::Event& event, const edm::EventSetup& setup) {
+void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
 
     auto jets = getHandle(event, jets_token);
     auto cands = getHandle(event, cands_token);
 
-    // step 1: get jets
     const size_t jets_size = jets->size();
+    
+    std::vector <float> v_score0(jets_size, -9);
+    std::vector <float> v_score1(jets_size, -9);
+
+    // step 1: get jets   
     for(size_t jetIndex = 0; jetIndex < jets_size; ++jetIndex)
     {
       const auto& jet = jets->at(jetIndex);
@@ -239,7 +248,25 @@ void DisTauTag::analyze(const edm::Event& event, const edm::EventSetup& setup) {
                 << " n_pfCand ->" << nDaughters
                 << " score -> " << outputs[0].flat<float>()(0)
                 << " " << outputs[0].flat<float>()(1) << std::endl;
+    
+      v_score0.at(jetIndex) = outputs[0].flat<float>()(0);
+      v_score1.at(jetIndex) = outputs[0].flat<float>()(1);
     }
+    
+    
+    std::unique_ptr<edm::ValueMap<float>> vm_score0(new edm::ValueMap<float>());
+    edm::ValueMap<float>::Filler filler_score0(*vm_score0);
+    filler_score0.insert(jets, v_score0.begin(), v_score0.end());
+    filler_score0.fill();
+    event.put(std::move(vm_score0), "score0");
+    
+    
+    std::unique_ptr<edm::ValueMap<float>> vm_score1(new edm::ValueMap<float>());
+    edm::ValueMap<float>::Filler filler_score1(*vm_score1);
+    filler_score1.insert(jets, v_score1.begin(), v_score1.end());
+    filler_score1.fill();
+    event.put(std::move(vm_score1), "score1");
+
 
 }
 
