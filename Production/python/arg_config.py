@@ -56,6 +56,13 @@ def get_args() :
         "Whether Data or MC" # Description
     )
     
+    args.register("disTauTagOutputOpt",
+        0, # Default value
+        VarParsing.multiplicity.singleton, # singleton or list
+        VarParsing.varType.int, # string, int, or float
+        "0: NANOAOD, 1: NANOAOD + disTauTagger, 2: disTauTagger only" # Description
+    )
+    
     # args.register("debug",
     #     0, # Default value
     #     VarParsing.VarParsing.multiplicity.singleton, # singleton or list

@@ -60,6 +60,34 @@ process.configurationMetadata = cms.untracked.PSet(
 )
 
 # Output definition
+assert(args.disTauTagOutputOpt in [0, 1, 2])
+
+disTauTaggerOnly = False
+
+if args.disTauTagOutputOpt == 0 :
+    
+    outputCommands = process.NANOAODSIMEventContent.outputCommands
+
+elif args.disTauTagOutputOpt == 1 :
+    
+    outputCommands = process.NANOAODSIMEventContent.outputCommands
+    args.outFile = args.outFile.replace(".root", "_with-disTauTagScore.root")
+
+elif args.disTauTagOutputOpt == 2 :
+    
+    disTauTaggerOnly = True
+    
+    outputCommands = cms.untracked.vstring(
+        "drop *",
+        #"keep *_*_*disTauTag*_*",
+        #"keep nanoaodFlatTable_*Table_*_*",
+        #"keep nanoaodFlatTable_*Table_*_*",
+        "keep nanoaodFlatTable_jetTable_*_*",
+    )
+    
+    args.outFile = args.outFile.replace(".root", "_only-disTauTagScore.root")
+
+#print(process.NANOAODSIMEventContent.outputCommands)
 
 process.NANOAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
     compressionAlgorithm = cms.untracked.string("LZMA"),
@@ -69,7 +97,8 @@ process.NANOAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
         filterName = cms.untracked.string("")
     ),
     fileName = cms.untracked.string(args.outFile),
-    outputCommands = process.NANOAODSIMEventContent.outputCommands
+    #outputCommands = process.NANOAODSIMEventContent.outputCommands
+    outputCommands = outputCommands,
 )
 
 # Additional output definition
@@ -98,7 +127,7 @@ from PhysicsTools.NanoAOD.nano_cff import nanoAOD_customizeMC
 process = nanoAOD_customizeMC(process)
 
 from LLStaus_Run2.Production.customize_nanoaod_eventcontent_cff import *
-customize_process_and_associate(process)
+customize_process_and_associate(process, disTauTagOutputOpt = args.disTauTagOutputOpt)
 
 # End of customisation functions
 
