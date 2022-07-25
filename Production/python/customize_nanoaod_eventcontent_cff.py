@@ -5,7 +5,7 @@ from PhysicsTools.NanoAOD.genparticles_cff import *
 from PhysicsTools.NanoAOD.taus_cff import *
 from PhysicsTools.NanoAOD.jetsAK4_CHS_cff import *
 
-def customize_process_and_associate(process) :
+def customize_process_and_associate(process, disTauTagOutputOpt = 1) :
     
     # Lost tracks
     process.lostTrackTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
@@ -112,30 +112,61 @@ def customize_process_and_associate(process) :
     #
     #process.globalReplace("genVisTauTable", myGenVisTauTable)
     
-    process.disTauTag = cms.EDProducer(
-        "DisTauTag",
-        graphPath = cms.string("LLStaus_Run2/Production/data/models/particlenet_v1_a27159734e304ea4b7f9e0042baa9e22.pb"),
-        #jets = cms.InputTag("finalJets"),
-        jets = process.jetTable.src,
-    )
+    if (disTauTagOutputOpt > 0) :
+        
+        process.disTauTag = cms.EDProducer(
+            "DisTauTag",
+            graphPath = cms.string("LLStaus_Run2/Production/data/models/particlenet_v1_a27159734e304ea4b7f9e0042baa9e22.pb"),
+            #jets = cms.InputTag("finalJets"),
+            jets = process.jetTable.src,
+        )
+        
+        d_disTauTagVars = {
+            "disTauTag_score0":     ExtVar("disTauTag:score0"       , float, doc = "Score 0"),
+            "disTauTag_score1":     ExtVar("disTauTag:score1"       , float, doc = "Score 1"),
+        }
     
-    process.jetTable.externalVariables = process.jetTable.externalVariables.clone(
-        disTauTag_score0         = ExtVar("disTauTag:score0"       , float, doc = "Score 0"),
-        disTauTag_score1         = ExtVar("disTauTag:score1"       , float, doc = "Score 1"),
-    )
+    ##process.jetTable.externalVariables = process.jetTable.externalVariables.clone(
+    ##    #disTauTag_score0         = ExtVar("disTauTag:score0"       , float, doc = "Score 0"),
+    ##    #disTauTag_score1         = ExtVar("disTauTag:score1"       , float, doc = "Score 1"),
+    ##    **d_disTauTagVars
+    ##)
     
     
     # Create the task
-    process.custom_nanoaod_task = cms.Task(
-        process.lostTrackTable,
+    if (disTauTagOutputOpt == 0) :
         
-        process.isFromTauForPfCand,
-        process.pfCandTable,
+        process.custom_nanoaod_task = cms.Task(
+            process.lostTrackTable,
+            
+            process.isFromTauForPfCand,
+            process.pfCandTable,
+            
+            process.caloJetTable,
+        )
+    
+    elif (disTauTagOutputOpt == 1) :
         
-        process.caloJetTable,
+        process.jetTable.externalVariables = process.jetTable.externalVariables.clone(**d_disTauTagVars)
         
-        process.disTauTag,
-    )
+        process.custom_nanoaod_task = cms.Task(
+            process.lostTrackTable,
+            
+            process.isFromTauForPfCand,
+            process.pfCandTable,
+            
+            process.caloJetTable,
+            
+            process.disTauTag,
+        )
+    
+    elif (disTauTagOutputOpt == 2) :
+        
+        process.jetTable.variables = cms.PSet()
+        process.jetTable.externalVariables = cms.PSet(**d_disTauTagVars)
+        
+        process.custom_nanoaod_task = cms.Task(process.disTauTag)
+    
     
     
     # Associate the task to the associate
