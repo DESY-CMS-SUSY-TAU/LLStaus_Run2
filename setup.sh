@@ -19,11 +19,17 @@ function run_cmd {
     fi
 }
 
-if [ $MODE = "NanoAOD_UL2018" ] ; then
+if [[ $MODE = "NanoAOD_UL2018" || "$MODE" == *"CMSSW"* ]] ; then
 
     if [ $MODE = "NanoAOD_UL2018" ] ; then
         CMSSW_VER=CMSSW_10_6_27
         export SCRAM_ARCH=slc7_amd64_gcc700
+    elif [[ "$MODE" == *"CMSSW"* ]] ; then
+        CMSSW_VER=$MODE
+        export SCRAM_ARCH=slc7_amd64_gcc10
+    else
+        echo "Mode "$MODE" is not supported."
+        exit
     fi
 
     if ! [ -f soft/$CMSSW_VER/.installed ] ; then
@@ -85,7 +91,8 @@ elif [ $MODE = "conda" ] ; then
     run_cmd conda activate llstau
 
 else
-    echo 'Mode "$MODE" is not supported.'
+    echo echo "Mode "$MODE" is not supported."
+    exit
 fi
 
 echo "$MODE environment is successfully loaded."

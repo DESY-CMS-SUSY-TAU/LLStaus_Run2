@@ -1,6 +1,8 @@
 # Definition of tools for CRAB job submission.
 # This file is part of https://github.com/hh-italian-group/h-tautau.
 
+from __future__ import print_function
+
 import re
 from sets import Set
 from CRABClient.UserUtilities import ClientException
@@ -11,10 +13,10 @@ def submit(config, dryrunBool):
     try:
         crabCommand('submit', config = config, dryrun = dryrunBool)
     except HTTPException as hte:
-        print str(hte)
-        print "\n{}\nERROR: failed to submit task due to HTTPException.\n{}".format(hte, hte.headers)
+        print(str(hte))
+        print("\n{}\nERROR: failed to submit task due to HTTPException.\n{}".format(hte, hte.headers))
     except ClientException as cle:
-        print "ERROR: failed to submit task due to ClientException.\n{}".format(cle)
+        print("ERROR: failed to submit task due to ClientException.\n{}".format(cle))
 
 class Job:
     def __init__(self, line, jobNameSuffix = ''):
