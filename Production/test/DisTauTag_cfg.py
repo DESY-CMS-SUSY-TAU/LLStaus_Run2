@@ -7,10 +7,9 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 
 
 # get the data/ directory
-# graph_file = 'LLStaus_Run2/Production/data/models/particlenet_v1_a27159734e304ea4b7f9e0042baa9e22.pb'
-# graph_file_abs = os.path.abspath(graph_file)
-# graph_file_abs = "/afs/desy.de/user/m/mykytaua/nfscms/softDeepTau/RecoML/DisTauTag/TauMLTools/Training/python/DisTauTag/mlruns/3/a27159734e304ea4b7f9e0042baa9e22/artifacts/model_graph/graph.pb"
-graph_file_abs = "/nfs/dust/cms/user/mykytaua/softDeepTau/RecoML/DisTauTag/TauMLTools/Training/python/DisTauTag/mlruns/3/9bea2e5d286b46bf86ac51285842be42/artifacts/model_graph/graph.pb"
+graph_file = 'LLStaus_Run2/Production/data/models/particlenet_v1_a27159734e304ea4b7f9e0042baa9e22.pb'
+graph_file_abs = os.path.abspath(graph_file)
+
 if not os.path.exists(graph_file_abs):
     raise Exception("Error: graph_file is not found")
 
@@ -25,7 +24,7 @@ process = cms.Process("TEST")
 # minimal configuration
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(100))
+process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(1))
 process.source = cms.Source("PoolSource",
     fileNames=cms.untracked.vstring(options.inputFiles))
 
@@ -36,10 +35,17 @@ process.options = cms.untracked.PSet(
 )
 
 # setup DisTauTag by loading the auto-generated cfi (see DisTauTag.fillDescriptions)
-process.load("LLStaus_Run2.Production.disTauTag_cfi")
-process.disTauTag.graphPath    = cms.string(graph_file_abs)
-process.disTauTag.jets         = cms.InputTag('slimmedJets')
-process.disTauTag.pfCandidates = cms.InputTag('packedPFCandidates')
+# process.load("LLStaus_Run2.Production.disTauTag_cfi")
+# process.disTauTag.graphPath    = cms.string(graph_file_abs)
+# process.disTauTag.jets         = cms.InputTag('slimmedJets')
+# process.disTauTag.pfCandidates = cms.InputTag('packedPFCandidates')
+
+process.disTauTag = cms.EDProducer("DisTauTag",
+    graphPath = cms.string(graph_file_abs),
+    jets         = cms.InputTag('slimmedJets'),
+    pfCandidates = cms.InputTag('packedPFCandidates'),
+    save_inputs  = cms.bool(True)
+)
 
 # define what to run in the path
 process.p = cms.Path(process.disTauTag)

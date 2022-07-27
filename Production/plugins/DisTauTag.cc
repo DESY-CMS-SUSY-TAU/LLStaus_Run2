@@ -36,7 +36,7 @@ public:
     explicit DisTauTag(const edm::ParameterSet&);
     ~DisTauTag(){};
 
-    static void fillDescriptions(edm::ConfigurationDescriptions&);
+    // static void fillDescriptions(edm::ConfigurationDescriptions&);
 
     template<typename Scalar>
     static Scalar getDeltaPhi(Scalar phi1, Scalar phi2);
@@ -50,30 +50,36 @@ private:
 
     template <typename FeatureT>
     const float Scale(const Int_t, const Float_t, const bool);
+    void saveInputs(const tensorflow::Tensor& tensor, const std::string& block_name);
 
     std::string graphPath_;
 
     edm::EDGetTokenT<pat::JetCollection> jets_token;
     edm::EDGetTokenT<pat::PackedCandidateCollection> cands_token;
 
+    const bool save_inputs_;
+
     tensorflow::GraphDef* graphDef_;
     tensorflow::Session* session_;
+
+    std::ofstream* json_file_;
     
 };
 
-void DisTauTag::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
-    // defining this function will lead to a *_cfi file being generated when compiling
-    edm::ParameterSetDescription desc;
-    desc.add<std::string>("graphPath");
-    desc.add<edm::InputTag>("jets", edm::InputTag("slimmedJets"));
-    desc.add<edm::InputTag>("pfCandidates", edm::InputTag("packedPFCandidates"));
-    descriptions.addWithDefaultLabel(desc);
-}
+// void DisTauTag::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+//     // defining this function will lead to a *_cfi file being generated when compiling
+//     edm::ParameterSetDescription desc;
+//     desc.add<std::string>("graphPath");
+//     desc.add<edm::InputTag>("jets", edm::InputTag("slimmedJets"));
+//     desc.add<edm::InputTag>("pfCandidates", edm::InputTag("packedPFCandidates"));
+//     descriptions.addWithDefaultLabel(desc);
+// }
 
 DisTauTag::DisTauTag(const edm::ParameterSet& config)
     : graphPath_(config.getParameter<std::string>("graphPath")),
       jets_token(consumes<pat::JetCollection>(config.getParameter<edm::InputTag>("jets"))),
       cands_token(consumes<pat::PackedCandidateCollection>(config.getParameter<edm::InputTag>("pfCandidates"))),
+      save_inputs_(config.getParameter<bool>("save_inputs")),
       graphDef_(nullptr),
       session_(nullptr) {
   
@@ -134,6 +140,33 @@ const float DisTauTag::Scale(const Int_t idx, const Float_t value, const bool in
 {
     return std::clamp((value - FeatureT::mean.at(idx).at(inner)) / FeatureT::std.at(idx).at(inner),
                         FeatureT::lim_min.at(idx).at(inner), FeatureT::lim_max.at(idx).at(inner));
+}
+
+void DisTauTag::saveInputs(const tensorflow::Tensor& tensor, const std::string& block_name)
+{
+    int tau_n = tensor.shape().dim_size(0);
+    int pf_n = tensor.shape().dim_size(1);
+    int ftr_n = tensor.shape().dim_size(2);
+
+    (*json_file_) << "\"" << block_name <<  "\":[";
+    for(int tau_idx=0; tau_idx<tau_n; tau_idx++)
+    {
+        (*json_file_) << "[";
+        for(int pf_idx=0; pf_idx<pf_n; pf_idx++)
+        {
+            (*json_file_) << "[";
+            for(int ftr_idx=0; ftr_idx<ftr_n; ftr_idx++)
+            {
+                (*json_file_) << tensor.tensor<float, 3>()(tau_idx, pf_idx, ftr_idx);
+                if(ftr_idx<ftr_n-1) (*json_file_) << ", ";
+            }
+            (*json_file_) << "]";
+            if(pf_idx<pf_n-1) (*json_file_) << ", ";
+        }
+        (*json_file_) << "]";
+        if(tau_idx<tau_n-1) (*json_file_) << ", ";
+    }
+    (*json_file_) << "]";
 }
 
 void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
@@ -251,6 +284,31 @@ void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
     
       v_score0.at(jetIndex) = outputs[0].flat<float>()(0);
       v_score1.at(jetIndex) = outputs[0].flat<float>()(1);
+
+      if (save_inputs_) {
+
+        std::string json_file_name = "distag_"
+                + std::to_string(event.id().run()) + "_"
+                + std::to_string(event.id().luminosityBlock()) + "_"
+                + std::to_string(event.id().event()) + "_" +
+                + "jet_" + std::to_string(jetIndex) + ".json";
+
+        json_file_ = new std::ofstream(json_file_name.data());
+
+        (*json_file_) << "{";
+
+        saveInputs(input_1, "PfCand");
+        (*json_file_) << ", ";
+        saveInputs(input_2, "PfCandCategorical");
+        (*json_file_) << ", \"Output\":["
+                        << outputs[0].flat<float>()(0) << ","
+                        << outputs[0].flat<float>()(1)
+                        << "]";
+
+        (*json_file_) << "}";
+
+        delete json_file_;
+      }
     }
     
     
