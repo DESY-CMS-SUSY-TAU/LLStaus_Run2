@@ -36,7 +36,7 @@ public:
     explicit DisTauTag(const edm::ParameterSet&);
     ~DisTauTag(){};
 
-    static void fillDescriptions(edm::ConfigurationDescriptions&);
+    // static void fillDescriptions(edm::ConfigurationDescriptions&);
 
     template<typename Scalar>
     static Scalar getDeltaPhi(Scalar phi1, Scalar phi2);
@@ -50,30 +50,36 @@ private:
 
     template <typename FeatureT>
     const float Scale(const Int_t, const Float_t, const bool);
+    void saveInputs(const tensorflow::Tensor& tensor, const std::string& block_name);
 
     std::string graphPath_;
 
     edm::EDGetTokenT<pat::JetCollection> jets_token;
     edm::EDGetTokenT<pat::PackedCandidateCollection> cands_token;
 
+    const bool save_inputs_;
+
     tensorflow::GraphDef* graphDef_;
     tensorflow::Session* session_;
+
+    std::ofstream* json_file_;
     
 };
 
-void DisTauTag::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
-    // defining this function will lead to a *_cfi file being generated when compiling
-    edm::ParameterSetDescription desc;
-    desc.add<std::string>("graphPath");
-    desc.add<edm::InputTag>("jets", edm::InputTag("slimmedJets"));
-    desc.add<edm::InputTag>("pfCandidates", edm::InputTag("packedPFCandidates"));
-    descriptions.addWithDefaultLabel(desc);
-}
+// void DisTauTag::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+//     // defining this function will lead to a *_cfi file being generated when compiling
+//     edm::ParameterSetDescription desc;
+//     desc.add<std::string>("graphPath");
+//     desc.add<edm::InputTag>("jets", edm::InputTag("slimmedJets"));
+//     desc.add<edm::InputTag>("pfCandidates", edm::InputTag("packedPFCandidates"));
+//     descriptions.addWithDefaultLabel(desc);
+// }
 
 DisTauTag::DisTauTag(const edm::ParameterSet& config)
     : graphPath_(config.getParameter<std::string>("graphPath")),
       jets_token(consumes<pat::JetCollection>(config.getParameter<edm::InputTag>("jets"))),
       cands_token(consumes<pat::PackedCandidateCollection>(config.getParameter<edm::InputTag>("pfCandidates"))),
+      save_inputs_(config.getParameter<bool>("save_inputs")),
       graphDef_(nullptr),
       session_(nullptr) {
   
@@ -136,6 +142,33 @@ const float DisTauTag::Scale(const Int_t idx, const Float_t value, const bool in
                         FeatureT::lim_min.at(idx).at(inner), FeatureT::lim_max.at(idx).at(inner));
 }
 
+void DisTauTag::saveInputs(const tensorflow::Tensor& tensor, const std::string& block_name)
+{
+    int tau_n = tensor.shape().dim_size(0);
+    int pf_n = tensor.shape().dim_size(1);
+    int ftr_n = tensor.shape().dim_size(2);
+
+    (*json_file_) << "\"" << block_name <<  "\":[";
+    for(int tau_idx=0; tau_idx<tau_n; tau_idx++)
+    {
+        (*json_file_) << "[";
+        for(int pf_idx=0; pf_idx<pf_n; pf_idx++)
+        {
+            (*json_file_) << "[";
+            for(int ftr_idx=0; ftr_idx<ftr_n; ftr_idx++)
+            {
+                (*json_file_) << std::setprecision(7) << std::fixed << tensor.tensor<float, 3>()(tau_idx, pf_idx, ftr_idx);
+                if(ftr_idx<ftr_n-1) (*json_file_) << ", ";
+            }
+            (*json_file_) << "]";
+            if(pf_idx<pf_n-1) (*json_file_) << ", ";
+        }
+        (*json_file_) << "]";
+        if(tau_idx<tau_n-1) (*json_file_) << ", ";
+    }
+    (*json_file_) << "]";
+}
+
 void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
 
     auto jets = getHandle(event, jets_token);
@@ -143,8 +176,8 @@ void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
 
     const size_t jets_size = jets->size();
     
-    std::vector <float> v_score0(jets_size, -9);
-    std::vector <float> v_score1(jets_size, -9);
+    std::vector <Float_t> v_score0(jets_size, -9);
+    std::vector <Float_t> v_score1(jets_size, -9);
 
     // step 1: get jets   
     for(size_t jetIndex = 0; jetIndex < jets_size; ++jetIndex)
@@ -191,46 +224,46 @@ void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
         {   // General features
             typedef PfCand_Features Br;
             getVecRef(input_1, Br::pfCand_valid                ,1.0);
-            getVecRef(input_1, Br::pfCand_pt                   ,static_cast<float>(daughter->polarP4().pt()));
-            getVecRef(input_1, Br::pfCand_eta                  ,static_cast<float>(daughter->polarP4().eta()));
-            getVecRef(input_1, Br::pfCand_phi                  ,static_cast<float>(daughter->polarP4().phi()));
-            getVecRef(input_1, Br::pfCand_mass                 ,static_cast<float>(daughter->polarP4().mass()));
-            getVecRef(input_1, Br::pfCand_charge               ,static_cast<float>(daughter->charge()));
-            getVecRef(input_1, Br::pfCand_puppiWeight          ,static_cast<float>(daughter->puppiWeight()));
-            getVecRef(input_1, Br::pfCand_puppiWeightNoLep     ,static_cast<float>(daughter->puppiWeightNoLep()));
-            getVecRef(input_1, Br::pfCand_lostInnerHits        ,static_cast<float>(daughter->lostInnerHits()));
-            getVecRef(input_1, Br::pfCand_nPixelHits           ,static_cast<float>(daughter->numberOfPixelHits()));
-            getVecRef(input_1, Br::pfCand_nHits                ,static_cast<float>(daughter->numberOfHits()));
-            getVecRef(input_1, Br::pfCand_caloFraction         ,static_cast<float>(daughter->caloFraction()));
-            getVecRef(input_1, Br::pfCand_hcalFraction         ,static_cast<float>(daughter->hcalFraction()));
-            getVecRef(input_1, Br::pfCand_rawCaloFraction      ,static_cast<float>(daughter->rawCaloFraction()));
-            getVecRef(input_1, Br::pfCand_rawHcalFraction      ,static_cast<float>(daughter->rawHcalFraction()));
+            getVecRef(input_1, Br::pfCand_pt                   ,static_cast<Float_t>(daughter->polarP4().pt()));
+            getVecRef(input_1, Br::pfCand_eta                  ,static_cast<Float_t>(daughter->polarP4().eta()));
+            getVecRef(input_1, Br::pfCand_phi                  ,static_cast<Float_t>(daughter->polarP4().phi()));
+            getVecRef(input_1, Br::pfCand_mass                 ,static_cast<Float_t>(daughter->polarP4().mass()));
+            getVecRef(input_1, Br::pfCand_charge               ,static_cast<Int_t>(daughter->charge()));
+            getVecRef(input_1, Br::pfCand_puppiWeight          ,static_cast<Float_t>(daughter->puppiWeight()));
+            getVecRef(input_1, Br::pfCand_puppiWeightNoLep     ,static_cast<Float_t>(daughter->puppiWeightNoLep()));
+            getVecRef(input_1, Br::pfCand_lostInnerHits        ,static_cast<Int_t>(daughter->lostInnerHits()));
+            getVecRef(input_1, Br::pfCand_nPixelHits           ,static_cast<Int_t>(daughter->numberOfPixelHits()));
+            getVecRef(input_1, Br::pfCand_nHits                ,static_cast<Int_t>(daughter->numberOfHits()));
+            getVecRef(input_1, Br::pfCand_caloFraction         ,static_cast<Float_t>(daughter->caloFraction()));
+            getVecRef(input_1, Br::pfCand_hcalFraction         ,static_cast<Float_t>(daughter->hcalFraction()));
+            getVecRef(input_1, Br::pfCand_rawCaloFraction      ,static_cast<Float_t>(daughter->rawCaloFraction()));
+            getVecRef(input_1, Br::pfCand_rawHcalFraction      ,static_cast<Float_t>(daughter->rawHcalFraction()));
             
-            getVecRef(input_1, Br::pfCand_hasTrackDetails      ,static_cast<float>(daughter->hasTrackDetails()));
+            getVecRef(input_1, Br::pfCand_hasTrackDetails      ,static_cast<Int_t>(daughter->hasTrackDetails()));
 
             if( daughter->hasTrackDetails() )
             {   
-                if(std::isfinite(daughter->dz()))        getVecRef(input_1, Br::pfCand_dz,       static_cast<float>(daughter->dz()));
-                if(std::isfinite(daughter->dzError()))   getVecRef(input_1, Br::pfCand_dz_error, static_cast<float>(daughter->dzError()));
-                if(std::isfinite(daughter->dxyError()))  getVecRef(input_1, Br::pfCand_dxy_error,static_cast<float>(daughter->dxyError()));
+                if(std::isfinite(daughter->dz()))        getVecRef(input_1, Br::pfCand_dz,       static_cast<Float_t>(daughter->dz()));
+                if(std::isfinite(daughter->dzError()))   getVecRef(input_1, Br::pfCand_dz_error, static_cast<Float_t>(daughter->dzError()));
+                if(std::isfinite(daughter->dxyError()))  getVecRef(input_1, Br::pfCand_dxy_error,static_cast<Float_t>(daughter->dxyError()));
 
-                getVecRef(input_1, Br::pfCand_dxy,        static_cast<float>(daughter->dxy()));
-                getVecRef(input_1, Br::pfCand_track_chi2, static_cast<float>(daughter->bestTrack()->chi2()));
-                getVecRef(input_1, Br::pfCand_track_ndof, static_cast<float>(daughter->bestTrack()->ndof()));
+                getVecRef(input_1, Br::pfCand_dxy,        static_cast<Float_t>(daughter->dxy()));
+                getVecRef(input_1, Br::pfCand_track_chi2, static_cast<Float_t>(daughter->bestTrack()->chi2()));
+                getVecRef(input_1, Br::pfCand_track_ndof, static_cast<Float_t>(daughter->bestTrack()->ndof()));
             }
             
-            float jet_eta = jet_p4.eta();
-            float jet_phi = jet_p4.phi();
-            getVecRef(input_1, PfCand_Features::pfCand_deta, static_cast<float>(daughter->polarP4().eta()) - jet_eta);
-            getVecRef(input_1, PfCand_Features::pfCand_dphi, getDeltaPhi<float>(static_cast<float>(daughter->polarP4().eta()), jet_phi));
+            Float_t jet_eta = jet_p4.eta();
+            Float_t jet_phi = jet_p4.phi();
+            getVecRef(input_1, PfCand_Features::pfCand_deta, static_cast<Float_t>(daughter->polarP4().eta()) - jet_eta);
+            getVecRef(input_1, PfCand_Features::pfCand_dphi, getDeltaPhi<Float_t>(static_cast<Float_t>(daughter->polarP4().phi()), jet_phi));
     
         }
 
         {   // Categorical features
             typedef PfCandCategorical_Features Br;
-            getVecRef(input_2, Br::pfCand_particleType         ,static_cast<float>(TranslatePdgIdToPFParticleType(daughter->pdgId())));
-            getVecRef(input_2, Br::pfCand_pvAssociationQuality ,static_cast<float>(daughter->pvAssociationQuality()));
-            getVecRef(input_2, Br::pfCand_fromPV               ,static_cast<float>(daughter->fromPV()));
+            getVecRef(input_2, Br::pfCand_particleType         ,static_cast<Int_t>(TranslatePdgIdToPFParticleType(daughter->pdgId())));
+            getVecRef(input_2, Br::pfCand_pvAssociationQuality ,static_cast<Int_t>(daughter->pvAssociationQuality()));
+            getVecRef(input_2, Br::pfCand_fromPV               ,static_cast<Int_t>(daughter->fromPV()));
         }
 
         ++tensor_idx; 
@@ -244,13 +277,38 @@ void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
                     {"final_out"}, &outputs);
 
       // print the output
-      std::cout << " jet -> " << jetIndex
-                << " n_pfCand ->" << nDaughters
-                << " score -> " << outputs[0].flat<float>()(0)
-                << " " << outputs[0].flat<float>()(1) << std::endl;
+    //   std::cout << " jet -> " << jetIndex
+    //             << " n_pfCand ->" << nDaughters
+    //             << " score -> " << outputs[0].flat<float>()(0)
+    //             << " " << outputs[0].flat<float>()(1) << std::endl;
     
       v_score0.at(jetIndex) = outputs[0].flat<float>()(0);
       v_score1.at(jetIndex) = outputs[0].flat<float>()(1);
+
+      if (save_inputs_) {
+
+        std::string json_file_name = "distag_"
+                + std::to_string(event.id().run()) + "_"
+                + std::to_string(event.id().luminosityBlock()) + "_"
+                + std::to_string(event.id().event()) + "_" +
+                + "jet_" + std::to_string(jetIndex) + ".json";
+
+        json_file_ = new std::ofstream(json_file_name.data());
+
+        (*json_file_) << "{";
+
+        saveInputs(input_1, "PfCand");
+        (*json_file_) << ", ";
+        saveInputs(input_2, "PfCandCategorical");
+        (*json_file_) << ", \"Output\":["
+                        << outputs[0].flat<float>()(0) << ","
+                        << outputs[0].flat<float>()(1)
+                        << "]";
+
+        (*json_file_) << "}";
+
+        delete json_file_;
+      }
     }
     
     
