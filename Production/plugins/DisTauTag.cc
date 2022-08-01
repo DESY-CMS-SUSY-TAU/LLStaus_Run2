@@ -157,7 +157,7 @@ void DisTauTag::saveInputs(const tensorflow::Tensor& tensor, const std::string& 
             (*json_file_) << "[";
             for(int ftr_idx=0; ftr_idx<ftr_n; ftr_idx++)
             {
-                (*json_file_) << tensor.tensor<float, 3>()(tau_idx, pf_idx, ftr_idx);
+                (*json_file_) << std::setprecision(7) << std::fixed << tensor.tensor<float, 3>()(tau_idx, pf_idx, ftr_idx);
                 if(ftr_idx<ftr_n-1) (*json_file_) << ", ";
             }
             (*json_file_) << "]";
@@ -176,8 +176,8 @@ void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
 
     const size_t jets_size = jets->size();
     
-    std::vector <float> v_score0(jets_size, -9);
-    std::vector <float> v_score1(jets_size, -9);
+    std::vector <Float_t> v_score0(jets_size, -9);
+    std::vector <Float_t> v_score1(jets_size, -9);
 
     // step 1: get jets   
     for(size_t jetIndex = 0; jetIndex < jets_size; ++jetIndex)
@@ -224,46 +224,46 @@ void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
         {   // General features
             typedef PfCand_Features Br;
             getVecRef(input_1, Br::pfCand_valid                ,1.0);
-            getVecRef(input_1, Br::pfCand_pt                   ,static_cast<float>(daughter->polarP4().pt()));
-            getVecRef(input_1, Br::pfCand_eta                  ,static_cast<float>(daughter->polarP4().eta()));
-            getVecRef(input_1, Br::pfCand_phi                  ,static_cast<float>(daughter->polarP4().phi()));
-            getVecRef(input_1, Br::pfCand_mass                 ,static_cast<float>(daughter->polarP4().mass()));
-            getVecRef(input_1, Br::pfCand_charge               ,static_cast<float>(daughter->charge()));
-            getVecRef(input_1, Br::pfCand_puppiWeight          ,static_cast<float>(daughter->puppiWeight()));
-            getVecRef(input_1, Br::pfCand_puppiWeightNoLep     ,static_cast<float>(daughter->puppiWeightNoLep()));
-            getVecRef(input_1, Br::pfCand_lostInnerHits        ,static_cast<float>(daughter->lostInnerHits()));
-            getVecRef(input_1, Br::pfCand_nPixelHits           ,static_cast<float>(daughter->numberOfPixelHits()));
-            getVecRef(input_1, Br::pfCand_nHits                ,static_cast<float>(daughter->numberOfHits()));
-            getVecRef(input_1, Br::pfCand_caloFraction         ,static_cast<float>(daughter->caloFraction()));
-            getVecRef(input_1, Br::pfCand_hcalFraction         ,static_cast<float>(daughter->hcalFraction()));
-            getVecRef(input_1, Br::pfCand_rawCaloFraction      ,static_cast<float>(daughter->rawCaloFraction()));
-            getVecRef(input_1, Br::pfCand_rawHcalFraction      ,static_cast<float>(daughter->rawHcalFraction()));
+            getVecRef(input_1, Br::pfCand_pt                   ,static_cast<Float_t>(daughter->polarP4().pt()));
+            getVecRef(input_1, Br::pfCand_eta                  ,static_cast<Float_t>(daughter->polarP4().eta()));
+            getVecRef(input_1, Br::pfCand_phi                  ,static_cast<Float_t>(daughter->polarP4().phi()));
+            getVecRef(input_1, Br::pfCand_mass                 ,static_cast<Float_t>(daughter->polarP4().mass()));
+            getVecRef(input_1, Br::pfCand_charge               ,static_cast<Int_t>(daughter->charge()));
+            getVecRef(input_1, Br::pfCand_puppiWeight          ,static_cast<Float_t>(daughter->puppiWeight()));
+            getVecRef(input_1, Br::pfCand_puppiWeightNoLep     ,static_cast<Float_t>(daughter->puppiWeightNoLep()));
+            getVecRef(input_1, Br::pfCand_lostInnerHits        ,static_cast<Int_t>(daughter->lostInnerHits()));
+            getVecRef(input_1, Br::pfCand_nPixelHits           ,static_cast<Int_t>(daughter->numberOfPixelHits()));
+            getVecRef(input_1, Br::pfCand_nHits                ,static_cast<Int_t>(daughter->numberOfHits()));
+            getVecRef(input_1, Br::pfCand_caloFraction         ,static_cast<Float_t>(daughter->caloFraction()));
+            getVecRef(input_1, Br::pfCand_hcalFraction         ,static_cast<Float_t>(daughter->hcalFraction()));
+            getVecRef(input_1, Br::pfCand_rawCaloFraction      ,static_cast<Float_t>(daughter->rawCaloFraction()));
+            getVecRef(input_1, Br::pfCand_rawHcalFraction      ,static_cast<Float_t>(daughter->rawHcalFraction()));
             
-            getVecRef(input_1, Br::pfCand_hasTrackDetails      ,static_cast<float>(daughter->hasTrackDetails()));
+            getVecRef(input_1, Br::pfCand_hasTrackDetails      ,static_cast<Int_t>(daughter->hasTrackDetails()));
 
             if( daughter->hasTrackDetails() )
             {   
-                if(std::isfinite(daughter->dz()))        getVecRef(input_1, Br::pfCand_dz,       static_cast<float>(daughter->dz()));
-                if(std::isfinite(daughter->dzError()))   getVecRef(input_1, Br::pfCand_dz_error, static_cast<float>(daughter->dzError()));
-                if(std::isfinite(daughter->dxyError()))  getVecRef(input_1, Br::pfCand_dxy_error,static_cast<float>(daughter->dxyError()));
+                if(std::isfinite(daughter->dz()))        getVecRef(input_1, Br::pfCand_dz,       static_cast<Float_t>(daughter->dz()));
+                if(std::isfinite(daughter->dzError()))   getVecRef(input_1, Br::pfCand_dz_error, static_cast<Float_t>(daughter->dzError()));
+                if(std::isfinite(daughter->dxyError()))  getVecRef(input_1, Br::pfCand_dxy_error,static_cast<Float_t>(daughter->dxyError()));
 
-                getVecRef(input_1, Br::pfCand_dxy,        static_cast<float>(daughter->dxy()));
-                getVecRef(input_1, Br::pfCand_track_chi2, static_cast<float>(daughter->bestTrack()->chi2()));
-                getVecRef(input_1, Br::pfCand_track_ndof, static_cast<float>(daughter->bestTrack()->ndof()));
+                getVecRef(input_1, Br::pfCand_dxy,        static_cast<Float_t>(daughter->dxy()));
+                getVecRef(input_1, Br::pfCand_track_chi2, static_cast<Float_t>(daughter->bestTrack()->chi2()));
+                getVecRef(input_1, Br::pfCand_track_ndof, static_cast<Float_t>(daughter->bestTrack()->ndof()));
             }
             
-            float jet_eta = jet_p4.eta();
-            float jet_phi = jet_p4.phi();
-            getVecRef(input_1, PfCand_Features::pfCand_deta, static_cast<float>(daughter->polarP4().eta()) - jet_eta);
-            getVecRef(input_1, PfCand_Features::pfCand_dphi, getDeltaPhi<float>(static_cast<float>(daughter->polarP4().eta()), jet_phi));
+            Float_t jet_eta = jet_p4.eta();
+            Float_t jet_phi = jet_p4.phi();
+            getVecRef(input_1, PfCand_Features::pfCand_deta, static_cast<Float_t>(daughter->polarP4().eta()) - jet_eta);
+            getVecRef(input_1, PfCand_Features::pfCand_dphi, getDeltaPhi<Float_t>(static_cast<Float_t>(daughter->polarP4().phi()), jet_phi));
     
         }
 
         {   // Categorical features
             typedef PfCandCategorical_Features Br;
-            getVecRef(input_2, Br::pfCand_particleType         ,static_cast<float>(TranslatePdgIdToPFParticleType(daughter->pdgId())));
-            getVecRef(input_2, Br::pfCand_pvAssociationQuality ,static_cast<float>(daughter->pvAssociationQuality()));
-            getVecRef(input_2, Br::pfCand_fromPV               ,static_cast<float>(daughter->fromPV()));
+            getVecRef(input_2, Br::pfCand_particleType         ,static_cast<Int_t>(TranslatePdgIdToPFParticleType(daughter->pdgId())));
+            getVecRef(input_2, Br::pfCand_pvAssociationQuality ,static_cast<Int_t>(daughter->pvAssociationQuality()));
+            getVecRef(input_2, Br::pfCand_fromPV               ,static_cast<Int_t>(daughter->fromPV()));
         }
 
         ++tensor_idx; 
@@ -277,10 +277,10 @@ void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
                     {"final_out"}, &outputs);
 
       // print the output
-      std::cout << " jet -> " << jetIndex
-                << " n_pfCand ->" << nDaughters
-                << " score -> " << outputs[0].flat<float>()(0)
-                << " " << outputs[0].flat<float>()(1) << std::endl;
+    //   std::cout << " jet -> " << jetIndex
+    //             << " n_pfCand ->" << nDaughters
+    //             << " score -> " << outputs[0].flat<float>()(0)
+    //             << " " << outputs[0].flat<float>()(1) << std::endl;
     
       v_score0.at(jetIndex) = outputs[0].flat<float>()(0);
       v_score1.at(jetIndex) = outputs[0].flat<float>()(1);

@@ -15,7 +15,7 @@ if not os.path.exists(graph_file_abs):
 
 # setup minimal options
 options = VarParsing("python")
-options.setDefault("inputFiles", "root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15_ext1-v2/270000/01825D94-A8FA-CB45-8048-7F6B6503DB45.root")  # noqa
+options.setDefault("inputFiles", "root://xrootd-cms.infn.it//store/user/myshched/mc/UL2018-pythia-v5-100cm/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v5/MiniAOD/220525_205521/0000/SUS-RunIISummer20UL18MiniAODv2-LLStau_401.root")  # noqa
 options.parseArguments()
 
 # define the process to run
@@ -24,7 +24,7 @@ process = cms.Process("TEST")
 # minimal configuration
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(1))
+process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(1000))
 process.source = cms.Source("PoolSource",
     fileNames=cms.untracked.vstring(options.inputFiles))
 
