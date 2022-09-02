@@ -1,24 +1,40 @@
 
 input:
-  stau100_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4
+#   stau100_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4
   stau250_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4
-  #stau400_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4
+#   stau400_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4
 
 n_files: -1 #per dataset
 
-# JetCollection: CaloJet
+mode:
+
+    # in jet_dR_matching mode the 2D plots with dR between:
+    # dR_STau_Tau vs. dR_STau_Jet
+    # dR_STau_Jet vs. dR_STau_lostTrack
+    # dR_STau_Jet vs. dR_STau_pfCand
+    # dR_Tau_STau vs. dR_Tau_Jet
+    
+    # - jet_dR_matching
+
+    # in efficiency_study efficiency plots are produced:
+    # seeding efficiency for pt and Lxy
+    - efficiency_study
 
 collections:
+    GenJets:
+        name: GenJet
+        # cut: "({name}.pt > 0)"
+        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
     Jets:
         name: Jet
         #name: CaloJet
-        #cut: "({name}.pt > 0)"
-        #cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
-        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4) & ({name}.genJetIdx >= 0)"
+        # cut: "({name}.pt > 0)"
+        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
+        # cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4) & ({name}.genJetIdx >= 0)"
     
     GenVisTaus:
         name: GenVisTau
-        #cut: "({name}.pt > 0)"
+        # cut: "(abs({name}.vertexZ) < 100)"
         #cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
         cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4) & (abs({name}.vertexZ) < 100)"
 
@@ -33,4 +49,14 @@ bin_setups:
                 [50,100]   # bin_min, bin_max
                ]
 
-output: ../../plots/region_study
+eff_setups:
+
+    gen_jet_pt  : [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 400, 500, 750, 1000] # n_bins, pt_min, pt_max
+    Lxy_bins : [ 100, 0.0, 100 ] # n_bins, dR_min, dR_max
+    Lxy_slice: [ [0, 1], [1, 10], [10, 50], [50, 100] ]
+    energy_ratio: [100, 0.9, 2.0]
+    energy_ratio_children: [100, 0.9, 1.1]
+    pt_ratio : [100, 0.0, 2.0, 100, 0, 1000]
+    pt_resolution : [100, -1, 2, 100, 0, 1000]
+
+output: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/plots/eff_study

@@ -1,21 +1,22 @@
 import dataclasses
 import numpy
 import os
-
+import sys
 import ROOT
 
 import CMS_lumi
 
 
+
 def get_canvas(ratio = False) :
-    
-    ROOT.gROOT.LoadMacro("utils/tdrstyle.C")
+
+    ROOT.gROOT.LoadMacro(os.path.split(os.path.realpath(__file__))[0]+"/../utils/tdrstyle.C")
     ROOT.gROOT.ProcessLine("setTDRStyle()")
     
     ROOT.gROOT.SetStyle("tdrStyle")
     ROOT.gROOT.ForceStyle(True)
     
-    canvas = ROOT.TCanvas("canvas", "canvas", 600, 600)
+    canvas = ROOT.TCanvas("canvas", "canvas", 800, 600)
     canvas.UseCurrentStyle()
     
     #canvas.SetLeftMargin(0.16)
