@@ -119,6 +119,8 @@ def customize_process_and_associate(process, disTauTagOutputOpt = 1) :
             graphPath = cms.string("LLStaus_Run2/Production/data/models/particlenet_v1_a27159734e304ea4b7f9e0042baa9e22.pb"),
             #jets = cms.InputTag("finalJets"),
             jets = process.jetTable.src,
+            pfCandidates = cms.InputTag('packedPFCandidates'),
+            save_inputs  = cms.bool(False)
         )
         
         d_disTauTagVars = {
