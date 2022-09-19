@@ -215,7 +215,7 @@ class EfficiencyStudy(object):
 
     @staticmethod
     def process_events(out, objects, events):
-
+        
         # genJets matched to the visible tau - matched_genJet, visible taus that mathced to this jets match_taus_genJet
         objects["match_taus_genJet"] = objects["genJets"].nearest(objects["Taus_susy"], return_metric=False, threshold=0.4)
         objects["matched_genJet"] = objects["genJets"][(objects["match_taus_genJet"].energy != None)]
@@ -337,11 +337,11 @@ class EfficiencyStudy(object):
         )
 
 class JetMatching(coffea.processor.ProcessorABC):
-    def __init__(self, cfg):
+    def __init__(self, cfg, tag_ids_files):
         
         self.mode = cfg.mode
-
         self.collections = cfg.collections
+        self.tag_ids_files = tag_ids_files
         self.hists = {}
 
         if 'jet_dR_matching' in self.mode:
@@ -355,8 +355,24 @@ class JetMatching(coffea.processor.ProcessorABC):
     def accumulator(self):
         return self._accumulator
 
+    def get_jets_score(self, _metadata): 
+        '''
+        parse distautag score from separate files
+        '''
+       
+        # file_path = self.tag_ids_files[_metadata['dataset']][_metadata['filename']]
+        # print(file_path)
+        # print(_metadata['entrystart'])
+        # print(_metadata['entrystop'])
+        # exit()
+
+        pass
+        
     def process(self, events):
         out = self.accumulator.identity()
+
+        if self.tag_ids_files:
+            self.get_jets_score(events.metadata)
 
         objects = {}
         # events = events[:20]
@@ -413,7 +429,21 @@ def regionStudy(cfg: DictConfig) -> None:
         else:
             samples[name] = glob.glob(f'{cfg.input[name]}/**/*.root', recursive=True)
         
-    
+    # to apply id from different file:
+    id_scores = {}
+    if cfg.input_disID:
+        print("Apply DisTauTag scrore from file!")
+        for name in samples.keys():
+            score_files = glob.glob(f'{cfg.input_disID[name]}/**/*.root', recursive=True)
+            id_scores[name] = {}
+            for file in samples[name]:
+                base = os.path.basename(file)
+                file_id = base.replace("nanoaod_with-disTauTagScore", "nanoaod_only-disTauTagScore")
+                matching = [s for s in score_files if file_id in s]
+                if len(matching) != 1:
+                    raise RuntimeError("Matching error (no or many matches): ", matching)
+                id_scores[name][file] = matching[0]
+
     os.makedirs(cfg.output, exist_ok=True)
 
     mySchema = NanoAODSchema
@@ -426,7 +456,8 @@ def regionStudy(cfg: DictConfig) -> None:
         samples,
         "Events",
         JetMatching(
-            cfg = cfg
+            cfg = cfg,
+            tag_ids_files = id_scores if cfg.input_disID else False,
         ),
         
         executor = coffea.processor.futures_executor,
