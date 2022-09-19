@@ -316,14 +316,14 @@ void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
     edm::ValueMap<float>::Filler filler_score0(*vm_score0);
     filler_score0.insert(jets, v_score0.begin(), v_score0.end());
     filler_score0.fill();
-    event.put(std::move(vm_score0), "score0");
+    event.put(std::move(vm_score0), "score0"); // jet probability
     
     
     std::unique_ptr<edm::ValueMap<float>> vm_score1(new edm::ValueMap<float>());
     edm::ValueMap<float>::Filler filler_score1(*vm_score1);
     filler_score1.insert(jets, v_score1.begin(), v_score1.end());
     filler_score1.fill();
-    event.put(std::move(vm_score1), "score1");
+    event.put(std::move(vm_score1), "score1"); // tau probability
 
 
 }
