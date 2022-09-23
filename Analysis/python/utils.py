@@ -52,6 +52,7 @@ def root_plot1D(
     outfile,
     xrange,
     yrange,
+    l_hist_overlay = [],
     logx = False, logy = False,
     title = "",
     xtitle = "", ytitle = "",
@@ -122,18 +123,24 @@ def root_plot1D(
         #hist.SetFillStyle(0)
         
         stack.Add(hist, "hist")
-        legend.AddEntry(hist, hist.GetTitle(), "LP")
+        legend.AddEntry(hist, hist.GetTitle(), "LPFE")
     
     # Add a dummy histogram so that the X-axis range can be beyond the histogram range
     h1_xRange = ROOT.TH1F("h1_xRange", "h1_xRange", 1, xrange[0], xrange[1])
     stack.Add(h1_xRange)
     
     stack.Draw(stackdrawopt)
-    legend.Draw()
     
     stack.GetXaxis().SetRangeUser(xrange[0], xrange[1])
     stack.SetMinimum(yrange[0])
     stack.SetMaximum(yrange[1])
+    
+    for hist in l_hist_overlay :
+        
+        hist.Draw(f"same {hist.GetOption()}")
+        legend.AddEntry(hist, hist.GetTitle(), "LPFE")
+    
+    legend.Draw()
     
     if (ndivisionsx is not None) :
         
