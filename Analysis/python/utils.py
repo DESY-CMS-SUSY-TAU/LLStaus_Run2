@@ -73,6 +73,13 @@ def root_plot1D(
     CMSextraText = "Simulation Preliminary",
     lumiText = "(13 TeV)"
 ) :
+    """
+    l_hist: list of TH1 to be stacked according to `stackdrawopt`.
+    l_hist_overlay: list of TH1 to be overlaid on the stack.
+    stackdrawopt: pass empty string to stack
+    ratio_num_den_pairs: list of (numerator TH1, denominator TH1) pairs of to be plotted as ratios: [(num1, den1), (num2, den2), ...].
+    Note that the desired plotting styles and colors (like FillStyle/Color, LineSize/Style/Color, MarkerSize/Style/Color, SetOption) need to be set for the stack and overlay histograms before calling this function.
+    """
     
     canvas = get_canvas(ratio = len(ratio_num_den_pairs))
     
