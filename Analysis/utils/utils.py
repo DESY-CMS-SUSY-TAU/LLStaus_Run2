@@ -50,6 +50,7 @@ def root_plot1D(
     outfile,
     xrange,
     yrange,
+    l_hist_overlay = [],
     logx = False, logy = False,
     title = "",
     xtitle = "", ytitle = "",
@@ -70,6 +71,13 @@ def root_plot1D(
     CMSextraText = "Simulation Preliminary",
     lumiText = "(13 TeV)"
 ) :
+    """
+    l_hist: list of TH1 to be stacked according to `stackdrawopt`.
+    l_hist_overlay: list of TH1 to be overlaid on the stack.
+    stackdrawopt: pass empty string to stack
+    ratio_num_den_pairs: list of (numerator TH1, denominator TH1) pairs of to be plotted as ratios: [(num1, den1), (num2, den2), ...].
+    Note that the desired plotting styles and colors (like FillStyle/Color, LineSize/Style/Color, MarkerSize/Style/Color, SetOption) need to be set for the stack and overlay histograms before calling this function.
+    """
     
     canvas = get_canvas(ratio = len(ratio_num_den_pairs))
     
@@ -120,18 +128,24 @@ def root_plot1D(
         #hist.SetFillStyle(0)
         
         stack.Add(hist, "hist")
-        legend.AddEntry(hist, hist.GetTitle(), "LP")
+        legend.AddEntry(hist, hist.GetTitle(), "LPFE")
     
     # Add a dummy histogram so that the X-axis range can be beyond the histogram range
     h1_xRange = ROOT.TH1F("h1_xRange", "h1_xRange", 1, xrange[0], xrange[1])
     stack.Add(h1_xRange)
     
     stack.Draw(stackdrawopt)
-    legend.Draw()
     
     stack.GetXaxis().SetRangeUser(xrange[0], xrange[1])
     stack.SetMinimum(yrange[0])
     stack.SetMaximum(yrange[1])
+    
+    for hist in l_hist_overlay :
+        
+        hist.Draw(f"same {hist.GetOption()}")
+        legend.AddEntry(hist, hist.GetTitle(), "LPFE")
+    
+    legend.Draw()
     
     if (ndivisionsx is not None) :
         
