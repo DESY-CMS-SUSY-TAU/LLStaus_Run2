@@ -3,7 +3,9 @@
 if [ $# -ne 1 ] ; then
     echo "To run: source setup.sh mode"
     echo "e.g: source setup.sh NanoAOD_UL2018"
-    echo "Supported modes: 1) NanoAOD_UL2018, 2) conda "
+    echo "Supported modes:"
+    echo "1) CMSSW_12_4_0 (for NanoAOD UL 2018 production)"
+    echo "2) conda (for analysis)"
     return 1
 fi
 
@@ -21,10 +23,7 @@ function run_cmd {
 
 if [[ $MODE = "NanoAOD_UL2018" || "$MODE" == *"CMSSW"* ]] ; then
 
-    if [ $MODE = "NanoAOD_UL2018" ] ; then
-        CMSSW_VER=CMSSW_10_6_27
-        export SCRAM_ARCH=slc7_amd64_gcc700
-    elif [[ "$MODE" == *"CMSSW"* ]] ; then
+    if [[ "$MODE" == *"CMSSW"* ]] ; then
         CMSSW_VER=$MODE
         export SCRAM_ARCH=slc7_amd64_gcc10
     else
@@ -92,11 +91,21 @@ elif [ $MODE = "conda" ] ; then
         echo "Creating llstau environment..."
         run_cmd conda env create -f $BASE_PATH/conda-env.yaml
     fi
+
     run_cmd conda activate llstau
+
+    pepper_found=$(conda env list | grep -E '^pepper.*' | wc -l)
+    if [ $pepper_found -ne 1 ]; then
+        echo "Pepper not found. Installing..."
+        run_cmd cd $BASE_PATH/soft
+        run_cmd git clone git@github.com:DESY-CMS-SUSY-TAU/pepper.git
+        run_cmd cd pepper
+        run_cmd python3 -m pip install --ignore-installed --upgrade --upgrade-strategy eager --editable .
+    fi
 
 else
     echo echo "Mode "$MODE" is not supported."
     exit
 fi
-
+run_cmd cd $BASE_PATH
 echo "$MODE environment is successfully loaded."
