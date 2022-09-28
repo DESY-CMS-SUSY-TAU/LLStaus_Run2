@@ -19,9 +19,9 @@ ROOT.gROOT.SetBatch(True)
 
 import numpy as np
 
-import utils
-import geometry_utils_jit
-import geometry_utils
+import utils.utils as utils
+# import utils.geometry_utils as geometry_utils_jit
+import utils.geometry_utils
 
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 
@@ -232,7 +232,7 @@ class EfficiencyStudy(object):
         objects["clone_Taus_susy"] = objects["Taus_susy"]
 
         # objects["matched_genJet"] = objects["genJets"]
-        # print(objects["genJets"].energy)
+        # print(objects["genJets"].energy)LLStaus_Run2.Analysis.
         # print(objects["match_taus_genJet"].energy)
 
         objects["matched_genJet", "jet_E"] = objects["matched_genJet"].energy
@@ -416,7 +416,7 @@ class JetMatching(coffea.processor.ProcessorABC):
         return accumulator
 
 
-@hydra.main(config_path="../configs", config_name="plot_regionStudy.yaml")
+@hydra.main(config_path="./configs", config_name="region_study.yaml")
 def regionStudy(cfg: DictConfig) -> None:
     '''
     The following script is performing the region study
@@ -553,7 +553,7 @@ def regionStudy(cfg: DictConfig) -> None:
                 
                 outfile = path_jet+f'/ratio_pt_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
                 
-                utils.root_plot1D(
+                utils.utils.root_plot1D(
                     l_hist = [hist_gen_jet_pt_ratio,hist_gen_tau_pt_ratio],
                     outfile = outfile,
                     xrange = [0.1, 1010],
@@ -614,7 +614,7 @@ def regionStudy(cfg: DictConfig) -> None:
                 
                 outfile = path_jet+f'/ratio_Lxy_{dataset}.png'
                 
-                utils.root_plot1D(
+                utils.utils.root_plot1D(
                     l_hist = [hist_gen_jet_pt_ratio,hist_gen_tau_pt_ratio],
                     outfile = outfile,
                     xrange = [-10, 110],
@@ -676,7 +676,7 @@ def regionStudy(cfg: DictConfig) -> None:
 
                 outfile = path_jet+f'/ratio_E_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
                 
-                utils.root_plot1D(
+                utils.utils.root_plot1D(
                     l_hist = [hist_gen_jet_ratio],
                     outfile = outfile,
                     xrange = [cfg.eff_setups.energy_ratio[1], cfg.eff_setups.energy_ratio[2]],
@@ -700,7 +700,7 @@ def regionStudy(cfg: DictConfig) -> None:
 
                 outfile2 = path_jet+f'/ratio_E_child_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
 
-                utils.root_plot1D(
+                utils.utils.root_plot1D(
                     l_hist = [hist_tau_childr_energy_ratio, hist_tau_childr_visTau_energy_ratio],
                     outfile = outfile2,
                     xrange = [cfg.eff_setups.energy_ratio_children[1], cfg.eff_setups.energy_ratio_children[2]],
@@ -759,7 +759,7 @@ def regionStudy(cfg: DictConfig) -> None:
 
                 outfile3 = path_res+f'/pt_resolution_visTau_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
 
-                utils.root_plot1D(
+                utils.utils.root_plot1D(
                     l_hist = [hist_visTau_resolution],
                     outfile = outfile3,
                     xrange = [cfg.eff_setups.pt_resolution[1], cfg.eff_setups.pt_resolution[2]],

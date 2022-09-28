@@ -4,13 +4,11 @@ import os
 import sys
 import ROOT
 
-import CMS_lumi
-
-
+import utils.cms_lumi as CMS_lumi
 
 def get_canvas(ratio = False) :
 
-    ROOT.gROOT.LoadMacro(os.path.split(os.path.realpath(__file__))[0]+"/../utils/tdrstyle.C")
+    ROOT.gROOT.LoadMacro(os.path.split(os.path.realpath(__file__))[0]+"/tdrstyle.C")
     ROOT.gROOT.ProcessLine("setTDRStyle()")
     
     ROOT.gROOT.SetStyle("tdrStyle")

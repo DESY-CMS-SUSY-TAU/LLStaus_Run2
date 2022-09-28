@@ -19,4 +19,4 @@ This repository is to perform the long-lives stau searches at DESY CMS.
 See documentation [here](Analysis/README.md)
 
 # Analysis
-See documentation [here](Producttion/README.md)
+See documentation [here](Production/README.md)

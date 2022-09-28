@@ -423,7 +423,7 @@ def main() :
             
             outfile = "%s/%s.pdf" %(outdir, histName)
             
-            utils.root_plot1D(
+            utils.utils.root_plot1D(
                 l_hist = l_hist,
                 ratio_num_den_pairs = [(h1_num, h1_den)],
                 outfile = outfile,
