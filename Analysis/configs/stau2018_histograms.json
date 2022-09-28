@@ -1,0 +1,40 @@
+# Here you can find example histograms that work with the example processor
+# There are also more advanced examples in the hist_config.json
+{
+    "leading_jet_score": {
+        "bins": [
+            {
+                "name": "leading_jet_tag",
+                "label": "leading jet tag",
+                "n_or_arr": 80,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "leading_jet_tag": [
+                "jet_1st",
+                "disTauTag_score1"
+            ]
+        }
+    },
+    "subleading_jet_score": {
+        "bins": [
+            {
+                "name": "subleading_jet_tag",
+                "label": "subleading jet tag",
+                "n_or_arr": 80,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "subleading_jet_tag": [
+                "jet_2nd",
+                "disTauTag_score1"
+            ]
+        }
+    },
+}

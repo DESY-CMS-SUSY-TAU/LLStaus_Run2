@@ -9,7 +9,7 @@ input_disID: null
 #     test1: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/soft/CMSSW_12_4_0/src/output_id/
 
 
-n_files: -1 #per dataset
+n_files: 1 #per dataset
 
 mode:
 
