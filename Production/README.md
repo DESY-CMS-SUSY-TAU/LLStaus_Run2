@@ -24,7 +24,7 @@
 
 3. To submit all datasets in configuration files use crab_submit.py:
 ```sh
-> python3 $(which crab_submit.py) --inputDBS phys03 --workArea <working/area/folder> --cfg LLStaus_Run2/Production/python/myNanoProdMc2018_NANO.py --site T2_DE_DESY --output <path/to/dcache/folder> ./LLStaus_Run2/Production/configs/crab/UL2018/STauSignal.txt .... <other/confo>
+> python3 $(which crab_submit.py) --inputDBS phys03 --workArea <working/area/folder> --cfg LLStaus_Run2/Production/python/myNanoProdMc2018_NANO.py --site T2_DE_DESY --output <path/to/dcache/folder> ./LLStaus_Run2/Production/configs/crab/UL2018/STauSignal.txt ... <other/configs>
 ```
 - For more command line options use crab_submit.py --help.
 - For big dataset file-based splitting should be used.

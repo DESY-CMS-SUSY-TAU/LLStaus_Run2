@@ -47,6 +47,10 @@ if [[ $MODE = "NanoAOD_UL2018" || "$MODE" == *"CMSSW"* ]] ; then
         run_cmd mkdir LLStaus_Run2
         run_cmd cd LLStaus_Run2
         run_cmd ln -s ../../../../Production Production
+        run_cmd mkdir -p ../data 
+        run_cmd cp -rf ../../../../Production/data/models/* ../data/
+        run_cmd mkdir -p ../src/data
+        run_cmd cp -rf ../../../../Production/data/models/* ../src/data
         run_cmd scram b -j8
         run_cmd touch ../../.installed
         run_cmd cd ../../../..

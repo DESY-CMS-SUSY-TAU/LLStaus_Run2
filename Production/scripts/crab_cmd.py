@@ -24,7 +24,7 @@ def sh_call(cmd):
     result = subprocess.call([cmd], shell=True)
     if result != 0:
         print('ERROR: failed to run "{}"'.format(cmd))
-        sys.exit(1)
+        #sys.exit(1)
 
 for dir in os.listdir(args.workArea):
     task_dir = os.path.join(args.workArea, dir)
