@@ -51,10 +51,28 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("Trigger", partial(
             self.passing_trigger, pos_triggers, neg_triggers))
 
-        # Pick up leading jet (by score)
-        selector.set_column("jet_1st", partial(self.leading_jet, order=1)) #1st jet
-        selector.set_column("jet_2nd", partial(self.leading_jet, order=2)) #2nd jet
 
+        # Add basics cuts (at least 2 good jets)
+        selector.add_cut("At least 2 good jets", self.has_jets)
+
+        # Pick up leading jet (by score)
+        selector.set_column("jet_1", partial(self.leading_jet, order=0)) #1-st jet
+        selector.set_column("jet_2", partial(self.leading_jet, order=1)) #2-nd jet
+
+        selector.set_column("sum_2jets", self.add_j1_j2)
+
+
+    def has_jets(self, data):
+        jets = data["Jet"]
+        
+        # Good jets only
+        is_good = (
+            (self.config["jet_eta_min"] < jets.eta)
+            & (jets.eta < self.config["jet_eta_max"])
+            & (self.config["good_jet_pt_min"] < jets.pt))
+        good_jets = jets[is_good]
+
+        return ak.num(good_jets) >= 2
 
     def leading_jet(self, data, order=0):
         jets = data["Jet"]
@@ -64,10 +82,14 @@ class Processor(pepper.ProcessorBasicPhysics):
             (self.config["jet_eta_min"] < jets.eta)
             & (jets.eta < self.config["jet_eta_max"])
             & (self.config["good_jet_pt_min"] < jets.pt))
-        
-        jets = jets[is_good]
+        good_jets = jets[is_good]
+
         # We want to get leading jet by the score of displaced tau tagger
         idx_leading = \
-            ak.argsort(jets.disTauTag_score1, ascending=False)[:,:order]
+            ak.argsort(good_jets.disTauTag_score1, ascending=False)[:,order:order+1]
 
-        return jets[idx_leading]
+        return good_jets[idx_leading]
+
+    def add_j1_j2(self, data):
+        
+        return data["jet_1"].add(data["jet_2"])

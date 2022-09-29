@@ -76,7 +76,7 @@
     
     "jet_eta_min" : -2.4,
     "jet_eta_max" :  2.4,
-    "good_jet_pt_min" : 20,
+    "good_jet_pt_min" : 30,
 
     "hists": "$CONFDIR/stau2018_histograms.json",
 }

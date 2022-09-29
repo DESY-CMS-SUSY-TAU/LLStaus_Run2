@@ -14,7 +14,7 @@
         ],
         "fill": {
             "leading_jet_tag": [
-                "jet_1st",
+                "jet_1",
                 "disTauTag_score1"
             ]
         }
@@ -32,8 +32,26 @@
         ],
         "fill": {
             "subleading_jet_tag": [
-                "jet_2nd",
+                "jet_2",
                 "disTauTag_score1"
+            ]
+        }
+    },
+    "mass_j1_j2": {
+        "bins": [
+            {
+                "name": "mass_2tagged_jets",
+                "label": "mass 2tagged jets",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 500,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mass_2tagged_jets": [
+                "sum_2jets",
+                "mass"
             ]
         }
     },
