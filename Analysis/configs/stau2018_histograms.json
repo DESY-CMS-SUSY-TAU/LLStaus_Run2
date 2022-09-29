@@ -55,4 +55,112 @@
             ]
         }
     },
+    "bJet_n": {
+        "bins": [
+            {
+                "name": "bjet_n",
+                "label": "b-tagged_jets_n",
+                "n_or_arr": 10,
+                "lo": 0,
+                "hi": 10,
+                "unit": "n."
+            }
+        ],
+        "fill": {
+            "bjet_n": [
+                "jet_b",
+                {"function": "num"}
+            ]
+        }
+    },
+    "jet1_leadingSV_dxy": {
+        "bins": [
+            {
+                "name": "jet1_leadingSV_dxy",
+                "label": "leading SV dxy (jet1)",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 50,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet1_leadingSV_dxy": [
+                "SV_1",
+                "dxy",
+            ]
+        }
+    },
+    "jet2_leadingSV_dxy": {
+        "bins": [
+            {
+                "name": "jet2_leadingSV_dxy",
+                "label": "leading SV dxy (jet2)",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 50,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet2_leadingSV_dxy": [
+                "SV_2",
+                "dxy",
+            ]
+        }
+    },
+    "jet1_SVn": {
+        "bins": [
+            {
+                "name": "jet1_SVn",
+                "label": "number of SV (jet1)",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n."
+            }
+        ],
+        "fill": {
+            "jet1_SVn": [
+                "SV_1",
+                {"function": "num"}
+            ]
+        }
+    },
+    "jet2_SVn": {
+        "bins": [
+            {
+                "name": "jet2_SVn",
+                "label": "number of SV (jet2)",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n."
+            }
+        ],
+        "fill": {
+            "jet2_SVn": [
+                "SV_2",
+                {"function": "num"}
+            ]
+        }
+    },
+    "SVn": {
+        "bins": [
+            {
+                "name": "SVn",
+                "label": "SVn",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n."
+            }
+        ],
+        "fill": {
+            "SVn": [
+                "SV",
+                {"function": "num"}
+            ]
+        }
+    },
 }

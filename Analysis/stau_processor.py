@@ -8,6 +8,7 @@
 # You change adjust the number of events in a chunk and thereby the memory
 # usage by using the --chunksize parameter (the default value is 500000).
 
+from nis import match
 import pepper
 import awkward as ak
 from functools import partial
@@ -51,45 +52,51 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("Trigger", partial(
             self.passing_trigger, pos_triggers, neg_triggers))
 
-
+        # Select jets that pass selection cuts 
+        selector.set_column("jets_valid", self.jets_valid)
         # Add basics cuts (at least 2 good jets)
-        selector.add_cut("At least 2 good jets", self.has_jets)
+        selector.add_cut("At least 2 valid jets", self.has_jets)
 
         # Pick up leading jet (by score)
         selector.set_column("jet_1", partial(self.leading_jet, order=0)) #1-st jet
         selector.set_column("jet_2", partial(self.leading_jet, order=1)) #2-nd jet
-
+        selector.set_column("jet_b", self.b_tagged_jet)
         selector.set_column("sum_2jets", self.add_j1_j2)
 
+        # Pick up matched SVs
+        selector.set_column("SV_1", partial(self.match_obj, name_1="jet_1", name_2="SV", dR=0.4))
+        selector.set_column("SV_2", partial(self.match_obj, name_1="jet_2", name_2="SV", dR=0.4))
+
+    def jets_valid(self, data):
+        jets = data["Jet"]
+        # Good jets only
+        is_good = (
+            (self.config["jet_eta_min"] < jets.eta)
+            & (jets.eta < self.config["jet_eta_max"])
+            & (self.config["jet_pt_min"] < jets.pt))
+        return jets[is_good]
 
     def has_jets(self, data):
-        jets = data["Jet"]
-        
-        # Good jets only
-        is_good = (
-            (self.config["jet_eta_min"] < jets.eta)
-            & (jets.eta < self.config["jet_eta_max"])
-            & (self.config["good_jet_pt_min"] < jets.pt))
-        good_jets = jets[is_good]
-
-        return ak.num(good_jets) >= 2
+        return ak.num(data["jets_valid"]) >= 2
 
     def leading_jet(self, data, order=0):
-        jets = data["Jet"]
-
-        # Good jets only
-        is_good = (
-            (self.config["jet_eta_min"] < jets.eta)
-            & (jets.eta < self.config["jet_eta_max"])
-            & (self.config["good_jet_pt_min"] < jets.pt))
-        good_jets = jets[is_good]
-
+        jets = data["jets_valid"]
         # We want to get leading jet by the score of displaced tau tagger
         idx_leading = \
-            ak.argsort(good_jets.disTauTag_score1, ascending=False)[:,order:order+1]
-
-        return good_jets[idx_leading]
+            ak.argsort(jets.disTauTag_score1, ascending=False)[:,order:order+1]
+        return jets[idx_leading]
 
     def add_j1_j2(self, data):
-        
         return data["jet_1"].add(data["jet_2"])
+
+    def b_tagged_jet(self, data):
+        # Jet_btagDeepFlavB satisfies the Medium (>0.2783) WP:
+        # https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
+        is_b = (data["Jet"].btagDeepFlavB > 0.2783)
+        return data["Jet"][is_b]
+
+    def match_obj(self, data, name_1=None, name_2=None, dR = 0.4):
+        obj1 = data[name_1][:,0]
+        obj2 = data[name_2]
+        _dR = obj1.delta_r(obj2)
+        return obj2[(_dR<dR)]
