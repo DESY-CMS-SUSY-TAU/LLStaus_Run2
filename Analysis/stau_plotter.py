@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 
 from pepper import Config
 
-import utils.utils as utils
+from utils.utils import ColorIterator, root_plot1D
 
 parser = ArgumentParser(
     description="Plot histograms from previously created histograms")
@@ -86,9 +86,8 @@ for _histfile in histfiles:
                 _histograms[isSignal][-1].Add(hist)
 
 
-
-        _histograms[isSignal][-1].SetLineColor(utils.ColorIterator(_group_idx))
-        _histograms[isSignal][-1].SetFillColor(utils.ColorIterator(_group_idx))
+        _histograms[isSignal][-1].SetLineColor(ColorIterator(_group_idx))
+        _histograms[isSignal][-1].SetFillColor(ColorIterator(_group_idx))
         _histograms[isSignal][-1].SetLineWidth(2)
         _histograms[isSignal][-1].SetMarkerSize(0)
         _histograms[isSignal][-1].SetTitle(_group_name)
@@ -107,15 +106,16 @@ for _histfile in histfiles:
     for _idx in _sorted_hist:
         _histograms_background_sorted.append(_histograms["background"][_idx])
 
-    utils.root_plot1D(
-        list_hist_bkgr = _histograms_background_sorted,
-        list_hist_sig = _histograms["signal"],
+    root_plot1D(
+        l_hist = _histograms_background_sorted,
+        l_hist_overlay = _histograms["signal"],
         outfile = args.outdir + "/" + os.path.splitext(os.path.basename(_histfile))[0] + ".png",
-        xrange = [0.0, 1.0],
-        yrange = (0.1,  100*y_max),
+        xrange = [_histograms["signal"][0].GetXaxis().GetXmin(), 
+                  _histograms["signal"][0].GetXaxis().GetXmin()],
+        yrange = (0.1,  80*y_max),
         logx = False, logy = True,
-        ytitle = "Events",
-        xtitle = "prop.(#tau)",
+        ytitle = _histograms["signal"][0].GetYaxis().GetTitle(),
+        xtitle = _histograms["signal"][0].GetXaxis().GetTitle(),
         centertitlex = True, centertitley = True,
         centerlabelx = False, centerlabely = False,
         gridx = True, gridy = True,

@@ -6,6 +6,22 @@ import ROOT
 
 import utils.cms_lumi as CMS_lumi
 
+def ColorIterator(index : int) -> int:
+    # kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
+    # kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
+    # kSpring = 820, kTeal   = 840, kAzure   =  860, kViolet = 880,  kPink   = 900
+    cs = 1
+    colow_wheel = [ cs + ROOT.kBlue,
+                    cs + ROOT.kRed,
+                    cs + ROOT.kGreen,
+                    cs + ROOT.kMagenta,
+                    cs + ROOT.kYellow,
+                    cs + ROOT.kCyan ]
+    color_idx =  colow_wheel +\
+                [x - 5 for x in colow_wheel] +\
+                [x - 10 for x in colow_wheel]
+    return color_idx[index]
+
 def get_canvas(ratio = False) :
 
     ROOT.gROOT.LoadMacro(os.path.split(os.path.realpath(__file__))[0]+"/tdrstyle.C")
@@ -24,13 +40,13 @@ def get_canvas(ratio = False) :
     
     if (ratio) :
         
-        canvas.Divide(1, 2);
+        canvas.Divide(1, 2)
         
-        canvas.cd(1).SetPad(0, 0.32, 1, 1);
+        canvas.cd(1).SetPad(0, 0.32, 1, 1)
         canvas.cd(1).SetTopMargin(0.075)
         canvas.cd(1).SetBottomMargin(0)
         
-        canvas.cd(2).SetPad(0, 0.0, 1, 0.3);
+        canvas.cd(2).SetPad(0, 0.0, 1, 0.3)
         canvas.cd(2).SetTopMargin(0.05)
         canvas.cd(2).SetBottomMargin(0.285)
     
@@ -131,8 +147,8 @@ def root_plot1D(
         legend.AddEntry(hist, hist.GetTitle(), "LPFE")
     
     # Add a dummy histogram so that the X-axis range can be beyond the histogram range
-    h1_xRange = ROOT.TH1F("h1_xRange", "h1_xRange", 1, xrange[0], xrange[1])
-    stack.Add(h1_xRange)
+    # h1_xRange = ROOT.TH1F("h1_xRange", "h1_xRange", 1, xrange[0], xrange[1])
+    # stack.Add(h1_xRange)
     
     stack.Draw(stackdrawopt)
     
