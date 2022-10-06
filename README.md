@@ -6,6 +6,7 @@ This repository is to perform the long-lives stau searches at DESY CMS.
 1. Clone package from the github without loading any additional environment (like CMSSW):
    ```sh
    > git clone -o DESY-CMS-SUSY-TAU -b master --recurse-submodules git@github.com:DESY-CMS-SUSY-TAU/LLStaus_Run2.git
+   > git submodule update --init --recursive # Update the submodules
    ```
     Update git to >=2.13 if possible, for `--recurse-submodules` to work.<br>
     Otherwise, use `--recursive` instead of `--recurse-submodules` with 1.9<=git<=2.12.<br>
