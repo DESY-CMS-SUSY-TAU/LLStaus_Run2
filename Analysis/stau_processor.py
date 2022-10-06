@@ -66,6 +66,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Pick up matched SVs
         selector.set_column("SV_1", partial(self.match_obj, name_1="jet_1", name_2="SV", dR=0.4))
         selector.set_column("SV_2", partial(self.match_obj, name_1="jet_2", name_2="SV", dR=0.4))
+        
+        selector.set_column("mt2_j1_j2_MET", partial(self.get_mt2, name_1 = "jet_1", name_2 = "jet_2"))
 
     def jets_valid(self, data):
         jets = data["Jet"]
@@ -100,3 +102,12 @@ class Processor(pepper.ProcessorBasicPhysics):
         obj2 = data[name_2]
         _dR = obj1.delta_r(obj2)
         return obj2[(_dR<dR)]
+    
+    def get_mt2(self, data, name_1, name_2, name_MET = "MET") :
+        
+        return mt2.mt2(
+            data[name_1].mass, data[name_1].px, data[name_1].py,
+            data[name_2].mass, data[name_2].px, data[name_2].py,
+            data[name_MET].px, data[name_MET].py,
+            0, 0
+        )
