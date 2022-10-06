@@ -7,6 +7,9 @@ This repository is to perform the long-lives stau searches at DESY CMS.
    ```sh
    > git clone -o DESY-CMS-SUSY-TAU -b master --recurse-submodules git@github.com:DESY-CMS-SUSY-TAU/LLStaus_Run2.git
    ```
+    Update git to >=2.13 if possible, for `--recurse-submodules` to work.<br>
+    Otherwise, use `--recursive` instead of `--recurse-submodules` with 1.9<=git<=2.12.<br>
+    Note that this is needed to clone the submodules (such as `pepper`).
 2. Go to the directory and setup appropriate environment with setup.sh script:
    ```sh
    > source setup.sh ENVIRONMENT
