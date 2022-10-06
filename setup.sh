@@ -94,14 +94,14 @@ elif [ $MODE = "conda" ] ; then
 
     run_cmd conda activate llstau
 
-    pepper_found=$(conda env list | grep -E '^pepper.*' | wc -l)
-    if [ $pepper_found -ne 1 ]; then
-        echo "Pepper not found. Installing..."
-        run_cmd cd $BASE_PATH/soft
-        run_cmd git clone git@github.com:DESY-CMS-SUSY-TAU/pepper.git
-        run_cmd cd pepper
-        run_cmd python3 -m pip install --ignore-installed --upgrade --upgrade-strategy eager --editable .
-    fi
+    #pepper_found=$(conda env list | grep -E '^pepper.*' | wc -l)
+    #if [ $pepper_found -ne 1 ]; then
+    #    echo "Pepper not found. Installing..."
+    #    run_cmd cd $BASE_PATH/soft
+    #    run_cmd git clone git@github.com:DESY-CMS-SUSY-TAU/pepper.git
+    #    run_cmd cd pepper
+    #    run_cmd python3 -m pip install --ignore-installed --upgrade --upgrade-strategy eager --editable .
+    #fi
 
 else
     echo echo "Mode "$MODE" is not supported."

@@ -5,7 +5,7 @@ This repository is to perform the long-lives stau searches at DESY CMS.
 # Environment installation
 1. Clone package from the github without loading any additional environment (like CMSSW):
    ```sh
-   > git clone -o DESY-CMS-SUSY-TAU -b master git@github.com:DESY-CMS-SUSY-TAU/LLStaus_Run2.git
+   > git clone -o DESY-CMS-SUSY-TAU -b master --recurse-submodules git@github.com:DESY-CMS-SUSY-TAU/LLStaus_Run2.git
    ```
 2. Go to the directory and setup appropriate environment with setup.sh script:
    ```sh
