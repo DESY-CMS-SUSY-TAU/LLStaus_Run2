@@ -1,0 +1,3 @@
+[submodule "pepper"]
+	path = pepper
+	url = git@github.com:DESY-CMS-SUSY-TAU/pepper.git

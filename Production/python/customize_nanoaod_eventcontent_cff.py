@@ -30,6 +30,12 @@ def customize_process_and_associate(process, disTauTagOutputOpt = 1) :
         #patTaus = cms.InputTag("selectedPatTaus"),
     )
     
+    trk_cond = "hasTrackDetails"
+    
+    # https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2017#Packed_ParticleFlow_Candidates
+    # https://cmsdoxygen.web.cern.ch/cmsdoxygen/CMSSW_12_4_0/doc/html/d8/d79/classpat_1_1PackedCandidate.html
+    # lostInnerHits: https://cmsdoxygen.web.cern.ch/cmsdoxygen/CMSSW_12_4_0/doc/html/d8/d79/classpat_1_1PackedCandidate.html#ab9ef9a12f92e02fa61653ba77ee34274
+    # fromPV: https://cmsdoxygen.web.cern.ch/cmsdoxygen/CMSSW_12_4_0/doc/html/d8/d79/classpat_1_1PackedCandidate.html#a1e86b4e893738b7cbae410b7f106f339
     process.pfCandTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
         src = cms.InputTag("packedPFCandidates"),
         #cut = cms.string(""),
@@ -40,6 +46,17 @@ def customize_process_and_associate(process, disTauTagOutputOpt = 1) :
         extension = cms.bool(False), # this is the main table
         variables = cms.PSet(
             CandVars,
+            fromPV                  = Var("fromPV"                              , int       , doc = "isolated track comes from PV"),
+            lostInnerHits           = Var("lostInnerHits"                       , int       , doc = "Lost inner hits"),
+            hasTrackDetails         = Var("hasTrackDetails"                     , bool      , doc = "True if a bestTrack can be extracted from this Candidate"),
+            phiAtVtx                = Var("phiAtVtx"                            , float     , doc = "Phi of the candidate's track at the vertex; this is identical to phi() for the vast majority of the particles, but the two might differ for some of them if the calorimeters had contributed significantly in defining the 4-vector of the particle"),
+            dxy                     = Var(f"?{trk_cond}?dxy:-999"               , float     , doc = "dxy w.r.t. associated PV"),
+            dxyError                = Var(f"?{trk_cond}?dxyError:-999"          , float     , doc = "Error on dxy"),
+            dz                      = Var(f"?{trk_cond}?dzAssociatedPV:-999"    , float     , doc = "dz w.r.t. associated PV"),
+            dzError                 = Var(f"?{trk_cond}?dzError:-999"           , float     , doc = "Error on dz"),
+            vx                      = Var("vx"                                  , float     , doc = "Vertex x"),
+            vy                      = Var("vx"                                  , float     , doc = "Vertex y"),
+            vz                      = Var("vz"                                  , float     , doc = "Vertex z"),
         ),
         externalVariables = cms.PSet(
             isTauIdxSignalCand     = ExtVar("isFromTauForPfCand:isTauIdxSignalCand"       , int, doc = "Index of the tau if it belongs to pat::Tau::signalCands(); else -1"),
