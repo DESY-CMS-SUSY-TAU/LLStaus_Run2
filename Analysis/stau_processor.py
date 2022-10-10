@@ -81,6 +81,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("SV_1", partial(self.match_obj, coll1="jet_1", coll2="SV", dR=0.4))
         selector.set_column("SV_2", partial(self.match_obj, coll1="jet_2", coll2="SV", dR=0.4))
 
+        selector.set_column("mt2_j1_j2_MET", partial(self.get_mt2, name_1 = "jet_1", name_2 = "jet_2"))
+
     def jets_valid(self, data):
         jets = data["Jet"]
         # Good jets only
@@ -135,19 +137,23 @@ class Processor(pepper.ProcessorBasicPhysics):
         Returns: if return_coll1 == True - return coll1 if any of coll2 match
         if return_coll1 == False - return coll2 elements that match to coll1
         """
-        # print("renning ---> ", coll1, coll2, "return_coll1", return_coll1, "not_match",not_match)
-        # print(data[coll1])
         obj1 = ak.firsts(data[coll1])
         assert ak.count(obj1, axis=None) == ak.count(data[coll1], axis=None)
-        # print(obj1)
         obj2 = data[coll2]
-        # print(obj2)
         _dR = obj1.delta_r(obj2)
-        # print(_dR)
+
         if return_coll1:
             idx = np.expand_dims(ak.any((_dR<dR), axis=-1), axis=-1)
-            # print(idx)
-            # print(data[coll1].mask[~idx] if not_match else data[coll1].mask[idx])
             return data[coll1].mask[~idx] if not_match else data[coll1].mask[idx]
         else:
             return obj2[(_dR>dR)] if not_match else obj2[(_dR<dR)]
+
+    
+    def get_mt2(self, data, name_1, name_2, name_MET = "MET") :
+        
+        return mt2.mt2(
+            data[name_1].mass, data[name_1].px, data[name_1].py,
+            data[name_2].mass, data[name_2].px, data[name_2].py,
+            data[name_MET].px, data[name_MET].py,
+            0, 0
+        )
