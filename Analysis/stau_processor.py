@@ -12,6 +12,8 @@ from nis import match
 import pepper
 import awkward as ak
 from functools import partial
+import numpy as np
+# np.set_printoptions(threshold=np.inf)
 
 
 # All processors should inherit from pepper.ProcessorBasicPhysics
@@ -63,9 +65,21 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("jet_b", self.b_tagged_jet)
         selector.set_column("sum_2jets", self.add_j1_j2)
 
+        # from jet1/2 we select only the objects that match / not match to tau
+
+        selector.set_column("jet_1_tau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.4))
+        selector.set_column("jet_2_tau", partial(self.match_nearest, coll1="jet_2", coll2="GenVisTau", dR=0.4))
+        selector.set_column("jet_1_notau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.4, not_matched=True))
+        selector.set_column("jet_2_notau", partial(self.match_nearest, coll1="jet_2", coll2="GenVisTau", dR=0.4, not_matched=True))
+
+        # selector.set_column("jet_1_tau", partial(self.match_obj, coll1="jet_1", coll2="GenVisTau", dR=0.2, return_coll1=True)) #1-st jet
+        # selector.set_column("jet_2_tau", partial(self.match_obj, coll1="jet_2", coll2="GenVisTau", dR=0.2, return_coll1=True)) #2-nd jet
+        # selector.set_column("jet_1_notau", partial(self.match_obj, coll1="jet_1", coll2="GenVisTau", dR=0.4, return_coll1=True, not_match=True)) #1-st jet
+        # selector.set_column("jet_2_notau", partial(self.match_obj, coll1="jet_2", coll2="GenVisTau", dR=0.4, return_coll1=True, not_match=True)) #2-nd jet
+
         # Pick up matched SVs
-        selector.set_column("SV_1", partial(self.match_obj, name_1="jet_1", name_2="SV", dR=0.4))
-        selector.set_column("SV_2", partial(self.match_obj, name_1="jet_2", name_2="SV", dR=0.4))
+        selector.set_column("SV_1", partial(self.match_obj, coll1="jet_1", coll2="SV", dR=0.4))
+        selector.set_column("SV_2", partial(self.match_obj, coll1="jet_2", coll2="SV", dR=0.4))
 
     def jets_valid(self, data):
         jets = data["Jet"]
@@ -95,8 +109,45 @@ class Processor(pepper.ProcessorBasicPhysics):
         is_b = (data["Jet"].btagDeepFlavB > 0.2783)
         return data["Jet"][is_b]
 
-    def match_obj(self, data, name_1=None, name_2=None, dR = 0.4):
-        obj1 = data[name_1][:,0]
-        obj2 = data[name_2]
+    def match_nearest(self, data, coll1=None, coll2=None, dR = 0.4, not_matched = False):
+        obj1 = data[coll1]
+        obj2 = data[coll2]
+        matches = obj1.nearest(obj2, return_metric=True, threshold=dR)[1]
+        if not_matched:
+            idx_matches_jets = ak.is_none(matches, axis=-1)
+        else:
+            idx_matches_jets = ~ak.is_none(matches, axis=-1)
+        return obj1.mask[idx_matches_jets]
+                      
+
+    def match_obj(self, data, coll1=None, coll2=None, dR = 0.4,
+                  return_coll1 = False, not_match = False ):
+        """Function takes names of two collections
+        and returns matched objects
+
+        Parameters:
+        coll1 -- a string, the name of first collection
+        coll2 -- a string, the name of second collection
+        dR -- matching threhold
+        return_coll1 -- bool, controls return behaviour
+        not_match -- bool, returned matched to the object or not matched
+        
+        Returns: if return_coll1 == True - return coll1 if any of coll2 match
+        if return_coll1 == False - return coll2 elements that match to coll1
+        """
+        # print("renning ---> ", coll1, coll2, "return_coll1", return_coll1, "not_match",not_match)
+        # print(data[coll1])
+        obj1 = ak.firsts(data[coll1])
+        assert ak.count(obj1, axis=None) == ak.count(data[coll1], axis=None)
+        # print(obj1)
+        obj2 = data[coll2]
+        # print(obj2)
         _dR = obj1.delta_r(obj2)
-        return obj2[(_dR<dR)]
+        # print(_dR)
+        if return_coll1:
+            idx = np.expand_dims(ak.any((_dR<dR), axis=-1), axis=-1)
+            # print(idx)
+            # print(data[coll1].mask[~idx] if not_match else data[coll1].mask[idx])
+            return data[coll1].mask[~idx] if not_match else data[coll1].mask[idx]
+        else:
+            return obj2[(_dR>dR)] if not_match else obj2[(_dR<dR)]

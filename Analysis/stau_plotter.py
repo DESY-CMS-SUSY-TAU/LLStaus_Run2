@@ -112,7 +112,7 @@ for _histfile in histfiles:
         outfile = args.outdir + "/" + os.path.splitext(os.path.basename(_histfile))[0] + ".png",
         xrange = [_histograms["signal"][0].GetXaxis().GetXmin(), 
                   _histograms["signal"][0].GetXaxis().GetXmin()],
-        yrange = (0.1,  80*y_max),
+        yrange = (0.1,  100*y_max),
         logx = False, logy = True,
         ytitle = _histograms["signal"][0].GetYaxis().GetTitle(),
         xtitle = _histograms["signal"][0].GetXaxis().GetTitle(),

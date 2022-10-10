@@ -37,6 +37,78 @@
             ]
         }
     },
+    "leading_jet-tau_score": {
+        "bins": [
+            {
+                "name": "leading_jet-tau_tag",
+                "label": "leading jet (match Tau) tag",
+                "n_or_arr": 80,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "leading_jet-tau_tag": [
+                "jet_1_tau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+    "subleading_jet-tau_score": {
+        "bins": [
+            {
+                "name": "subleading_jet-tau_tag",
+                "label": "subleading jet (match Tau) tag",
+                "n_or_arr": 80,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "subleading_jet-tau_tag": [
+                "jet_2_tau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+    "leading_jet-notau_score": {
+        "bins": [
+            {
+                "name": "leading_jet-notau_tag",
+                "label": "leading jet (no match Tau) tag",
+                "n_or_arr": 80,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "leading_jet-notau_tag": [
+                "jet_1_notau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+    "subleading_jet-notau_score": {
+        "bins": [
+            {
+                "name": "subleading_jet-notau_tag",
+                "label": "subleading jet (no match Tau) tag",
+                "n_or_arr": 80,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "subleading_jet-notau_tag": [
+                "jet_2_notau",
+                "disTauTag_score1"
+            ]
+        }
+    },
     "mass_j1_j2": {
         "bins": [
             {
