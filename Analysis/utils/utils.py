@@ -6,11 +6,11 @@ import ROOT
 
 import utils.cms_lumi as CMS_lumi
 
-def ColorIterator(index : int) -> int:
+def ColorIterator(index : int, scale : int) -> int:
     # kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
     # kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
     # kSpring = 820, kTeal   = 840, kAzure   =  860, kViolet = 880,  kPink   = 900
-    cs = 1
+    cs = scale
     colow_wheel = [ cs + ROOT.kBlue,
                     cs + ROOT.kRed,
                     cs + ROOT.kGreen,

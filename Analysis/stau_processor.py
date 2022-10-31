@@ -13,6 +13,7 @@ import pepper
 import awkward as ak
 from functools import partial
 import numpy as np
+import mt2
 # np.set_printoptions(threshold=np.inf)
 
 
@@ -54,10 +55,14 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("Trigger", partial(
             self.passing_trigger, pos_triggers, neg_triggers))
 
-        # Select jets that pass selection cuts 
+        # Select valid objects
+        selector.set_column("muons_valid", self.muons_valid)
+        selector.set_column("electrons_valid", self.electrons_valid)
         selector.set_column("jets_valid", self.jets_valid)
+        selector.set_column("hps_taus_valid", self.hps_taus_valid)
+
         # Add basics cuts (at least 2 good jets)
-        selector.add_cut("At least 2 valid jets", self.has_jets)
+        selector.add_cut("is_two_valid_jets", self.has_jets)
 
         # Pick up leading jet (by score)
         selector.set_column("jet_1", partial(self.leading_jet, order=0)) #1-st jet
@@ -67,10 +72,23 @@ class Processor(pepper.ProcessorBasicPhysics):
 
         # from jet1/2 we select only the objects that match / not match to tau
 
-        selector.set_column("jet_1_tau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.4))
-        selector.set_column("jet_2_tau", partial(self.match_nearest, coll1="jet_2", coll2="GenVisTau", dR=0.4))
-        selector.set_column("jet_1_notau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.4, not_matched=True))
-        selector.set_column("jet_2_notau", partial(self.match_nearest, coll1="jet_2", coll2="GenVisTau", dR=0.4, not_matched=True))
+        selector.set_column("jet_1_gtau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.4))
+        selector.set_column("jet_2_gtau", partial(self.match_nearest, coll1="jet_2", coll2="GenVisTau", dR=0.4))
+
+        selector.set_column("jet_1_!gtau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.4, not_matched=True))
+        selector.set_column("jet_2_!gtau", partial(self.match_nearest, coll1="jet_2", coll2="GenVisTau", dR=0.4, not_matched=True))
+
+        selector.set_column("jet_1_gtau_hpstau", partial(self.match_nearest, coll1="jet_1_gtau", coll2="hps_taus_valid", dR=0.4))
+        selector.set_column("jet_2_gtau_hpstau", partial(self.match_nearest, coll1="jet_2_gtau", coll2="hps_taus_valid", dR=0.4))
+        
+        selector.set_column("jet_1_!gtau_hpstau", partial(self.match_nearest, coll1="jet_1_!gtau", coll2="hps_taus_valid", dR=0.4))
+        selector.set_column("jet_2_!gtau_hpstau", partial(self.match_nearest, coll1="jet_2_!gtau", coll2="hps_taus_valid", dR=0.4))
+
+        selector.set_column("jet_1_gtau_!hpstau", partial(self.match_nearest, coll1="jet_1_gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
+        selector.set_column("jet_2_gtau_!hpstau", partial(self.match_nearest, coll1="jet_2_gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
+        
+        selector.set_column("jet_1_!gtau_!hpstau", partial(self.match_nearest, coll1="jet_1_!gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
+        selector.set_column("jet_2_!gtau_!hpstau", partial(self.match_nearest, coll1="jet_2_!gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
 
         # selector.set_column("jet_1_tau", partial(self.match_obj, coll1="jet_1", coll2="GenVisTau", dR=0.2, return_coll1=True)) #1-st jet
         # selector.set_column("jet_2_tau", partial(self.match_obj, coll1="jet_2", coll2="GenVisTau", dR=0.2, return_coll1=True)) #2-nd jet
@@ -83,14 +101,63 @@ class Processor(pepper.ProcessorBasicPhysics):
 
         selector.set_column("mt2_j1_j2_MET", partial(self.get_mt2, name_1 = "jet_1", name_2 = "jet_2"))
 
+        selector.set_column("distautag_double", self.distautag_double)
+
     def jets_valid(self, data):
         jets = data["Jet"]
-        # Good jets only
-        is_good = (
+
+        # study kinem region
+        jets = jets[(
             (self.config["jet_eta_min"] < jets.eta)
             & (jets.eta < self.config["jet_eta_max"])
-            & (self.config["jet_pt_min"] < jets.pt))
-        return jets[is_good]
+            & (self.config["jet_pt_min"] < jets.pt)
+            )]
+
+        # muon veto
+        jets_vetoed = jets.nearest(data["muons_valid"], return_metric=True, threshold=0.4)[0]
+        idx_vetoed_jets = ak.is_none(jets_vetoed, axis=-1)
+        jets = jets[idx_vetoed_jets]
+
+        # electron veto
+        jets_vetoed = jets.nearest(data["electrons_valid"], return_metric=True, threshold=0.4)[0]
+        idx_vetoed_jets = ak.is_none(jets_vetoed, axis=-1)
+        jets = jets[idx_vetoed_jets]
+
+        return jets
+
+    def muons_valid(self, data):
+        muons = data["Muon"]
+        is_good = (
+            (muons.pt > 20)
+            & (muons.eta < 2.5)
+            & (-2.5 < muons.eta)
+            & (muons.tightId == 1)
+            & (muons.pfRelIso04_all<0.2)
+            )
+        return muons[is_good]
+
+    def electrons_valid(self, data):
+        ele = data["Electron"]
+        is_good = (
+            (ele.pt > 20)
+            & (ele.eta < 2.5)
+            & (-2.5 < ele.eta)
+            & (ele.convVeto == 1)
+            & (ele.mvaFall17V2Iso_WP80==1)
+            )
+        return ele[is_good]
+
+    def hps_taus_valid(self, data):
+        taus = data["Tau"]
+        is_good = (
+            (taus.pt > 20)
+            & (taus.eta < 2.5)
+            & (-2.5 < taus.eta)
+            & (taus.idDeepTau2017v2p1VSe >= 1)
+            & (taus.idDeepTau2017v2p1VSjet >= 1)
+            & (taus.idDeepTau2017v2p1VSmu >=1)
+            )
+        return taus[is_good]
 
     def has_jets(self, data):
         return ak.num(data["jets_valid"]) >= 2
@@ -157,3 +224,6 @@ class Processor(pepper.ProcessorBasicPhysics):
             data[name_MET].px, data[name_MET].py,
             0, 0
         )
+
+    def distautag_double(self, data):
+        return data["jet_1"].disTauTag_score1*data["jet_2"].disTauTag_score1

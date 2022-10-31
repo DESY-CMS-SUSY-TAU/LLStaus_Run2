@@ -1,12 +1,16 @@
-# Here you can find example histograms that work with the example processor
-# There are also more advanced examples in the hist_config.json
-{
+{   
+    // ####################################################################
+    // DisTauTag score section:
+    // ####################################################################
+
+    // General score of leading and subleading jet: ---------------------->
+
     "leading_jet_score": {
         "bins": [
             {
                 "name": "leading_jet_tag",
-                "label": "leading jet tag",
-                "n_or_arr": 80,
+                "label": "P(jet_lead)",
+                "n_or_arr": 60,
                 "lo": 0,
                 "hi": 1,
                 "unit": "prob."
@@ -23,8 +27,8 @@
         "bins": [
             {
                 "name": "subleading_jet_tag",
-                "label": "subleading jet tag",
-                "n_or_arr": 80,
+                "label": "P(jet_sublead)",
+                "n_or_arr": 60,
                 "lo": 0,
                 "hi": 1,
                 "unit": "prob."
@@ -37,78 +41,254 @@
             ]
         }
     },
-    "leading_jet-tau_score": {
+    "distautag_double": {
         "bins": [
             {
-                "name": "leading_jet-tau_tag",
-                "label": "leading jet (match Tau) tag",
-                "n_or_arr": 80,
+                "name": "distautag_double",
+                "label": "P(jet_lead)*P(jet_sublead)",
+                "n_or_arr": 60,
                 "lo": 0,
                 "hi": 1,
                 "unit": "prob."
             }
         ],
         "fill": {
-            "leading_jet-tau_tag": [
-                "jet_1_tau",
-                "disTauTag_score1"
+            "distautag_double": [
+                "distautag_double"
             ]
         }
     },
-    "subleading_jet-tau_score": {
+
+    // Jets matched to gen-tau -------------------->
+
+    "leading_jet_gtau_tag": {
         "bins": [
             {
-                "name": "subleading_jet-tau_tag",
-                "label": "subleading jet (match Tau) tag",
-                "n_or_arr": 80,
+                "name": "leading_jet_gtau_tag",
+                "label": "P(jet_lead) (gen-tau)",
+                "n_or_arr": 60,
                 "lo": 0,
                 "hi": 1,
                 "unit": "prob."
             }
         ],
         "fill": {
-            "subleading_jet-tau_tag": [
-                "jet_2_tau",
+            "leading_jet_gtau_tag": [
+                "jet_1_gtau",
                 "disTauTag_score1"
             ]
         }
     },
-    "leading_jet-notau_score": {
+    "subleading_jet_gtau_tag": {
         "bins": [
             {
-                "name": "leading_jet-notau_tag",
-                "label": "leading jet (no match Tau) tag",
-                "n_or_arr": 80,
+                "name": "subleading_jet_gtau_tag",
+                "label": "P(jet_sublead) (gen-tau)",
+                "n_or_arr": 60,
                 "lo": 0,
                 "hi": 1,
                 "unit": "prob."
             }
         ],
         "fill": {
-            "leading_jet-notau_tag": [
-                "jet_1_notau",
+            "subleading_jet_gtau_tag": [
+                "jet_2_gtau",
                 "disTauTag_score1"
             ]
         }
     },
-    "subleading_jet-notau_score": {
+
+    "leading_jet_gtau_hpstau_tag": {
         "bins": [
             {
-                "name": "subleading_jet-notau_tag",
-                "label": "subleading jet (no match Tau) tag",
-                "n_or_arr": 80,
+                "name": "leading_jet_gtau_hpstau_tag",
+                "label": "P(jet_lead) (gen-tau hps-tau)",
+                "n_or_arr": 60,
                 "lo": 0,
                 "hi": 1,
                 "unit": "prob."
             }
         ],
         "fill": {
-            "subleading_jet-notau_tag": [
-                "jet_2_notau",
+            "leading_jet_gtau_hpstau_tag": [
+                "jet_1_gtau_hpstau",
                 "disTauTag_score1"
             ]
         }
     },
+    "subleading_jet_gtau_hpstau_tag": {
+        "bins": [
+            {
+                "name": "subleading_jet_gtau_hpstau_tag",
+                "label": "P(jet_sublead) (gen-tau hps-tau)",
+                "n_or_arr": 60,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "subleading_jet_gtau_hpstau_tag": [
+                "jet_2_gtau_hpstau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+
+    "leading_jet_gtau_!hpstau_tag": {
+        "bins": [
+            {
+                "name": "leading_jet_gtau_!hpstau_tag",
+                "label": "P(jet_lead) (gen-tau !hps-tau)",
+                "n_or_arr": 60,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "leading_jet_gtau_!hpstau_tag": [
+                "jet_1_gtau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+    "subleading_jet_gtau_!hpstau_tag": {
+        "bins": [
+            {
+                "name": "subleading_jet_gtau_!hpstau_tag",
+                "label": "P(jet_sublead) (gen-tau !hps-tau)",
+                "n_or_arr": 60,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "subleading_jet_gtau_!hpstau_tag": [
+                "jet_2_gtau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+
+    // Jets not matched to gen-tau -------------------->
+    "leading_jet_!gtau_tag": {
+        "bins": [
+            {
+                "name": "leading_jet_!gtau_tag",
+                "label": "P(jet_lead) (!gen-tau)",
+                "n_or_arr": 60,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "leading_jet_!gtau_tag": [
+                "jet_1_!gtau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+    "subleading_jet_!gtau_tag": {
+        "bins": [
+            {
+                "name": "subleading_jet_!gtau_tag",
+                "label": "P(jet_sublead) (!gen_tau)",
+                "n_or_arr": 60,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "subleading_jet_!gtau_tag": [
+                "jet_2_!gtau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+
+    "leading_jet_!gtau_hpstau_tag": {
+        "bins": [
+            {
+                "name": "leading_jet_!gtau_hpstau_tag",
+                "label": "P(jet_lead) (!gen-tau hps-tau)",
+                "n_or_arr": 60,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "leading_jet_!gtau_hpstau_tag": [
+                "jet_1_!gtau_hpstau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+    "subleading_jet_!gtau_hpstau_tag": {
+        "bins": [
+            {
+                "name": "subleading_jet_!gtau_hpstau_tag",
+                "label": "P(jet_sublead) (!gen_tau hps-tau)",
+                "n_or_arr": 60,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "subleading_jet_!gtau_hpstau_tag": [
+                "jet_2_!gtau_hpstau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+
+    "leading_jet_!gtau_!hpstau_tag": {
+        "bins": [
+            {
+                "name": "leading_jet_!gtau_!hpstau_tag",
+                "label": "P(jet_lead) (!gen-tau !hpstau)",
+                "n_or_arr": 60,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "leading_jet_!gtau_!hpstau_tag": [
+                "jet_1_!gtau_!hpstau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+    "subleading_jet_!gtau_!hpstau_tag": {
+        "bins": [
+            {
+                "name": "subleading_jet_!gtau_!hpstau_tag",
+                "label": "P(jet_sublead) (!gen_tau !hpstau)",
+                "n_or_arr": 60,
+                "lo": 0,
+                "hi": 1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "subleading_jet_!gtau_!hpstau_tag": [
+                "jet_2_!gtau_!hpstau",
+                "disTauTag_score1"
+            ]
+        }
+    },
+
+
+    // ####################################################################
+    // Gloabal obser. variables:
+    // ####################################################################
+
     "mass_j1_j2": {
         "bins": [
             {
@@ -142,6 +322,25 @@
             "bjet_n": [
                 "jet_b",
                 {"function": "num"}
+            ]
+        }
+    },
+    "HT": {
+        "bins": [
+            {
+                "name": "HT",
+                "label": "all jets HT",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 3000,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "HT": [
+                "Jet",
+                "pt"
+                {"function": "sum"}
             ]
         }
     },

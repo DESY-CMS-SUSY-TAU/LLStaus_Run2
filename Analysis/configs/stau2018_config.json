@@ -2,19 +2,16 @@
 
     "year": "2018",
     "datadir": ".",
-    "store": "/pnfs/desy.de/cms/tier2/store/user/myshched/nano/",
+    "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/",
     "rng_seed_file": "$CONFDIR/seed.txt",
     "compute_systematics": false,
     "lumimask": "",
-    "luminosity": 59.7,
+    "luminosity": 1.0,
     "crosssections": "$CONFDIR/crosssections.json",
     "exp_datasets": {    
     },
     "mc_datasets": {
-
-        // "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8" :  [
-        //     "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
-        // ],                             
+                        
         "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8" :  [
             "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
         ],                                
@@ -36,18 +33,30 @@
         "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8" : [
             "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
         ],
+        "TTToHadronic_TuneCP5_13TeV-powheg-pythia8" : [
+            "TTToHadronic_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
+        ],
         "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8" : [
             "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
         ],
-        "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4" :  [
-            "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4/*/*/*/*.root",
+        "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6" :  [
+            "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6/*/*/*/*.root",
         ],                                
-        "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4" : [
-            "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4/*/*/*/*.root",
+        "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6" : [
+            "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6/*/*/*/*.root",
+        ],
+        "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6" : [
+            "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6/*/*/*/*.root",
+        ],
+        "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4" : [
+            "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4/*/*/*/*.root",
         ],
         "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4" : [
             "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4/*/*/*/*.root",
         ],
+        "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4" : [
+            "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4/*/*/*/*.root",
+        ]
     },
     "dataset_for_systematics": {
     },
