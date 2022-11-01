@@ -1,4 +1,5 @@
 
+from turtle import color
 import ROOT
 ROOT.gROOT.SetBatch(True)
 
@@ -42,13 +43,13 @@ try:
     with open(config["crosssections"]) as f:
         crosssections = json.load(f)
 except:
-    raise ValueError('Can not open file with crosssections')
+    raise ValueError('Error reading/open file with crosssections')
 
 try:
     with open(args.cutflow) as f:
         cutflow = json.load(f)
 except:
-    raise ValueError('Can not open file with cutflow')
+    raise ValueError('Error reading/open file with cutflow')
 
 histfiles = []
 for histfile in args.histfile:
@@ -85,9 +86,15 @@ for _histfile in histfiles:
             else:
                 _histograms[isSignal][-1].Add(hist)
 
-
-        _histograms[isSignal][-1].SetLineColor(ColorIterator(_group_idx))
-        _histograms[isSignal][-1].SetFillColor(ColorIterator(_group_idx))
+        if isSignal == "signal":
+            line_color = ColorIterator(_group_idx, 1)
+            fill_color = 0
+        else:
+            line_color = ColorIterator(_group_idx, -6)
+            fill_color = ColorIterator(_group_idx, -6)
+            
+        _histograms[isSignal][-1].SetLineColor(line_color)
+        _histograms[isSignal][-1].SetFillColor(fill_color)
         _histograms[isSignal][-1].SetLineWidth(2)
         _histograms[isSignal][-1].SetMarkerSize(0)
         _histograms[isSignal][-1].SetTitle(_group_name)
@@ -112,7 +119,7 @@ for _histfile in histfiles:
         outfile = args.outdir + "/" + os.path.splitext(os.path.basename(_histfile))[0] + ".png",
         xrange = [_histograms["signal"][0].GetXaxis().GetXmin(), 
                   _histograms["signal"][0].GetXaxis().GetXmin()],
-        yrange = (0.1,  80*y_max),
+        yrange = (0.1,  100*y_max),
         logx = False, logy = True,
         ytitle = _histograms["signal"][0].GetYaxis().GetTitle(),
         xtitle = _histograms["signal"][0].GetXaxis().GetTitle(),
@@ -121,11 +128,12 @@ for _histfile in histfiles:
         gridx = True, gridy = True,
         ndivisionsx = None,
         stackdrawopt = "",
-        legendpos = "UL",
+        normilize = False,
+        legendpos = "UR",
         legendtitle = f"",
-        legendncol = 2,
-        legendtextsize = 0.04,
-        legendwidthscale = 1.5,
-        legendheightscale = 0.5,
+        legendncol = 3,
+        legendtextsize = 0.03,
+        legendwidthscale = 1.7,
+        legendheightscale = 0.4,
         lumiText = "2018 (13 TeV)"
     )

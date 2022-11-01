@@ -14,11 +14,12 @@
 		],
         "$\\mathrm{t}\\bar{\\mathrm{t}}$ dilep": ["TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8"],
         "$\\mathrm{t}\\bar{\\mathrm{t}}$ semilep": ["TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8"],
+        "$\\mathrm{t}\\bar{\\mathrm{t}}$ hadron.": ["TTToHadronic_TuneCP5_13TeV-powheg-pythia8"],
         "$\\mathrm{W}+\\mathrm{jets}$": ["WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8"],
-        "$\\mathrm{stau(100-450)}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4",
-                            "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4",
-                            "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"
-                            ],
+        "$\\mathrm{stau100GeV-10cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
+        "$\\mathrm{stau100GeV-1m}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
+        // "$\\mathrm{stau250GeV}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
+        // "$\\mathrm{stau400GeV}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
     },
     "Data": [],
     "MC_bkgd": {
@@ -29,7 +30,10 @@
         "$\\mathrm{W}+\\mathrm{jets}$": "yellow"
     },
     "Signal_samples":{
-        "$\\mathrm{stau(100-450)}$" : "tab:red",
+        "$\\mathrm{stau100GeV-10cm}$" : "tab:red",
+        "$\\mathrm{stau100GeV-1m}$" : "tab:red",
+        // "$\\mathrm{stau250GeV}$" : "tab:red", 
+        // "$\\mathrm{stau400GeV}$" : "tab:red",
     }
 }
 

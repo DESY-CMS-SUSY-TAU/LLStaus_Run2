@@ -6,11 +6,11 @@ import ROOT
 
 import utils.cms_lumi as CMS_lumi
 
-def ColorIterator(index : int) -> int:
+def ColorIterator(index : int, scale : int) -> int:
     # kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
     # kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
     # kSpring = 820, kTeal   = 840, kAzure   =  860, kViolet = 880,  kPink   = 900
-    cs = 1
+    cs = scale
     colow_wheel = [ cs + ROOT.kBlue,
                     cs + ROOT.kRed,
                     cs + ROOT.kGreen,
@@ -78,6 +78,7 @@ def root_plot1D(
     ndivisionsx = None, ndivisionsy = None,
     ndivisionsy_ratio = (5, 5, 0), 
     stackdrawopt = "nostack",
+    normilize = False,
     legendpos = "UR",
     legendncol = 1,
     legendtextsize = 0.045,
@@ -142,7 +143,8 @@ def root_plot1D(
         
         hist.GetXaxis().SetRangeUser(xrange[0], xrange[1])
         #hist.SetFillStyle(0)
-        
+        if normilize:
+            hist.Scale(1.0/hist.Integral())
         stack.Add(hist, "hist")
         legend.AddEntry(hist, hist.GetTitle(), "LPFE")
     
