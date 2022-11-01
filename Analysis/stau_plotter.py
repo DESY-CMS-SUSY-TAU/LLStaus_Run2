@@ -128,6 +128,7 @@ for _histfile in histfiles:
         gridx = True, gridy = True,
         ndivisionsx = None,
         stackdrawopt = "",
+        normilize = False,
         legendpos = "UR",
         legendtitle = f"",
         legendncol = 3,

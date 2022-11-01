@@ -9,11 +9,14 @@
 # usage by using the --chunksize parameter (the default value is 500000).
 
 from nis import match
+from unittest import result
 import pepper
 import awkward as ak
 from functools import partial
 import numpy as np
 import mt2
+
+from coffea.nanoevents import NanoAODSchema
 # np.set_printoptions(threshold=np.inf)
 
 
@@ -22,6 +25,11 @@ class Processor(pepper.ProcessorBasicPhysics):
     # We use the ConfigTTbarLL instead of its base Config, to use some of its
     # predefined extras
     config_class = pepper.ConfigTTbarLL
+    schema_class = NanoAODSchema
+    schema_class.mixins.update({
+        "PFCandidate": "PtEtaPhiMCollection",
+        "SV": "PtEtaPhiMCollection",
+    })
 
     def __init__(self, config, eventdir):
         # Initialize the class, maybe overwrite some config variables and
@@ -71,7 +79,6 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("sum_2jets", self.add_j1_j2)
 
         # from jet1/2 we select only the objects that match / not match to tau
-
         selector.set_column("jet_1_gtau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.4))
         selector.set_column("jet_2_gtau", partial(self.match_nearest, coll1="jet_2", coll2="GenVisTau", dR=0.4))
 
@@ -90,14 +97,15 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("jet_1_!gtau_!hpstau", partial(self.match_nearest, coll1="jet_1_!gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
         selector.set_column("jet_2_!gtau_!hpstau", partial(self.match_nearest, coll1="jet_2_!gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
 
-        # selector.set_column("jet_1_tau", partial(self.match_obj, coll1="jet_1", coll2="GenVisTau", dR=0.2, return_coll1=True)) #1-st jet
-        # selector.set_column("jet_2_tau", partial(self.match_obj, coll1="jet_2", coll2="GenVisTau", dR=0.2, return_coll1=True)) #2-nd jet
-        # selector.set_column("jet_1_notau", partial(self.match_obj, coll1="jet_1", coll2="GenVisTau", dR=0.4, return_coll1=True, not_match=True)) #1-st jet
-        # selector.set_column("jet_2_notau", partial(self.match_obj, coll1="jet_2", coll2="GenVisTau", dR=0.4, return_coll1=True, not_match=True)) #2-nd jet
-
         # Pick up matched SVs
-        selector.set_column("SV_1", partial(self.match_obj, coll1="jet_1", coll2="SV", dR=0.4))
-        selector.set_column("SV_2", partial(self.match_obj, coll1="jet_2", coll2="SV", dR=0.4))
+        selector.set_column("SV_jet1", partial(self.match_nearest, coll1="SV", coll2="jet_1", dR=0.4))
+        selector.set_column("SV_jet2", partial(self.match_nearest, coll1="SV", coll2="jet_2", dR=0.4))
+
+        # Pick up matched PfCand
+        selector.set_column("pfCands_jet1", partial(self.match_nearest, coll1="PFCandidate", coll2="jet_1", dR=0.4))
+        selector.set_column("pfCands_jet2", partial(self.match_nearest, coll1="PFCandidate", coll2="jet_2", dR=0.4))
+        selector.set_column("pfCands_jet1_DxySig", partial(self.pfCandDxySig,name="pfCands_jet1"))
+        selector.set_column("pfCands_jet2_DxySig", partial(self.pfCandDxySig,name="pfCands_jet2"))
 
         selector.set_column("mt2_j1_j2_MET", partial(self.get_mt2, name_1 = "jet_1", name_2 = "jet_2"))
 
@@ -181,39 +189,42 @@ class Processor(pepper.ProcessorBasicPhysics):
     def match_nearest(self, data, coll1=None, coll2=None, dR = 0.4, not_matched = False):
         obj1 = data[coll1]
         obj2 = data[coll2]
-        matches = obj1.nearest(obj2, return_metric=True, threshold=dR)[1]
+        matches, dRlist = obj1.nearest(obj2, return_metric=True, threshold=dR)
         if not_matched:
-            idx_matches_jets = ak.is_none(matches, axis=-1)
+            idx_matches_jets = ak.is_none(matches, axis=1)
         else:
-            idx_matches_jets = ~ak.is_none(matches, axis=-1)
-        return obj1.mask[idx_matches_jets]
+            idx_matches_jets = ~ak.is_none(matches, axis=1)
+        # results = obj1.mask[idx_matches_jets] # this function convert False to None e.g: [[obj, obj, None, None,..],..]
+        results = obj1[idx_matches_jets] # this function drops all False e.g: [[obj, obj,..],..]
+        sort_idx = ak.argsort(results.pt, axis=-1, ascending=False)
+        return results[sort_idx]
                       
 
-    def match_obj(self, data, coll1=None, coll2=None, dR = 0.4,
-                  return_coll1 = False, not_match = False ):
-        """Function takes names of two collections
-        and returns matched objects
+    # def match_obj(self, data, coll1=None, coll2=None, dR = 0.4,
+    #               return_coll1 = False, not_match = False ):
+    #     """Function takes names of two collections
+    #     and returns matched objects
 
-        Parameters:
-        coll1 -- a string, the name of first collection
-        coll2 -- a string, the name of second collection
-        dR -- matching threhold
-        return_coll1 -- bool, controls return behaviour
-        not_match -- bool, returned matched to the object or not matched
+    #     Parameters:
+    #     coll1 -- a string, the name of first collection
+    #     coll2 -- a string, the name of second collection
+    #     dR -- matching threhold
+    #     return_coll1 -- bool, controls return behaviour
+    #     not_match -- bool, returned matched to the object or not matched
         
-        Returns: if return_coll1 == True - return coll1 if any of coll2 match
-        if return_coll1 == False - return coll2 elements that match to coll1
-        """
-        obj1 = ak.firsts(data[coll1])
-        assert ak.count(obj1, axis=None) == ak.count(data[coll1], axis=None)
-        obj2 = data[coll2]
-        _dR = obj1.delta_r(obj2)
+    #     Returns: if return_coll1 == True - return coll1 if any of coll2 match
+    #     if return_coll1 == False - return coll2 elements that match to coll1
+    #     """
+    #     obj1 = ak.firsts(data[coll1])
+    #     assert ak.count(obj1, axis=None) == ak.count(data[coll1], axis=None)
+    #     obj2 = data[coll2]
+    #     _dR = obj1.delta_r(obj2)
 
-        if return_coll1:
-            idx = np.expand_dims(ak.any((_dR<dR), axis=-1), axis=-1)
-            return data[coll1].mask[~idx] if not_match else data[coll1].mask[idx]
-        else:
-            return obj2[(_dR>dR)] if not_match else obj2[(_dR<dR)]
+    #     if return_coll1:
+    #         idx = np.expand_dims(ak.any((_dR<dR), axis=-1), axis=-1)
+    #         return data[coll1].mask[~idx] if not_match else data[coll1].mask[idx]
+    #     else:
+    #         return obj2[(_dR>dR)] if not_match else obj2[(_dR<dR)]
 
     
     def get_mt2(self, data, name_1, name_2, name_MET = "MET") :
@@ -227,3 +238,7 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     def distautag_double(self, data):
         return data["jet_1"].disTauTag_score1*data["jet_2"].disTauTag_score1
+
+    def pfCandDxySig(self, data, name):
+        pfCand = data[name] 
+        return pfCand.dxy/pfCand.dxyError

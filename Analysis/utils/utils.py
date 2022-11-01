@@ -78,6 +78,7 @@ def root_plot1D(
     ndivisionsx = None, ndivisionsy = None,
     ndivisionsy_ratio = (5, 5, 0), 
     stackdrawopt = "nostack",
+    normilize = False,
     legendpos = "UR",
     legendncol = 1,
     legendtextsize = 0.045,
@@ -142,7 +143,8 @@ def root_plot1D(
         
         hist.GetXaxis().SetRangeUser(xrange[0], xrange[1])
         #hist.SetFillStyle(0)
-        
+        if normilize:
+            hist.Scale(1.0/hist.Integral())
         stack.Add(hist, "hist")
         legend.AddEntry(hist, hist.GetTitle(), "LPFE")
     
