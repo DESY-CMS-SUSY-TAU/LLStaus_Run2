@@ -25,11 +25,11 @@ class Processor(pepper.ProcessorBasicPhysics):
     # We use the ConfigTTbarLL instead of its base Config, to use some of its
     # predefined extras
     config_class = pepper.ConfigTTbarLL
-    schema_class = NanoAODSchema
-    schema_class.mixins.update({
-        "PFCandidate": "PtEtaPhiMCollection",
-        "SV": "PtEtaPhiMCollection",
-    })
+    # schema_class = NanoAODSchema
+    # schema_class.mixins.update({
+    #     "PFCandidate": "PtEtaPhiMCollection",
+    #     "SV": "PtEtaPhiMCollection",
+    # })
 
     def __init__(self, config, eventdir):
         # Initialize the class, maybe overwrite some config variables and
@@ -77,6 +77,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("jet_2", partial(self.leading_jet, order=1)) #2-nd jet
         selector.set_column("jet_b", self.b_tagged_jet)
         selector.set_column("sum_2jets", self.add_j1_j2)
+        
+        selector.add_cut("b_tagged_cut", self.b_tagged_cut)
+        selector.add_cut("MET_cut", self.MET_cut)
 
         # from jet1/2 we select only the objects that match / not match to tau
         selector.set_column("jet_1_gtau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.4))
@@ -104,8 +107,18 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Pick up matched PfCand
         selector.set_column("pfCands_jet1", partial(self.match_nearest, coll1="PFCandidate", coll2="jet_1", dR=0.4))
         selector.set_column("pfCands_jet2", partial(self.match_nearest, coll1="PFCandidate", coll2="jet_2", dR=0.4))
-        selector.set_column("pfCands_jet1_DxySig", partial(self.pfCandDxySig,name="pfCands_jet1"))
-        selector.set_column("pfCands_jet2_DxySig", partial(self.pfCandDxySig,name="pfCands_jet2"))
+        selector.set_column("pfCands_jet1_DxySig", partial(self.pfCandDxySig, name="pfCands_jet1"))
+        selector.set_column("pfCands_jet2_DxySig", partial(self.pfCandDxySig, name="pfCands_jet2"))
+
+        selector.set_column("pfCands_jet1_gtau", partial(self.match_nearest, coll1="PFCandidate", coll2="jet_1_gtau", dR=0.4))
+        selector.set_column("pfCands_jet2_gtau", partial(self.match_nearest, coll1="PFCandidate", coll2="jet_2_gtau", dR=0.4))
+        selector.set_column("pfCands_jet1_gtau_DxySig", partial(self.pfCandDxySig, name="pfCands_jet1_gtau"))
+        selector.set_column("pfCands_jet2_gtau_DxySig", partial(self.pfCandDxySig, name="pfCands_jet2_gtau"))
+
+        selector.set_column("pfCands_jet1_!gtau", partial(self.match_nearest, coll1="PFCandidate", coll2="jet_1_!gtau", dR=0.4))
+        selector.set_column("pfCands_jet2_!gtau", partial(self.match_nearest, coll1="PFCandidate", coll2="jet_2_!gtau", dR=0.4))
+        selector.set_column("pfCands_jet1_!gtau_DxySig", partial(self.pfCandDxySig, name="pfCands_jet1_!gtau"))
+        selector.set_column("pfCands_jet2_!gtau_DxySig", partial(self.pfCandDxySig, name="pfCands_jet2_!gtau"))
 
         selector.set_column("mt2_j1_j2_MET", partial(self.get_mt2, name_1 = "jet_1", name_2 = "jet_2"))
 
@@ -185,6 +198,12 @@ class Processor(pepper.ProcessorBasicPhysics):
         # https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
         is_b = (data["Jet"].btagDeepFlavB > 0.2783)
         return data["Jet"][is_b]
+
+    def b_tagged_cut(self, data):
+        return ak.num(data["jet_b"]) <= 1
+    
+    def MET_cut(self, data):
+        return data["MET"].pt > 100 #GeV
 
     def match_nearest(self, data, coll1=None, coll2=None, dR = 0.4, not_matched = False):
         obj1 = data[coll1]

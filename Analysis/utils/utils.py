@@ -159,7 +159,8 @@ def root_plot1D(
     stack.SetMaximum(yrange[1])
     
     for hist in l_hist_overlay :
-        
+        if normilize:
+            hist.Scale(1.0/hist.Integral())
         hist.Draw(f"same {hist.GetOption()}")
         legend.AddEntry(hist, hist.GetTitle(), "LPFE")
     
