@@ -12,7 +12,7 @@
                 "label": "P(jet_lead)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -30,7 +30,7 @@
                 "label": "P(jet_sublead)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -48,7 +48,7 @@
                 "label": "P(jet_lead)*P(jet_sublead)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -68,7 +68,7 @@
                 "label": "P(jet_lead) (gen-tau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -86,7 +86,7 @@
                 "label": "P(jet_sublead) (gen-tau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -104,7 +104,7 @@
                 "label": "P(jet_lead) (gen-tau hps-tau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -122,7 +122,7 @@
                 "label": "P(jet_sublead) (gen-tau hps-tau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -141,7 +141,7 @@
                 "label": "P(jet_lead) (gen-tau !hps-tau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -159,7 +159,7 @@
                 "label": "P(jet_sublead) (gen-tau !hps-tau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -180,7 +180,7 @@
                 "label": "P(jet_lead) (!gen-tau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -198,7 +198,7 @@
                 "label": "P(jet_sublead) (!gen_tau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -216,7 +216,7 @@
                 "label": "P(jet_lead) (!gen-tau hps-tau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -234,7 +234,7 @@
                 "label": "P(jet_sublead) (!gen_tau hps-tau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -252,7 +252,7 @@
                 "label": "P(jet_lead) (!gen-tau !hpstau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -270,7 +270,7 @@
                 "label": "P(jet_sublead) (!gen_tau !hpstau)",
                 "n_or_arr": 60,
                 "lo": 0,
-                "hi": 1,
+                "hi": 1.1,
                 "unit": "prob."
             }
         ],
@@ -286,6 +286,24 @@
     // Gloabal obser. variables:
     // ####################################################################
 
+    "MET": {
+        "bins": [
+            {
+                "name": "MET",
+                "label": "MET",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 1000,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "MET": [
+                "MET",
+                "pt"
+            ]
+        }
+    },
     "mass_j1_j2": {
         "bins": [
             {
@@ -293,7 +311,7 @@
                 "label": "mass 2tagged jets",
                 "n_or_arr": 100,
                 "lo": 0,
-                "hi": 500,
+                "hi": 1000,
                 "unit": "GeV"
             }
         ],
@@ -329,7 +347,7 @@
                 "label": "all jets HT",
                 "n_or_arr": 100,
                 "lo": 0,
-                "hi": 3000,
+                "hi": 5000,
                 "unit": "GeV"
             }
         ],
@@ -450,15 +468,15 @@
     },
 
     // ####################################################################
-    // Pf Candidates dxy and dz
+    // Pf Candidates dxy
     // ####################################################################
 
-    "pfcand_dxy_jet1": {
+    "pfcand_dxy_leading_jet1": {
         "bins": [
             {
                 "name": "jet1_leadingPFCand_dxy",
-                "label": "leadingPFCand dxy jet1",
-                "n_or_arr": 50,
+                "label": "leading_pt PF dxy jet1",
+                "n_or_arr": 1000,
                 "lo": -50,
                 "hi": 50,
                 "unit": "cm."
@@ -473,12 +491,12 @@
         }
     },
 
-    "pfcand_dxy_jet2": {
+    "pfcand_dxy_leading_jet2": {
         "bins": [
             {
                 "name": "jet2_leadingPFCand_dxy",
-                "label": "leadingPFCand dxy jet2",
-                "n_or_arr": 50,
+                "label": "leading_pt PF dxy jet2",
+                "n_or_arr": 1000,
                 "lo": -50,
                 "hi": 50,
                 "unit": "cm."
@@ -492,15 +510,339 @@
             ]
         }
     },
+    
+    "pfcand_dxy_leading_jet1_hpstau": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet1 hpstau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dxy": [
+                "pfCands_jet1_hpstau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet2_hpstau": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet2 hpstau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dxy": [
+                "pfCands_jet2_hpstau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet1_!hpstau": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet1 !hpstau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dxy": [
+                "pfCands_jet1_!hpstau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet2_!hpstau": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet2 !hpstau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dxy": [
+                "pfCands_jet2_!hpstau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet1_gen": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet1 gen-tau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dxy": [
+                "pfCands_jet1_gtau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet2_gen": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet2 gen-tau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dxy": [
+                "pfCands_jet2_gtau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet1_gen_hpstau": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet1 gen-tau hpstau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dxy": [
+                "pfCands_jet1_gtaun_hpstau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet2_gen_hpstau": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet2 gen-tau hpstau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dxy": [
+                "pfCands_jet2_gtau_hpstau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet1_gen_!hpstau": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet1 gen-tau !hpstau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dxy": [
+                "pfCands_jet1_gtau_!hpstau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet2_gen_!hpstau": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet2 gen-tau !hpstau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dxy": [
+                "pfCands_jet2_gtau_!hpstau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet1_!gen": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet1 !gen-tau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dxy": [
+                "pfCands_jet1_!gtau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet2_!gen": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet2 !gen-tau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dxy": [
+                "pfCands_jet2_!gtau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet1_!gen_!allgtau": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet1 !gen-tau !allgtau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dxy": [
+                "pfCands_jet1_!gtau_!allgtau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet2_!gen_!allgtau": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet2 !gen-tau !allgtau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dxy": [
+                "pfCands_jet2_!gtau_!allgtau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet1_!gen_!allgtau_!stau": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet1 !gen-tau !allgtau !stau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dxy": [
+                "pfCands_jet1_!gtau_!allgtau_!stau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dxy_leading_jet2_!gen_!allgtau_!stau": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet2 !gen-tau !allgtau !stau",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dxy": [
+                "pfCands_jet2_!gtau_!allgtau_!stau"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    // ####################################################################
+    // Pf Candidates dz
+    // ####################################################################
 
     "pfcand_dz_jet1": {
         "bins": [
             {
                 "name": "jet1_leadingPFCand_dz",
-                "label": "leadingPFCand dz jet1",
-                "n_or_arr": 50,
-                "lo": -50,
-                "hi": 50,
+                "label": "leading_pt PF dz jet1",
+                "n_or_arr": 1000,
+                "lo": -100,
+                "hi": 100,
                 "unit": "cm."
             }
         ],
@@ -517,10 +859,10 @@
         "bins": [
             {
                 "name": "jet2_leadingPFCand_dz",
-                "label": "leadingPFCand dz jet2",
-                "n_or_arr": 50,
-                "lo": -50,
-                "hi": 50,
+                "label": "leading_pt PF dz jet2",
+                "n_or_arr": 1000,
+                "lo": -100,
+                "hi": 100,
                 "unit": "cm."
             }
         ],
@@ -533,22 +875,223 @@
         }
     },
 
+    "pfcand_dz_jet1_hpstau": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dz",
+                "label": "leading_pt PF dz jet1 hpstau",
+                "n_or_arr": 1000,
+                "lo": -100,
+                "hi": 100,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dz": [
+                "pfCands_jet1_hpstau"
+                "dz",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dz_jet2_hpstau": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dz",
+                "label": "leading_pt PF dz jet2 hpstau",
+                "n_or_arr": 1000,
+                "lo": -100,
+                "hi": 100,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dz": [
+                "pfCands_jet2_hpstau"
+                "dz",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dz_jet1_!hpstau": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dz",
+                "label": "leading_pt PF dz jet1 !hpstau",
+                "n_or_arr": 1000,
+                "lo": -100,
+                "hi": 100,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dz": [
+                "pfCands_jet1_!hpstau"
+                "dz",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dz_jet2_!hpstau": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dz",
+                "label": "leading_pt PF dz jet2 !hpstau",
+                "n_or_arr": 1000,
+                "lo": -100,
+                "hi": 100,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dz": [
+                "pfCands_jet2_!hpstau"
+                "dz",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dz_jet1_gtau_hpstau": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dz",
+                "label": "leading_pt PF dz jet1 gtau hpstau",
+                "n_or_arr": 1000,
+                "lo": -100,
+                "hi": 100,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dz": [
+                "pfCands_jet1_gtau_hpstau"
+                "dz",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dz_jet2_gtau_hpstau": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dz",
+                "label": "leading_pt PF dz jet2 gtau hpstau",
+                "n_or_arr": 1000,
+                "lo": -100,
+                "hi": 100,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dz": [
+                "pfCands_jet2_gtau_hpstau"
+                "dz",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dz_jet1_gtau_!hpstau": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dz",
+                "label": "leading_pt PF dz jet1 gtau !hpstau",
+                "n_or_arr": 1000,
+                "lo": -100,
+                "hi": 100,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dz": [
+                "pfCands_jet1_gtau_!hpstau"
+                "dz",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_dz_jet2_gtau_!hpstau": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_dz",
+                "label": "leading_pt PF dz jet2 gtau !hpstau",
+                "n_or_arr": 1000,
+                "lo": -100,
+                "hi": 100,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_dz": [
+                "pfCands_jet2_gtau_!hpstau"
+                "dz",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_Lrel_jet1": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_Lrel",
+                "label": "leading_pt PF Lrel jet1",
+                "n_or_arr": 1000,
+                "lo": 0,
+                "hi": 200,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_Lrel": [
+                "pfCands_jet1"
+                "Lrel",
+                {"leading": 1}
+            ]
+        }
+    },
+
+    "pfcand_Lrel_jet2": {
+        "bins": [
+            {
+                "name": "jet2_leadingPFCand_Lrel",
+                "label": "leading_pt PF Lrel jet2",
+                "n_or_arr": 1000,
+                "lo": 0,
+                "hi": 200,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet2_leadingPFCand_Lrel": [
+                "pfCands_jet2"
+                "Lrel",
+                {"leading": 1}
+            ]
+        }
+    },
+
     // dxySig for all jets:
 
     "pfcand_dxySig_jet1": {
         "bins": [
             {
-                "name": "jet1_leadingPFCand_dxySig",
-                "label": "leadingPFCand dxySig jet1",
+                "name": "leadingPFCand_dxySig",
+                "label": "max PF dxySig jet1",
                 "n_or_arr": 60,
-                "lo": -30,
-                "hi": 30,
+                "lo": -300,
+                "hi": 300,
                 "unit": "-"
             }
         ],
         "fill": {
-            "jet1_leadingPFCand_dxySig": [
-                "pfCands_jet1_DxySig",
+            "leadingPFCand_dxySig": [
+                "pfCands_jet1",
+                "dxySig",
                 {"leading": 1}
             ]
         }
@@ -557,17 +1100,18 @@
     "pfcand_dxySig_jet2": {
         "bins": [
             {
-                "name": "jet2_leadingPFCand_dxySig",
-                "label": "leadingPFCand dxySig jet2",
+                "name": "leadingPFCand_dxySig",
+                "label": "max PF dxySig jet2",
                 "n_or_arr": 60,
-                "lo": -30,
-                "hi": 30,
+                "lo": -300,
+                "hi": 300,
                 "unit": "-"
             }
         ],
         "fill": {
-            "jet2_leadingPFCand_dxySig": [
-                "pfCands_jet2_DxySig",
+            "leadingPFCand_dxySig": [
+                "pfCands_jet2",
+                "dxySig",
                 {"leading": 1}
             ]
         }
@@ -576,17 +1120,18 @@
     "pfcand_dxySig_jet1_gtau": {
         "bins": [
             {
-                "name": "jet1_gtau_leadingPFCand_dxySig",
-                "label": "leadingPFCand dxySig jet1_gtau",
+                "name": "leadingPFCand_dxySig",
+                "label": "max PF dxySig jet1 gtau",
                 "n_or_arr": 60,
-                "lo": -30,
-                "hi": 30,
+                "lo": -300,
+                "hi": 300,
                 "unit": "-"
             }
         ],
         "fill": {
-            "jet1_gtau_leadingPFCand_dxySig": [
-                "pfCands_jet1_gtau_DxySig",
+            "leadingPFCand_dxySig": [
+                "pfCands_jet1_gtau",
+                "dxySig",
                 {"leading": 1}
             ]
         }
@@ -595,17 +1140,18 @@
     "pfcand_dxySig_jet2_gtau": {
         "bins": [
             {
-                "name": "jet2_gtau_leadingPFCand_dxySig",
-                "label": "leadingPFCand dxySig jet2_gtau",
+                "name": "leadingPFCand_dxySig",
+                "label": "max PF dxySig jet2 gtau",
                 "n_or_arr": 60,
-                "lo": -30,
-                "hi": 30,
+                "lo": -300,
+                "hi": 300,
                 "unit": "-"
             }
         ],
         "fill": {
-            "jet2_gtau_leadingPFCand_dxySig": [
-                "pfCands_jet2_gtau_DxySig",
+            "leadingPFCand_dxySig": [
+                "pfCands_jet2_gtau",
+                "dxySig",
                 {"leading": 1}
             ]
         }
@@ -614,17 +1160,18 @@
     "pfcand_dxySig_jet1_!gtau": {
         "bins": [
             {
-                "name": "jet1_!gtau_leadingPFCand_dxySig",
-                "label": "leadingPFCand dxySig jet1_!gtau",
+                "name": "leadingPFCand_dxySig",
+                "label": "max PF dxySig jet1 !gtau",
                 "n_or_arr": 60,
-                "lo": -30,
-                "hi": 30,
+                "lo": -300,
+                "hi": 300,
                 "unit": "-"
             }
         ],
         "fill": {
-            "jet1_!gtau_leadingPFCand_dxySig": [
-                "pfCands_jet1_!gtau_DxySig",
+            "leadingPFCand_dxySig": [
+                "pfCands_jet1_!gtau",
+                "dxySig",
                 {"leading": 1}
             ]
         }
@@ -633,17 +1180,18 @@
     "pfcand_dxySig_jet2_!gtau": {
         "bins": [
             {
-                "name": "jet2_!gtau_leadingPFCand_dxySig",
-                "label": "leadingPFCand dxySig jet2_!gtau",
+                "name": "leadingPFCand_dxySig",
+                "label": "max PF dxySig jet2 !gtau",
                 "n_or_arr": 60,
-                "lo": -30,
-                "hi": 30,
+                "lo": -300,
+                "hi": 300,
                 "unit": "-"
             }
         ],
         "fill": {
-            "jet2_!gtau_leadingPFCand_dxySig": [
-                "pfCands_jet2_!gtau_DxySig",
+            "leadingPFCand_dxySig": [
+                "pfCands_jet2_!gtau",
+                "dxySig",
                 {"leading": 1}
             ]
         }
