@@ -79,6 +79,7 @@ def root_plot1D(
     ndivisionsx = None, ndivisionsy = None,
     ndivisionsy_ratio = (5, 5, 0), 
     stackdrawopt = "nostack",
+    normilize = False,
     normilize_overlay = True,
     legendpos = "UR",
     legendncol = 1,
@@ -153,7 +154,7 @@ def root_plot1D(
                     hist.Scale(1.0/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
         else:
             stack_integral += (hist.Integral())
-            if stackdrawopt == 'nostack':
+            if stackdrawopt == 'nostack' and normilize:
                 if hist.Integral()!=0:
                     hist.Scale(1.0/(hist.Integral()))
 
