@@ -1,0 +1,194 @@
+{   
+    
+    "tau_muon_Lxy": {
+        "bins": [
+            {
+                "name": "tau_muon_Lxy",
+                "label": "Lxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "tau_muon_Lxy": [
+                "tau_muons",
+                "Lxy"
+            ]
+        }
+    },
+
+    "tau_elecs_Lxy": {
+        "bins": [
+            {
+                "name": "tau_elecs_Lxy",
+                "label": "Lxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "tau_elecs_Lxy": [
+                "tau_elecs",
+                "Lxy"
+            ]
+        }
+    },
+   
+    "tau_muon_jet_Lxy": {
+        "bins": [
+            {
+                "name": "tau_muon_Lxy",
+                "label": "Lxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "tau_muon_Lxy": [
+                "tau_muons_jet",
+                "Lxy"
+            ]
+        }
+    },
+
+    "tau_elecs_jet_Lxy": {
+        "bins": [
+            {
+                "name": "tau_elecs_Lxy",
+                "label": "Lxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "tau_elecs_Lxy": [
+                "tau_elecs_jet",
+                "Lxy"
+            ]
+        }
+    },
+    
+    "tau_muon_Lxy_v1": {
+        "bins": [
+            {
+                "name": "tau_muon_Lxy",
+                "label": "Lxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "tau_muon_Lxy": [
+                "tau_muons_v1",
+                "Lxy"
+            ]
+        }
+    },
+
+    "tau_elecs_Lxy_v1": {
+        "bins": [
+            {
+                "name": "tau_elecs_Lxy",
+                "label": "Lxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "tau_elecs_Lxy": [
+                "tau_elecs_v1",
+                "Lxy"
+            ]
+        }
+    },
+
+        
+    "tau_muon_Lxy_v2": {
+        "bins": [
+            {
+                "name": "tau_muon_Lxy",
+                "label": "Lxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "tau_muon_Lxy": [
+                "tau_muons_v2",
+                "Lxy"
+            ]
+        }
+    },
+
+    "tau_elecs_Lxy_v2": {
+        "bins": [
+            {
+                "name": "tau_elecs_Lxy",
+                "label": "Lxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "tau_elecs_Lxy": [
+                "tau_elecs_v2",
+                "Lxy"
+            ]
+        }
+    },
+
+        
+    "tau_muon_Lxy_v3": {
+        "bins": [
+            {
+                "name": "tau_muon_Lxy",
+                "label": "Lxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "tau_muon_Lxy": [
+                "tau_muons_v3",
+                "Lxy"
+            ]
+        }
+    },
+
+    "tau_elecs_Lxy_v3": {
+        "bins": [
+            {
+                "name": "tau_elecs_Lxy",
+                "label": "Lxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "tau_elecs_Lxy": [
+                "tau_elecs_v3",
+                "Lxy"
+            ]
+        }
+    },
+}
