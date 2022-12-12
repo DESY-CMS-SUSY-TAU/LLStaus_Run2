@@ -81,6 +81,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("muons_v3", self.muons_v3)
         selector.set_column("electrons_v3", self.electrons_v3)
 
+        # Only muons that are pfCand
+        selector.set_column("muons_pf", self.muons_pf)
+
         selector.set_column("jets_valid", self.jets_valid)
         # selector.set_column("hps_taus_valid", self.hps_taus_valid)
 
@@ -90,6 +93,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("tau_muons_jet", partial(self.match_nearest, coll1="tau_muons", coll2="jets_valid", dR=0.4))
         selector.set_column("tau_elecs_jet", partial(self.match_nearest, coll1="tau_elecs", coll2="jets_valid", dR=0.4))
 
+        selector.set_column("tau_muons_pf", partial(self.match_nearest, coll1="tau_muons", coll2="muons_pf", dR=0.4))
         selector.set_column("tau_muons_v1", partial(self.match_nearest, coll1="tau_muons", coll2="muons_v1", dR=0.4))
         selector.set_column("tau_muons_v2", partial(self.match_nearest, coll1="tau_muons", coll2="muons_v2", dR=0.4))
         selector.set_column("tau_muons_v3", partial(self.match_nearest, coll1="tau_muons", coll2="muons_v3", dR=0.4))
@@ -146,12 +150,23 @@ class Processor(pepper.ProcessorBasicPhysics):
         return jets
 
     @zero_handler
+    def muons_pf(self, data):
+        muons = data["Muon"]
+        is_good = (
+            (muons.pt > 30)
+            & (muons.eta < 2.4)
+            & (-2.4 < muons.eta)
+            & (muons.isPFcand == 1)
+            )
+        return muons[is_good]
+
+    @zero_handler
     def muons_v1(self, data):
         muons = data["Muon"]
         is_good = (
-            (muons.pt > 20)
-            & (muons.eta < 2.5)
-            & (-2.5 < muons.eta)
+            (muons.pt > 30)
+            & (muons.eta < 2.4)
+            & (-2.4 < muons.eta)
             )
         return muons[is_good]
     
@@ -159,9 +174,9 @@ class Processor(pepper.ProcessorBasicPhysics):
     def muons_v2(self, data):
         muons = data["Muon"]
         is_good = (
-            (muons.pt > 20)
-            & (muons.eta < 2.5)
-            & (-2.5 < muons.eta)
+            (muons.pt > 30)
+            & (muons.eta < 2.4)
+            & (-2.4 < muons.eta)
             & (muons.pfRelIso04_all<0.2)
             )
         return muons[is_good]
@@ -170,9 +185,9 @@ class Processor(pepper.ProcessorBasicPhysics):
     def muons_v3(self, data):
         muons = data["Muon"]
         is_good = (
-            (muons.pt > 20)
-            & (muons.eta < 2.5)
-            & (-2.5 < muons.eta)
+            (muons.pt > 30)
+            & (muons.eta < 2.4)
+            & (-2.4 < muons.eta)
             & (muons.pfRelIso04_all<0.2)
             & (muons.tightId == 1)
             )
@@ -182,9 +197,9 @@ class Processor(pepper.ProcessorBasicPhysics):
     def electrons_v1(self, data):
         ele = data["Electron"]
         is_good = (
-            (ele.pt > 20)
-            & (ele.eta < 2.5)
-            & (-2.5 < ele.eta)
+            (ele.pt > 30)
+            & (ele.eta < 2.4)
+            & (-2.4 < ele.eta)
             )
         return ele[is_good]
 
@@ -192,9 +207,9 @@ class Processor(pepper.ProcessorBasicPhysics):
     def electrons_v2(self, data):
         ele = data["Electron"]
         is_good = (
-            (ele.pt > 20)
-            & (ele.eta < 2.5)
-            & (-2.5 < ele.eta)
+            (ele.pt > 30)
+            & (ele.eta < 2.4)
+            & (-2.4 < ele.eta)
             & (ele.convVeto == 1)
             )
         return ele[is_good]
@@ -206,9 +221,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         high_eta_iso = ((np.abs(ele.eta) > 1.479) & (np.abs(ele.eta) < 2.5) & (ele.pfRelIso03_all < (0.203+0.963/ele.pt)))
         isolation_cut = ( low_eta_iso | high_eta_iso )
         is_good = (
-            (ele.pt > 20)
-            & (ele.eta < 2.5)
-            & (-2.5 < ele.eta)
+            (ele.pt > 30)
+            & (ele.eta < 2.4)
+            & (-2.4 < ele.eta)
             & (ele.convVeto == 1)
             & isolation_cut
             )
@@ -234,7 +249,7 @@ class Processor(pepper.ProcessorBasicPhysics):
     def hps_taus_valid(self, data):
         taus = data["Tau"]
         is_good = (
-            (taus.pt > 20)
+            (taus.pt > 30)
             & (taus.eta < 2.5)
             & (-2.5 < taus.eta)
             & (taus.idDeepTau2017v2p1VSe >= 1)
