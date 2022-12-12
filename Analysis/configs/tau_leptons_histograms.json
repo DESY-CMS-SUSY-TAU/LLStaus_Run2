@@ -76,6 +76,25 @@
         }
     },
     
+    "tau_muon_Lxy_pf": {
+        "bins": [
+            {
+                "name": "tau_muon_Lxy",
+                "label": "Lxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "tau_muon_Lxy": [
+                "tau_muons_pf",
+                "Lxy"
+            ]
+        }
+    },
+
     "tau_muon_Lxy_v1": {
         "bins": [
             {
