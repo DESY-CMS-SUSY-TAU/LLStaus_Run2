@@ -11,7 +11,6 @@
     "exp_datasets": {    
     },
     "mc_datasets": {
-                        
         "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8" :  [
             "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
         ],                                
@@ -133,5 +132,4 @@
     "jet_pt_min"  :  30,
 
     "hists": "$CONFDIR/stau2018_histograms.json",
-    // "hists": "$CONFDIR/stau2018_histograms_leptons.json",
 }
