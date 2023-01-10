@@ -5,7 +5,37 @@
 
     // General score of leading and subleading jet:
 
-    "leading_jet_score": {
+    "jet_score_TH2": {
+        "bins": [
+            {
+                "name": "leading_jet_tag",
+                "label": "P(jet_lead)",
+                "n_or_arr": 60,
+                "lo": 0,
+                "hi": 1.1,
+                "unit": "prob."
+            },
+            {
+                "name": "subleading_jet_tag",
+                "label": "P(jet_sublead)",
+                "n_or_arr": 60,
+                "lo": 0,
+                "hi": 1.1,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "leading_jet_tag": [
+                "jet_1",
+                "disTauTag_score1"
+            ],
+            "subleading_jet_tag": [
+                "jet_2",
+                "disTauTag_score1"
+            ]
+        }
+    },
+    "jet1_score": {
         "bins": [
             {
                 "name": "leading_jet_tag",
@@ -23,7 +53,7 @@
             ]
         }
     },
-    "subleading_jet_score": {
+    "jet2_score": {
         "bins": [
             {
                 "name": "subleading_jet_tag",
@@ -41,7 +71,7 @@
             ]
         }
     },
-    "distautag_double": {
+    "sum_jet1_jet2_score": {
         "bins": [
             {
                 "name": "distautag_double",
@@ -61,7 +91,7 @@
 
     // Jets matched to gen-tau:
 
-    "leading_jet_gtau_tag": {
+    "jet1_gtau_tag": {
         "bins": [
             {
                 "name": "leading_jet_gtau_tag",
@@ -79,7 +109,7 @@
             ]
         }
     },
-    "subleading_jet_gtau_tag": {
+    "jet2_gtau_tag": {
         "bins": [
             {
                 "name": "subleading_jet_gtau_tag",
@@ -97,7 +127,7 @@
             ]
         }
     },
-    "leading_jet_gtau_hpstau_tag": {
+    "jet1_gtau_hpstau_tag": {
         "bins": [
             {
                 "name": "leading_jet_gtau_hpstau_tag",
@@ -115,7 +145,7 @@
             ]
         }
     },
-    "subleading_jet_gtau_hpstau_tag": {
+    "jet2_gtau_hpstau_tag": {
         "bins": [
             {
                 "name": "subleading_jet_gtau_hpstau_tag",
@@ -133,8 +163,7 @@
             ]
         }
     },
-
-    "leading_jet_gtau_!hpstau_tag": {
+    "jet1_gtau_!hpstau_tag": {
         "bins": [
             {
                 "name": "leading_jet_gtau_!hpstau_tag",
@@ -152,7 +181,7 @@
             ]
         }
     },
-    "subleading_jet_gtau_!hpstau_tag": {
+    "jet2_gtau_!hpstau_tag": {
         "bins": [
             {
                 "name": "subleading_jet_gtau_!hpstau_tag",
@@ -173,7 +202,7 @@
 
     // Jets not matched to gen-tau:
 
-    "leading_jet_!gtau_tag": {
+    "jet1_!gtau_tag": {
         "bins": [
             {
                 "name": "leading_jet_!gtau_tag",
@@ -191,7 +220,7 @@
             ]
         }
     },
-    "subleading_jet_!gtau_tag": {
+    "jet2_!gtau_tag": {
         "bins": [
             {
                 "name": "subleading_jet_!gtau_tag",
@@ -209,7 +238,7 @@
             ]
         }
     },
-    "leading_jet_!gtau_hpstau_tag": {
+    "jet1_!gtau_hpstau_tag": {
         "bins": [
             {
                 "name": "leading_jet_!gtau_hpstau_tag",
@@ -227,7 +256,7 @@
             ]
         }
     },
-    "subleading_jet_!gtau_hpstau_tag": {
+    "jet2_!gtau_hpstau_tag": {
         "bins": [
             {
                 "name": "subleading_jet_!gtau_hpstau_tag",
@@ -245,7 +274,7 @@
             ]
         }
     },
-    "leading_jet_!gtau_!hpstau_tag": {
+    "jet1_!gtau_!hpstau_tag": {
         "bins": [
             {
                 "name": "leading_jet_!gtau_!hpstau_tag",
@@ -263,7 +292,7 @@
             ]
         }
     },
-    "subleading_jet_!gtau_!hpstau_tag": {
+    "jet2_!gtau_!hpstau_tag": {
         "bins": [
             {
                 "name": "subleading_jet_!gtau_!hpstau_tag",
@@ -344,7 +373,7 @@
         "bins": [
             {
                 "name": "HT",
-                "label": "all jets HT",
+                "label": "HT of valid jets",
                 "n_or_arr": 100,
                 "lo": 0,
                 "hi": 5000,
@@ -353,45 +382,109 @@
         ],
         "fill": {
             "HT": [
-                "Jet",
-                "pt"
-                {"function": "sum"}
+                "HT"
             ]
         }
     },
-    "jet1_leadingSV_dxy": {
+    "HT_miss": {
         "bins": [
             {
-                "name": "jet1_leadingSV_dxy",
-                "label": "leading SV dxy (jet1)",
+                "name": "HT_miss",
+                "label": "HT_miss of valid jets",
                 "n_or_arr": 100,
                 "lo": 0,
-                "hi": 50,
-                "unit": "cm"
+                "hi": 500,
+                "unit": "GeV"
             }
         ],
         "fill": {
-            "jet1_leadingSV_dxy": [
-                "SV_jet1",
-                "dxy",
+            "HT_miss": [
+                "HT_miss"
             ]
         }
     },
-    "jet2_leadingSV_dxy": {
+    "HT_miss_pt_miss": {
         "bins": [
             {
-                "name": "jet2_leadingSV_dxy",
-                "label": "leading SV dxy (jet2)",
+                "name": "HT_miss_pt_miss",
+                "label": "HT_miss/pt_miss of valid jets",
                 "n_or_arr": 100,
                 "lo": 0,
-                "hi": 50,
-                "unit": "cm"
+                "hi": 500,
+                "unit": "GeV"
             }
         ],
         "fill": {
-            "jet2_leadingSV_dxy": [
-                "SV_jet2",
-                "dxy",
+            "HT_miss_pt_miss": [
+                "HT_miss_pt_miss"
+            ]
+        }
+    },
+    "mt_jet1": {
+        "bins": [
+            {
+                "name": "mt_jet1",
+                "label": "mt of the jet1",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 500,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mt_jet1": [
+                "mt_jet1"
+            ]
+        }
+    },
+    "mt_jet2": {
+        "bins": [
+            {
+                "name": "mt_jet2",
+                "label": "mt of the jet1",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 500,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mt_jet2": [
+                "mt_jet2"
+            ]
+        }
+    },
+    "mt_sum": {
+        "bins": [
+            {
+                "name": "mt_sum",
+                "label": "mt_jet1 + mt_jet2",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 500,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mt_sum": [
+                "mt_sum"
+            ]
+        }
+    },
+    "dphi_jet1_jet2": {
+        "bins": [
+            {
+                "name": "dphi_jet1_jet2",
+                "label": "dphi_jet1_jet2",
+                "n_or_arr": 100,
+                "lo": -3.14,
+                "hi": 3.14,
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "dphi_jet1_jet2": [
+                "dphi_jet1_jet2"
             ]
         }
     },
@@ -456,7 +549,7 @@
                 "label": "mt2_j1_j2_MET",
                 "n_or_arr": 100,
                 "lo": 0,
-                "hi": 1000,
+                "hi": 500,
                 "unit": "GeV"
             }
         ],
@@ -467,9 +560,73 @@
         }
     },
 
+
+    "mt2_sum_mt_TH2": {
+        "bins": [
+            {
+                "name": "mt2_j1_j2_MET",
+                "label": "mt2_j1_j2_MET",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 500,
+                "unit": "GeV"
+            },
+            {
+                "name": "mt_sum",
+                "label": "mt_jet1 + mt_jet2",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 500,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mt2_j1_j2_MET": [
+                "mt2_j1_j2_MET"
+            ],
+            "mt_sum": [
+                "mt_sum"
+            ]
+        }
+    },
+
+
     // ####################################################################
     // Pf Candidates dxy
     // ####################################################################
+
+    "pfcand_dxy_TH2": {
+        "bins": [
+            {
+                "name": "jet1_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet1",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            },
+            {
+                "name": "jet2_leadingPFCand_dxy",
+                "label": "leading_pt PF dxy jet2",
+                "n_or_arr": 1000,
+                "lo": -50,
+                "hi": 50,
+                "unit": "cm."
+            }
+        ],
+        "fill": {
+            "jet1_leadingPFCand_dxy": [
+                "pfCands_jet1"
+                "dxy",
+                {"leading": 1}
+            ],
+            "jet2_leadingPFCand_dxy": [
+                "pfCands_jet2"
+                "dxy",
+                {"leading": 1}
+            ]
+        }
+    },
 
     "pfcand_dxy_leading_jet1": {
         "bins": [
