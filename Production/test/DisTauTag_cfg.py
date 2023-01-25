@@ -15,7 +15,7 @@ if not os.path.exists(graph_file_abs):
 
 # setup minimal options
 options = VarParsing("python")
-options.setDefault("inputFiles", "root://xrootd-cms.infn.it//store/user/myshched/mc/UL2018-pythia-v5-100cm/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v5/MiniAOD/220525_205521/0000/SUS-RunIISummer20UL18MiniAODv2-LLStau_401.root")  # noqa
+options.setDefault("inputFiles", "root://xrootd-cms.infn.it//store/mc/RunIISummer20UL18MiniAODv2/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/270003/5A654E13-5D02-164D-AE58-16B0E553EB2E.root")  # noqa
 options.parseArguments()
 
 # define the process to run
