@@ -34,11 +34,11 @@ namespace {
 void test_vector(std::vector<float>& values) {
     for (auto& value : values) {
         if (std::isnan(value)) {
-            throw runtime_error("DisTauTag score output: NaN detected.");
+            throw std::runtime_error("DisTauTag score output: NaN detected.");
         } else if (std::isinf(value)) {
-            throw runtime_error("DisTauTag score output: Infinity detected.");
+            throw std::runtime_error("DisTauTag score output: Infinity detected.");
         } else if (!std::isfinite(value)) {
-            throw runtime_error("DisTauTag score output: Non-standard value detected.");
+            throw std::runtime_error("DisTauTag score output: Non-standard value detected.");
         }
     }
 }
