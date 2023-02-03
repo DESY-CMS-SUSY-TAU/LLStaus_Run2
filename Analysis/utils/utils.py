@@ -6,11 +6,11 @@ import ROOT
 
 import utils.cms_lumi as CMS_lumi
 
-def ColorIterator(index : int) -> int:
+def ColorIterator(index : int, scale : int) -> int:
     # kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
     # kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
     # kSpring = 820, kTeal   = 840, kAzure   =  860, kViolet = 880,  kPink   = 900
-    cs = 1
+    cs = scale
     colow_wheel = [ cs + ROOT.kBlue,
                     cs + ROOT.kRed,
                     cs + ROOT.kGreen,
@@ -68,6 +68,7 @@ def root_plot1D(
     yrange,
     l_hist_overlay = [],
     logx = False, logy = False,
+    include_overflow = False,
     title = "",
     xtitle = "", ytitle = "",
     xtitle_ratio = "", ytitle_ratio = "",
@@ -78,6 +79,8 @@ def root_plot1D(
     ndivisionsx = None, ndivisionsy = None,
     ndivisionsy_ratio = (5, 5, 0), 
     stackdrawopt = "nostack",
+    normilize = False,
+    normilize_overlay = True,
     legendpos = "UR",
     legendncol = 1,
     legendtextsize = 0.045,
@@ -137,15 +140,32 @@ def root_plot1D(
     legend.SetTextSize(legendtextsize)
     
     stack = ROOT.THStack()
-    
-    for hist in l_hist :
-        
+    stack_integral = 0.0
+
+    for hist in l_hist :    
         hist.GetXaxis().SetRangeUser(xrange[0], xrange[1])
-        #hist.SetFillStyle(0)
-        
+
+        if include_overflow:
+            stack_integral += (hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0))
+            hist.SetBinContent(1, hist.GetBinContent(1) +  hist.GetBinContent(0))
+            hist.SetBinContent(hist.GetNbinsX() , hist.GetBinContent(hist.GetNbinsX()) +  hist.GetBinContent(hist.GetNbinsX() + 1))
+            if stackdrawopt == 'nostack':
+                if hist.Integral()!=0:
+                    hist.Scale(1.0/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
+        else:
+            stack_integral += (hist.Integral())
+            if stackdrawopt == 'nostack' and normilize:
+                if hist.Integral()!=0:
+                    hist.Scale(1.0/(hist.Integral()))
+
+        # stack.Add(hist, "hist")
+        # legend.AddEntry(hist, hist.GetTitle(), "LPFE")
+
+    for hist in l_hist :
+        # hist.Scale(1.0/stack_integral)
         stack.Add(hist, "hist")
         legend.AddEntry(hist, hist.GetTitle(), "LPFE")
-    
+
     # Add a dummy histogram so that the X-axis range can be beyond the histogram range
     # h1_xRange = ROOT.TH1F("h1_xRange", "h1_xRange", 1, xrange[0], xrange[1])
     # stack.Add(h1_xRange)
@@ -158,6 +178,18 @@ def root_plot1D(
     
     for hist in l_hist_overlay :
         
+        if include_overflow:
+            hist.SetBinContent(1, hist.GetBinContent(1) +  hist.GetBinContent(0))
+            hist.SetBinContent(hist.GetNbinsX() , hist.GetBinContent(hist.GetNbinsX() ) +  hist.GetBinContent(hist.GetNbinsX() + 1))
+        
+        if stackdrawopt == 'nostack':
+            if hist.Integral()!=0: hist.Scale(1.0/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
+        elif normilize_overlay and include_overflow:
+            hist.Scale(stack_integral/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
+        elif normilize_overlay:
+            hist.Scale(stack_integral/(hist.Integral()))
+            
+        hist.SetOption("histo")
         hist.Draw(f"same {hist.GetOption()}")
         legend.AddEntry(hist, hist.GetTitle(), "LPFE")
     

@@ -1,0 +1,72 @@
+{
+    "year": "2018",
+    "luminosity": 59.7,
+    "crosssections": "$CONFDIR/crosssections.json",
+    "Labels": {
+        "$\\mathrm{stau100GeV10cm}$" : "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6",
+        "$\\mathrm{stau100GeV100cm}$" : "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4",
+        "$\\mathrm{stau400GeV10cm}$" : "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6",
+        "$\\mathrm{stau400GeV100cm}$" : "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"
+    },
+    "Histograms_ratio" : {
+        // "Cut-001_muons" : {
+        //     "Cut-001_Trigger_tau_muon_Lxy.root" :     ["base",  "All muons from taus"],
+        //     "Cut-001_Trigger_tau_muon_jet_Lxy.root" : ["ratio", "All muons to jet "],
+        //     "Cut-001_Trigger_tau_muon_Lxy_v1.root" :  ["ratio", "All muons to PAT::Muon v1"],
+        //     "Cut-001_Trigger_tau_muon_Lxy_v2.root" :  ["ratio", "All muons to PAT::Muon v2"],
+        //     "Cut-001_Trigger_tau_muon_Lxy_v3.root" :  ["ratio", "All muons to PAT::Muon v3"]
+        // },
+        // "Cut-001_elect" : {
+        //     "Cut-001_Trigger_tau_elecs_Lxy.root" :     ["base", " All elecs from taus"],
+        //     "Cut-001_Trigger_tau_elecs_jet_Lxy.root" : ["ratio", "All elecs to jet "],
+        //     "Cut-001_Trigger_tau_elecs_Lxy_v1.root" :  ["ratio", "All elecs to PAT::Ele v1"],
+        //     "Cut-001_Trigger_tau_elecs_Lxy_v2.root" :  ["ratio", "All elecs to PAT::Ele v2"],
+        //     "Cut-001_Trigger_tau_elecs_Lxy_v3.root" :  ["ratio", "All elecs to PAT::Ele v3"]
+        // },
+        // "Cut-002_muons" : {
+        //     "Cut-002_is_two_valid_jets_tau_muon_Lxy.root" :     ["base", "All muons from taus"],
+        //     "Cut-002_is_two_valid_jets_tau_muon_jet_Lxy.root" : ["ratio", "All muons to jet "],
+        //     "Cut-002_is_two_valid_jets_tau_muon_Lxy_v1.root" :  ["ratio", "All muons to PAT::Muon v1"],
+        //     "Cut-002_is_two_valid_jets_tau_muon_Lxy_v2.root" :  ["ratio", "All muons to PAT::Muon v2"],
+        //     "Cut-002_is_two_valid_jets_tau_muon_Lxy_v3.root" :  ["ratio", "All muons to PAT::Muon v3"]
+        // },
+        // "Cut-002_elect" : {
+        //     "Cut-002_is_two_valid_jets_tau_elecs_Lxy.root" :     ["base", "All elecs from taus"],
+        //     "Cut-002_is_two_valid_jets_tau_elecs_jet_Lxy.root" : ["ratio", "All elecs to jet "],
+        //     "Cut-002_is_two_valid_jets_tau_elecs_Lxy_v1.root" :  ["ratio", "All elecs to PAT::Ele v1"],
+        //     "Cut-002_is_two_valid_jets_tau_elecs_Lxy_v2.root" :  ["ratio", "All elecs to PAT::Ele v2"],
+        //     "Cut-002_is_two_valid_jets_tau_elecs_Lxy_v3.root" :  ["ratio", "All elecs to PAT::Ele v3"]
+        // },
+        // "Cut-003_muons" : {
+        //     "Cut-003_b_tagged_cut_tau_muon_Lxy.root" :     ["base", "All muons from taus"],
+        //     "Cut-003_b_tagged_cut_tau_muon_jet_Lxy.root" : ["ratio", "All muons to jet "],
+        //     "Cut-003_b_tagged_cut_tau_muon_Lxy_v1.root" :  ["ratio", "All muons to PAT::Muon v1"],
+        //     "Cut-003_b_tagged_cut_tau_muon_Lxy_v2.root" :  ["ratio", "All muons to PAT::Muon v2"],
+        //     "Cut-003_b_tagged_cut_tau_muon_Lxy_v3.root" :  ["ratio", "All muons to PAT::Muon v3"]
+        // },
+        // "Cut-003_elect" : {
+        //     "Cut-003_b_tagged_cut_tau_elecs_Lxy.root" :     ["base", "All elecs from taus"],
+        //     "Cut-003_b_tagged_cut_tau_elecs_jet_Lxy.root" : ["ratio", "All elecs to jet "],
+        //     "Cut-003_b_tagged_cut_tau_elecs_Lxy_v1.root" :  ["ratio", "All elecs to PAT::Ele v1"],
+        //     "Cut-003_b_tagged_cut_tau_elecs_Lxy_v2.root" :  ["ratio", "All elecs to PAT::Ele v2"],
+        //     "Cut-003_b_tagged_cut_tau_elecs_Lxy_v3.root" :  ["ratio", "All elecs to PAT::Ele v3"]
+        // },
+
+        "Cut-004_muons" : {
+            "Cut-004_MET_cut_tau_muon_Lxy.root" :     ["base", "All muons from taus"],
+            "Cut-004_MET_cut_tau_muon_jet_Lxy.root" : ["ratio", "All muons to jet "],
+            "Cut-004_MET_cut_tau_muon_Lxy_pf.root" :  ["ratio", "All muons to Pf Muons"],
+            "Cut-004_MET_cut_tau_muon_Lxy_v1.root" :  ["ratio", "All muons to PAT::Muon v1"],
+            "Cut-004_MET_cut_tau_muon_Lxy_v2.root" :  ["ratio", "All muons to PAT::Muon v2"],
+            "Cut-004_MET_cut_tau_muon_Lxy_v3.root" :  ["ratio", "All muons to PAT::Muon v3"]
+        },
+        "Cut-004_elect" : {
+            "Cut-004_MET_cut_tau_elecs_Lxy.root" :     ["base", "All elecs from taus"],
+            "Cut-004_MET_cut_tau_elecs_jet_Lxy.root" : ["ratio", "All elecs to jet "],
+            "Cut-004_MET_cut_tau_elecs_Lxy_v1.root" :  ["ratio", "All elecs to PAT::Ele v1"],
+            "Cut-004_MET_cut_tau_elecs_Lxy_v2.root" :  ["ratio", "All elecs to PAT::Ele v2"],
+            "Cut-004_MET_cut_tau_elecs_Lxy_v3.root" :  ["ratio", "All elecs to PAT::Ele v3"]
+        },
+
+    }
+}

@@ -31,6 +31,18 @@ namespace {
     }
 }
 
+void test_vector(std::vector<float>& values) {
+    for (auto& value : values) {
+        if (std::isnan(value)) {
+            throw std::runtime_error("DisTauTag score output: NaN detected.");
+        } else if (std::isinf(value)) {
+            throw std::runtime_error("DisTauTag score output: Infinity detected.");
+        } else if (!std::isfinite(value)) {
+            throw std::runtime_error("DisTauTag score output: Non-standard value detected.");
+        }
+    }
+}
+
 class DisTauTag : public edm::stream::EDProducer<> {
 public:
     explicit DisTauTag(const edm::ParameterSet&);
@@ -278,6 +290,7 @@ void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
 
       // print the output
     //   std::cout << " jet -> " << jetIndex
+    //             << " jet_pt -> " << jet_p4.pt()
     //             << " n_pfCand ->" << nDaughters
     //             << " score -> " << outputs[0].flat<float>()(0)
     //             << " " << outputs[0].flat<float>()(1) << std::endl;
@@ -311,6 +324,8 @@ void DisTauTag::produce(edm::Event& event, const edm::EventSetup& setup) {
       }
     }
     
+    test_vector(v_score0);
+    test_vector(v_score1);
     
     std::unique_ptr<edm::ValueMap<float>> vm_score0(new edm::ValueMap<float>());
     edm::ValueMap<float>::Filler filler_score0(*vm_score0);
