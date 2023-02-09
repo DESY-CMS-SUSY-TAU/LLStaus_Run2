@@ -19,3 +19,6 @@
 *misc*
 
 soft/*
+
+# Analysis output extension
+*.coffea

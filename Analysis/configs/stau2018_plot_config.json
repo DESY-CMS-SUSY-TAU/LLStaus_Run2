@@ -2,48 +2,61 @@
     "year": "2018",
     "luminosity": 59.7,
     "crosssections": "$CONFDIR/crosssections.json",
-    "cuts" : ["Cut-004_MET_cut"],
+    "cuts" : ["Cut-006"],
     "Categories" : [
-                    ["COMB"],
-                    ["OS", "SS"]
-                    // ["PP", "PD", "DD", "COMB"],
-                    // ["OS", "SS"]
-                   ],
+                    ["PP", "PD", "DD", "PDtag", "DDtag", "D_INCL"],
+                    ["S_INCL"]
+                    // ["D_INCL"],
+                    // ["S_INCL"]
+                ],
     "Labels": {
+
         "$\\mathrm{QCD}$": [
             "QCD_Pt_15to30_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_30to50_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_50to80_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_80to120_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_120to170_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_170to300_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_300to470_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_470to600_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_600to800_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_800to1000_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8",
-        //     "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8"
+            "QCD_Pt_30to50_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_50to80_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_80to120_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_120to170_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_170to300_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_300to470_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_470to600_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_600to800_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_800to1000_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8"
         ],
-        // "$\\mathrm{DY}$": [
-		// 	"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8"
-		// ],
-        // "$\\mathrm{t}/\\bar{\\mathrm{t}}$": [
-        //     "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
-        //     "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
-        //     "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
-        //     "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"       
-		// ],
+        "$\\mathrm{DY}$": [
+			"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8"
+		],
+        "$\\mathrm{t}/\\bar{\\mathrm{t}}$": [
+            "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
+            "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
+            "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
+            "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"       
+		],
         "$\\mathrm{t}\\bar{\\mathrm{t}}$ dilep": ["TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8"],
-        // "$\\mathrm{t}\\bar{\\mathrm{t}}$ semilep": ["TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8"],
+        "$\\mathrm{t}\\bar{\\mathrm{t}}$ semilep": ["TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8"],
         "$\\mathrm{t}\\bar{\\mathrm{t}}$ hadron.": ["TTToHadronic_TuneCP5_13TeV-powheg-pythia8"],
-        // "$\\mathrm{W}+\\mathrm{jets}$": ["WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8"],
+        "$\\mathrm{W}+\\mathrm{jets}$": [
+            "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8"
+        ],
+        "$\\mathrm{Z}+\\mathrm{jets}$": [
+            "ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8"
+        ],
         "$\\mathrm{stau100GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
-        // "$\\mathrm{stau100GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
-        // "$\\mathrm{stau400GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
-        // "$\\mathrm{stau400GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
+        "$\\mathrm{stau100GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
+        "$\\mathrm{stau400GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
+        "$\\mathrm{stau400GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
     },
     "Data": [],
     "MC_bkgd": {
@@ -53,7 +66,8 @@
         "$\\mathrm{t}\\bar{\\mathrm{t}}$ hadron.": [394, 394],
         "$\\mathrm{t}/\\bar{\\mathrm{t}}$":        [623, 623],
         "$\\mathrm{DY}$":                          [403, 403],
-        "$\\mathrm{W}+\\mathrm{jets}$":            [410, 410]
+        "$\\mathrm{W}+\\mathrm{jets}$":            [410, 410],
+        "$\\mathrm{Z}+\\mathrm{jets}$":            [616, 616]
     },
     "Signal_samples":{
         "$\\mathrm{stau100GeV10cm}$" : [0, 810],
@@ -62,35 +76,32 @@
         "$\\mathrm{stau400GeV100cm}$" : [0, 882]
     },
     "SetupBins" : {
-        // "Histogram name" : [x_min, x_max, rebin_bins, overflow_include]
-        // "pfcand_dz_jet1" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet1" : [-4, 4, 1, true],
-        // "pfcand_Lrel_jet1" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet1_gen" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet1_!gen" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet1_hpstau" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet1_!gen_!allgtau_!stau" : [-4, 4, 1, true],
-        // "pfcand_dz_jet1_hpstau" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet1_!hpstau" : [-4, 4, 1, true],
-        // "pfcand_dz_jet1_!hpstau" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet1_!gen_!allgtau" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet1_gen_!hpstau" : [-4, 4, 1, true],
-        // "pfcand_dz_jet1_gtau_hpstau" : [-4, 4, 1, true],
-        // "pfcand_dz_jet2" : [-4, 4, 1, true],
-        // "pfcand_Lrel_jet2" : [-4, 4, 1, true],
-        // "pfcand_dz_jet1_gtau_!hpstau" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet2_gen" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet2" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet2_!gen" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet2_!gen_!allgtau_!stau" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet2_!gen_!allgtau" : [-4, 4, 1, true],
-        // "pfcand_dz_jet2_hpstau" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet2_hpstau" : [-4, 4, 1, true],
-        // "pfcand_dz_jet2_!hpstau" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet2_gen_hpstau" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet2_gen_!hpstau" : [-4, 4, 1, true],
-        // "pfcand_dxy_leading_jet2_!hpstau" : [-4, 4, 1, true],
-        // "pfcand_dz_jet2_gtau_!hpstau" : [-4, 4, 1, true],
-        // "pfcand_dz_jet2_gtau_hpstau" : [-4, 4, 1, true]
+        // "Histogram name" : [x_min, x_max, rebin_bins, overflow_include
+        "dphi_jet1_jet2": [-3.2, 3.2, 5, true],
+        "HT_miss_pt_miss": [0, 10, 5, true],
+        "HT_miss": [0, 800, 10, true],
+        "HT": [0, 800, 1, true],
+        "jet1_score": [0.0, 1.0, 11, true],
+        "jet2_score": [0.0, 1.0, 11, true],
+        "sum_jet1_jet2_score": [0.0, 1.0, 11, true],
+        "jet1_SVn": [0, 12, 1, true],
+        "jet2_SVn": [0, 12, 1, true],
+        "MET": [50, 1000, 10, true],
+        "mass_j1_j2": [0, 1400, 10, true],
+        "mt_jet1": [0, 1000, 10, true],
+        "mt_jet2": [0, 1000, 10, true],
+        "mt_sum": [0, 2000, 10, true],
+        "mt2_j1_j2_MET": [0, 500, 10, true],
+        "pfcand_dxySig_jet1": [-500, 500, 5, true],
+        "pfcand_dxySig_jet2": [-500, 500, 5, true],
+        "pfcand_dz_jet1": [-40, 40, 4, true],
+        "pfcand_dz_jet2": [-40, 40, 4, true],
+        "pfcand_dxy_leading_jet1": [-20, 20, 4, true],
+        "pfcand_dxy_leading_jet2": [-20, 20, 4, true],
+
+        // "Histogram name" : [x_min, x_max, y_min, y_max, rebin_binx, rebin_biny, text, log]
+        "jet_score_TH2": [0.0, 1.1, 0.0, 1.1, 11, 11, false, true],
+        "pfcand_dxy_TH2": [-20, 20, -20, 20, 5, 5, false, true],
+        "mt2_sum_mt_TH2" : [0, 500, 0, 2000, 10, 10, true, true]
     }
 }

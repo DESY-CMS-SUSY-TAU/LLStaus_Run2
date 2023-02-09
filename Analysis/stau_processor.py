@@ -14,6 +14,7 @@ import pepper
 import awkward as ak
 from functools import partial
 import numpy as np
+np.set_printoptions(threshold=np.inf)
 import mt2
 
 from coffea.nanoevents import NanoAODSchema
@@ -49,6 +50,11 @@ class Processor(pepper.ProcessorBasicPhysics):
             else: return ak.Array([])
         return _function
 
+    @zero_handler
+    def nan_drop(self, data):
+        if np.any(np.logical_not(np.isfinite(data["Jet"].disTauTag_score1))):
+            return ak.full_like(data["event"], False)
+        return ak.full_like(data["event"], True)
 
     def process_selection(self, selector, dsname, is_mc, filler):
         # Implement the selection steps: add cuts, define objects and/or
@@ -60,6 +66,11 @@ class Processor(pepper.ProcessorBasicPhysics):
         if not is_mc:
             selector.add_cut("Lumi", partial(
                 self.good_lumimask, is_mc, dsname))
+
+        # Due to the bug in the current DisTauTag production compain
+        # the whole file should be dropped if Nan values are detected in the
+        # DisTauTag score
+        selector.add_cut("NanDrop", self.nan_drop)
 
         # Only allow events that pass triggers specified in config
         # This also takes into account a trigger order to avoid triggering
@@ -75,6 +86,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("electrons_valid", self.electrons_valid)
         selector.set_column("jets_valid", self.jets_valid)
         selector.set_column("hps_taus_valid", self.hps_taus_valid)
+        selector.set_column("pfcand_valid", self.pfcand_valid)
 
         # Add basics cuts (at least 2 good jets)
         selector.add_cut("is_two_valid_jets", self.has_jets)
@@ -95,35 +107,40 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("mt_sum", self.mt_sum)
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
 
-        selector.add_cut("b_tagged_cut", self.b_tagged_cut)    
+        selector.add_cut("MET_cut", self.MET_cut)
+        selector.add_cut("b_tagged_1_cut", self.b_tagged_cut)    
 
         # from jet1/2 we select only the objects that match / not match to tau
-        selector.set_column("jet_1_gtau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.4))
-        selector.set_column("jet_2_gtau", partial(self.match_nearest, coll1="jet_2", coll2="GenVisTau", dR=0.4))
+        # selector.set_column("jet_1_gtau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.4))
+        # selector.set_column("jet_2_gtau", partial(self.match_nearest, coll1="jet_2", coll2="GenVisTau", dR=0.4))
 
-        selector.set_column("jet_1_!gtau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.7, not_matched=True))
-        selector.set_column("jet_2_!gtau", partial(self.match_nearest, coll1="jet_2", coll2="GenVisTau", dR=0.7, not_matched=True))
+        # selector.set_column("jet_1_!gtau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.7, not_matched=True))
+        # selector.set_column("jet_2_!gtau", partial(self.match_nearest, coll1="jet_2", coll2="GenVisTau", dR=0.7, not_matched=True))
 
-        selector.set_column("jet_1_hpstau", partial(self.match_nearest, coll1="jet_1", coll2="hps_taus_valid", dR=0.4))
-        selector.set_column("jet_2_hpstau", partial(self.match_nearest, coll1="jet_2", coll2="hps_taus_valid", dR=0.4))
+        # ??????????????
+        # selector.set_column("jet_1_hpstau", partial(self.match_nearest, coll1="jet_1", coll2="hps_taus_valid", dR=0.4))
+        # selector.set_column("jet_2_hpstau", partial(self.match_nearest, coll1="jet_2", coll2="hps_taus_valid", dR=0.4))
+        # selector.set_column("hpstau_1", partial(self.match_nearest, coll1="hps_taus_valid", coll2="jet_1_hpstau", dR=0.4))
+        # selector.set_column("hpstau_2", partial(self.match_nearest, coll1="hps_taus_valid", coll2="jet_2_hpstau", dR=0.4))
+        # ?????????????? -> alternative
 
-        selector.set_column("hpstau_1", partial(self.match_nearest, coll1="hps_taus_valid", coll2="jet_1_hpstau", dR=0.4))
-        selector.set_column("hpstau_2", partial(self.match_nearest, coll1="hps_taus_valid", coll2="jet_2_hpstau", dR=0.4))
+        selector.set_column("hpstau_1", partial(self.match_nearest, coll1="hps_taus_valid", coll2="jet_1", dR=0.4))
+        selector.set_column("hpstau_2", partial(self.match_nearest, coll1="hps_taus_valid", coll2="jet_2", dR=0.4))
 
-        selector.set_column("jet_1_!hpstau", partial(self.match_nearest, coll1="jet_1", coll2="hps_taus_valid", dR=0.7, not_matched=True))
-        selector.set_column("jet_2_!hpstau", partial(self.match_nearest, coll1="jet_2", coll2="hps_taus_valid", dR=0.7, not_matched=True))
+        # selector.set_column("jet_1_!hpstau", partial(self.match_nearest, coll1="jet_1", coll2="hps_taus_valid", dR=0.7, not_matched=True))
+        # selector.set_column("jet_2_!hpstau", partial(self.match_nearest, coll1="jet_2", coll2="hps_taus_valid", dR=0.7, not_matched=True))
 
-        selector.set_column("jet_1_gtau_hpstau", partial(self.match_nearest, coll1="jet_1_gtau", coll2="hps_taus_valid", dR=0.4))
-        selector.set_column("jet_2_gtau_hpstau", partial(self.match_nearest, coll1="jet_2_gtau", coll2="hps_taus_valid", dR=0.4))
+        # selector.set_column("jet_1_gtau_hpstau", partial(self.match_nearest, coll1="jet_1_gtau", coll2="hps_taus_valid", dR=0.4))
+        # selector.set_column("jet_2_gtau_hpstau", partial(self.match_nearest, coll1="jet_2_gtau", coll2="hps_taus_valid", dR=0.4))
         
-        selector.set_column("jet_1_!gtau_hpstau", partial(self.match_nearest, coll1="jet_1_!gtau", coll2="hps_taus_valid", dR=0.4))
-        selector.set_column("jet_2_!gtau_hpstau", partial(self.match_nearest, coll1="jet_2_!gtau", coll2="hps_taus_valid", dR=0.4))
+        # selector.set_column("jet_1_!gtau_hpstau", partial(self.match_nearest, coll1="jet_1_!gtau", coll2="hps_taus_valid", dR=0.4))
+        # selector.set_column("jet_2_!gtau_hpstau", partial(self.match_nearest, coll1="jet_2_!gtau", coll2="hps_taus_valid", dR=0.4))
 
-        selector.set_column("jet_1_gtau_!hpstau", partial(self.match_nearest, coll1="jet_1_gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
-        selector.set_column("jet_2_gtau_!hpstau", partial(self.match_nearest, coll1="jet_2_gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
+        # selector.set_column("jet_1_gtau_!hpstau", partial(self.match_nearest, coll1="jet_1_gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
+        # selector.set_column("jet_2_gtau_!hpstau", partial(self.match_nearest, coll1="jet_2_gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
         
-        selector.set_column("jet_1_!gtau_!hpstau", partial(self.match_nearest, coll1="jet_1_!gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
-        selector.set_column("jet_2_!gtau_!hpstau", partial(self.match_nearest, coll1="jet_2_!gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
+        # selector.set_column("jet_1_!gtau_!hpstau", partial(self.match_nearest, coll1="jet_1_!gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
+        # selector.set_column("jet_2_!gtau_!hpstau", partial(self.match_nearest, coll1="jet_2_!gtau", coll2="hps_taus_valid", dR=0.4, not_matched=True))
 
         # Pick up matched SVs
         selector.set_column("SV_jet1", partial(self.match_nearest, coll1="SV", coll2="jet_1", dR=0.4))
@@ -137,15 +154,20 @@ class Processor(pepper.ProcessorBasicPhysics):
         # PP - 2 OS prompt tau_h
         # PD - 1 prompt tau_h, 1 displaced tau_h
         # DD - 2 displaced tau_h
-        selector.set_cat("cat", {"PP", "PD", "DD", "COMB"})
+        # D_INCL - Inclusive for all displacement
+        selector.set_cat("cat_disp", {"PP", "PD", "DD", "PDtag", "DDtag", "D_INCL"})
         selector.set_multiple_columns(partial(self.category_masks))
 
-        # regions: SS and OS
-        selector.set_cat("cat_charge", {"OS","SS"})
+        # regions of charge:
+        # OS - opposite charge
+        # SS - same charge
+        # S_INCL - Inclusive for all charge
+        selector.set_cat("cat_charge", {"OS", "SS", "S_INCL"})
         selector.set_multiple_columns(partial(self.charge_masks))
-
-        selector.add_cut("MET_cut", self.MET_cut)
-        selector.add_cut("b_tagged_tight_cut", self.b_tagged_tight_cut)
+        
+        selector.add_cut("b_tagged_0_cut", self.b_tagged_tight_cut)
+        
+        selector.set_column("signal_bins", self.signal_bins)
 
 
     def pfCand_Sequence(self, selector, input_jet_n=None):
@@ -154,32 +176,34 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         jet_n = str(input_jet_n)
         selector.set_column("pfCands_jet"+jet_n, partial(self.get_matched_pfCands, match_object="jet_"+jet_n, dR=0.4))
-        selector.set_column("pfCands_jet"+jet_n+"_gtau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_gtau", dR=0.4))
-        selector.set_column("pfCands_jet"+jet_n+"_!gtau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_!gtau", dR=0.4))
+        # selector.set_column("pfCands_jet"+jet_n+"_gtau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_gtau", dR=0.4))
+        # selector.set_column("pfCands_jet"+jet_n+"_!gtau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_!gtau", dR=0.4))
 
-        selector.set_column("gen_stau",    self.gen_stau)
-        selector.set_column("gen_stau_tau", self.gen_stau_tau)
+        # selector.set_column("gen_stau",    self.gen_stau)
+        # selector.set_column("gen_stau_tau", self.gen_stau_tau)
 
-        selector.set_column("jet_"+jet_n+"_!gtau_!allgtau", partial(self.match_nearest, coll1="jet_"+jet_n+"_!gtau", coll2="gen_stau_tau", dR=0.7, not_matched=True))
-        selector.set_column("jet_"+jet_n+"_!gtau_!allgtau_!stau", partial(self.match_nearest, coll1="jet_"+jet_n+"_!gtau_!allgtau", coll2="gen_stau", dR=0.7, not_matched=True))
+        # selector.set_column("jet_"+jet_n+"_!gtau_!allgtau", partial(self.match_nearest, coll1="jet_"+jet_n+"_!gtau", coll2="gen_stau_tau", dR=0.7, not_matched=True))
+        # selector.set_column("jet_"+jet_n+"_!gtau_!allgtau_!stau", partial(self.match_nearest, coll1="jet_"+jet_n+"_!gtau_!allgtau", coll2="gen_stau", dR=0.7, not_matched=True))
 
-        # Choose PF Cands that are daughters of isolated jets
-        selector.set_column("pfCands_jet"+jet_n+"_!gtau_!allgtau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_!gtau_!allgtau", dR=0.4))
-        selector.set_column("pfCands_jet"+jet_n+"_!gtau_!allgtau_!stau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_!gtau_!allgtau_!stau", dR=0.4))
+        # # Choose PF Cands that are daughters of isolated jets
+        # selector.set_column("pfCands_jet"+jet_n+"_!gtau_!allgtau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_!gtau_!allgtau", dR=0.4))
+        # selector.set_column("pfCands_jet"+jet_n+"_!gtau_!allgtau_!stau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_!gtau_!allgtau_!stau", dR=0.4))
 
-        # Choose PF Cands that match to HPS or not match to HPS
-        selector.set_column("pfCands_jet"+jet_n+"_hpstau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_hpstau", dR=0.4))
-        selector.set_column("pfCands_jet"+jet_n+"_!hpstau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_!hpstau", dR=0.4))
+        # # Choose PF Cands that match to HPS or not match to HPS
+        # selector.set_column("pfCands_jet"+jet_n+"_hpstau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_hpstau", dR=0.4))
+        # selector.set_column("pfCands_jet"+jet_n+"_!hpstau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_!hpstau", dR=0.4))
 
-        selector.set_column("pfCands_jet"+jet_n+"_gtau_hpstau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_gtau_hpstau", dR=0.4))
-        selector.set_column("pfCands_jet"+jet_n+"_gtau_!hpstau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_gtau_!hpstau", dR=0.4))
+        # selector.set_column("pfCands_jet"+jet_n+"_gtau_hpstau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_gtau_hpstau", dR=0.4))
+        # selector.set_column("pfCands_jet"+jet_n+"_gtau_!hpstau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_gtau_!hpstau", dR=0.4))
  
     def category_masks(self, data):
         if len(data) == 0:
             return { "PP" : ak.Array([]),
                      "PD" : ak.Array([]),
+                     "PDtag" : ak.Array([]),
                      "DD" : ak.Array([]),
-                     "COMB" : ak.Array([]) }
+                     "DDtag" : ak.Array([]),
+                     "D_INCL" : ak.Array([]) }
 
         masks = {}
 
@@ -187,10 +211,12 @@ class Processor(pepper.ProcessorBasicPhysics):
         sel_1 = ( ak.num(data['hpstau_1'])>=1 )
         sel_1 = ak.fill_none(sel_1, False)
         # sel_2 = ( np.abs(ak.firsts(data['hpstau_1']).dxy) < 0.03 )
-        sel_2 = ( np.abs(ak.firsts(data['pfCands_jet1'],axis=-1).dxy) < 0.03 )
+        # sel_2 = ( np.abs(ak.firsts(data['pfCands_jet1'],axis=-1).dxy) < 0.03 )
+        sel_2 = ( np.abs(data['pfCands_jet1'].dxy) < self.config["pf_dxy"] )
         sel_2 = ak.fill_none(sel_2, False)
         # sel_3 = ( np.abs(ak.firsts(data['hpstau_1']).dz) < 0.2 )
-        sel_3 = ( np.abs(ak.firsts(data['pfCands_jet1'],axis=-1).dz) < 0.2 )
+        # sel_3 = ( np.abs(ak.firsts(data['pfCands_jet1'],axis=-1).dz) < 0.2 )
+        sel_3 = ( np.abs(data['pfCands_jet1'].dz) < self.config["pf_dz"] )
         sel_3 = ak.fill_none(sel_3, False)
         isJet1_Prompt = ( sel_1 & sel_2 & sel_3 )
 
@@ -198,20 +224,30 @@ class Processor(pepper.ProcessorBasicPhysics):
         sel_1 = ( ak.num(data['hpstau_2'])>=1 )
         sel_1 = ak.fill_none(sel_1, False)
         # sel_2 = ( np.abs(ak.firsts(data['hpstau_2']).dxy) < 0.03 )
-        sel_2 = ( np.abs(ak.firsts(data['pfCands_jet2'],axis=-1).dxy) < 0.03 )
+        # sel_2 = ( np.abs(ak.firsts(data['pfCands_jet2'],axis=-1).dxy) < 0.03 )
+        sel_2 = ( np.abs(data['pfCands_jet2'].dxy) < self.config["pf_dxy"] )
         sel_2 = ak.fill_none(sel_2, False)
         # sel_3 = ( np.abs(ak.firsts(data['hpstau_2']).dz) < 0.2 )
-        sel_3 = ( np.abs(ak.firsts(data['pfCands_jet2'],axis=-1).dz) < 0.2 )
+        # sel_3 = ( np.abs(ak.firsts(data['pfCands_jet2'],axis=-1).dz) < 0.2 )
+        sel_3 = ( np.abs(data['pfCands_jet2'].dz) < self.config["pf_dz"] )
         sel_3 = ak.fill_none(sel_3, False)
         isJet2_Prompt = ( sel_1 & sel_2 & sel_3 )
 
         # To have jet 1 displaced
-        isJet1_Displaced = ( np.abs(ak.firsts(data['pfCands_jet1'],axis=-1).dxy) > 0.03 )
+        # isJet1_Displaced = ( np.abs(ak.firsts(data['pfCands_jet1'],axis=-1).dxy) > 0.03 )
+        isJet1_Displaced = ( np.abs(data['pfCands_jet1'].dxy) > self.config["pf_dxy"] )
         isJet1_Displaced = ak.fill_none(isJet1_Displaced, False)
         
+        isJet1_Tagged = ( ak.firsts(data['jet_1'].disTauTag_score1) > self.config["tag_score"] )
+        isJet1_Tagged = ak.fill_none(isJet1_Tagged, False)
+
         # To have jet 2 displaced
-        isJet2_Displaced = ( np.abs(ak.firsts(data['pfCands_jet2'],axis=-1).dxy) > 0.03 )
+        # isJet2_Displaced = ( np.abs(ak.firsts(data['pfCands_jet2'],axis=-1).dxy) > 0.03 )
+        isJet2_Displaced = ( np.abs(data['pfCands_jet2'].dxy) > self.config["pf_dxy"] )
         isJet2_Displaced = ak.fill_none(isJet2_Displaced, False)
+
+        isJet2_Tagged = ( ak.firsts(data['jet_2'].disTauTag_score1) > self.config["tag_score"] )
+        isJet2_Tagged = ak.fill_none(isJet2_Tagged, False)
 
         # PP category (OS prompt tau_h)
         PP = (isJet1_Prompt & isJet2_Prompt)
@@ -225,23 +261,79 @@ class Processor(pepper.ProcessorBasicPhysics):
         DD = (isJet1_Displaced & isJet2_Displaced)
         masks["DD"] = DD
 
+        PDtag = ( (isJet1_Prompt & isJet2_Displaced & isJet2_Tagged) | (isJet2_Prompt & isJet1_Displaced & isJet1_Tagged) )
+        masks["PDtag"] = PDtag
+
+        DDtag = (isJet1_Displaced & isJet2_Displaced & isJet2_Tagged & isJet1_Tagged)
+        masks["DDtag"] = DDtag
+
         # COMB - all regions together
-        masks["COMB"] = ( DD | PP | PD )
+        masks["D_INCL"] = ak.full_like(DD, True)
 
         return masks
 
     def charge_masks(self, data):
         if len(data) == 0:
             return { "OS" : ak.Array([]),
-                     "SS" : ak.Array([]) }
-        SS = (ak.firsts(data['pfCands_jet1'],axis=-1).charge
-            * ak.firsts(data['pfCands_jet2'],axis=-1).charge) > 0
-        OS = ~SS
+                     "SS" : ak.Array([]),
+                     "S_INCL" : ak.Array([]) }
+        # SS = (ak.firsts(data['pfCands_jet1'],axis=-1).charge
+        #     * ak.firsts(data['pfCands_jet2'],axis=-1).charge) > 0
+        # OS = (ak.firsts(data['pfCands_jet1'],axis=-1).charge
+        #     * ak.firsts(data['pfCands_jet2'],axis=-1).charge) < 0
+        SS = (data['pfCands_jet1'].charge
+            * data['pfCands_jet2'].charge) > 0
+        OS = (data['pfCands_jet1'].charge
+            * data['pfCands_jet2'].charge) < 0
         SS = ak.fill_none(SS, False)
         OS = ak.fill_none(OS, False)
-        return {"OS": OS, "SS": SS}
+        ALL_CHARGES = ak.full_like(SS, True)
+        return {"OS": OS, "SS": SS, "S_INCL": ALL_CHARGES}
 
+    @zero_handler
+    def signal_bins(self, data):
+        
+        bins = np.zeros((len(data["D_INCL"])))
+        
+        mt2 = data["mt2_j1_j2_MET"][:,0]
+        mt_sum = data["mt_sum"]
+        
+        # DD region bins:
+        DDMTTWO1 = ( (mt2 > 0) & (mt2 < 100) )
+        
+        DDMTTWO1SMT1 = DDMTTWO1 & ( mt_sum > 0 )   & ( mt_sum < 400) 
+        DDMTTWO1SMT2 = DDMTTWO1 & ( mt_sum > 400 ) & ( mt_sum < 800) 
+        DDMTTWO1SMT3 = DDMTTWO1 & ( mt_sum > 800 )
+        DDMTTWO2SMT1 = (mt2 > 100)
+        
+        # PD region bins:
+        PDMTTWO1 = ( (mt2 < 100) )
+        PDMTTWO2 = ( (mt2 > 100) & (mt2 < 200) )
 
+        PDMTTWO1SMT1 = PDMTTWO1 & ( mt_sum > 0 )   & ( mt_sum < 200) 
+        PDMTTWO1SMT2 = PDMTTWO1 & ( mt_sum > 200 ) & ( mt_sum < 400)  
+        PDMTTWO1SMT3 = PDMTTWO1 & ( mt_sum > 400 ) & ( mt_sum < 600)
+        PDMTTWO1SMT4 = PDMTTWO1 & ( mt_sum > 600 ) & ( mt_sum < 800)
+        PDMTTWO1SMT5 = PDMTTWO1 & ( mt_sum > 800 )
+        PDMTTWO2SMT1 = PDMTTWO2 & ( mt_sum < 800) 
+        PDMTTWO2SMT2 = PDMTTWO2 & ( mt_sum > 800 )
+        PDMTTWO3SMT1 = (mt2 > 200)
+        
+        bins[DDMTTWO1SMT1] = 1
+        bins[DDMTTWO1SMT2] = 2
+        bins[DDMTTWO1SMT3] = 3
+        bins[DDMTTWO2SMT1] = 4
+        bins[PDMTTWO1SMT1] = 5
+        bins[PDMTTWO1SMT2] = 6
+        bins[PDMTTWO1SMT3] = 7
+        bins[PDMTTWO1SMT4] = 8
+        bins[PDMTTWO1SMT5] = 9
+        bins[PDMTTWO2SMT1] = 10
+        bins[PDMTTWO2SMT2] = 11
+        bins[PDMTTWO3SMT1] = 12
+
+        return bins 
+        
     @zero_handler
     def jets_valid(self, data):
         jets = data["Jet"]
@@ -253,58 +345,47 @@ class Processor(pepper.ProcessorBasicPhysics):
             & (self.config["jet_pt_min"] < jets.pt)
             )]
 
-        # print(jets)
-        # print(data.metadata["dataset"])
-        # print(data.metadata['filename'])
-        # print(data["muons_valid"])
-        # print(data["electrons_valid"])
-        # print("mu:", ak.sum(ak.num(data["muons_valid"],axis=-1)), "per", ak.num(data["muons_valid"],axis=0),
-        #       "e:", ak.sum(ak.num(data["electrons_valid"],axis=-1)),  "per", ak.num(data["electrons_valid"], axis=0))
-
         # muon veto
-        jets_vetoed = jets.nearest(data["muons_valid"], return_metric=True, threshold=0.4)[0]
-        # print("1st veto", jets_vetoed)
+        jets_vetoed = jets.nearest(data["muons_valid"], return_metric=True, 
+                                   threshold=self.config["muon_veto_dR"])[0]
         idx_vetoed_jets = ak.is_none(jets_vetoed, axis=-1)
-        # print(idx_vetoed_jets)
         jets = jets[idx_vetoed_jets]
 
         # electron veto
-        jets_vetoed = jets.nearest(data["electrons_valid"], return_metric=True, threshold=0.4)[0]
-        # print("2nd veto", jets_vetoed)
+        jets_vetoed = jets.nearest(data["electrons_valid"], return_metric=True,
+                                   threshold=self.config["ele_veto_dR"])[0]
         idx_vetoed_jets = ak.is_none(jets_vetoed, axis=-1)
-        # print(idx_vetoed_jets)
         jets = jets[idx_vetoed_jets]
 
-        return jets
+        # sort by pt
+        sort_idx = ak.argsort(jets.pt, axis=-1, ascending=False)
+        return jets[sort_idx]
 
     @zero_handler
     def muons_valid(self, data):
         muons = data["Muon"]
         is_good = (
-            (muons.pt > 30)
-            & (muons.eta < 2.5)
-            & (-2.5 < muons.eta)
-            # & (muons.tightId == 1)
-            & (muons.pfRelIso04_all<0.2)
+              (muons.pt > self.config["muon_pt"])
+            & (muons.eta < self.config["muon_eta_max"])
+            & (muons.eta > self.config["muon_eta_min"])
+            # & (muons[ self.config["muonID"] == 1)
+            & (muons.pfRelIso04_all < self.config["muon_pfRelIso04_all"])
             )
         return muons[is_good]
 
     @zero_handler
     def electrons_valid(self, data):
         ele = data["Electron"]
-        low_eta_iso = ((np.abs(ele.eta) < 1.479)
-                     & (ele.pfRelIso03_all < (0.198+0.506/ele.pt)))
-        high_eta_iso = ((np.abs(ele.eta) > 1.479)
-                      & (np.abs(ele.eta) < 2.5)
-                      & (ele.pfRelIso03_all < (0.203+0.963/ele.pt)))
-        isolation_cut = ( low_eta_iso | high_eta_iso )
+        ele_low_eta_iso = eval(self.config["ele_low_eta_iso"])
+        ele_high_eta_iso = eval(self.config["ele_high_eta_iso"])
+        isolation_cut = ( ele_low_eta_iso | ele_high_eta_iso )
         is_good = (
             isolation_cut
-            & (ele.pt > 30)
-            & (ele.eta < 2.5)
-            & (-2.5 < ele.eta)
-            & (ele.convVeto == 1)
-            # & (ele.mvaFall17V2Iso_WP80==1)
+            & (ele.pt > self.config["muon_pt"])
+            & (ele.eta < self.config["ele_eta_max"])
+            & (ele.eta > self.config["ele_eta_min"])
+            & (ele[self.config["eleVeto"]] == 1)
+            # & (ele[self.config["eleID"]]==1)
             )
         return ele[is_good]
 
@@ -312,15 +393,15 @@ class Processor(pepper.ProcessorBasicPhysics):
     def hps_taus_valid(self, data):
         taus = data["Tau"]
         is_good = (
-            (taus.pt > 30)
-            & (taus.eta < 2.3)
-            & (-2.3 < taus.eta)
-            & (taus.idDeepTau2017v2p1VSe >= 1)
-            & (taus.idDeepTau2017v2p1VSjet >= 1)
-            & (taus.idDeepTau2017v2p1VSmu >=1)
+            (taus.pt > self.config["tau_pt"])
+            & (taus.eta < self.config["tau_eta_max"])
+            & (taus.eta > self.config["tau_eta_min"])
+            & (taus.idDeepTau2017v2p1VSe >= self.config["tau_idDeepTau_vsjet"])
+            & (taus.idDeepTau2017v2p1VSjet >= self.config["tau_idDeepTau_vsmu"])
+            & (taus.idDeepTau2017v2p1VSmu >= self.config["tau_idDeepTau_vsele"])
             )
         return taus[is_good]
-
+    
     @zero_handler
     def has_jets(self, data):
         return ak.num(data["jets_valid"]) >= 2
@@ -345,10 +426,12 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     @zero_handler
     def b_tagged_jet(self, data):
+        # To leading jets are excluded! 
+        jet_not_signal = data["jets_valid"][:,2:]
         # Jet_btagDeepFlavB satisfies the Medium (>0.2783) WP:
         # https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
-        is_b = (data["Jet"].btagDeepFlavB > 0.2783)
-        return data["Jet"][is_b]
+        b_tagged_idx = (jet_not_signal.btagDeepFlavB > 0.2783)
+        return jet_not_signal[b_tagged_idx]
 
     @zero_handler
     def b_tagged_cut(self, data):
@@ -360,7 +443,7 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     @zero_handler    
     def MET_cut(self, data):
-        return data["MET"].pt > 100 #GeV
+        return data["MET"].pt > self.config["MET_pt"] #GeV
 
     @zero_handler
     def match_nearest(self, data, coll1=None, coll2=None, dR = 0.4, not_matched = False):
@@ -393,17 +476,22 @@ class Processor(pepper.ProcessorBasicPhysics):
         return data["jet_1"].disTauTag_score1*data["jet_2"].disTauTag_score1
 
     @zero_handler
-    def get_matched_pfCands(self, data, match_object, dR=0.4):
-        pfCands = self.match_nearest(data, coll1="PFCandidate", coll2=match_object, dR=dR)
+    def pfcand_valid(self, data):
+        pfCands = data["PFCandidate"]
         is_good = (
-            (pfCands.pt > 5)
-            & (pfCands.eta < 2.5)
-            & (-2.5 < pfCands.eta)
-            & (pfCands.hasTrackDetails)
+            (pfCands.pt > self.config["pfcand_pt"])
+            & (pfCands.eta < self.config["pfcand_eta_max"])
+            & (pfCands.eta > self.config["pfcand_eta_min"])
+            & (pfCands[self.config["track"]])
         )
+        return pfCands[is_good]
 
-        # Add dxySig variable
-        pfCands = pfCands[is_good]
+    @zero_handler
+    def get_matched_pfCands(self, data, match_object, dR=0.4):
+        pfCands = self.match_nearest(data, coll1="pfcand_valid", coll2=match_object, dR=dR)
+        # print(pfCands)
+        pfCands = ak.firsts(pfCands, axis=-1) # take only leading pfCand (optional)
+        # print(pfCands)
         pfCands["dxySig"] = pfCands.dxy / pfCands.dxyError
         pfCands["Lrel"] = np.sqrt(pfCands.dxy**2 + pfCands.dz**2)
         return pfCands
