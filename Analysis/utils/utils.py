@@ -185,9 +185,19 @@ def root_plot1D(
             accume_hist = hist.Clone()
             accume_hist.SetDirectory(0)
         else:
+            hist.SetDirectory(0)
             accume_hist.Add(hist)
     
     stack.Draw(stackdrawopt)
+    
+    accume_hist.SetFillStyle(3004)
+    accume_hist.SetFillColor(1)
+    # accume_hist.SetLineColor(15)
+    # accume_hist.SetLineWidth(0)
+    accume_hist.SetMarkerStyle(21)
+    accume_hist.SetMarkerSize(0)
+ 
+    accume_hist.Draw("e2same")
     
     stack.GetXaxis().SetRangeUser(xrange[0], xrange[1])
     stack.SetMinimum(yrange[0])
