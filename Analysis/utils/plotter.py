@@ -41,7 +41,12 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path):
 
                     if _histname in config["SetupBins"]:
                         hist.Rebin(config["SetupBins"][_histname][2])
-                    
+                        
+                        if config["SetupBins"][_histname][4]:
+                            for bin_i, label in enumerate(config["SetupBins"][_histname][4]):
+                                hist.GetXaxis().SetBinLabel(bin_i, label)
+                                hist.GetXaxis().SetTitle("")
+          
                     if _idx == 0:
                         _histograms[isSignal].append(hist)
                     else:
@@ -59,7 +64,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path):
                 
                 _histograms[isSignal][-1].SetLineColor(line_color)
                 _histograms[isSignal][-1].SetFillColor(fill_color)
-                _histograms[isSignal][-1].SetLineWidth(2)
+                _histograms[isSignal][-1].SetLineWidth(6)
                 _histograms[isSignal][-1].SetMarkerSize(0)
                 _histograms[isSignal][-1].SetTitle(_group_name)
             
@@ -106,16 +111,17 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path):
                 stackdrawopt = "",
                 # normilize = True,
                 normilize_overlay = False,
-                legendpos = "UR",
+                legendpos = "UL",
                 legendtitle = f"",
                 legendncol = 3,
-                legendtextsize = 0.03,
+                legendtextsize = 0.035,
                 legendwidthscale = 1.9,
-                legendheightscale = 0.4,
+                legendheightscale = 0.36,
                 lumiText = "2018 (13 TeV)",
                 signal_to_background_ratio = True,
                 ratio_mode = "SB",
-                yrange_ratio = (1E-05, 10)
+                yrange_ratio = (1E-05, 10),
+                draw_errors = True
             )
 
 def plot2D(histfiles, histnames, config, xsec, cutflow, output_path):

@@ -30,7 +30,7 @@ def get_canvas(ratio = False) :
     ROOT.gROOT.SetStyle("tdrStyle")
     ROOT.gROOT.ForceStyle(True)
     
-    canvas = ROOT.TCanvas("canvas", "canvas", 800, 600)
+    canvas = ROOT.TCanvas("canvas", "canvas", 1200, 1000)
     canvas.UseCurrentStyle()
     
     #canvas.SetLeftMargin(0.16)
@@ -95,15 +95,16 @@ def root_plot1D(
     normilize_overlay = True,
     legendpos = "UR",
     legendncol = 1,
-    legendtextsize = 0.045,
+    legendtextsize = 0.065,
     legendtitle = "",
     legendheightscale = 1.0,
     legendwidthscale = 1.0,
     ratio_num_den_pairs = [],
     ratio_mode = "B",
     signal_to_background_ratio = False,
-    CMSextraText = "Simulation Preliminary",
-    lumiText = "(13 TeV)"
+    CMSextraText = "Private work (CMS simulation)",
+    lumiText = "(13 TeV)",
+    draw_errors = False
 ) :
     """
     l_hist: list of TH1 to be stacked according to `stackdrawopt`.
@@ -197,7 +198,8 @@ def root_plot1D(
     accume_hist.SetMarkerStyle(21)
     accume_hist.SetMarkerSize(0)
  
-    accume_hist.Draw("e2same")
+    if draw_errors:
+        accume_hist.Draw("e2same")
     
     stack.GetXaxis().SetRangeUser(xrange[0], xrange[1])
     stack.SetMinimum(yrange[0])
@@ -318,6 +320,7 @@ def root_plot1D(
         
         os.system("mkdir -p %s" %(outdir))
     
+    ROOT.gStyle.SetImageScaling(2.)
     canvas.SaveAs(outfile)
     
     return 0
@@ -350,7 +353,7 @@ def root_plot2D(
     ratio_num_den_pairs = [],
     fill_empty_bins_ratio = False,
     signal_to_background_ratio = False,
-    CMSextraText = "Simulation Preliminary",
+    CMSextraText = "Private work (CMS simulation)",
     lumiText = "(13 TeV)",
     text_colz = False
 ) :
