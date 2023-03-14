@@ -26,9 +26,9 @@
             {
                 "name": "signal_bins",
                 "label": "Analysis bins",
-                "n_or_arr": 15,
+                "n_or_arr": 30,
                 "lo": 0,
-                "hi": 15,
+                "hi": 30,
                 "unit": ""
             }
         ],

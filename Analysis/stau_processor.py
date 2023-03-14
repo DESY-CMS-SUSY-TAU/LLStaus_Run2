@@ -293,44 +293,72 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def signal_bins(self, data):
         
+        print(data.genWeight, ak.sum(data.genWeight))
+        
         bins = np.zeros((len(data["D_INCL"])))
         
         mt2 = data["mt2_j1_j2_MET"][:,0]
         mt_sum = data["mt_sum"]
         
         # DD region bins:
-        DDMTTWO1 = ( (mt2 > 0) & (mt2 < 100) )
-        
-        DDMTTWO1SMT1 = DDMTTWO1 & ( mt_sum > 0 )   & ( mt_sum < 400) 
-        DDMTTWO1SMT2 = DDMTTWO1 & ( mt_sum > 400 ) & ( mt_sum < 800) 
-        DDMTTWO1SMT3 = DDMTTWO1 & ( mt_sum > 800 )
-        DDMTTWO2SMT1 = (mt2 > 100)
+        DDMTTWO1 = (mt2 < 100)
+        DDMTTWO1SMT1 = data["DDtag"] & DDMTTWO1 & ( mt_sum > 0 )   & ( mt_sum < 200)
+        DDMTTWO1SMT2 = data["DDtag"] & DDMTTWO1 & ( mt_sum > 200 ) & ( mt_sum < 400) 
+        DDMTTWO1SMT3 = data["DDtag"] & DDMTTWO1 & ( mt_sum > 400 ) & ( mt_sum < 800) 
+        DDMTTWO1SMT4 = data["DDtag"] & DDMTTWO1 & ( mt_sum > 800 )
+        DDMTTWO2SMT1 = data["DDtag"] & (mt2 > 100)
         
         # PD region bins:
-        PDMTTWO1 = ( (mt2 < 100) )
+        PDMTTWO1 =   (mt2 < 100) 
         PDMTTWO2 = ( (mt2 > 100) & (mt2 < 200) )
-
-        PDMTTWO1SMT1 = PDMTTWO1 & ( mt_sum > 0 )   & ( mt_sum < 200) 
-        PDMTTWO1SMT2 = PDMTTWO1 & ( mt_sum > 200 ) & ( mt_sum < 400)  
-        PDMTTWO1SMT3 = PDMTTWO1 & ( mt_sum > 400 ) & ( mt_sum < 600)
-        PDMTTWO1SMT4 = PDMTTWO1 & ( mt_sum > 600 ) & ( mt_sum < 800)
-        PDMTTWO1SMT5 = PDMTTWO1 & ( mt_sum > 800 )
-        PDMTTWO2SMT1 = PDMTTWO2 & ( mt_sum < 800) 
-        PDMTTWO2SMT2 = PDMTTWO2 & ( mt_sum > 800 )
-        PDMTTWO3SMT1 = (mt2 > 200)
+        PDMTTWO1SMT1 = data["PDtag"] & PDMTTWO1 & ( mt_sum > 0 )   & ( mt_sum < 200) 
+        PDMTTWO1SMT2 = data["PDtag"] & PDMTTWO1 & ( mt_sum > 200 ) & ( mt_sum < 400)  
+        PDMTTWO1SMT3 = data["PDtag"] & PDMTTWO1 & ( mt_sum > 400 ) & ( mt_sum < 600)
+        PDMTTWO1SMT4 = data["PDtag"] & PDMTTWO1 & ( mt_sum > 600 ) & ( mt_sum < 800)
+        PDMTTWO1SMT5 = data["PDtag"] & PDMTTWO1 & ( mt_sum > 800 )
+        PDMTTWO2SMT1 = data["PDtag"] & PDMTTWO2 & ( mt_sum < 800) 
+        PDMTTWO2SMT2 = data["PDtag"] & PDMTTWO2 & ( mt_sum > 800 )
+        PDMTTWO3SMT1 = data["PDtag"] & (mt2 > 200)
         
-        bins[DDMTTWO1SMT1] = 1
-        bins[DDMTTWO1SMT2] = 2
-        bins[DDMTTWO1SMT3] = 3
-        bins[DDMTTWO2SMT1] = 4
-        bins[PDMTTWO1SMT1] = 5
-        bins[PDMTTWO1SMT2] = 6
-        bins[PDMTTWO1SMT3] = 7
-        bins[PDMTTWO1SMT4] = 8
-        bins[PDMTTWO1SMT5] = 9
-        bins[PDMTTWO2SMT1] = 10
-        bins[PDMTTWO2SMT2] = 11
-        bins[PDMTTWO3SMT1] = 12
+        # PP region binning
+        PPMTTWO1SMT1 = data["PP"] & ( (mt_sum > 200 ) & (mt_sum < 250) ) & ( (mt2 > 25) & (mt2 < 50) ) 
+        PPMTTWO2SMT1 = data["PP"] & ( (mt_sum > 200 ) & (mt_sum < 250) ) & (mt2 > 50)
+        PPMTTWO1SMT2 = data["PP"] & ( (mt_sum > 250 ) & (mt_sum < 300) ) & ( (mt2 > 25) & (mt2 < 50) )
+        PPMTTWO2SMT2 = data["PP"] & ( (mt_sum > 250 ) & (mt_sum < 300) ) & ( (mt2 > 50) & (mt2 < 75) )
+        PPMTTWO3SMT2 = data["PP"] & ( (mt_sum > 250 ) & (mt_sum < 300) ) & (mt2 > 75)
+        PPMTTWO1SMT3 = data["PP"] & ( (mt_sum > 300 ) & (mt_sum < 350) ) & ( (mt2 > 25) & (mt2 < 50) )
+        PPMTTWO2SMT3 = data["PP"] & ( (mt_sum > 300 ) & (mt_sum < 350) ) & ( (mt2 > 50) & (mt2 < 75) )
+        PPMTTWO3SMT3 = data["PP"] & ( (mt_sum > 300 ) & (mt_sum < 350) ) & (mt2 > 75)
+        PPMTTWO1SMT4 = data["PP"] & (mt_sum > 350 ) & ( (mt2 > 25) & (mt2 < 75) )
+        PPMTTWO2SMT4 = data["PP"] & (mt_sum > 350 ) & ( (mt2 > 75) & (mt2 < 100) )
+        PPMTTWO3SMT4 = data["PP"] & (mt_sum > 350 ) & (mt2 > 100)
+        
+        bins[PPMTTWO1SMT1] = 1
+        bins[PPMTTWO2SMT1] = 2
+        bins[PPMTTWO1SMT2] = 3
+        bins[PPMTTWO2SMT2] = 4
+        bins[PPMTTWO3SMT2] = 5
+        bins[PPMTTWO1SMT3] = 6
+        bins[PPMTTWO2SMT3] = 7
+        bins[PPMTTWO3SMT3] = 8
+        bins[PPMTTWO1SMT4] = 9
+        bins[PPMTTWO2SMT4] = 10
+        bins[PPMTTWO3SMT4] = 11
+        
+        bins[PDMTTWO1SMT1] = 12
+        bins[PDMTTWO1SMT2] = 13
+        bins[PDMTTWO1SMT3] = 14
+        bins[PDMTTWO1SMT4] = 15
+        bins[PDMTTWO1SMT5] = 16
+        bins[PDMTTWO2SMT1] = 17
+        bins[PDMTTWO2SMT2] = 18
+        bins[PDMTTWO3SMT1] = 19
+        
+        bins[DDMTTWO1SMT1] = 20
+        bins[DDMTTWO1SMT2] = 21
+        bins[DDMTTWO1SMT3] = 22
+        bins[DDMTTWO1SMT4] = 23
+        bins[DDMTTWO2SMT1] = 24
 
         return bins 
         
@@ -435,11 +463,12 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     @zero_handler
     def b_tagged_cut(self, data):
+        print(data.genWeight, ak.sum(data.genWeight))
         return ak.num(data["jet_b"]) <= 1
     
     @zero_handler
     def b_tagged_tight_cut(self, data):
-        return ak.num(data["jet_b"]) <= 0
+        return ak.num(data["jet_b"]) == 0
 
     @zero_handler    
     def MET_cut(self, data):

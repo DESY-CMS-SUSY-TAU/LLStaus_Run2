@@ -187,16 +187,19 @@
     "tau_pt"               : 30,
     "tau_eta_min"          :-2.4,
     "tau_eta_max"          : 2.4,
-    "tau_idDeepTau_vsjet"  : 1,
-    "tau_idDeepTau_vsmu"   : 1,
-    "tau_idDeepTau_vsele"  : 1,
+    "tau_idDeepTau_vsjet"  : 128,
+    "tau_idDeepTau_vsmu"   : 8,
+    "tau_idDeepTau_vsele"  : 4,
+    // "tau_idDeepTau_vsjet"  : 2,
+    // "tau_idDeepTau_vsmu"   : 2,
+    // "tau_idDeepTau_vsele"  : 2,
 
     // MET cut
     "MET_pt"               : 50,
 
     // category cuts
     "tag_score" : 0.969, // efficincy 80% 
-    "pf_dxy"    : 0.01,
+    "pf_dxy"    : 0.03,
     "pf_dz"     : 0.2,
 
     "hists": "$CONFDIR/stau2018_histograms.json",
