@@ -14,7 +14,7 @@ import pepper
 import awkward as ak
 from functools import partial
 import numpy as np
-np.set_printoptions(threshold=np.inf)
+# np.set_printoptions(threshold=np.inf)
 import mt2
 
 from coffea.nanoevents import NanoAODSchema
@@ -164,7 +164,11 @@ class Processor(pepper.ProcessorBasicPhysics):
         # S_INCL - Inclusive for all charge
         selector.set_cat("cat_charge", {"OS", "SS", "S_INCL"})
         selector.set_multiple_columns(partial(self.charge_masks))
-        
+
+        # devide into the regions related to the gen-matching
+        selector.set_column("jet1_gen", partial(self.jet_gen, jet_name="jet_1"))
+        selector.set_column("jet2_gen", partial(self.jet_gen, jet_name="jet_2"))
+
         selector.add_cut("b_tagged_0_cut", self.b_tagged_tight_cut)
         
         selector.set_column("signal_bins", self.signal_bins)
@@ -195,7 +199,49 @@ class Processor(pepper.ProcessorBasicPhysics):
 
         # selector.set_column("pfCands_jet"+jet_n+"_gtau_hpstau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_gtau_hpstau", dR=0.4))
         # selector.set_column("pfCands_jet"+jet_n+"_gtau_!hpstau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_gtau_!hpstau", dR=0.4))
- 
+
+    @zero_handler
+    def jet_gen(self, data, jet_name='', dR=0.4):
+
+        # gen level jet information
+        # -1 not matched to any gen-tau object
+        # 0 matches to genJet
+        # 1 hadronic tau
+        # 2 matched to tau muon
+        # 3 matched to tau electron
+        # 4 dummy mutched to >2 objects
+
+        jet = data[jet_name]
+        status = np.full((len(jet),1), -1)
+
+        gen_elec = data.GenPart[ (abs(data.GenPart.pdgId) == 11) &
+                                    (data.GenPart.hasFlags(["isDirectTauDecayProduct"])) ]
+
+        gen_muon = data.GenPart[ (abs(data.GenPart.pdgId) == 13) &
+                                    (data.GenPart.hasFlags(["isDirectTauDecayProduct"])) ]
+        gen_tauvis = data.GenVisTau
+        
+        matches_genjet, dRlist = jet.nearest(data.GenJet, return_metric=True, threshold=dR)
+        hasJet = (~ak.is_none(matches_genjet, axis=1))
+        status[hasJet] = 0
+
+        matches_h, dRlist = jet.nearest(gen_tauvis, return_metric=True, threshold=dR)
+        hasHadronic = (~ak.is_none(matches_h, axis=1))
+        status[hasHadronic] = 1
+
+        matches_muon, dRlist = jet.nearest(gen_muon, return_metric=True, threshold=dR)
+        hasMuon = (~ak.is_none(matches_muon, axis=1))
+        status[hasMuon] = 2
+
+        matches_elec, dRlist = jet.nearest(gen_elec, return_metric=True, threshold=dR)
+        hasElec = (~ak.is_none(matches_elec, axis=1))
+        status[hasElec] = 3
+        
+        comp = ( (hasHadronic & hasMuon) | (hasHadronic & hasElec) | (hasElec & hasMuon) )
+        status[comp] = 4
+
+        return ak.firsts(status)
+
     def category_masks(self, data):
         if len(data) == 0:
             return { "PP" : ak.Array([]),
@@ -293,9 +339,8 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def signal_bins(self, data):
         
-        print(data.genWeight, ak.sum(data.genWeight))
-        
-        bins = np.zeros((len(data["D_INCL"])))
+
+        bins = np.full((len(data["D_INCL"])), np.nan)
         
         mt2 = data["mt2_j1_j2_MET"][:,0]
         mt_sum = data["mt_sum"]
@@ -463,7 +508,6 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     @zero_handler
     def b_tagged_cut(self, data):
-        print(data.genWeight, ak.sum(data.genWeight))
         return ak.num(data["jet_b"]) <= 1
     
     @zero_handler

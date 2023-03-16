@@ -39,6 +39,42 @@
         }
     },
 
+    "jet1_status": {
+        "bins": [
+            {
+                "name": "jet1_status",
+                "label": "jet1_status",
+                "n_or_arr": 9,
+                "lo": -2,
+                "hi": 7,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "jet1_status": [
+                "jet1_gen"
+            ]
+        }
+    },
+
+    "jet2_status": {
+        "bins": [
+            {
+                "name": "jet2_status",
+                "label": "jet2_status",
+                "n_or_arr": 9,
+                "lo": -2,
+                "hi": 7,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "jet2_status": [
+                "jet2_gen"
+            ]
+        }
+    },
+
     // General score of leading and subleading jet:
 
     "jet_score_TH2": {

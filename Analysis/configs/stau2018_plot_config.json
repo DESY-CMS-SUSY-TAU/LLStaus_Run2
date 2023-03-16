@@ -4,7 +4,7 @@
     "crosssections": "$CONFDIR/crosssections.json",
     "cuts" : ["Cut-006"],
     "Categories" : [
-                    ["PP", "PD", "DD", "PDtag", "DDtag", "D_INCL"],
+                    ["PP", "PD", "PDtag","DD", "DDtag", "D_INCL"],
                     ["S_INCL"]
                     // ["D_INCL"],
                     // ["S_INCL"]
@@ -57,6 +57,8 @@
         "$\\mathrm{stau100GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
         "$\\mathrm{stau400GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
         "$\\mathrm{stau400GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
+        "$\\mathrm{stau250GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
+        "$\\mathrm{stau250GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
     },
     "Data": [],
     "MC_bkgd": {
@@ -67,13 +69,15 @@
         "$\\mathrm{t}/\\bar{\\mathrm{t}}$":        [623, 623],
         "$\\mathrm{DY}$":                          [403, 403],
         "$\\mathrm{W}+\\mathrm{jets}$":            [410, 410],
-        "$\\mathrm{Z}+\\mathrm{jets}$":            [616, 616]
+        "$\\mathrm{Z}+\\mathrm{jets}$":            [616, 616],
     },
     "Signal_samples":{
         "$\\mathrm{stau100GeV10cm}$" : [0, 810],
         "$\\mathrm{stau100GeV100cm}$" : [0, 910],
         "$\\mathrm{stau400GeV10cm}$" : [0, 600], 
-        "$\\mathrm{stau400GeV100cm}$" : [0, 603]
+        "$\\mathrm{stau400GeV100cm}$" : [0, 603],
+        "$\\mathrm{stau250GeV10cm}$": [0, 418],
+        "$\\mathrm{stau250GeV100cm}$": [0, 420],
     },
     "SetupBins" : {
         // "Histogram name" : [x_min, x_max, rebin_bins, overflow_include
@@ -98,6 +102,8 @@
         "pfcand_dz_jet2": [-40, 40, 4, true, null],
         "pfcand_dxy_leading_jet1": [-20, 20, 4, true, null],
         "pfcand_dxy_leading_jet2": [-20, 20, 4, true, null],
+        "jet1_status": [-1, 5, 1, false, ["", "", "no match", "gen_jet", "tau_h", "tau_mu", "tau_e", "few tau", ""]],
+        "jet2_status": [-1, 5, 1, false, ["", "", "no match", "gen_jet", "tau_h", "tau_mu", "tau_e", "few tau", ""]],
         "signal_bins": [1, 25, 1, false, 
             [   
                 "EMPTY"
