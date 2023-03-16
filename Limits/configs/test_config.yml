@@ -1,0 +1,92 @@
+procs_sig:
+  # key: <list of histnames that will be combined into one process>
+  # The histnames must exist in the input histogram root file
+  "stau100_lsp1_ctau100mm":
+    - "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"
+  "stau100_lsp1_ctau1000mm":
+    - "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"
+  "stau250_lsp1_ctau100mm":
+    - "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"
+  "stau250_lsp1_ctau1000mm":
+    - "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"
+  "stau400_lsp1_ctau100mm":
+    - "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"
+  "stau400_lsp1_ctau1000mm":
+    - "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"
+
+procs_bkg:
+  # Same format as procs_sig
+  "DYJets":
+    - "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8"
+    - "ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8"
+    - "ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8"
+    - "ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8"
+    - "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8"
+  "WJets":
+    - "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8"
+    - "WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8"
+    - "WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8"
+    - "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8"
+    - "WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8"
+  "ST":
+    #- "ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-madgraph-pythia8"
+    - "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8"
+    - "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8"
+    - "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"
+    - "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"
+  "TT":
+    - "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8"
+    - "TTToHadronic_TuneCP5_13TeV-powheg-pythia8"
+    - "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8"
+  #"TTX":
+  #  - "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"
+  #  - "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"
+  #  - "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8"
+  #  - "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8"
+  #"VV":
+  #  - "WW_TuneCP5_13TeV-pythia8"
+  #  - "WZ_TuneCP5_13TeV-pythia8"
+  #  - "ZZ_TuneCP5_13TeV-pythia8"
+  "QCD":
+    - "QCD_Pt_15to30_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_30to50_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_50to80_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_80to120_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_120to170_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_170to300_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_300to470_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_470to600_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_600to800_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_800to1000_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8"
+    - "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8"
+
+# File containing the input histograms
+inhistfile: "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/control_cat_plots_v20/hists/Cut-006_b_tagged_0_cut_signal_bins.root"
+
+# Will read the histnames with the following suffix
+# Must include the leading underscore (or whichever separator is used)
+# Can be an empty string
+histnametag: "_D_INCL_S_INCL"
+
+xsecfile_bkg: "/nfs/dust/cms/user/sobhatta/work/LongLivedStaus/LLStaus_Run2/Analysis/configs/crosssections.json"
+
+# The signal xsecs should be in a csv file
+xsecfile_sig: "/nfs/dust/cms/user/sobhatta/work/LongLivedStaus/LLStaus_Run2/Analysis/configs/crosssections_stau_mass-degenerate.csv"
+
+cutflowsfile: "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/control_cat_plots_v20/cutflows.json"
+
+# Count to use in the denominator when normalizing
+# Nested keys separated by "."
+# For e.g. if "a.b.c", will read the dictionary entry dict[a][b][c]
+neventkey: "all.NanDrop"
+
+era: "2018"
+#lumi: 59.83
+lumi: 137.62
+
+prephistdir: "tmp/hists"
+carddir: "tmp/combine"

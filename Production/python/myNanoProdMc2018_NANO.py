@@ -22,6 +22,8 @@ process.load("PhysicsTools.NanoAOD.nano_cff")
 process.load("Configuration.StandardSequences.EndOfProcess_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 
+process.MessageLogger.cerr.enableStatistics = True
+
 from LLStaus_Run2.Production.arg_config import *
 args = get_args()
 
@@ -105,7 +107,8 @@ process.NANOAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, "106X_upgrade2018_realistic_v16_L1v1", "")
+#process.GlobalTag = GlobalTag(process.GlobalTag, "106X_upgrade2018_realistic_v16_L1v1", "")
+process.GlobalTag = GlobalTag(process.GlobalTag, "auto:phase1_2018_realistic", "")
 
 # Path and EndPath definitions
 #process.nanoAOD_step = cms.Path(process.nanoSequenceMC)
