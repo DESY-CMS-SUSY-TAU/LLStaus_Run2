@@ -1,11 +1,16 @@
+
+from turtle import color
+import ROOT
+ROOT.gROOT.SetBatch(True)
+
 import os
 import json
+import numpy as np
 from argparse import ArgumentParser
-import re
 
 from pepper import Config
-from utils.plotter import plot1D, plot2D
 
+from utils.utils import ColorIterator, root_plot1D
 
 parser = ArgumentParser(
     description="Plot histograms from previously created histograms")
@@ -16,16 +21,16 @@ parser.add_argument(
     "JSON file containing histogram info. See output of select_events.py")
 parser.add_argument(
     "--outdir", help="Output directory. If not given, output to the directory "
-    "where histfile is located", default='hist_output')
+    "where histfile is located")
 parser.add_argument(
-    "--cutflow", help="cutflow file", required=True)
+    "--cutflow", help="cutflow file")
 parser.add_argument(
     "--ext", choices=["pdf", "svg", "png"], help="Output file format",
     default="svg")
 parser.add_argument(
-    '-m','--mode', nargs='+', default=[], help="The set of histograms to be plotted "
-    "Available options: [1D, 2D]", required=True)
-
+    "-s", "--signals", nargs='*', default=["None"], help="Set of signal "
+    "points to plot. Can be All, None (default) or a name (or series of names)"
+    " of a specific set defined in the config")
 
 args = parser.parse_args()
 
@@ -46,46 +51,90 @@ try:
 except:
     raise ValueError('Error reading/open file with cutflow')
 
-if "1D" in args.mode:
-    histfiles = []
-    histnames = []
-    for histfile in args.histfile:
-        if histfile.endswith(".json"):
-            dirname = os.path.dirname(histfile)
-            with open(histfile) as f:
-                f = json.load(f)
-                for keys, histfile in zip(*f):
-                    if len(keys) != 2:
-                        continue
-                    # 2D histogram will be filtered out (labeled by TH2)
-                    if re.search(".*_TH2", keys[1]):
-                        continue
-                    histfiles.append(os.path.join(dirname, histfile))
-                    histnames.append(keys[1])
+histfiles = []
+for histfile in args.histfile:
+    if histfile.endswith(".json"):
+        dirname = os.path.dirname(histfile)
+        with open(histfile) as f:
+            f = json.load(f)
+            for keys, histfile in zip(*f):
+                if len(keys) != 2:
+                    continue
+                histfiles.append(os.path.join(dirname, histfile))
+    else:
+        histfiles.append(histfile)
+
+
+for _histfile in histfiles:
+
+    file = ROOT.TFile.Open(str(_histfile), 'read')
+
+    _histograms = {"background":[], "signal":[]}
+    for _group_idx, _group_name in enumerate(config["Labels"].keys()):
+
+        isSignal = "signal" if _group_name in config["Signal_samples"] else "background"
+        
+        for _idx, _histogram_name in enumerate(config["Labels"][_group_name]):
+            
+            # rescaling:
+            hist = file.Get(_histogram_name)
+            N = cutflow[_histogram_name]["all"]["Before cuts"]
+            hist.Scale( (crosssections[_histogram_name] * config["luminosity"]) / N)
+            
+            if _idx == 0:
+                _histograms[isSignal].append(hist)
+            else:
+                _histograms[isSignal][-1].Add(hist)
+
+        if isSignal == "signal":
+            line_color = ColorIterator(_group_idx, 1)
+            fill_color = 0
         else:
-            raise ValueError('Json should be provided')
+            line_color = ColorIterator(_group_idx, -6)
+            fill_color = ColorIterator(_group_idx, -6)
+            
+        _histograms[isSignal][-1].SetLineColor(line_color)
+        _histograms[isSignal][-1].SetFillColor(fill_color)
+        _histograms[isSignal][-1].SetLineWidth(2)
+        _histograms[isSignal][-1].SetMarkerSize(0)
+        _histograms[isSignal][-1].SetTitle(_group_name)
+    
+    # get maximum for the y-scale
+    y_max = _histograms["background"][0].GetMaximum()
+    for _h in _histograms["background"]:
+        y_max = max(y_max,_h.GetMaximum())
 
-    plot1D(histfiles, histnames, config, crosssections, cutflow, args.outdir)
+    # sort histogram from min to max
+    _histograms_background_entries = []
+    _histograms_background_sorted = []
+    for _h in _histograms["background"]:
+        _histograms_background_entries.append(_h.Integral())
+    _sorted_hist = np.argsort(_histograms_background_entries)
+    for _idx in _sorted_hist:
+        _histograms_background_sorted.append(_histograms["background"][_idx])
 
-if "2D" in args.mode:
-    histfiles = []
-    histnames = []
-    for histfile in args.histfile:
-        if histfile.endswith(".json"):
-            dirname = os.path.dirname(histfile)
-            with open(histfile) as f:
-                f = json.load(f)
-                for keys, histfile in zip(*f):
-                    if len(keys) != 2:
-                        continue
-                    # 2D histogram will be filtered out (labeled by TH2)
-                    if not re.search(".*_TH2", keys[1]):
-                        continue
-                    # if not re.search(".*mt2_sum_mt_TH2", keys[1]):
-                    #     continue
-                    histfiles.append(os.path.join(dirname, histfile))
-                    histnames.append(keys[1])
-        else:
-            raise ValueError('Json should be provided')
-
-    plot2D(histfiles, histnames, config, crosssections, cutflow, args.outdir)
+    root_plot1D(
+        l_hist = _histograms_background_sorted,
+        l_hist_overlay = _histograms["signal"],
+        outfile = args.outdir + "/" + os.path.splitext(os.path.basename(_histfile))[0] + ".png",
+        xrange = [_histograms["signal"][0].GetXaxis().GetXmin(), 
+                  _histograms["signal"][0].GetXaxis().GetXmin()],
+        yrange = (0.1,  100*y_max),
+        # yrange = (0.001,  1),
+        logx = False, logy = True,
+        ytitle = _histograms["signal"][0].GetYaxis().GetTitle(),
+        xtitle = _histograms["signal"][0].GetXaxis().GetTitle(),
+        centertitlex = True, centertitley = True,
+        centerlabelx = False, centerlabely = False,
+        gridx = True, gridy = True,
+        ndivisionsx = None,
+        stackdrawopt = "",
+        # normilize = True,
+        legendpos = "UR",
+        legendtitle = f"",
+        legendncol = 3,
+        legendtextsize = 0.03,
+        legendwidthscale = 1.7,
+        legendheightscale = 0.4,
+        lumiText = "2018 (13 TeV)"
+    )

@@ -54,6 +54,7 @@ config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = args.cfg
 config.JobType.maxMemoryMB = args.maxMemory
 config.JobType.numCores = args.numCores
+config.JobType.inputFiles = ["data"]
 
 config.Data.inputDBS = args.inputDBS
 config.Data.allowNonValidInputDataset = args.allowNonValid

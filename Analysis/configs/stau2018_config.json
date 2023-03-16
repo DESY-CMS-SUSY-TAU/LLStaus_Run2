@@ -1,133 +1,106 @@
 {
 
     "year": "2018",
-    "file_mode": "local",
-    "xrootddomain": "xrootd-cms.infn.it",
-    "bad_file_paths": "$CONFDIR/bad-pnfs-files.json",
-    "datadir": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD",
-    "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD",
+    "datadir": ".",
+    "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/",
     "rng_seed_file": "$CONFDIR/seed.txt",
     "compute_systematics": false,
     "lumimask": "",
-    "luminosity": 59.74,
+    "luminosity": 1.0,
     "crosssections": "$CONFDIR/crosssections.json",
     "exp_datasets": {    
     },
     "mc_datasets": {
         "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8" :  [
-            "$DATADIR/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
+            "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
         ],                                
         "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [
-            "$DATADIR/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/*/*/*/*.root",
+            "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/*/*/*/*.root",
         ],
         "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [
-            "$DATADIR/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/*/*/*/*.root",
+            "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/*/*/*/*.root",
         ],
         "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8" : [
-            "$DATADIR/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
+            "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
         ],
         "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8" : [
-            "$DATADIR/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
+            "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
         ],
         "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [
-            "$DATADIR/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
+            "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
         ],
         "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8" : [
-            "$DATADIR/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
+            "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
         ],
         "TTToHadronic_TuneCP5_13TeV-powheg-pythia8" : [
-            "$DATADIR/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
+            "TTToHadronic_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
         ],
         "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8" : [
-            "$DATADIR/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
+            "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root",
         ],
         "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6" :  [
-            "$DATADIR/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6/*/*/*/*.root",
+            "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6/*/*/*/*.root",
         ],                                
         "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6" : [
-            "$DATADIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6/*/*/*/*.root",
+            "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6/*/*/*/*.root",
         ],
         "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6" : [
-            "$DATADIR/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6/*/*/*/*.root",
+            "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6/*/*/*/*.root",
         ],
         "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4" : [
-            "$DATADIR/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4/*/*/*/*.root",
+            "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4/*/*/*/*.root",
         ],
         "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4" : [
-            "$DATADIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4/*/*/*/*.root",
+            "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4/*/*/*/*.root",
         ],
         "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4" : [
-            "$DATADIR/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4/*/*/*/*.root",
+            "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4/*/*/*/*.root",
         ],
         "QCD_Pt_15to30_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_15to30_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_30to50_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_30to50_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_50to80_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_50to80_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_80to120_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_80to120_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_120to170_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_120to170_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_170to300_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_170to300_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_300to470_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_300to470_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_470to600_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_470to600_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_600to800_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_600to800_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_800to1000_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
         "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8" : [
-            "$DATADIR/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/*/*/*/*.root",
+            "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/*/*/*/*.root",
         ],
-        "WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8" : [
-            "$DATADIR/WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
-        ],
-        "WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8" : [
-            "$DATADIR/WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
-        ],
-        "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8" : [
-            "$DATADIR/WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
-        ],
-        "WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8" : [
-            "$DATADIR/WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
-        ],
-        "ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8" : [
-            "$DATADIR/ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
-        ],
-        "ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8" : [
-            "$DATADIR/ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
-        ],
-        "ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8" : [
-            "$DATADIR/ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
-        ],
-        "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8" : [
-            "$DATADIR/ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root",
-        ]
     },
     "dataset_for_systematics": {
     },
@@ -154,53 +127,9 @@
         ]
     },
     
-    // reco Jet:
-    "jet_pt_min"   :  30,
-    "jet_eta_min"  : -2.4,
-    "jet_eta_max"  :  2.4,
-    "muon_veto_dR" :  0.4,
-    "ele_veto_dR"  :  0.4,
-
-    // pfCand selection:
-    "pfcand_pt"         : 1.0,
-    "pfcand_eta_min"    : -2.4,
-    "pfcand_eta_max"    : 2.4,
-    "track"             : "hasTrackDetails",
-
-    // muon veto
-    "muon_pt"               : 30,
-    "muon_eta_min"          :-2.4,
-    "muon_eta_max"          : 2.4,
-    "muonID"                : "tightId",
-    "muon_pfRelIso04_all"   : 0.2,
-
-    // ele veto
-    "ele_veto"   : 30,
-    "ele_eta_min":-2.4,
-    "ele_eta_max": 2.4,
-    "eleID"      : "mvaFall17V2Iso_WP80",
-    "eleVeto"    : "convVeto",
-    "ele_low_eta_iso"  : "((np.abs(ele.eta) < 1.479) & (ele.pfRelIso03_all < (0.198+0.506/ele.pt)))",
-    "ele_high_eta_iso" : "((np.abs(ele.eta) > 1.479) & (np.abs(ele.eta) < 2.5) & (ele.pfRelIso03_all < (0.203+0.963/ele.pt)))",
-
-    // HPS Tau:
-    "tau_pt"               : 30,
-    "tau_eta_min"          :-2.4,
-    "tau_eta_max"          : 2.4,
-    "tau_idDeepTau_vsjet"  : 128,
-    "tau_idDeepTau_vsmu"   : 8,
-    "tau_idDeepTau_vsele"  : 4,
-    // "tau_idDeepTau_vsjet"  : 2,
-    // "tau_idDeepTau_vsmu"   : 2,
-    // "tau_idDeepTau_vsele"  : 2,
-
-    // MET cut
-    "MET_pt"               : 50,
-
-    // category cuts
-    "tag_score" : 0.969, // efficincy 80% 
-    "pf_dxy"    : 0.03,
-    "pf_dz"     : 0.2,
+    "jet_eta_min" : -2.4,
+    "jet_eta_max" :  2.4,
+    "jet_pt_min"  :  30,
 
     "hists": "$CONFDIR/stau2018_histograms.json",
 }

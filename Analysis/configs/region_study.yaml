@@ -1,18 +1,15 @@
 
 input:
-#   stau100_lsp1_ctau100mm: /pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6
-#   stau250_lsp1_ctau100mm: /pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6
-#   stau400_lsp1_ctau100mm: /pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6
-
-    # stau100_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4
-    # stau250_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4
-    stau400_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4
+  stau100_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4
+  stau250_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4
+  stau400_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/myshched/nano/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4
 
 input_disID: null
 # input_disID:
 #     test1: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/soft/CMSSW_12_4_0/src/output_id/
 
-n_files: -1 #per dataset
+
+n_files: 1 #per dataset
 
 mode:
 
@@ -21,7 +18,8 @@ mode:
     # dR_STau_Jet vs. dR_STau_lostTrack
     # dR_STau_Jet vs. dR_STau_pfCand
     # dR_Tau_STau vs. dR_Tau_Jet
-    - jet_dR_matching
+    
+    # - jet_dR_matching
 
     # in efficiency_study efficiency plots are produced:
     # seeding efficiency for pt and Lxy
@@ -30,32 +28,39 @@ mode:
 collections:
     GenJets:
         name: GenJet
+        # cut: "({name}.pt > 0)"
         cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
     Jets:
         name: Jet
         #name: CaloJet
+        # cut: "({name}.pt > 0)"
         cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
-    Tau:
-        name: Tau
-        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4) & ({name}.idDeepTau2017v2p1VSe > 16) & ({name}.idDeepTau2017v2p1VSjet > 16) & ({name}.idDeepTau2017v2p1VSmu > 4)"
+        # cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4) & ({name}.genJetIdx >= 0)"
     GenVisTaus:
         name: GenVisTau
+        # cut: "(abs({name}.vertexZ) < 100)"
+        #cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
         cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4) & (abs({name}.vertexZ) < 100)"
-        # cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
 
 bin_setups:
-    dR_bins  : [100, 0.0, 0.8]  # n_bins, dR_min, dR_max
-    Lxy_bins : [0.0, 0.05, 0.1, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 50.0, 70.0, 80.0, 100.0, 200.0] # bin edges in cm
-    Lxy_slice : [ [0, 0.05], [0.05, 1.0], [1.0, 10.0], [10.0, 30.0], [30.0, 50.0], [50.0, 100.0], [100.0, 200.0]] # also in cm (bin edges)
-
+    #dR_bins  : [70, 0.0, 0.8]  # n_bins, dR_min, dR_max
+    dR_bins  : [300, 0.0, 3.0]  # n_bins, dR_min, dR_max
+    Lxy_bins : [100, 0.0, 100] # n_bins, dR_min, dR_max
+    Lxy_slice: [
+                [0, 100],  # bin_min, bin_max
+                [0, 10],   # bin_min, bin_max
+                [10,50],   # bin_min, bin_max
+                [50,100]   # bin_min, bin_max
+               ]
 
 eff_setups:
-    gen_jet_pt  : [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 1000] # n_bins, pt_min, pt_max
-    Lxy_bins : [0.0, 0.05, 0.1, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 50.0, 70.0, 80.0, 100.0, 200.0] # in cm
-    Lxy_slice : [ [0, 0.05], [0.05, 1.0], [1.0, 10.0], [10.0, 30.0], [30.0, 50.0], [50.0, 100.0], [100.0, 200.0]] # also in cm (bin edjes)
+
+    gen_jet_pt  : [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 400, 500, 750, 1000] # n_bins, pt_min, pt_max
+    Lxy_bins : [ 100, 0.0, 100 ] # n_bins, dR_min, dR_max
+    Lxy_slice: [ [0, 1], [1, 10], [10, 50], [50, 100] ]
     energy_ratio: [100, 0.9, 2.0]
     energy_ratio_children: [100, 0.9, 1.1]
     pt_ratio : [100, 0.0, 2.0, 100, 0, 1000]
-    pt_resolution : [100, -1, 5, 100, 0, 1000]
+    pt_resolution : [100, -1, 2, 100, 0, 1000]
 
 output: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/plots/eff_study

@@ -46,7 +46,7 @@ class JetdR2D(object):
             coffea.hist.Cat("dataset", "Dataset"),
             coffea.hist.Bin("dR_STau_Tau", "dR(STau,Tau)", *setups.dR_bins),
             coffea.hist.Bin("dR_STau_Jet", "dR(STau,Jet)", *setups.dR_bins),
-            coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
             # coffea.hist.Bin("Lxy","Lxy", setups["rho_bins"])
         )
         hists["dR_STau_Track"] = coffea.hist.Hist(
@@ -54,7 +54,7 @@ class JetdR2D(object):
             coffea.hist.Cat("dataset", "Dataset"),
             coffea.hist.Bin("dR_STau_Jet", "dR(STau,Jet)", *setups.dR_bins),
             coffea.hist.Bin("dR_STau_lostTrack","dR(STau,lostTrack)", *setups.dR_bins),
-            coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
             # coffea.hist.Bin("Lxy","Lxy", setups["rho_bins"])
         )
         
@@ -63,7 +63,7 @@ class JetdR2D(object):
             coffea.hist.Cat("dataset", "Dataset"),
             coffea.hist.Bin("dR_STau_Jet", "dR(STau,Jet)", *setups.dR_bins),
             coffea.hist.Bin("dR_STau_pfCand","dR(STau,pfCand)", *setups.dR_bins),
-            coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
             # coffea.hist.Bin("Lxy","Lxy", setups["rho_bins"])
         )
         
@@ -72,24 +72,23 @@ class JetdR2D(object):
             coffea.hist.Cat("dataset", "Dataset"),
             coffea.hist.Bin("dR_Tau_STau", "dR(Tau,STau)", *setups.dR_bins),
             coffea.hist.Bin("dR_Tau_Jet", "dR(Tau,Jet)", *setups.dR_bins),
-            coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
             # coffea.hist.Bin("Lxy","Lxy", setups["rho_bins"])
         )
     
     @staticmethod
     def process_events(out, objects, events):
 
-        # objects["dRTauSTau"] = objects["genSUSYTaus"].delta_r(objects["genTau"])
-        objects["dR_STau_Tau"] = objects["genSUSYTaus"].nearest(objects["genTau"], return_metric=True, threshold=None)[1]
-        objects["dR_STau_Jet"] = objects["genSUSYTaus"].nearest(objects["jets"], 
+        # objects["dRTauSTau"] = objects["STaus_susy"].delta_r(objects["Taus_susy"])
+        objects["dR_STau_Tau"] = objects["STaus_susy"].nearest(objects["Taus_susy"], return_metric=True, threshold=None)[1]
+        objects["dR_STau_Jet"] = objects["STaus_susy"].nearest(objects["jets"], 
             #metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2),
             return_metric=True, threshold=None)[1]
-        
-        objects['dR_STau_lostTrack'] = objects["genSUSYTaus"].nearest(events.LostTrack, return_metric=True, threshold=None)[1]
-        objects['dR_STau_pfCand'] = objects["genSUSYTaus"].nearest(events.PFCandidate, return_metric=True, threshold=None)[1]
+        objects['dR_STau_lostTrack'] = objects["STaus_susy"].nearest(events.LostTrack, return_metric=True, threshold=None)[1]
+        objects['dR_STau_pfCand'] = objects["STaus_susy"].nearest(events.PFCandidate, return_metric=True, threshold=None)[1]
 
-        objects["dR_Tau_STau"] = objects["genTau"].nearest(objects["genSUSYTaus"], return_metric=True, threshold=None)[1]
-        objects["dR_Tau_Jet"]  = objects["genTau"].nearest(objects["jets"], 
+        objects["dR_Tau_STau"] = objects["Taus_susy"].nearest(objects["STaus_susy"], return_metric=True, threshold=None)[1]
+        objects["dR_Tau_Jet"]  = objects["Taus_susy"].nearest(objects["jets"], 
             #metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2),
             return_metric=True, threshold=None)[1]
 
@@ -97,11 +96,11 @@ class JetdR2D(object):
         objects["dR_STau_Jet"] = ak.flatten(objects["dR_STau_Jet"])
         objects['dR_STau_lostTrack'] = ak.flatten(objects['dR_STau_lostTrack'])
         objects['dR_STau_pfCand'] = ak.flatten(objects['dR_STau_pfCand'])
-        objects['stau_disp'] = ak.flatten(objects["genSUSYTaus","disp"])
+        objects['stau_disp'] = ak.flatten(objects["STaus_susy","disp"])
 
         objects["dR_Tau_STau"] = ak.flatten(objects["dR_Tau_STau"])
         objects["dR_Tau_Jet"]  = ak.flatten(objects["dR_Tau_Jet"])
-        objects['tau_disp'] = ak.flatten(objects["genTau","disp"])
+        objects['tau_disp'] = ak.flatten(objects["Taus_susy","disp"])
 
         objects["dR_STau_Tau"] = ak.fill_none(objects["dR_STau_Tau"], -1)
         objects["dR_STau_Jet"] = ak.fill_none(objects["dR_STau_Jet"], -1)
@@ -112,10 +111,6 @@ class JetdR2D(object):
         objects["dR_Tau_STau"] = ak.fill_none(objects["dR_Tau_STau"], -1)
         objects["dR_Tau_Jet"]  = ak.fill_none(objects["dR_Tau_Jet"], -1)
         objects['tau_disp'] = ak.fill_none(objects['tau_disp'],-1)
-
-        # print(objects['dR_STau_Jet'])
-        # print(objects['stau_disp'])
-        # exit()
 
         out["dR_STau_Jet"].fill(
             dataset = events.metadata["dataset"],
@@ -156,69 +151,58 @@ class EfficiencyStudy(object):
             "Events",
             coffea.hist.Cat("dataset", "Dataset"),
             coffea.hist.Bin("gen_tau_pt", "efficiency", np.array(setups.gen_jet_pt)),
-            # coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
-            coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
-        )
-        
-        hists["gen_tau_pt_reco"] = coffea.hist.Hist(
-            "Events",
-            coffea.hist.Cat("dataset", "Dataset"),
-            coffea.hist.Bin("gen_tau_pt", "efficiency", np.array(setups.gen_jet_pt)),
-            # coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
-            coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
         )
 
         hists["gen_jet_pt"] = coffea.hist.Hist(
             "Events",
             coffea.hist.Cat("dataset", "Dataset"),
             coffea.hist.Bin("gen_tau_pt", "efficiency", np.array(setups.gen_jet_pt)),
-            # coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
-            coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
         )
 
         hists["gen_jet_pt_reco"] = coffea.hist.Hist(
             "Events",
             coffea.hist.Cat("dataset", "Dataset"),
             coffea.hist.Bin("gen_tau_pt", "efficiency", np.array(setups.gen_jet_pt)),
-            # coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
-            coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
         )
 
-        # hists["gen_energy_ratio"] = coffea.hist.Hist(
-        #     "Events",
-        #     coffea.hist.Cat("dataset", "Dataset"),
-        #     coffea.hist.Bin("energy_ratio", "energy_ratio", *setups.energy_ratio),
-        #     coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
-        # )
+        hists["gen_energy_ratio"] = coffea.hist.Hist(
+            "Events",
+            coffea.hist.Cat("dataset", "Dataset"),
+            coffea.hist.Bin("energy_ratio", "energy_ratio", *setups.energy_ratio),
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
+        )
 
-        # hists["tau_childr_energy_ratio"] = coffea.hist.Hist(
-        #     "Events",
-        #     coffea.hist.Cat("dataset", "Dataset"),
-        #     coffea.hist.Bin("energy_ratio", "energy_ratio", *setups.energy_ratio_children),
-        #     coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
-        # )
+        hists["tau_childr_energy_ratio"] = coffea.hist.Hist(
+            "Events",
+            coffea.hist.Cat("dataset", "Dataset"),
+            coffea.hist.Bin("energy_ratio", "energy_ratio", *setups.energy_ratio_children),
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
+        )
 
-        # hists["tau_childr_visTau_energy_ratio"] = coffea.hist.Hist(
-        #     "Events",
-        #     coffea.hist.Cat("dataset", "Dataset"),
-        #     coffea.hist.Bin("energy_ratio", "energy_ratio", *setups.energy_ratio_children),
-        #     coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
-        # )
+        hists["tau_childr_visTau_energy_ratio"] = coffea.hist.Hist(
+            "Events",
+            coffea.hist.Cat("dataset", "Dataset"),
+            coffea.hist.Bin("energy_ratio", "energy_ratio", *setups.energy_ratio_children),
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
+        )
 
-        # hists["pt_ratio_genJet"] = coffea.hist.Hist(
-        #     "Events",
-        #     coffea.hist.Cat("dataset", "Dataset"),
-        #     coffea.hist.Bin("pt_ratio", "pt_reco/pt_gen", *(setups.pt_ratio[:3])),
-        #     coffea.hist.Bin("pt_gen", "pt_gen", *(setups.pt_ratio[-3:])),
-        #     coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
-        # )
+        hists["pt_ratio_genJet"] = coffea.hist.Hist(
+            "Events",
+            coffea.hist.Cat("dataset", "Dataset"),
+            coffea.hist.Bin("pt_ratio", "pt_reco/pt_gen", *(setups.pt_ratio[:3])),
+            coffea.hist.Bin("pt_gen", "pt_gen", *(setups.pt_ratio[-3:])),
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
+        )
 
         hists["pt_ratio_visTau"] = coffea.hist.Hist(
             "Events",
             coffea.hist.Cat("dataset", "Dataset"),
             coffea.hist.Bin("pt_ratio", "pt_reco/pt_gen", *(setups.pt_ratio[:3])),
             coffea.hist.Bin("pt_gen", "pt_gen", *(setups.pt_ratio[-3:])),
-            coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
         )
 
         hists["pt_resolution_visTau"] = coffea.hist.Hist(
@@ -226,109 +210,57 @@ class EfficiencyStudy(object):
             coffea.hist.Cat("dataset", "Dataset"),
             coffea.hist.Bin("pt_resolution", "pt_reco-pt_gen/pt_gen", *(setups.pt_resolution[:3])),
             coffea.hist.Bin("pt_gen", "pt_gen", *(setups.pt_resolution[-3:])),
-            coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+            coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
         )
 
     @staticmethod
     def process_events(out, objects, events):
         
-        # genTaus that have matching reco tau
+        # genJets matched to the visible tau - matched_genJet, visible taus that mathced to this jets match_taus_genJet
+        objects["match_taus_genJet"] = objects["genJets"].nearest(objects["Taus_susy"], return_metric=False, threshold=0.4)
+        objects["matched_genJet"] = objects["genJets"][(objects["match_taus_genJet"].energy != None)]
 
-        hpsTaus = objects["genTau"].nearest(objects["hpsTaus"], return_metric=False, threshold=0.4)
-        objects["match_genTau_to_recoTau"] = objects["genTau"][(~ak.is_none(hpsTaus.energy,-1))]
+        # recoJets matched to the visible tau - matched_recoJet, visible taus that mathced to this jets match_taus_recoJet
+        objects["match_taus_recoJet"] = objects["jets"].nearest(objects["Taus_susy"], return_metric=False, threshold=0.4)
+        objects["matched_recoJet_taus"] = objects["jets"][(objects["match_taus_recoJet"].energy != None)]
 
-        out["gen_tau_pt"].fill(
-            dataset = events.metadata["dataset"],
-            gen_tau_pt = stand_arr( objects["genTau"].pt ),
-            Lxy = stand_arr( objects["genTau"].parent.vertexRho ),
-            )
-        
-        out["gen_tau_pt_reco"].fill(
-            dataset = events.metadata["dataset"],
-            gen_tau_pt = stand_arr( objects["match_genTau_to_recoTau"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_recoTau"].parent.vertexRho ),
-            )
-        
-        genJets = objects["genTau"].nearest(objects["genJets"], return_metric=False, threshold=0.4)
-        objects["match_genTau_to_genJet"] = objects["genTau"][(~ak.is_none(genJets.energy,-1))]
+        # recoJet matched to the genJet - matched_jets, genJet that matched to this jets match_taus_recoJet
+        objects["match_recoJet_genJet"] = objects["matched_genJet"].nearest(objects["jets"], return_metric=False, threshold=0.4)
+        objects["matched_genJet_recoJet"] = objects["matched_genJet"][(objects["match_recoJet_genJet"].energy != None)]
+        objects["matched_genJet_recoJet_taus"] = objects["match_taus_genJet"][(objects["match_recoJet_genJet"].energy != None)]
 
-        out["gen_jet_pt"].fill(
-            dataset = events.metadata["dataset"],
-            gen_tau_pt = stand_arr( objects["match_genTau_to_genJet"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_genJet"].parent.vertexRho ),
-            )
-        
-        jets = objects["genTau"].nearest(objects["jets"], return_metric=False, threshold=0.4)
-        objects["match_genTau_to_recoJet"] = objects["genTau"][(~ak.is_none(jets.energy,-1))]
-   
-        out["gen_jet_pt_reco"].fill(
-            dataset = events.metadata["dataset"],
-            gen_tau_pt = stand_arr( objects["match_genTau_to_recoJet"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_recoJet"].parent.vertexRho ),
-            )
-        
-        objects["match_recoJet_to_genTau"] = jets[(~ak.is_none(jets.energy,-1))]
-        
-        out["pt_ratio_visTau"].fill(
-            dataset = events.metadata["dataset"],
-            pt_ratio = stand_arr( objects["match_recoJet_to_genTau"].pt /objects["match_genTau_to_recoJet"].pt  ),
-            pt_gen = stand_arr( objects["match_genTau_to_recoJet"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_recoJet"].parent.vertexRho ),
-            )
+        objects["clone_Taus_susy"] = objects["Taus_susy"]
 
-        out["pt_resolution_visTau"].fill(
-            dataset = events.metadata["dataset"],
-            pt_resolution = stand_arr( (objects["match_recoJet_to_genTau"].pt - objects["match_genTau_to_recoJet"].pt) /objects["match_genTau_to_recoJet"].pt  ),
-            pt_gen = stand_arr( objects["match_genTau_to_recoJet"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_recoJet"].parent.vertexRho ),
-        )
-        
-        
-        '''
+        # objects["matched_genJet"] = objects["genJets"]
+        # print(objects["genJets"].energy)LLStaus_Run2.Analysis.
+        # print(objects["match_taus_genJet"].energy)
 
-        # genJets matched to the visible tau - matched_genJet, visible taus that mathced to this jets match_genTau_to_genJet
-        objects["match_genTau_to_genJet"] = objects["genJets"].nearest(objects["genTau"], return_metric=False, threshold=0.4) # genTaus matched to jets
-        objects["match_genJet_to_genTau"] = objects["genJets"][(objects["match_genTau_to_genJet"].energy != None)] # genJets that have matched genTaus
-
-        # recoJets matched to the visible tau - match_recoJet, visible taus that mathced to this jets match_genTau_to_recoJet
-        objects["match_genTau_to_recoJet"] = objects["jets"].nearest(objects["genTau"], return_metric=False, threshold=0.4) # genTaus matched to reco jets
-        objects["match_recoJet"] = objects["jets"][(objects["match_genTau_to_recoJet"].energy != None)] # Jets that have matched genTaus
-
-        # recoJet matched to the genJet - match_jets, genJet that matched to this jets match_genTau_to_recoJet
-        objects["match_recoJet_to_genJet"] = objects["match_genJet_to_genTau"].nearest(objects["jets"], return_metric=False, threshold=0.4)
-        objects["match_genJet_to_recoJet_and_genTau"] = objects["match_genJet_to_genTau"][(objects["match_recoJet_to_genJet"].energy != None)]
-        
-        objects["match_genTau_to_genJet_and_recoJet"] = objects["match_genTau_to_genJet"][(objects["match_recoJet_to_genJet"].energy != None)]
-
-        objects["clone_Taus_susy"] = objects["genTau"]
-
-
-        objects["match_genJet_to_genTau", "jet_E"] = objects["match_genJet_to_genTau"].energy
-        objects["match_genJet_to_genTau", "tau_E"] = objects["match_genTau_to_genJet"].energy[(objects["match_genTau_to_genJet"].energy != None)]
-        objects["match_genJet_to_genTau", "tau_disp"] = objects["match_genTau_to_genJet"].parent.vertexRho[(objects["match_genTau_to_genJet"].energy != None)]
-        objects["match_genJet_to_genTau", "ratio_E"]  = objects["match_genJet_to_genTau", "jet_E"] / objects["match_genJet_to_genTau", "tau_E"]
+        objects["matched_genJet", "jet_E"] = objects["matched_genJet"].energy
+        objects["matched_genJet", "tau_E"] = objects["match_taus_genJet"].energy[(objects["match_taus_genJet"].energy != None)]
+        objects["matched_genJet", "tau_disp"] = objects["match_taus_genJet"].parent.vertexRho[(objects["match_taus_genJet"].energy != None)]
+        objects["matched_genJet", "ratio_E"]  = objects["matched_genJet", "jet_E"] / objects["matched_genJet", "tau_E"]
         
         # Select tau (that mathed to the jet children) that not None 
-        tau = objects["match_genTau_to_genJet"].parent
+        tau = objects["match_taus_genJet"].parent
         tau_children = tau[(~ak.is_none(tau.pdgId,-1))].children
         # Select only visible tau children (drop neutrino)
         tau_children = tau_children[(abs(tau_children.pdgId)!=16)]
 
         # matched genJet without jets that does not match to anything
-        match_genJet = objects["match_genJet_to_genTau"][(~ak.is_none(objects["match_genJet_to_genTau"].energy,-1))]
+        matched_genJet = objects["matched_genJet"][(~ak.is_none(objects["matched_genJet"].energy,-1))]
 
-        # print(match_genJet.energy.to_list())
+        # print(matched_genJet.energy.to_list())
         # print(tau_children.pdgId.to_list())
-        # print(len(match_genJet), len(tau_children))
+        # print(len(matched_genJet), len(tau_children))
 
-        dR = tau_children.delta_r(match_genJet)
+        dR = tau_children.delta_r(matched_genJet)
         # visible tau children that within 0.4 cone to the jet
         tau_children_in_cone = tau_children[(dR<0.4)]
         tau_children_in_cone_E = ak.sum(tau_children_in_cone.energy, axis=2)
         tau_children_E = ak.sum(tau_children.energy, axis=2)
 
-        tau_vis_E = objects["match_genTau_to_genJet"][(~ak.is_none(tau.energy,-1))].energy
-        tau_vis_disp = objects["match_genTau_to_genJet"][(~ak.is_none(tau.energy,-1))].parent.vertexRho
+        tau_vis_E = objects["match_taus_genJet"][(~ak.is_none(tau.energy,-1))].energy
+        tau_vis_disp = objects["match_taus_genJet"][(~ak.is_none(tau.energy,-1))].parent.vertexRho
 
         # print(tau_tau_children_in_cone_E.to_list())
         # print(tau_tau_children_E.to_list())
@@ -343,69 +275,66 @@ class EfficiencyStudy(object):
 
         # exit()
         # print(len(tau_childr_energy_ratio), len(tau_childr_visTau_energy_ratio))
-        # print(len(objects["match_genJet_to_genTau", "tau_disp"]))
-        
-        
+        # print(len(objects["matched_genJet", "tau_disp"]))
+
         out["gen_tau_pt"].fill(
             dataset = events.metadata["dataset"],
-            gen_tau_pt = stand_arr( objects["genTau"].pt ),
-            Lxy = stand_arr( objects["genTau"].parent.vertexRho ),
+            gen_tau_pt = stand_arr( objects["clone_Taus_susy"].pt ),
+            Lxy = stand_arr( objects["clone_Taus_susy"].parent.vertexRho ),
             )
 
         out["gen_jet_pt"].fill(
             dataset = events.metadata["dataset"],
-            gen_tau_pt = stand_arr( objects["match_genTau_to_genJet"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_genJet"].parent.vertexRho ),
+            gen_tau_pt = stand_arr( objects["match_taus_genJet"].pt ),
+            Lxy = stand_arr( objects["match_taus_genJet"].parent.vertexRho ),
             )
    
         out["gen_jet_pt_reco"].fill(
             dataset = events.metadata["dataset"],
-            gen_tau_pt = stand_arr( objects["match_genTau_to_recoJet"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_recoJet"].parent.vertexRho ),
+            gen_tau_pt = stand_arr( objects["match_taus_recoJet"].pt ),
+            Lxy = stand_arr( objects["match_taus_recoJet"].parent.vertexRho ),
             )
 
-        # out["gen_energy_ratio"].fill(
-        #     dataset = events.metadata["dataset"],
-        #     energy_ratio = stand_arr( objects["match_genJet_to_genTau", "ratio_E"] ),
-        #     Lxy = stand_arr( objects["match_genJet_to_genTau", "tau_disp"] ),
-        #     )
+        out["gen_energy_ratio"].fill(
+            dataset = events.metadata["dataset"],
+            energy_ratio = stand_arr( objects["matched_genJet", "ratio_E"] ),
+            Lxy = stand_arr( objects["matched_genJet", "tau_disp"] ),
+            )
 
-        # out["tau_childr_energy_ratio"].fill(
-        #     dataset = events.metadata["dataset"],
-        #     energy_ratio = stand_arr( tau_childr_energy_ratio ),
-        #     Lxy = stand_arr( tau_vis_disp ),
-        #     )
+        out["tau_childr_energy_ratio"].fill(
+            dataset = events.metadata["dataset"],
+            energy_ratio = stand_arr( tau_childr_energy_ratio ),
+            Lxy = stand_arr( tau_vis_disp ),
+            )
 
-        # out["tau_childr_visTau_energy_ratio"].fill(
-        #     dataset = events.metadata["dataset"],
-        #     energy_ratio = stand_arr( tau_childr_visTau_energy_ratio ),
-        #     Lxy = stand_arr( tau_vis_disp ),
-        #     )
+        out["tau_childr_visTau_energy_ratio"].fill(
+            dataset = events.metadata["dataset"],
+            energy_ratio = stand_arr( tau_childr_visTau_energy_ratio ),
+            Lxy = stand_arr( tau_vis_disp ),
+            )
 
-        # ######
+        ######
 
-        # out["pt_ratio_genJet"].fill(
-        #     dataset = events.metadata["dataset"],
-        #     pt_ratio = stand_arr( objects["match_recoJet_to_genJet"].pt / objects["match_genJet_to_recoJet_and_genTau"].pt  ),
-        #     pt_gen = stand_arr( objects["match_genJet_to_recoJet_and_genTau"].pt ),
-        #     Lxy = stand_arr( objects["match_genTau_to_genJet_and_recoJet"].parent.vertexRho ),
-        #     )
+        out["pt_ratio_genJet"].fill(
+            dataset = events.metadata["dataset"],
+            pt_ratio = stand_arr( objects["match_recoJet_genJet"].pt / objects["matched_genJet_recoJet"].pt  ),
+            pt_gen = stand_arr( objects["matched_genJet_recoJet"].pt ),
+            Lxy = stand_arr( objects["matched_genJet_recoJet_taus"].parent.vertexRho ),
+            )
 
-        # out["pt_ratio_visTau"].fill(
-        #     dataset = events.metadata["dataset"],
-        #     pt_ratio = stand_arr( objects["match_recoJet"].pt /objects["match_genTau_to_recoJet"].pt  ),
-        #     pt_gen = stand_arr( objects["match_genTau_to_recoJet"].pt ),
-        #     Lxy = stand_arr( objects["match_genTau_to_recoJet"].parent.vertexRho ),
-        #     )
+        out["pt_ratio_visTau"].fill(
+            dataset = events.metadata["dataset"],
+            pt_ratio = stand_arr( objects["matched_recoJet_taus"].pt /objects["match_taus_recoJet"].pt  ),
+            pt_gen = stand_arr( objects["match_taus_recoJet"].pt ),
+            Lxy = stand_arr( objects["match_taus_recoJet"].parent.vertexRho ),
+            )
 
-        # out["pt_resolution_visTau"].fill(
-        #     dataset = events.metadata["dataset"],
-        #     pt_resolution = stand_arr( (objects["match_recoJet"].pt - objects["match_genTau_to_recoJet"].pt) /objects["match_genTau_to_recoJet"].pt  ),
-        #     pt_gen = stand_arr( objects["match_genTau_to_recoJet"].pt ),
-        #     Lxy = stand_arr( objects["match_genTau_to_recoJet"].parent.vertexRho ),
-        # )
-        
-        '''
+        out["pt_resolution_visTau"].fill(
+            dataset = events.metadata["dataset"],
+            pt_resolution = stand_arr( (objects["matched_recoJet_taus"].pt - objects["match_taus_recoJet"].pt) /objects["match_taus_recoJet"].pt  ),
+            pt_gen = stand_arr( objects["match_taus_recoJet"].pt ),
+            Lxy = stand_arr( objects["match_taus_recoJet"].parent.vertexRho ),
+        )
 
 class JetMatching(coffea.processor.ProcessorABC):
     def __init__(self, cfg, tag_ids_files):
@@ -453,17 +382,17 @@ class JetMatching(coffea.processor.ProcessorABC):
         events[self.collections.GenVisTaus.name, "vertexZ"] = events.GenPart.vertexZ[events[self.collections.GenVisTaus.name].genPartIdxMother]
 
         # First way of finding pairs
-        # objects["genTau"] = events.GenVisTau[
+        # objects["Taus_susy"] = events.GenVisTau[
         #     abs(events.GenVisTau.parent.parent.parent.pdgId) == 1000015
         # ]
-        # objects["genSUSYTaus"] = objects["genTau"].parent.parent.parent
+        # objects["STaus_susy"] = objects["Taus_susy"].parent.parent.parent
 
         # Second way of calculating pairs
-        objects["genTau"] = events[self.collections.GenVisTaus.name][eval(self.collections.GenVisTaus.cut.format(name = "events.%s" %(self.collections.GenVisTaus.name)))]
-        objects["genSUSYTaus"] = events.GenPart[ (abs(events.GenPart.pdgId) == 1000015) & (events.GenPart.hasFlags(["isLastCopy"])) ]
+        objects["Taus_susy"] = events[self.collections.GenVisTaus.name][eval(self.collections.GenVisTaus.cut.format(name = "events.%s" %(self.collections.GenVisTaus.name)))]
+        objects["STaus_susy"] = events.GenPart[ (abs(events.GenPart.pdgId) == 1000015) & (events.GenPart.hasFlags(["isLastCopy"])) ]
 
-        objects["genTau","disp"] = objects["genTau"].parent.vertexRho
-        objects["genSUSYTaus","disp"] = objects["genSUSYTaus"].children[:,:,0].vertexRho
+        objects["Taus_susy","disp"] = objects["Taus_susy"].parent.vertexRho
+        objects["STaus_susy","disp"] = objects["STaus_susy"].children[:,:,0].vertexRho
 
         events[self.collections.Jets.name,"px"] = events[self.collections.Jets.name].x
         events[self.collections.Jets.name,"py"] = events[self.collections.Jets.name].y
@@ -472,9 +401,8 @@ class JetMatching(coffea.processor.ProcessorABC):
         
         objects["jets"] = events[self.collections.Jets.name][eval(self.collections.Jets.cut.format(name = "events.%s" %(self.collections.Jets.name)))]
         objects["genJets"] = events[self.collections.GenJets.name][eval(self.collections.GenJets.cut.format(name = "events.%s" %(self.collections.GenJets.name)))]
-        objects["hpsTaus"] = events[self.collections.Tau.name][eval(self.collections.Tau.cut.format(name = "events.%s" %(self.collections.Tau.name)))]
 
-        # print(objects["genTau"].energy)
+        # print(objects["Taus_susy"].energy)
 
         if "jet_dR_matching" in self.mode:
             JetdR2D.process_events(out, objects, events)
@@ -550,111 +478,42 @@ def regionStudy(cfg: DictConfig) -> None:
         for dataset in samples:
             
             for Lxy_slice in cfg.bin_setups.Lxy_slice:
-         
-                dR_STau_Jet = result_JetMatching["dR_STau_Jet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                ax = coffea.hist.plot2d(dR_STau_Jet, xaxis='dR_STau_Jet', patch_opts={"norm":colors.LogNorm()})
+
+                hist_dRJetSTau = result_JetMatching["dR_STau_Jet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+                ax = coffea.hist.plot2d(hist_dRJetSTau, xaxis='dR_STau_Jet', patch_opts={"norm":colors.LogNorm()})
                 ax.set_title(f'dR(STau, {cfg.collections.Jets.name}) ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
                 ax.figure.set_dpi(72)
                 ax.figure.tight_layout()
-                ax.figure.savefig(path_jet+f'/dR_STau_Jet_Tau_dataset_{dataset}_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png')
-                # ax.figure.savefig(path_jet+f'/dR_STau_Jet_dataset_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.pdf')
+                ax.figure.savefig(path_jet+f'/dR_STau_Jet_dataset_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png')
+                ax.figure.savefig(path_jet+f'/dR_STau_Jet_dataset_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.pdf')
                 matplotlib.pyplot.close(ax.figure)
 
-                dR_Tau_Jet = result_JetMatching["dR_Tau_Jet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                ax = coffea.hist.plot2d(dR_Tau_Jet, xaxis='dR_Tau_Jet', patch_opts={"norm":colors.LogNorm()})
-                ax.set_title(f'dR(Tau, {cfg.collections.Jets.name}) ({dataset}) Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
+                hist_dRJetTau = result_JetMatching["dR_Tau_Jet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+                ax = coffea.hist.plot2d(hist_dRJetTau, xaxis='dR_Tau_Jet', patch_opts={"norm":colors.LogNorm()})
+                ax.set_title(f'dR(Tau, {cfg.collections.Jets.name}) ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
                 ax.figure.set_dpi(72)
                 ax.figure.tight_layout()
-                ax.figure.savefig(path_jet+f'/dR_Tau_Jet_STau_dataset_{dataset}_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png')
-                # ax.figure.savefig(path_jet+f'/dR_Tau_Jet_dataset_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.pdf')
+                ax.figure.savefig(path_jet+f'/dR_Tau_Jet_dataset_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png')
+                ax.figure.savefig(path_jet+f'/dR_Tau_Jet_dataset_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.pdf')
                 matplotlib.pyplot.close(ax.figure)
 
-                dR_STau_Track = result_JetMatching["dR_STau_Track"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                ax = coffea.hist.plot2d(dR_STau_Track, xaxis='dR_STau_lostTrack', patch_opts={"norm":colors.LogNorm()})
-                ax.set_title(f'dR(Tau, lostTrack) ({dataset}) Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
+                hist_dRJetSTau = result_JetMatching["dR_STau_Track"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+                ax = coffea.hist.plot2d(hist_dRJetSTau, xaxis='dR_STau_lostTrack', patch_opts={"norm":colors.LogNorm()})
+                ax.set_title(f'dR(Tau, lostTrack) ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
                 ax.figure.set_dpi(72)
                 ax.figure.tight_layout()
-                ax.figure.savefig(path_pfCand+f'/dR_STau_lostTrack_dataset_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png')
-                # ax.figure.savefig(path_pfCand+f'/dR_STau_lostTrack_dataset_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.pdf')
+                ax.figure.savefig(path_pfCand+f'/dR_STau_lostTrack_dataset_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png')
+                ax.figure.savefig(path_pfCand+f'/dR_STau_lostTrack_dataset_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.pdf')
                 matplotlib.pyplot.close(ax.figure)
 
-                dR_STau_pfCand = result_JetMatching["dR_STau_pfCand"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                ax = coffea.hist.plot2d(dR_STau_pfCand, xaxis='dR_STau_pfCand', patch_opts={"norm":colors.LogNorm()})
-                ax.set_title(f'dR(Tau, pfCand) ({dataset}) Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
+                hist_dRJetSTau = result_JetMatching["dR_STau_pfCand"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+                ax = coffea.hist.plot2d(hist_dRJetSTau, xaxis='dR_STau_pfCand', patch_opts={"norm":colors.LogNorm()})
+                ax.set_title(f'dR(Tau, pfCand) ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
                 ax.figure.set_dpi(72)
                 ax.figure.tight_layout()
-                ax.figure.savefig(path_pfCand+f'/dR_STau_pfCand_dataset_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png')
-                # ax.figure.savefig(path_pfCand+f'/dR_STau_pfCand_dataset_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.pdf')
+                ax.figure.savefig(path_pfCand+f'/dR_STau_pfCand_dataset_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png')
+                ax.figure.savefig(path_pfCand+f'/dR_STau_pfCand_dataset_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.pdf')
                 matplotlib.pyplot.close(ax.figure)
-
-                # Additional projection plots:
-                dR_Tau_Jet_project = dR_Tau_Jet.integrate("dR_Tau_STau")
-                dR_Tau_Jet_project = conv_to_root(dR_Tau_Jet_project, f'dR_Tau_Jet_project{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
-                
-                dR_Tau_Jet_project.SetLineColor(46)
-                dR_Tau_Jet_project.SetLineWidth(2)
-                dR_Tau_Jet_project.SetMarkerColor(3)
-                dR_Tau_Jet_project.SetMarkerSize(0)
-                dR_Tau_Jet_project.SetTitle("dR(#tau,Jet)")
-                
-                outfile = path_jet+f'/dR_Tau_Jet_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
-                
-                utils.utils.root_plot1D(
-                    l_hist = [dR_Tau_Jet_project],
-                    outfile = outfile,
-                    xrange = [0, 0.5],
-                    yrange = (0, dR_Tau_Jet_project.GetMaximum()+0.5*dR_Tau_Jet_project.GetMaximum()),
-                    logx = False, logy = False,
-                    ytitle = "Efficiency",
-                    xtitle = "dR (#tau, jet)",
-                    centertitlex = True, centertitley = True,
-                    centerlabelx = False, centerlabely = False,
-                    gridx = True, gridy = True,
-                    ndivisionsx = None,
-                    stackdrawopt = "nostack",
-                    legendpos = "UL",
-                    legendtitle = f"Lxy: {Lxy_slice[0]}-{Lxy_slice[1]} cm",
-                    legendncol = 1,
-                    #legendtextsize = 0.04,
-                    legendwidthscale = 1.0,
-                    legendheightscale = 1.0,
-                    lumiText = "2018 (13 TeV)"
-                )
-                
-                dR_STau_Jet_project = dR_STau_Jet.integrate("dR_STau_Tau")
-                dR_STau_Jet_project = conv_to_root(dR_STau_Jet_project, f'dR_STau_Jet_project{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
-                
-                dR_STau_Jet_project.SetLineColor(46)
-                dR_STau_Jet_project.SetLineWidth(2)
-                dR_STau_Jet_project.SetMarkerColor(3)
-                dR_STau_Jet_project.SetMarkerSize(0)
-                dR_STau_Jet_project.SetTitle("dR(s#tau,Jet)")
-                
-                
-                outfile = path_jet+f'/dR_STau_Jet_{dataset}__Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png'
-                
-                utils.utils.root_plot1D(
-                    l_hist = [dR_STau_Jet_project],
-                    outfile = outfile,
-                    xrange = [0, 0.5],
-                    yrange = (0, dR_STau_Jet_project.GetMaximum()+0.5*dR_STau_Jet_project.GetMaximum()),
-                    logx = False, logy = False,
-                    ytitle = "Efficiency",
-                    xtitle = "dR (s#tau, jet)",
-                    centertitlex = True, centertitley = True,
-                    centerlabelx = False, centerlabely = False,
-                    gridx = True, gridy = True,
-                    ndivisionsx = None,
-                    stackdrawopt = "nostack",
-                    legendpos = "UL",
-                    legendtitle = f"Lxy: {Lxy_slice[0]}-{Lxy_slice[1]} cm",
-                    legendncol = 1,
-                    #legendtextsize = 0.04,
-                    legendwidthscale = 1.0,
-                    legendheightscale = 1.0,
-                    lumiText = "2018 (13 TeV)"
-                )
-                
 
     if 'efficiency_study' in cfg.mode:
 
@@ -668,47 +527,37 @@ def regionStudy(cfg: DictConfig) -> None:
                 hist_gen_jet_pt = result_JetMatching["gen_jet_pt"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
                 hist_gen_jet_pt_reco = result_JetMatching["gen_jet_pt_reco"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
                 hist_gen_tau_pt = result_JetMatching["gen_tau_pt"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                hist_gen_tau_pt_reco = result_JetMatching["gen_tau_pt_reco"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
                 
                 hist_gen_jet_pt = conv_to_root(hist_gen_jet_pt, f'gen_jet_pt_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
                 hist_gen_jet_pt_reco = conv_to_root(hist_gen_jet_pt_reco, f'gen_jet_pt_reco_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
                 hist_gen_tau_pt = conv_to_root(hist_gen_tau_pt, f'gen_tau_pt_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
-                hist_gen_tau_pt_reco = conv_to_root(hist_gen_tau_pt_reco, f'gen_tau_pt_reco_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
 
-                hist_gen_jet_pt_ratio = hist_gen_jet_pt.Clone()
-                hist_gen_jet_pt_reco_ratio = hist_gen_jet_pt_reco.Clone()
-                hist_gen_tau_pt_reco_ratio= hist_gen_tau_pt_reco.Clone()
-                
-                hist_gen_jet_pt_ratio.Divide(hist_gen_tau_pt)
-                hist_gen_jet_pt_reco_ratio.Divide(hist_gen_tau_pt)
-                hist_gen_tau_pt_reco_ratio.Divide(hist_gen_tau_pt)
+                hist_gen_jet_pt_ratio = hist_gen_jet_pt_reco.Clone()
+                hist_gen_jet_pt_ratio.Divide(hist_gen_jet_pt)
 
-                hist_gen_jet_pt_ratio.SetLineColor(9)
+                hist_gen_tau_pt_ratio = hist_gen_jet_pt.Clone()
+                hist_gen_tau_pt_ratio.Divide(hist_gen_tau_pt)
+
+                hist_gen_jet_pt_ratio.SetLineColor(2)
                 hist_gen_jet_pt_ratio.SetLineWidth(2)
                 hist_gen_jet_pt_ratio.SetMarkerColor(2)
                 hist_gen_jet_pt_ratio.SetMarkerSize(0)
-                hist_gen_jet_pt_ratio.SetTitle("genJet/genTau (dR<0.4)")
+                hist_gen_jet_pt_ratio.SetTitle("recoJet/genJet (dR<0.4)")
 
-                hist_gen_jet_pt_reco_ratio.SetLineColor(8)
-                hist_gen_jet_pt_reco_ratio.SetLineWidth(2)
-                hist_gen_jet_pt_reco_ratio.SetMarkerColor(3)
-                hist_gen_jet_pt_reco_ratio.SetMarkerSize(0)
-                hist_gen_jet_pt_reco_ratio.SetTitle("recoJet/genTau (dR<0.4)")
+                hist_gen_tau_pt_ratio.SetLineColor(3)
+                hist_gen_tau_pt_ratio.SetLineWidth(2)
+                hist_gen_tau_pt_ratio.SetMarkerColor(3)
+                hist_gen_tau_pt_ratio.SetMarkerSize(0)
+                hist_gen_tau_pt_ratio.SetTitle("genJet/genTau (dR<0.4)")
                 
-                hist_gen_tau_pt_reco_ratio.SetLineColor(46)
-                hist_gen_tau_pt_reco_ratio.SetLineWidth(2)
-                hist_gen_tau_pt_reco_ratio.SetMarkerColor(3)
-                hist_gen_tau_pt_reco_ratio.SetMarkerSize(0)
-                hist_gen_tau_pt_reco_ratio.SetTitle("recoTau/genTau (dR<0.4)")
                 
                 outfile = path_jet+f'/ratio_pt_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
                 
                 utils.utils.root_plot1D(
-                    # l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
-                    l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio ],
+                    l_hist = [hist_gen_jet_pt_ratio,hist_gen_tau_pt_ratio],
                     outfile = outfile,
-                    xrange = [10, 1010],
-                    yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.5*hist_gen_jet_pt_ratio.GetMaximum()),
+                    xrange = [0.1, 1010],
+                    yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.05*hist_gen_jet_pt_ratio.GetMaximum()),
                     logx = True, logy = False,
                     ytitle = "Efficiency",
                     xtitle = "p_{T}(#tau_{vis}) GeV",
@@ -717,12 +566,12 @@ def regionStudy(cfg: DictConfig) -> None:
                     gridx = True, gridy = True,
                     ndivisionsx = None,
                     stackdrawopt = "nostack",
-                    legendpos = "UL",
-                    legendtitle = f"Lxy: {Lxy_slice[0]}-{Lxy_slice[1]} cm",
+                    legendpos = "LR",
+                    legendtitle = f"Lxy=({Lxy_slice[0]}-{Lxy_slice[1]})cm",
                     legendncol = 1,
                     #legendtextsize = 0.04,
-                    legendwidthscale = 1.0,
-                    legendheightscale = 1.0,
+                    legendwidthscale = 1.3,
+                    legendheightscale = 1.5,
                     lumiText = "2018 (13 TeV)"
                 )
 
@@ -736,51 +585,41 @@ def regionStudy(cfg: DictConfig) -> None:
                 hist_gen_jet_pt = result_JetMatching["gen_jet_pt"].integrate("dataset",dataset).integrate("gen_tau_pt")
                 hist_gen_jet_pt_reco = result_JetMatching["gen_jet_pt_reco"].integrate("dataset",dataset).integrate("gen_tau_pt")
                 hist_gen_tau_pt = result_JetMatching["gen_tau_pt"].integrate("dataset",dataset).integrate("gen_tau_pt")
-                hist_gen_tau_pt_reco = result_JetMatching["gen_tau_pt_reco"].integrate("dataset",dataset).integrate("gen_tau_pt")
                 
                 hist_gen_jet_pt = conv_to_root(hist_gen_jet_pt, f'gen_jet_Lxy')
-                hist_gen_jet_pt.Rebin(1)
-                hist_gen_jet_pt_reco = conv_to_root(hist_gen_jet_pt_reco, f'gen_jet_reco_Lxy')
-                hist_gen_jet_pt_reco.Rebin(1)
+                hist_gen_jet_pt.Rebin(5)
+                hist_gen_jet_pt_reco = conv_to_root(hist_gen_jet_pt_reco, f'gen_jet_Lxy')
+                hist_gen_jet_pt_reco.Rebin(5)
                 hist_gen_tau_pt = conv_to_root(hist_gen_tau_pt, f'gen_tau_Lxy')
-                hist_gen_tau_pt.Rebin(1)
-                hist_gen_tau_pt_reco = conv_to_root(hist_gen_tau_pt_reco, f'gen_tau_reco_Lxy')
-                hist_gen_tau_pt_reco.Rebin(1)
+                hist_gen_tau_pt.Rebin(5)
 
-                hist_gen_jet_pt_ratio = hist_gen_jet_pt.Clone()
-                hist_gen_jet_pt_reco_ratio = hist_gen_jet_pt_reco.Clone()
-                hist_gen_tau_pt_reco_ratio = hist_gen_tau_pt_reco.Clone()
+                hist_gen_jet_pt_ratio = hist_gen_jet_pt_reco.Clone()
+                hist_gen_jet_pt_ratio.Divide(hist_gen_jet_pt)
 
-                hist_gen_jet_pt_ratio.Divide(hist_gen_tau_pt)
-                hist_gen_jet_pt_reco_ratio.Divide(hist_gen_tau_pt)
-                hist_gen_tau_pt_reco_ratio.Divide(hist_gen_tau_pt)
+                hist_gen_tau_pt_ratio = hist_gen_jet_pt.Clone()
+                hist_gen_tau_pt_ratio.Divide(hist_gen_tau_pt)
 
-                hist_gen_jet_pt_ratio.SetLineColor(9)
+                hist_gen_jet_pt_ratio.SetLineColor(2)
                 hist_gen_jet_pt_ratio.SetLineWidth(2)
                 hist_gen_jet_pt_ratio.SetMarkerColor(2)
                 hist_gen_jet_pt_ratio.SetMarkerSize(0)
-                hist_gen_jet_pt_ratio.SetTitle("genJet/genTau (dR<0.4)")
+                hist_gen_jet_pt_ratio.SetTitle("recoJet/genJet (dR<0.4)")
 
-                hist_gen_jet_pt_reco_ratio.SetLineColor(8)
-                hist_gen_jet_pt_reco_ratio.SetLineWidth(2)
-                hist_gen_jet_pt_reco_ratio.SetMarkerColor(3)
-                hist_gen_jet_pt_reco_ratio.SetMarkerSize(0)
-                hist_gen_jet_pt_reco_ratio.SetTitle("recoJet/genTau (dR<0.4)")
+                hist_gen_tau_pt_ratio.SetLineColor(3)
+                hist_gen_tau_pt_ratio.SetLineWidth(2)
+                hist_gen_tau_pt_ratio.SetMarkerColor(3)
+                hist_gen_tau_pt_ratio.SetMarkerSize(0)
+                hist_gen_tau_pt_ratio.SetTitle("genJet/genTau (dR<0.4)")
                 
-                hist_gen_tau_pt_reco_ratio.SetLineColor(46)
-                hist_gen_tau_pt_reco_ratio.SetLineWidth(2)
-                hist_gen_tau_pt_reco_ratio.SetMarkerColor(3)
-                hist_gen_tau_pt_reco_ratio.SetMarkerSize(0)
-                hist_gen_tau_pt_reco_ratio.SetTitle("recoTau/genTau (dR<0.4)")
                 
                 outfile = path_jet+f'/ratio_Lxy_{dataset}.png'
                 
                 utils.utils.root_plot1D(
-                    l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
+                    l_hist = [hist_gen_jet_pt_ratio,hist_gen_tau_pt_ratio],
                     outfile = outfile,
-                    xrange = [0.0001, 110],
-                    yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.5*hist_gen_jet_pt_ratio.GetMaximum()),
-                    logx = True, logy = False,
+                    xrange = [-10, 110],
+                    yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.05*hist_gen_jet_pt_ratio.GetMaximum()),
+                    logx = False, logy = False,
                     ytitle = "Efficiency",
                     xtitle = "Lxy(#tau_{vis}) cm",
                     centertitlex = True, centertitley = True,
@@ -788,100 +627,100 @@ def regionStudy(cfg: DictConfig) -> None:
                     gridx = True, gridy = True,
                     ndivisionsx = None,
                     stackdrawopt = "nostack",
-                    legendpos = "UL",
+                    legendpos = "LR",
                     legendtitle = f"",
                     legendncol = 1,
                     #legendtextsize = 0.04,
-                    legendwidthscale = 1.0,
-                    legendheightscale = 1.0,
+                    legendwidthscale = 1.3,
+                    legendheightscale = 1.5,
                     lumiText = "2018 (13 TeV)"
                 )
 
 
-        # path_jet = cfg.output+"/eff_study/ratio_E"
-        # os.makedirs(path_jet, exist_ok=True)
+        path_jet = cfg.output+"/eff_study/ratio_E"
+        os.makedirs(path_jet, exist_ok=True)
 
-        # for dataset in samples:
+        for dataset in samples:
             
-        #     for Lxy_slice in cfg.eff_setups.Lxy_slice:
+            for Lxy_slice in cfg.eff_setups.Lxy_slice:
 
-        #         # gen_energy_ratio
-        #         # energy_ratio
+                # gen_energy_ratio
+                # energy_ratio
 
-        #         hist_gen_jet_ratio = result_JetMatching["gen_energy_ratio"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-        #         hist_tau_childr_energy_ratio = result_JetMatching["tau_childr_energy_ratio"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-        #         hist_tau_childr_visTau_energy_ratio = result_JetMatching["tau_childr_visTau_energy_ratio"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))  
+                hist_gen_jet_ratio = result_JetMatching["gen_energy_ratio"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+                hist_tau_childr_energy_ratio = result_JetMatching["tau_childr_energy_ratio"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+                hist_tau_childr_visTau_energy_ratio = result_JetMatching["tau_childr_visTau_energy_ratio"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))  
 
                 
-        #         hist_gen_jet_ratio = conv_to_root(hist_gen_jet_ratio, f'energy_ratio{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
-        #         hist_tau_childr_energy_ratio = conv_to_root(hist_tau_childr_energy_ratio, f'children/mat_children_ratio{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
-        #         hist_tau_childr_visTau_energy_ratio = conv_to_root(hist_tau_childr_visTau_energy_ratio, f'vis_tau/mat_children_ratio{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
+                hist_gen_jet_ratio = conv_to_root(hist_gen_jet_ratio, f'energy_ratio{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
+                hist_tau_childr_energy_ratio = conv_to_root(hist_tau_childr_energy_ratio, f'children/mat_children_ratio{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
+                hist_tau_childr_visTau_energy_ratio = conv_to_root(hist_tau_childr_visTau_energy_ratio, f'vis_tau/mat_children_ratio{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
 
-        #         hist_gen_jet_ratio.SetLineColor(2)
-        #         hist_gen_jet_ratio.SetLineWidth(2)
-        #         hist_gen_jet_ratio.SetMarkerColor(2)
-        #         hist_gen_jet_ratio.SetMarkerSize(0)
-        #         hist_gen_jet_ratio.SetTitle("genJet_{E}/#tau^{vis}_{E} (dR<0.4)")
+                hist_gen_jet_ratio.SetLineColor(2)
+                hist_gen_jet_ratio.SetLineWidth(2)
+                hist_gen_jet_ratio.SetMarkerColor(2)
+                hist_gen_jet_ratio.SetMarkerSize(0)
+                hist_gen_jet_ratio.SetTitle("genJet_{E}/#tau^{vis}_{E} (dR<0.4)")
                 
-        #         hist_tau_childr_energy_ratio.SetLineColor(4)
-        #         hist_tau_childr_energy_ratio.SetLineWidth(2)
-        #         hist_tau_childr_energy_ratio.SetMarkerColor(4)
-        #         hist_tau_childr_energy_ratio.SetMarkerSize(0)
-        #         hist_tau_childr_energy_ratio.SetTitle("#sum(#tau_{child_E})/#sum(#tau_{child_E}, dR_{genJet}<0.4)")
+                hist_tau_childr_energy_ratio.SetLineColor(4)
+                hist_tau_childr_energy_ratio.SetLineWidth(2)
+                hist_tau_childr_energy_ratio.SetMarkerColor(4)
+                hist_tau_childr_energy_ratio.SetMarkerSize(0)
+                hist_tau_childr_energy_ratio.SetTitle("#sum(#tau_{child_E})/#sum(#tau_{child_E}, dR_{genJet}<0.4)")
 
-        #         hist_tau_childr_visTau_energy_ratio.SetLineColor(6)
-        #         hist_tau_childr_visTau_energy_ratio.SetLineWidth(2)
-        #         hist_tau_childr_visTau_energy_ratio.SetMarkerColor(6)
-        #         hist_tau_childr_visTau_energy_ratio.SetMarkerSize(0)
-        #         hist_tau_childr_visTau_energy_ratio.SetTitle("#sum(#tau^{vis}_{E})/#sum(#tau_{child_E}, dR_{genJet}<0.4)")
+                hist_tau_childr_visTau_energy_ratio.SetLineColor(6)
+                hist_tau_childr_visTau_energy_ratio.SetLineWidth(2)
+                hist_tau_childr_visTau_energy_ratio.SetMarkerColor(6)
+                hist_tau_childr_visTau_energy_ratio.SetMarkerSize(0)
+                hist_tau_childr_visTau_energy_ratio.SetTitle("#sum(#tau^{vis}_{E})/#sum(#tau_{child_E}, dR_{genJet}<0.4)")
 
-        #         outfile = path_jet+f'/ratio_E_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
+                outfile = path_jet+f'/ratio_E_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
                 
-        #         utils.utils.root_plot1D(
-        #             l_hist = [hist_gen_jet_ratio],
-        #             outfile = outfile,
-        #             xrange = [cfg.eff_setups.energy_ratio[1], cfg.eff_setups.energy_ratio[2]],
-        #             yrange = (0, hist_gen_jet_ratio.GetMaximum()+0.05*hist_gen_jet_ratio.GetMaximum()),
-        #             logx = False, logy = False,
-        #             ytitle = "Freq.",
-        #             xtitle = "E_{obj_1}/E_{obj_2}",
-        #             centertitlex = True, centertitley = True,
-        #             centerlabelx = False, centerlabely = False,
-        #             gridx = True, gridy = True,
-        #             ndivisionsx = None,
-        #             stackdrawopt = "nostack",
-        #             legendpos = "UR",
-        #             legendtitle = f"Lxy=({Lxy_slice[0]}-{Lxy_slice[1]})",
-        #             legendncol = 1,
-        #             #legendtextsize = 0.04,
-        #             legendwidthscale = 1.3,
-        #             legendheightscale = 1.5,
-        #             lumiText = "2018 (13 TeV)"
-        #         )
+                utils.utils.root_plot1D(
+                    l_hist = [hist_gen_jet_ratio],
+                    outfile = outfile,
+                    xrange = [cfg.eff_setups.energy_ratio[1], cfg.eff_setups.energy_ratio[2]],
+                    yrange = (0, hist_gen_jet_ratio.GetMaximum()+0.05*hist_gen_jet_ratio.GetMaximum()),
+                    logx = False, logy = False,
+                    ytitle = "Freq.",
+                    xtitle = "E_{obj_1}/E_{obj_2}",
+                    centertitlex = True, centertitley = True,
+                    centerlabelx = False, centerlabely = False,
+                    gridx = True, gridy = True,
+                    ndivisionsx = None,
+                    stackdrawopt = "nostack",
+                    legendpos = "UR",
+                    legendtitle = f"Lxy=({Lxy_slice[0]}-{Lxy_slice[1]})",
+                    legendncol = 1,
+                    #legendtextsize = 0.04,
+                    legendwidthscale = 1.3,
+                    legendheightscale = 1.5,
+                    lumiText = "2018 (13 TeV)"
+                )
 
-        #         outfile2 = path_jet+f'/ratio_E_child_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
+                outfile2 = path_jet+f'/ratio_E_child_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
 
-        #         utils.utils.root_plot1D(
-        #             l_hist = [hist_tau_childr_energy_ratio, hist_tau_childr_visTau_energy_ratio],
-        #             outfile = outfile2,
-        #             xrange = [cfg.eff_setups.energy_ratio_children[1], cfg.eff_setups.energy_ratio_children[2]],
-        #             yrange = (0, hist_tau_childr_energy_ratio.GetMaximum()+0.05*hist_tau_childr_energy_ratio.GetMaximum()),
-        #             logx = False, logy = False,
-        #             ytitle = "Freq.",
-        #             xtitle = "E_{obj_1}/E_{obj_2}",
-        #             centertitlex = True, centertitley = True,
-        #             centerlabelx = False, centerlabely = False,
-        #             gridx = True, gridy = True,
-        #             ndivisionsx = None,
-        #             stackdrawopt = "nostack",
-        #             legendpos = "UL",
-        #             legendtitle = f"Lxy=({Lxy_slice[0]}-{Lxy_slice[1]})",
-        #             legendncol = 1,
-        #             #legendtextsize = 0.04,
-        #             legendwidthscale = 1.3,
-        #             legendheightscale = 1.5,
-        #             lumiText = "2018 (13 TeV)"
-        #         )
+                utils.utils.root_plot1D(
+                    l_hist = [hist_tau_childr_energy_ratio, hist_tau_childr_visTau_energy_ratio],
+                    outfile = outfile2,
+                    xrange = [cfg.eff_setups.energy_ratio_children[1], cfg.eff_setups.energy_ratio_children[2]],
+                    yrange = (0, hist_tau_childr_energy_ratio.GetMaximum()+0.05*hist_tau_childr_energy_ratio.GetMaximum()),
+                    logx = False, logy = False,
+                    ytitle = "Freq.",
+                    xtitle = "E_{obj_1}/E_{obj_2}",
+                    centertitlex = True, centertitley = True,
+                    centerlabelx = False, centerlabely = False,
+                    gridx = True, gridy = True,
+                    ndivisionsx = None,
+                    stackdrawopt = "nostack",
+                    legendpos = "UL",
+                    legendtitle = f"Lxy=({Lxy_slice[0]}-{Lxy_slice[1]})",
+                    legendncol = 1,
+                    #legendtextsize = 0.04,
+                    legendwidthscale = 1.3,
+                    legendheightscale = 1.5,
+                    lumiText = "2018 (13 TeV)"
+                )
 
 
         path_res = cfg.output+"/eff_study/resolution_pt"
@@ -891,13 +730,13 @@ def regionStudy(cfg: DictConfig) -> None:
             
             for Lxy_slice in cfg.eff_setups.Lxy_slice:
 
-                # hist_pt_ratio_genJet = result_JetMatching["pt_ratio_genJet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                # ax = coffea.hist.plot2d(hist_pt_ratio_genJet, xaxis='pt_gen', patch_opts={"norm":colors.LogNorm()})
-                # ax.set_title(f'pt_reco/pt_genJet ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
-                # ax.figure.set_dpi(72)
-                # ax.figure.tight_layout()
-                # ax.figure.savefig(path_res+f'/pt_ratio_genJet_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png')
-                # matplotlib.pyplot.close(ax.figure)
+                hist_pt_ratio_genJet = result_JetMatching["pt_ratio_genJet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+                ax = coffea.hist.plot2d(hist_pt_ratio_genJet, xaxis='pt_gen', patch_opts={"norm":colors.LogNorm()})
+                ax.set_title(f'pt_reco/pt_genJet ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
+                ax.figure.set_dpi(72)
+                ax.figure.tight_layout()
+                ax.figure.savefig(path_res+f'/pt_ratio_genJet_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png')
+                matplotlib.pyplot.close(ax.figure)
 
 
                 hist_pt_ratio_visTau = result_JetMatching["pt_ratio_visTau"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
@@ -905,7 +744,7 @@ def regionStudy(cfg: DictConfig) -> None:
                 ax.set_title(f'pt_reco/pt_visTau ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
                 ax.figure.set_dpi(72)
                 ax.figure.tight_layout()
-                ax.figure.savefig(path_res+f'/pt_ratio_visTau_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png')
+                ax.figure.savefig(path_res+f'/pt_ratio_visTau_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png')
                 matplotlib.pyplot.close(ax.figure)
 
 
@@ -918,7 +757,7 @@ def regionStudy(cfg: DictConfig) -> None:
                 hist_visTau_resolution.SetMarkerSize(0)
                 hist_visTau_resolution.SetTitle("pt_resolution")
 
-                outfile3 = path_res+f'/pt_resolution_visTau_{dataset}_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png'
+                outfile3 = path_res+f'/pt_resolution_visTau_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
 
                 utils.utils.root_plot1D(
                     l_hist = [hist_visTau_resolution],
@@ -926,7 +765,7 @@ def regionStudy(cfg: DictConfig) -> None:
                     xrange = [cfg.eff_setups.pt_resolution[1], cfg.eff_setups.pt_resolution[2]],
                     yrange = (1, hist_visTau_resolution.GetMaximum()+0.05*hist_visTau_resolution.GetMaximum()),
                     logx = False, logy = True,
-                    ytitle = "arb. units",
+                    ytitle = "Freq.",
                     xtitle = "pt(recoJet)-pt(#tau_{vis}) / pt(#tau_{vis})",
                     centertitlex = True, centertitley = True,
                     centerlabelx = False, centerlabely = False,
@@ -934,11 +773,11 @@ def regionStudy(cfg: DictConfig) -> None:
                     ndivisionsx = None,
                     stackdrawopt = "nostack",
                     legendpos = "UR",
-                    legendtitle = f"Lxy: {Lxy_slice[0]}-{Lxy_slice[1]} cm",
+                    legendtitle = f"Lxy=({Lxy_slice[0]}-{Lxy_slice[1]})",
                     legendncol = 1,
                     #legendtextsize = 0.04,
-                    legendwidthscale = 0.7,
-                    legendheightscale = 0.7,
+                    legendwidthscale = 1.3,
+                    legendheightscale = 1.5,
                     lumiText = "2018 (13 TeV)"
                 )
 

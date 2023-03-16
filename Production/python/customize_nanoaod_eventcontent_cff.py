@@ -4,6 +4,7 @@ from PhysicsTools.NanoAOD.common_cff import *
 from PhysicsTools.NanoAOD.genparticles_cff import *
 from PhysicsTools.NanoAOD.taus_cff import *
 from PhysicsTools.NanoAOD.jetsAK4_CHS_cff import *
+#from PhysicsTools.NanoAOD.jets_cff import *
 
 def customize_process_and_associate(process, disTauTagOutputOpt = 1) :
     
@@ -50,10 +51,10 @@ def customize_process_and_associate(process, disTauTagOutputOpt = 1) :
             lostInnerHits           = Var("lostInnerHits"                       , int       , doc = "Lost inner hits"),
             hasTrackDetails         = Var("hasTrackDetails"                     , bool      , doc = "True if a bestTrack can be extracted from this Candidate"),
             phiAtVtx                = Var("phiAtVtx"                            , float     , doc = "Phi of the candidate's track at the vertex; this is identical to phi() for the vast majority of the particles, but the two might differ for some of them if the calorimeters had contributed significantly in defining the 4-vector of the particle"),
-            dxy                     = Var(f"?{trk_cond}?dxy:-999"               , float     , doc = "dxy w.r.t. associated PV"),
-            dxyError                = Var(f"?{trk_cond}?dxyError:-999"          , float     , doc = "Error on dxy"),
-            dz                      = Var(f"?{trk_cond}?dzAssociatedPV:-999"    , float     , doc = "dz w.r.t. associated PV"),
-            dzError                 = Var(f"?{trk_cond}?dzError:-999"           , float     , doc = "Error on dz"),
+            dxy                     = Var(f"?{trk_cond}?dxy:-999"                , float     , doc = "dxy w.r.t. associated PV"),
+            dxyError                = Var(f"?{trk_cond}?dxyError:-999"           , float     , doc = "Error on dxy"),
+            dz                      = Var(f"?{trk_cond}?dzAssociatedPV:-999"     , float     , doc = "dz w.r.t. associated PV"),
+            dzError                 = Var(f"?{trk_cond}?dzError:-999"            , float     , doc = "Error on dz"),
             vx                      = Var("vx"                                  , float     , doc = "Vertex x"),
             vy                      = Var("vx"                                  , float     , doc = "Vertex y"),
             vz                      = Var("vz"                                  , float     , doc = "Vertex z"),
@@ -67,13 +68,8 @@ def customize_process_and_associate(process, disTauTagOutputOpt = 1) :
     
     
     # Unfiltered taus
-    myfinalTaus = finalTaus.clone(
-        #src = cms.InputTag("slimmedTausUpdated"),
-        src = cms.InputTag("slimmedTaus"),
-        cut = cms.string("pt > 18"),
-    )
-    
-    process.globalReplace("finalTaus", myfinalTaus)
+    process.finalTaus.cut = cms.string("pt > 18")
+    process.tauTable.doc = cms.string("slimmedTaus after basic selection (" + process.finalTaus.cut.value()+")")
     
     
     # CaloJets
@@ -133,7 +129,7 @@ def customize_process_and_associate(process, disTauTagOutputOpt = 1) :
         
         process.disTauTag = cms.EDProducer(
             "DisTauTag",
-            graphPath = cms.string("src/data/particlenet_v1_a27159734e304ea4b7f9e0042baa9e22.pb"),
+            graphPath = cms.string("data/particlenet_v1_a27159734e304ea4b7f9e0042baa9e22.pb"),
             #jets = cms.InputTag("finalJets"),
             jets = process.jetTable.src,
             pfCandidates = cms.InputTag('packedPFCandidates'),
