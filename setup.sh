@@ -4,8 +4,9 @@ if [ $# -ne 1 ] ; then
     echo "To run: source setup.sh mode"
     echo "e.g: source setup.sh NanoAOD_UL2018"
     echo "Supported modes:"
-    echo "1) CMSSW_12_4_0 (for NanoAOD UL 2018 production)"
+    echo "1) NanoAOD_UL2018 (for NanoAOD UL 2018 production) or CMSSW_X_Y_Z"
     echo "2) conda (for analysis)"
+    echo "3) combine (for combine)"
     return 1
 fi
 
@@ -23,7 +24,10 @@ function run_cmd {
 
 if [[ $MODE = "NanoAOD_UL2018" || "$MODE" == *"CMSSW"* ]] ; then
 
-    if [[ "$MODE" == *"CMSSW"* ]] ; then
+    if [[ $MODE == "NanoAOD_UL2018" ]] ; then
+        CMSSW_VER="CMSSW_12_6_0_patch1"
+        export SCRAM_ARCH=slc7_amd64_gcc10
+    elif [[ "$MODE" == *"CMSSW"* ]] ; then
         CMSSW_VER=$MODE
         export SCRAM_ARCH=slc7_amd64_gcc10
     else
@@ -48,8 +52,8 @@ if [[ $MODE = "NanoAOD_UL2018" || "$MODE" == *"CMSSW"* ]] ; then
         run_cmd ln -s ../../../../Production Production
         run_cmd mkdir -p ../data 
         run_cmd cp -rf ../../../../Production/data/models/* ../data/
-        run_cmd mkdir -p ../src/data
-        run_cmd cp -rf ../../../../Production/data/models/* ../src/data
+        #run_cmd mkdir -p ../src/data
+        #run_cmd cp -rf ../../../../Production/data/models/* ../src/data
         run_cmd scram b -j8
         run_cmd touch ../../.installed
         run_cmd cd ../../../..
@@ -93,6 +97,45 @@ elif [ $MODE = "conda" ] ; then
     fi
 
     run_cmd conda activate llstau
+
+elif [[ $MODE = "combine" ]] ; then
+
+    CMSSW_VER="CMSSW_11_3_4"
+    #export SCRAM_ARCH=slc7_amd64_gcc10
+
+    if ! [ -f soft/$CMSSW_VER/.installed ] ; then
+        run_cmd mkdir -p soft
+        run_cmd cd soft
+        if [ -d $CMSSW_VER ] ; then
+            echo "Removing incomplete $CMSSW_VER installation..."
+            run_cmd rm -rf $CMSSW_VER
+        fi
+        
+        echo "Creating new $CMSSW_VER area..."
+        run_cmd scramv1 project CMSSW $CMSSW_VER
+        run_cmd cd $CMSSW_VER/src
+        run_cmd eval `scramv1 runtime -sh`
+        echo "CMSSW_BASE: "$CMSSW_BASE
+        
+        run_cmd git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+        run_cmd cd $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/
+        run_cmd git fetch origin
+        run_cmd git checkout v9.0.0
+        
+        run_cmd cd $CMSSW_BASE/src/
+        
+        run_cmd git clone https://github.com/cms-analysis/CombineHarvester.git CombineHarvester
+        run_cmd cd $CMSSW_BASE/src/CombineHarvester/
+        run_cmd git checkout v2.0.0
+        
+        run_cmd cd $CMSSW_BASE/src/
+        
+        run_cmd ln -s ../../../Limits Limits
+        
+        run_cmd scramv1 b clean
+        run_cmd scramv1 b
+    
+    fi
 
 else
     echo echo "Mode "$MODE" is not supported."
