@@ -1,4 +1,4 @@
-isMC=True disTauTagOutputOpt=1
+sampleType=MC era=2018 disTauTagOutputOpt=1
 
 # QCD_HT50to100       /QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2/MINIAODSIM
 # QCD_HT100to200      /QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2/MINIAODSIM

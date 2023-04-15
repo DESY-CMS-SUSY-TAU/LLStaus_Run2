@@ -5,6 +5,8 @@ procs_sig:
     - "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"
   "stau100_lsp1_ctau1000mm":
     - "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"
+  "stau250_lsp1_ctau0p01mm":
+    - "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"
   "stau250_lsp1_ctau100mm":
     - "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"
   "stau250_lsp1_ctau1000mm":
@@ -38,15 +40,32 @@ procs_bkg:
     - "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8"
     - "TTToHadronic_TuneCP5_13TeV-powheg-pythia8"
     - "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8"
-  #"TTX":
-  #  - "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"
-  #  - "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"
-  #  - "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8"
-  #  - "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8"
-  #"VV":
-  #  - "WW_TuneCP5_13TeV-pythia8"
-  #  - "WZ_TuneCP5_13TeV-pythia8"
-  #  - "ZZ_TuneCP5_13TeV-pythia8"
+  "TTX":
+    - "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"
+    - "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"
+    - "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8"
+    - "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8"
+    - "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8"
+  "VXX":
+    - "VVTo2L2Nu_MLL-1toInf_TuneCP5_13TeV-amcatnloFXFX-pythia8"
+    - "WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8"
+    - "WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8"
+    - "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8"
+    - "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8"
+    - "WZTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8"
+    - "WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8"
+    - "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8"
+    - "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8"
+    - "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8"
+    - "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8"
+    - "ZZTo4L_TuneCP5_13TeV_powheg_pythia8"
+    - "VHToNonbb_M125_TuneCP5_13TeV-amcatnloFXFX_madspin_pythia8"
+  
+  "GluGlu":
+    - "GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8"
+    - "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8"
+    - "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8"
+
   "QCD":
     - "QCD_Pt_15to30_TuneCP5_13TeV_pythia8"
     - "QCD_Pt_30to50_TuneCP5_13TeV_pythia8"
@@ -65,7 +84,7 @@ procs_bkg:
     - "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8"
 
 # File containing the input histograms
-inhistfile: "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/control_cat_plots_v20/hists/Cut-006_b_tagged_0_cut_signal_bins.root"
+inhistfile: "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_condor/control_cat_plots_MET_METnoMu/hists/Cut-006_b_tagged_0_cut_signal_bins.root"
 
 # Will read the histnames with the following suffix
 # Must include the leading underscore (or whichever separator is used)
@@ -76,10 +95,11 @@ xsecfile_bkg: "/nfs/dust/cms/user/sobhatta/work/LongLivedStaus/LLStaus_Run2/Anal
 
 # The signal xsecs should be in a csv file
 xsecfile_sig: "/nfs/dust/cms/user/sobhatta/work/LongLivedStaus/LLStaus_Run2/Analysis/configs/crosssections_stau_mass-degenerate.csv"
+#xsecfile_sig: "/nfs/dust/cms/user/sobhatta/work/LongLivedStaus/LLStaus_Run2/Analysis/configs/crosssections_stau_maximally-mixed.csv"
 
-cutflowsfile: "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/control_cat_plots_v20/cutflows.json"
+cutflowsfile: "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_condor/control_cat_plots_MET_METnoMu/cutflows.json"
 
-# Count to use in the denominator when normalizing
+# Count to use (from cutflowsfile) in the denominator when normalizing
 # Nested keys separated by "."
 # For e.g. if "a.b.c", will read the dictionary entry dict[a][b][c]
 neventkey: "all.NanDrop"
@@ -88,5 +108,8 @@ era: "2018"
 #lumi: 59.83
 lumi: 137.62
 
-prephistdir: "tmp/hists"
-carddir: "tmp/combine"
+prephistdir: "tmp/control_cat_plots_MET_METnoMu/mass-degenerate/hists"
+carddir: "tmp/control_cat_plots_MET_METnoMu/mass-degenerate/combine"
+
+#prephistdir: "tmp/control_cat_plots_MET_METnoMu/maximally-mixed/hists"
+#carddir: "tmp/control_cat_plots_MET_METnoMu/maximally-mixed/combine"

@@ -34,5 +34,8 @@
 ```sh
 crab_cmd.py --workArea work-area --cmd status
 ```
+Better script for job status (provides a summary):<br>
+`./LLStaus_Run2/Production/scripts/crab.py --status --work-area <crab work area>`<br>
+This also has other useful options. Run with `--help` to check.
 
 5. If some jobs are failed: try to understand the reason and use standard crab tools to solve the problem (e.g. crab resubmit with additional arguments). In very problematic cases a recovery task could be created.
