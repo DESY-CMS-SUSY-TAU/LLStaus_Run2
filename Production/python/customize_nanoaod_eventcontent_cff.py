@@ -6,7 +6,7 @@ from PhysicsTools.NanoAOD.taus_cff import *
 from PhysicsTools.NanoAOD.jetsAK4_CHS_cff import *
 #from PhysicsTools.NanoAOD.jets_cff import *
 
-def customize_process_and_associate(process, disTauTagOutputOpt = 1) :
+def customize_process_and_associate(process, isMC, disTauTagOutputOpt = 1) :
     
     # Lost tracks
     process.lostTrackTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
@@ -104,26 +104,28 @@ def customize_process_and_associate(process, disTauTagOutputOpt = 1) :
     )
     
     
-    # GenParticles
-    myGenParticleTable = genParticleTable.clone()
-    myGenParticleTable.variables.vertexX        = Var("vertex.X"      , float)
-    myGenParticleTable.variables.vertexY        = Var("vertex.Y"      , float)
-    myGenParticleTable.variables.vertexZ        = Var("vertex.Z"      , float)
-    myGenParticleTable.variables.vertexRho      = Var("vertex.Rho"    , float)
-    myGenParticleTable.variables.vertexR        = Var("vertex.R"      , float)
-    
-    process.globalReplace("genParticleTable", myGenParticleTable)
-    
-    
-    ## GenVisTau
-    #myGenVisTauTable = genVisTauTable.clone()
-    #myGenVisTauTable.variables.vertexX        = Var("vertex.X"      , float)
-    #myGenVisTauTable.variables.vertexY        = Var("vertex.Y"      , float)
-    #myGenVisTauTable.variables.vertexZ        = Var("vertex.Z"      , float)
-    #myGenVisTauTable.variables.vertexRho      = Var("vertex.Rho"    , float)
-    #myGenVisTauTable.variables.vertexR        = Var("vertex.R"      , float)
-    #
-    #process.globalReplace("genVisTauTable", myGenVisTauTable)
+    if isMC :
+        
+        # GenParticles
+        myGenParticleTable = genParticleTable.clone()
+        myGenParticleTable.variables.vertexX        = Var("vertex.X"      , float)
+        myGenParticleTable.variables.vertexY        = Var("vertex.Y"      , float)
+        myGenParticleTable.variables.vertexZ        = Var("vertex.Z"      , float)
+        myGenParticleTable.variables.vertexRho      = Var("vertex.Rho"    , float)
+        myGenParticleTable.variables.vertexR        = Var("vertex.R"      , float)
+        
+        process.globalReplace("genParticleTable", myGenParticleTable)
+        
+        
+        ## GenVisTau
+        #myGenVisTauTable = genVisTauTable.clone()
+        #myGenVisTauTable.variables.vertexX        = Var("vertex.X"      , float)
+        #myGenVisTauTable.variables.vertexY        = Var("vertex.Y"      , float)
+        #myGenVisTauTable.variables.vertexZ        = Var("vertex.Z"      , float)
+        #myGenVisTauTable.variables.vertexRho      = Var("vertex.Rho"    , float)
+        #myGenVisTauTable.variables.vertexR        = Var("vertex.R"      , float)
+        #
+        #process.globalReplace("genVisTauTable", myGenVisTauTable)
     
     if (disTauTagOutputOpt > 0) :
         

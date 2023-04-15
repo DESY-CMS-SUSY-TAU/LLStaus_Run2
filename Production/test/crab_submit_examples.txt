@@ -1,5 +1,9 @@
 # Private MC (like signal)
-python3 $(which crab_submit.py) --inputDBS phys03 --workArea crab_projects --cfg LLStaus_Run2/Production/python/myNanoProdMc2018_NANO.py --site T2_DE_DESY --output /store/user/sobhatta/LongLivedStaus/NanoAOD/ ./LLStaus_Run2/Production/configs/crab/UL2018/Staus.txt --maxMemory 2500
+python3 $(which crab_submit.py) --inputDBS phys03 --workArea crab_projects --cfg LLStaus_Run2/Production/python/myNanoProd.py --site T2_DE_DESY --output /store/user/sobhatta/LongLivedStaus/NanoAOD/ ./LLStaus_Run2/Production/configs/crab/UL2018/Staus.txt --maxMemory 2500
 
 # Background
-python3 $(which crab_submit.py) --workArea crab_projects --cfg LLStaus_Run2/Production/python/myNanoProdMc2018_NANO.py --site T2_DE_DESY --output /store/user/sobhatta/LongLivedStaus/NanoAOD/ ./LLStaus_Run2/Production/configs/crab/UL2018/TTbar.txt --maxMemory 2500
+python3 $(which crab_submit.py) --workArea crab_projects --cfg LLStaus_Run2/Production/python/myNanoProd.py --site T2_DE_DESY --output /store/user/sobhatta/LongLivedStaus/NanoAOD/ ./LLStaus_Run2/Production/configs/crab/UL2018/TTbar.txt --maxMemory 2500
+
+# Data
+python3 $(which crab_submit.py) --workArea crab_projects --cfg LLStaus_Run2/Production/python/myNanoProd.py --site T2_DE_DESY --output /store/user/sobhatta/LongLivedStaus/NanoAOD/ ./LLStaus_Run2/Production/configs/crab/UL2018/Data_MET.txt --lumiMask <lumimaskfile> --maxMemory 2500
+# For '--dryrun', add '--splitting LumiBased  --unitsPerJob 500'

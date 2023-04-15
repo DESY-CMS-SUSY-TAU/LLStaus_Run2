@@ -84,6 +84,15 @@ def main() :
                 scale = d_config["lumi"] * d_xsec[sample] / d_neventtot[sample]
                 hist_sample.Scale(scale)
                 
+                # Fix negative weights
+                nbins = hist_sample.GetNbinsX()
+                for bin in range(1, nbins+1) :
+                    
+                    if (hist_sample.GetBinContent(bin) < 0) :
+                        
+                        hist_sample.SetBinContent(bin, 0.0)
+                        hist_sample.SetBinError(bin, 0.0)
+                
                 if (hist_proc is None) :
                     
                     hist_proc = hist_sample.Clone()

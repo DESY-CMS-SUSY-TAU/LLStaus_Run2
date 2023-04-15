@@ -1,3 +1,3 @@
-isMC=True disTauTagOutputOpt=1
+sampleType=MC era=2018 disTauTagOutputOpt=1
 
 VHToNonbb               /VHToNonbb_M125_TuneCP5_13TeV-amcatnloFXFX_madspin_pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2/MINIAODSIM
