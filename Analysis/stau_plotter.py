@@ -25,6 +25,9 @@ parser.add_argument(
 parser.add_argument(
     '-m','--mode', nargs='+', default=[], help="The set of histograms to be plotted "
     "Available options: [1D, 2D]", required=True)
+parser.add_argument(
+    '-d','--data', action='store_true', help="If True Data/MC comparison will be plotted"
+        "otherwise signal/background will be plotted")
 
 
 args = parser.parse_args()
@@ -60,12 +63,14 @@ if "1D" in args.mode:
                     # 2D histogram will be filtered out (labeled by TH2)
                     if re.search(".*_TH2", keys[1]):
                         continue
+                    if keys[1] in config["mask_hists"]:
+                        continue
                     histfiles.append(os.path.join(dirname, histfile))
                     histnames.append(keys[1])
         else:
             raise ValueError('Json should be provided')
 
-    plot1D(histfiles, histnames, config, crosssections, cutflow, args.outdir)
+    plot1D(histfiles, histnames, config, crosssections, cutflow, args.outdir, args.data)
 
 if "2D" in args.mode:
     histfiles = []

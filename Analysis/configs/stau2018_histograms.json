@@ -146,6 +146,46 @@
         }
     },
 
+    // idDeepTau2017v2p1VSjet
+
+    "tau1_score": {
+        "bins": [
+            {
+                "name": "tau1_tag",
+                "label": "idDeepTau2017v2p1VSjet",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "tau1_tag": [
+                "hpstau_1",
+                "idDeepTau2017v2p1VSjet"
+            ]
+        }
+    },
+
+    "tau2_score": {
+        "bins": [
+            {
+                "name": "tau2_tag",
+                "label": "P(jet_sublead)",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "prob."
+            }
+        ],
+        "fill": {
+            "tau2_tag": [
+                "hpstau_2",
+                "idDeepTau2017v2p1VSjet"
+            ]
+        }
+    },
+
     "sum_jet1_jet2_score": {
         "bins": [
             {

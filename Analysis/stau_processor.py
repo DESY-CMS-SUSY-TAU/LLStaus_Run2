@@ -63,14 +63,16 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Add a cut only allowing events according to the golden JSON
         # The good_lumimask method is specified in pepper.ProcessorBasicPhysics
         # It also requires a lumimask to be specified in config
-        if not is_mc:
-            selector.add_cut("Lumi", partial(
-                self.good_lumimask, is_mc, dsname))
+        
+        # if not is_mc:
+        #     selector.add_cut("Lumi", partial(
+        #         self.good_lumimask, is_mc, dsname))
 
         # Due to the bug in the current DisTauTag production compain
         # the whole file should be dropped if Nan values are detected in the
+        
         # DisTauTag score
-        selector.add_cut("NanDrop", self.nan_drop)
+        # selector.add_cut("NanDrop", self.nan_drop)
 
         # Only allow events that pass triggers specified in config
         # This also takes into account a trigger order to avoid triggering
@@ -108,7 +110,10 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
 
         selector.add_cut("MET_cut", self.MET_cut)
-        selector.add_cut("b_tagged_1_cut", self.b_tagged_cut)    
+        selector.add_cut("b_tagged_1_cut", self.b_tagged_cut)   
+        
+        selector.set_cat("control_region", {"CR", "SR", "ALL"})
+        selector.set_multiple_columns(partial(self.control_region))
 
         # from jet1/2 we select only the objects that match / not match to tau
         # selector.set_column("jet_1_gtau", partial(self.match_nearest, coll1="jet_1", coll2="GenVisTau", dR=0.4))
@@ -165,9 +170,10 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_cat("cat_charge", {"OS", "SS", "S_INCL"})
         selector.set_multiple_columns(partial(self.charge_masks))
 
-        # devide into the regions related to the gen-matching
-        selector.set_column("jet1_gen", partial(self.jet_gen, jet_name="jet_1"))
-        selector.set_column("jet2_gen", partial(self.jet_gen, jet_name="jet_2"))
+        # divide into the regions related to the gen-matching
+        if is_mc:
+            selector.set_column("jet1_gen", partial(self.jet_gen, jet_name="jet_1"))
+            selector.set_column("jet2_gen", partial(self.jet_gen, jet_name="jet_2"))
 
         selector.add_cut("b_tagged_0_cut", self.b_tagged_tight_cut)
         
@@ -241,6 +247,20 @@ class Processor(pepper.ProcessorBasicPhysics):
         status[comp] = 4
 
         return ak.firsts(status)
+
+    def control_region(self, data):
+        if len(data) == 0:
+            return { "CR" : ak.Array([]),
+                     "ALL" : ak.Array([]),
+                     "SR" : ak.Array([]) }
+        mask = {}
+        
+        mask["SR"] = np.squeeze(data["sum_2jets"].mass) > self.config["control_region"]
+        mask["CR"] = np.squeeze(data["sum_2jets"].mass) < self.config["control_region"]
+        mask["ALL"] = ak.full_like(mask["SR"], True)
+        
+        return mask
+        
 
     def category_masks(self, data):
         if len(data) == 0:
@@ -469,9 +489,12 @@ class Processor(pepper.ProcessorBasicPhysics):
             (taus.pt > self.config["tau_pt"])
             & (taus.eta < self.config["tau_eta_max"])
             & (taus.eta > self.config["tau_eta_min"])
-            & (taus.idDeepTau2017v2p1VSe >= self.config["tau_idDeepTau_vsjet"])
-            & (taus.idDeepTau2017v2p1VSjet >= self.config["tau_idDeepTau_vsmu"])
-            & (taus.idDeepTau2017v2p1VSmu >= self.config["tau_idDeepTau_vsele"])
+            & (taus.idDeepTau2017v2p1VSjet >= self.config["tau_idDeepTau_vsjet"])
+            # & (taus.idDeepTau2017v2p1VSmu >= self.config["tau_idDeepTau_vsmu"])
+            # & (taus.idDeepTau2017v2p1VSe >= self.config["tau_idDeepTau_vsele"])
+            # & (taus.idDeepTau2018v2p5VSe >= self.config["tau_idDeepTau_vsele"])
+            # & (taus.idDeepTau2018v2p5VSjet >= self.config["tau_idDeepTau_vsjet"])
+            # & (taus.idDeepTau2018v2p5VSmu >= self.config["tau_idDeepTau_vsmu"])
             )
         return taus[is_good]
     

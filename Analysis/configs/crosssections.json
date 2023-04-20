@@ -69,6 +69,7 @@
     
     "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6": 365.7,
     "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6": 12.92,
+    "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6": 12.92,
     "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6": 1.86,
     "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4": 365.7,
     "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4": 12.92,

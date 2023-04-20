@@ -30,7 +30,7 @@ def get_canvas(ratio = False) :
     ROOT.gROOT.SetStyle("tdrStyle")
     ROOT.gROOT.ForceStyle(True)
     
-    canvas = ROOT.TCanvas("canvas", "canvas", 1200, 1000)
+    canvas = ROOT.TCanvas("canvas", "canvas", 1600, 1300)
     canvas.UseCurrentStyle()
     
     #canvas.SetLeftMargin(0.16)
@@ -209,13 +209,18 @@ def root_plot1D(
         if include_overflow:
             hist.SetBinContent(1, hist.GetBinContent(1) +  hist.GetBinContent(0))
             hist.SetBinContent(hist.GetNbinsX() , hist.GetBinContent(hist.GetNbinsX() ) +  hist.GetBinContent(hist.GetNbinsX() + 1))
+            
         if stackdrawopt == 'nostack':
             if hist.Integral()!=0: hist.Scale(1.0/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
         elif normilize_overlay and include_overflow:
             if hist.Integral()!=0: hist.Scale(1.0/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
         elif normilize_overlay:
             if hist.Integral()!=0: hist.Scale(1.0/(hist.Integral()))
-        hist.SetOption("histo")
+        
+        if ratio_mode=="DATA":
+            hist.SetOption("HISTP")
+        else:
+            hist.SetOption("HIST")
         hist.Draw(f"same {hist.GetOption()}")
         legend.AddEntry(hist, hist.GetTitle(), "LPFE")
     
@@ -267,15 +272,21 @@ def root_plot1D(
             hist.SetDirectory(0)
             h1_ratio = hist.Clone()
             h1_ratio.SetDirectory(0)
+            h1_ratio.GetXaxis().SetRangeUser(xrange[0], xrange[1])
             if ratio_mode=="B":
                 h1_ratio = h1_ratio.Divide(accume_hist)
+                stack_ratio.Add(h1_ratio, "HIST")
             elif ratio_mode=="SB":
                 SandB = accume_hist.Clone()
                 SandB.SetDirectory(0)
                 SandB.Add(hist)
                 h1_ratio.Divide(SandB)
-            h1_ratio.GetXaxis().SetRangeUser(xrange[0], xrange[1])
-            stack_ratio.Add(h1_ratio, "hist")
+                stack_ratio.Add(h1_ratio, "HIST")
+            elif ratio_mode=="DATA":
+                SandB = accume_hist.Clone()
+                SandB.SetDirectory(0)
+                h1_ratio.Divide(SandB)
+                stack_ratio.Add(h1_ratio, "HISTP")
     
         stack_ratio.Draw("nostack")
         stack_ratio.GetXaxis().SetRangeUser(xrange[0], xrange[1])
@@ -320,7 +331,7 @@ def root_plot1D(
         
         os.system("mkdir -p %s" %(outdir))
     
-    ROOT.gStyle.SetImageScaling(2.)
+    # ROOT.gStyle.SetImageScaling(2.)
     canvas.SaveAs(outfile)
     
     return 0
