@@ -269,12 +269,16 @@
     "MET_pt"               : 110,
 
     // category cuts
-    "tag_score" : 0.969, // efficincy 80% 
+    // "Loose": 0.7785,
+    // "Medium": 0.9687,
+    // "Tight": 0.9995
+    "tag_score" : 0.90, // efficincy 80% 
     "pf_dxy"    : 0.03,
     "pf_dz"     : 0.2,
 
     // control/signal region definition
-    "control_region" : 100, // > 100 GeV will be considered as signal region
+    "region1" : 400,
+    "region2" : 500,
 
     "hists": "$CONFDIR/stau2018_histograms.json",
 }

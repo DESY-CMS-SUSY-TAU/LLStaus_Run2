@@ -9,7 +9,8 @@ from .utils import ColorIterator, root_plot1D, root_plot2D
 def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
 
     categories_list = list(itertools.product(*config["Categories"]))
-    categories_list = [f"{cat1}_{cat2}_{cat3}" for cat1,cat2,cat3 in categories_list]
+    # categories_list = [f"{cat1}_{cat2}_{cat3}" for cat1,cat2,cat3 in categories_list]
+    categories_list = ["_".join(cat) for cat in categories_list]
 
     for _ci, _categ in enumerate(categories_list):
 
@@ -38,7 +39,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     
                     # Rescaling according to cross-section and luminosity
                     # print("Histogram: ", _histname)
-                    # print("Reading data:", _histogram_data + "_" + _categ) 
+                    # print("Reading data:", _histogram_data + "_" + _categ)
                     hist = file.Get(_histogram_data + "_" + _categ)
                     # hist = file.Get(_histogram_data)
                     
@@ -203,7 +204,7 @@ def plot2D(histfiles, histnames, config, xsec, cutflow, output_path):
                     # Rescaling according to cross-section and luminosity
                     # print("Reading hist:", _histogram_data + "_" + _categ)
                     hist = file.Get(_histogram_data + "_" + _categ)
-                    N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
+                    N = cutflow[_histogram_data]["all"]["Before cuts"] #After Nan dropper
                     hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
 
                     if _histname in config["SetupBins"]:

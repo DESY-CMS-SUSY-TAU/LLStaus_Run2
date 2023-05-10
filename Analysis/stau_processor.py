@@ -14,12 +14,41 @@ import pepper
 import awkward as ak
 from functools import partial
 import numpy as np
-# np.set_printoptions(threshold=np.inf)
 import mt2
+import numba as nb
 
 from coffea.nanoevents import NanoAODSchema
 # np.set_printoptions(threshold=np.inf)
 
+# @nb.njit
+# def pad_array_byindex(array_flat, array, idx_of_mother, idx_to_mother):
+#     '''
+#     The function pads an array by the indexes to coorespond to mother array
+#     Input example:
+#         array: [[Tau1, Tau2, Tau3], [Tau1, Tau2], [Tau3]] type: ak.Array
+#         idx_of_mother: [[0, 1, 2, 4], [0, 1, 2, 3], [0, 1, 2]] type: ak.Array
+#         idx_to_mother: [[0, -1, 2], [-1, 1], [0]]  type: ak.Array
+#     Output:
+#         [[Tau1, None, Tau3, None], [None, Tau2, None, None], [Tau3, None, None]]
+#     '''
+    
+#     fill_idx = 0
+#     for event_i in range(len(idx_of_mother)):
+#         for i, idx_jet in enumerate(idx_of_mother[event_i]):
+#             for j, idx_to_jet in enumerate(idx_to_mother[event_i]):
+#                 if idx_to_jet != -1 and idx_to_jet == idx_jet:
+#                     array_flat[fill_idx] = array[event_i][j]
+#                 fill_idx += 1
+#     return array_flat
+
+# def wrap_padder(jets, taus):
+#     array_flat = np.full(ak.count(jets["initial_idx"], axis=None), -999)   
+#     idDeepTau2017v2p1VSe = pad_array_byindex(array_flat,
+#                                              taus["idDeepTau2017v2p1VSe"],
+#                                              jets["initial_idx"], 
+#                                              taus.jetIdx)
+#     idDeepTau2017v2p1VSe = ak.unflatten(idDeepTau2017v2p1VSe, ak.num(jets["initial_idx"]))
+#     return idDeepTau2017v2p1VSe
 
 # All processors should inherit from pepper.ProcessorBasicPhysics
 class Processor(pepper.ProcessorBasicPhysics):
@@ -52,6 +81,11 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     @zero_handler
     def nan_drop(self, data):
+        '''
+        Function to drop events with Nan values in the DisTauTag score,
+        alternatively one should analyse the whole file and drop it using
+        bad_file_paths in the config
+        '''
         if np.any(np.logical_not(np.isfinite(data["Jet"].disTauTag_score1))):
             return ak.full_like(data["event"], False)
         return ak.full_like(data["event"], True)
@@ -71,7 +105,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Due to the bug in the current DisTauTag production compain
         # the whole file should be dropped if Nan values are detected in the
         
-        # DisTauTag score
+        # DisTauTag score (better to analyse the whole file and drop it)
         # selector.add_cut("NanDrop", self.nan_drop)
 
         # Only allow events that pass triggers specified in config
@@ -86,13 +120,18 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Select valid objects
         selector.set_column("muons_valid", self.muons_valid)
         selector.set_column("electrons_valid", self.electrons_valid)
-        selector.set_column("jets_valid", self.jets_valid)
         selector.set_column("hps_taus_valid", self.hps_taus_valid)
+        selector.set_column("jets_valid", self.jets_valid)
         selector.set_column("pfcand_valid", self.pfcand_valid)
 
-        # Add basics cuts (at least 2 good jets)
+        selector.add_cut("MET_cut", self.MET_cut)
         selector.add_cut("is_two_valid_jets", self.has_jets)
-
+        
+        # GenMatch jets
+        # if is_mc:
+        #     selector.set_column("match_valid_jets", partial(self.gen_match_jets, jet_name="jets_valid"))
+        #     selector.set_column("gentau_jets", self.gentau_jets)
+            
         # Pick up leading jet (by score)
         selector.set_column("jet_1", partial(self.leading_jet, order=0)) #1-st jet
         selector.set_column("jet_2", partial(self.leading_jet, order=1)) #2-nd jet
@@ -109,10 +148,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("mt_sum", self.mt_sum)
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
 
-        selector.add_cut("MET_cut", self.MET_cut)
         selector.add_cut("b_tagged_1_cut", self.b_tagged_cut)   
         
-        selector.set_cat("control_region", {"CR", "SR", "ALL"})
+        selector.set_cat("control_region", {"M1", "M2", "M3", "ALL"})
         selector.set_multiple_columns(partial(self.control_region))
 
         # from jet1/2 we select only the objects that match / not match to tau
@@ -154,30 +192,38 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Pick up matched PfCand
         self.pfCand_Sequence(selector, input_jet_n = 1) # jet_1
         self.pfCand_Sequence(selector, input_jet_n = 2) # jet_2
+        
+        # Fake regions
+        # G1G2 - both jets are matched to gen-taus
+        # G1F2 - jet1 is matched to gen-tau, jet2 is not matched
+        # F1G2 - jet1 is not matched to gen-tau, jet2 is matched
+        # F1F2 - both jets are not matched to gen-tau
+        selector.set_cat("cat_fake", {"G1G2", "G1F2", "F1G2", "F1F2", "NOMATCH"})
+        selector.set_multiple_columns(partial(self.fake_masks, is_mc=is_mc))
 
         # study regions:
         # PP - 2 OS prompt tau_h
         # PD - 1 prompt tau_h, 1 displaced tau_h
         # DD - 2 displaced tau_h
         # D_INCL - Inclusive for all displacement
-        selector.set_cat("cat_disp", {"PP", "PD", "DD", "PDtag", "DDtag", "D_INCL"})
+        selector.set_cat("cat_disp", {"PP", "PD", "DD", "PDtag", "DDtag", "PP_inv", "PDtag_inv", "DDtag_inv", "D_INCL"})
         selector.set_multiple_columns(partial(self.category_masks))
 
         # regions of charge:
         # OS - opposite charge
         # SS - same charge
         # S_INCL - Inclusive for all charge
-        selector.set_cat("cat_charge", {"OS", "SS", "S_INCL"})
-        selector.set_multiple_columns(partial(self.charge_masks))
+        # selector.set_cat("cat_charge", {"OS", "SS", "S_INCL"})
+        # selector.set_multiple_columns(partial(self.charge_masks))
 
         # divide into the regions related to the gen-matching
-        if is_mc:
-            selector.set_column("jet1_gen", partial(self.jet_gen, jet_name="jet_1"))
-            selector.set_column("jet2_gen", partial(self.jet_gen, jet_name="jet_2"))
+        # if is_mc:
+            # selector.set_column("jet1_gen", partial(self.jet_gen, jet_name="jet_1"))
+            # selector.set_column("jet2_gen", partial(self.jet_gen, jet_name="jet_2"))
 
         selector.add_cut("b_tagged_0_cut", self.b_tagged_tight_cut)
         
-        selector.set_column("signal_bins", self.signal_bins)
+        # selector.set_column("signal_bins", self.signal_bins)
 
 
     def pfCand_Sequence(self, selector, input_jet_n=None):
@@ -207,18 +253,23 @@ class Processor(pepper.ProcessorBasicPhysics):
         # selector.set_column("pfCands_jet"+jet_n+"_gtau_!hpstau", partial(self.get_matched_pfCands, match_object="jet_"+jet_n+"_gtau_!hpstau", dR=0.4))
 
     @zero_handler
-    def jet_gen(self, data, jet_name='', dR=0.4):
+    def gentau_jets(self, data):
+        code = data["match_valid_jets"]
+        jets = data["jets_valid"][(code == 1) | (code == 5)]
+        return jets
 
-        # gen level jet information
-        # -1 not matched to any gen-tau object
-        # 0 matches to genJet
-        # 1 hadronic tau
-        # 2 matched to tau muon
-        # 3 matched to tau electron
-        # 4 dummy mutched to >2 objects
-
+    @zero_handler
+    def gen_match_jets(self, data, jet_name='', dR=0.4):
+        
+        #     # -1 not matched to any gen-tau object
+        #     # 0 matches to genJet
+        #     # 1 hadronic tau
+        #     # 2 matched to tau muon
+        #     # 3 matched to tau electron
+        #     # 4 mutched to >2 objects
+        #     # 5 matched to >2 objects including hadronic tau
+    
         jet = data[jet_name]
-        status = np.full((len(jet),1), -1)
 
         gen_elec = data.GenPart[ (abs(data.GenPart.pdgId) == 11) &
                                     (data.GenPart.hasFlags(["isDirectTauDecayProduct"])) ]
@@ -229,38 +280,80 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         matches_genjet, dRlist = jet.nearest(data.GenJet, return_metric=True, threshold=dR)
         hasJet = (~ak.is_none(matches_genjet, axis=1))
-        status[hasJet] = 0
+        data[jet_name, "match_genJet"] = hasJet
 
         matches_h, dRlist = jet.nearest(gen_tauvis, return_metric=True, threshold=dR)
         hasHadronic = (~ak.is_none(matches_h, axis=1))
-        status[hasHadronic] = 1
+        data[jet_name, "match_genTau"] = hasHadronic
 
         matches_muon, dRlist = jet.nearest(gen_muon, return_metric=True, threshold=dR)
         hasMuon = (~ak.is_none(matches_muon, axis=1))
-        status[hasMuon] = 2
+        data[jet_name, "match_genMuon"] = hasMuon
 
         matches_elec, dRlist = jet.nearest(gen_elec, return_metric=True, threshold=dR)
         hasElec = (~ak.is_none(matches_elec, axis=1))
-        status[hasElec] = 3
+        data[jet_name, "match_genElec"] = hasElec
         
-        comp = ( (hasHadronic & hasMuon) | (hasHadronic & hasElec) | (hasElec & hasMuon) )
-        status[comp] = 4
+        code = ak.where(data[jet_name].match_genJet, 0, -1)
+        code = ak.where(data[jet_name].match_genTau, 1, code)
+        code = ak.where(data[jet_name].match_genMuon, 2, code)
+        code = ak.where(data[jet_name].match_genElec, 3, code)
 
-        return ak.firsts(status)
+        multy_match = ak.values_astype(data[jet_name].match_genJet, "int64") + \
+                      ak.values_astype(data[jet_name].match_genTau, "int64") + \
+                      ak.values_astype(data[jet_name].match_genMuon, "int64") + \
+                      ak.values_astype(data[jet_name].match_genElec, "int64")
+
+        code = ak.where(multy_match > 2, 4, code)
+        code = ak.where(((multy_match > 2) & hasHadronic), 5, code)
+
+        return code
 
     def control_region(self, data):
         if len(data) == 0:
-            return { "CR" : ak.Array([]),
-                     "ALL" : ak.Array([]),
-                     "SR" : ak.Array([]) }
+            return { "M1" : ak.Array([]),
+                     "M2" : ak.Array([]),
+                     "M3" : ak.Array([]),
+                     "ALL" : ak.Array([]) }
         mask = {}
         
-        mask["SR"] = np.squeeze(data["sum_2jets"].mass) > self.config["control_region"]
-        mask["CR"] = np.squeeze(data["sum_2jets"].mass) < self.config["control_region"]
-        mask["ALL"] = ak.full_like(mask["SR"], True)
+        # mask["SR"] = ak.firsts(data["sum_2jets"].mass) > self.config["control_region"]
+        # mask["CR"] = ak.firsts(data["sum_2jets"].mass) < self.config["control_region"]
+        mask["M1"] = data["mt_sum"] < self.config["region1"]
+        mask["M2"] = (( data["mt_sum"] > self.config["region1"] ) & ( data["mt_sum"] < self.config["region2"] ))
+        mask["M3"] = data["mt_sum"] > self.config["region2"]
+        mask["ALL"] = ak.full_like(mask["M1"], True)
         
         return mask
-        
+    
+    def fake_masks(self, data, is_mc):
+        if(len(data) == 0):
+            return { "G1G2" : ak.Array([]),
+                     "G1F2" : ak.Array([]),
+                     "F1G2" : ak.Array([]),
+                     "F1F2" : ak.Array([]),
+                     "NOMATCH" : ak.Array([]) }
+        mask = {}
+        Inclusive = np.full(len(data["hps_taus_valid"]), True)
+        if is_mc:
+            tau_vis = data.GenVisTau[ ((data.GenVisTau.pt > 30) & (abs(data.GenVisTau.eta) < 2.4) &
+                                      (data.GenVisTau.parent.hasFlags(["fromHardProcess"])))
+                                    ] 
+            matches_h, dRlist = data["jet_1"].nearest(data.GenVisTau, return_metric=True, threshold=0.4)
+            has_hps1 = ak.firsts(~ak.is_none(matches_h, axis=1))
+            matches_h, dRlist = data["jet_2"].nearest(data.GenVisTau, return_metric=True, threshold=0.4)
+            has_hps2 = ak.firsts(~ak.is_none(matches_h, axis=1))
+            mask["G1G2"] = ( has_hps1 & has_hps2 )
+            mask["G1F2"] = ( has_hps1 & (~has_hps2) )
+            mask["F1G2"] = ( (~has_hps1) & has_hps2 )
+            mask["F1F2"] = ( (~has_hps1) & (~has_hps2) )
+        else:
+            mask["G1G2"] = Inclusive
+            mask["G1F2"] = Inclusive
+            mask["F1G2"] = Inclusive
+            mask["F1F2"] = Inclusive
+        mask["NOMATCH"] = Inclusive
+        return mask
 
     def category_masks(self, data):
         if len(data) == 0:
@@ -269,55 +362,71 @@ class Processor(pepper.ProcessorBasicPhysics):
                      "PDtag" : ak.Array([]),
                      "DD" : ak.Array([]),
                      "DDtag" : ak.Array([]),
+                     "PP_inv" : ak.Array([]),
+                     "PDtag_inv" : ak.Array([]),
+                     "DDtag_inv" : ak.Array([]),
                      "D_INCL" : ak.Array([]) }
 
         masks = {}
 
+
         # To have jet 1 associated with hps taus
-        sel_1 = ( ak.num(data['hpstau_1'])>=1 )
+        sel_1 = ( (ak.num(data['hpstau_1'])>=1) & (ak.firsts(data['hpstau_1']).idDeepTau2017v2p1VSjet >= 6) )
         sel_1 = ak.fill_none(sel_1, False)
-        # sel_2 = ( np.abs(ak.firsts(data['hpstau_1']).dxy) < 0.03 )
-        # sel_2 = ( np.abs(ak.firsts(data['pfCands_jet1'],axis=-1).dxy) < 0.03 )
         sel_2 = ( np.abs(data['pfCands_jet1'].dxy) < self.config["pf_dxy"] )
         sel_2 = ak.fill_none(sel_2, False)
-        # sel_3 = ( np.abs(ak.firsts(data['hpstau_1']).dz) < 0.2 )
-        # sel_3 = ( np.abs(ak.firsts(data['pfCands_jet1'],axis=-1).dz) < 0.2 )
         sel_3 = ( np.abs(data['pfCands_jet1'].dz) < self.config["pf_dz"] )
         sel_3 = ak.fill_none(sel_3, False)
         isJet1_Prompt = ( sel_1 & sel_2 & sel_3 )
+        
+        
+        sel_1_inv = ( (ak.num(data['hpstau_1'])>=1) & (ak.firsts(data['hpstau_1']).idDeepTau2017v2p1VSjet < 6) & (ak.firsts(data['hpstau_1']).idDeepTau2017v2p1VSjet >= 3))
+        sel_1_inv = ak.fill_none(sel_1_inv, False)
+        isJet1_Prompt_inv = ( sel_1_inv & sel_2 & sel_3 )
+        
 
         # To have jet 2 associated with hps taus
-        sel_1 = ( ak.num(data['hpstau_2'])>=1 )
+        sel_1 = ( (ak.num(data['hpstau_2'])>=1) & (ak.firsts(data['hpstau_2']).idDeepTau2017v2p1VSjet >= 6) )
         sel_1 = ak.fill_none(sel_1, False)
-        # sel_2 = ( np.abs(ak.firsts(data['hpstau_2']).dxy) < 0.03 )
-        # sel_2 = ( np.abs(ak.firsts(data['pfCands_jet2'],axis=-1).dxy) < 0.03 )
         sel_2 = ( np.abs(data['pfCands_jet2'].dxy) < self.config["pf_dxy"] )
         sel_2 = ak.fill_none(sel_2, False)
-        # sel_3 = ( np.abs(ak.firsts(data['hpstau_2']).dz) < 0.2 )
-        # sel_3 = ( np.abs(ak.firsts(data['pfCands_jet2'],axis=-1).dz) < 0.2 )
         sel_3 = ( np.abs(data['pfCands_jet2'].dz) < self.config["pf_dz"] )
         sel_3 = ak.fill_none(sel_3, False)
         isJet2_Prompt = ( sel_1 & sel_2 & sel_3 )
 
+        sel_1_inv = ( (ak.num(data['hpstau_2'])>=1) & (ak.firsts(data['hpstau_2']).idDeepTau2017v2p1VSjet < 6) & (ak.firsts(data['hpstau_2']).idDeepTau2017v2p1VSjet >= 3))
+        sel_1_inv = ak.fill_none(sel_1_inv, False)
+        isJet2_Prompt_inv = ( sel_1_inv & sel_2 & sel_3 )
+
         # To have jet 1 displaced
-        # isJet1_Displaced = ( np.abs(ak.firsts(data['pfCands_jet1'],axis=-1).dxy) > 0.03 )
         isJet1_Displaced = ( np.abs(data['pfCands_jet1'].dxy) > self.config["pf_dxy"] )
         isJet1_Displaced = ak.fill_none(isJet1_Displaced, False)
-        
-        isJet1_Tagged = ( ak.firsts(data['jet_1'].disTauTag_score1) > self.config["tag_score"] )
+        isJet1_Tagged = ( ak.firsts(data['jet_1'].disTauTag_score1) > 0.90 )
         isJet1_Tagged = ak.fill_none(isJet1_Tagged, False)
+        isJet1_Dtag = (isJet1_Displaced & isJet1_Tagged)
+
+        isJet1_Tagged_inv = (( ak.firsts(data['jet_1'].disTauTag_score1) < 0.90 ) & ( ak.firsts(data['jet_1'].disTauTag_score1) > 0.50 ) )
+        isJet1_Tagged_inv = ak.fill_none(isJet1_Tagged_inv, False)
+        isJet1_Dtag_inv = (isJet1_Displaced & isJet1_Tagged_inv)
 
         # To have jet 2 displaced
-        # isJet2_Displaced = ( np.abs(ak.firsts(data['pfCands_jet2'],axis=-1).dxy) > 0.03 )
         isJet2_Displaced = ( np.abs(data['pfCands_jet2'].dxy) > self.config["pf_dxy"] )
         isJet2_Displaced = ak.fill_none(isJet2_Displaced, False)
-
-        isJet2_Tagged = ( ak.firsts(data['jet_2'].disTauTag_score1) > self.config["tag_score"] )
+        isJet2_Tagged = ( ak.firsts(data['jet_2'].disTauTag_score1) > 0.90 )
         isJet2_Tagged = ak.fill_none(isJet2_Tagged, False)
+        isJet2_Dtag = (isJet2_Displaced & isJet2_Tagged)
 
-        # PP category (OS prompt tau_h)
+        isJet2_Tagged_inv = (( ak.firsts(data['jet_2'].disTauTag_score1) < 0.90 ) & ( ak.firsts(data['jet_2'].disTauTag_score1) > 0.50 ) )
+        isJet2_Tagged_inv = ak.fill_none(isJet2_Tagged_inv, False)
+        isJet2_Dtag_inv = (isJet2_Displaced & isJet2_Tagged_inv)
+
+        # PP category
         PP = (isJet1_Prompt & isJet2_Prompt)
         masks["PP"] = PP
+        
+        # PP category with inverted deepTau ID
+        PP_inv = ((isJet1_Prompt_inv & isJet2_Prompt) | (isJet1_Prompt_inv & isJet2_Prompt_inv) | (isJet1_Prompt & isJet2_Prompt_inv))
+        masks["PP_inv"] = PP_inv
 
         # PD - 1 prompt tau_h, 1 displaced tau_h
         PD = ( (isJet1_Prompt & isJet2_Displaced) | (isJet2_Prompt & isJet1_Displaced) )
@@ -327,11 +436,18 @@ class Processor(pepper.ProcessorBasicPhysics):
         DD = (isJet1_Displaced & isJet2_Displaced)
         masks["DD"] = DD
 
-        PDtag = ( (isJet1_Prompt & isJet2_Displaced & isJet2_Tagged) | (isJet2_Prompt & isJet1_Displaced & isJet1_Tagged) )
+        PDtag = ( (isJet1_Prompt & isJet2_Dtag) | (isJet2_Prompt & isJet1_Dtag) )
         masks["PDtag"] = PDtag
+        
+        PDtag_inv = (((isJet1_Prompt_inv & isJet2_Dtag) | (isJet1_Prompt_inv & isJet2_Dtag_inv) | (isJet1_Prompt & isJet2_Dtag_inv)) |
+                     ((isJet2_Prompt_inv & isJet1_Dtag) | (isJet2_Prompt_inv & isJet1_Dtag_inv) | (isJet2_Prompt & isJet1_Dtag_inv)))
+        masks["PDtag_inv"] = PDtag_inv
 
-        DDtag = (isJet1_Displaced & isJet2_Displaced & isJet2_Tagged & isJet1_Tagged)
+        DDtag = (isJet2_Dtag & isJet1_Dtag)
         masks["DDtag"] = DDtag
+        
+        DDtag_inv = ((isJet1_Dtag & isJet2_Dtag_inv) | (isJet1_Dtag_inv & isJet2_Dtag_inv) | (isJet1_Dtag_inv & isJet2_Dtag))  
+        masks["DDtag_inv"] = DDtag_inv
 
         # COMB - all regions together
         masks["D_INCL"] = ak.full_like(DD, True)
@@ -430,6 +546,7 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def jets_valid(self, data):
         jets = data["Jet"]
+        jets["initial_idx"] = ak.local_index(jets, axis=1)
 
         # study kinem region
         jets = jets[(
@@ -452,7 +569,28 @@ class Processor(pepper.ProcessorBasicPhysics):
 
         # sort by pt
         sort_idx = ak.argsort(jets.pt, axis=-1, ascending=False)
-        return jets[sort_idx]
+        jets = jets[sort_idx]
+        
+        # to index the valid jets
+        
+        # Add DeepTau ID to every jet that matches to HPS tau
+        # if there is no matching jet, set the ID to -1
+        # taus = data["hps_taus_valid"]
+        # nearest_tau = jets.nearest(taus, return_metric=True, threshold=0.4)[0]
+        # jets["idDeepTau2017v2p1VSjet"] = ak.where(ak.is_none(nearest_tau, axis=-1), -1, nearest_tau.idDeepTau2017v2p1VSjet)
+        # jets["idDeepTau2017v2p1VSe"] = ak.where(ak.is_none(nearest_tau, axis=-1), -1, nearest_tau.idDeepTau2017v2p1VSe)
+        # jets["idDeepTau2017v2p1VSmu"] = ak.where(ak.is_none(nearest_tau, axis=-1), -1, nearest_tau.idDeepTau2017v2p1VSmu)
+        # jets["idDeepTau2018v2p5VSjet"] = ak.where(ak.is_none(nearest_tau, axis=-1), -1, nearest_tau.idDeepTau2018v2p5VSjet)
+        # jets["idDeepTau2018v2p5VSe"] = ak.where(ak.is_none(nearest_tau, axis=-1), -1, nearest_tau.idDeepTau2018v2p5VSe)
+        # jets["idDeepTau2018v2p5VSmu"] = ak.where(ak.is_none(nearest_tau, axis=-1), -1, nearest_tau.idDeepTau2018v2p5VSmu)
+        # print(jets["initial_idx"])
+        # print(data["hps_taus_valid"].jetIdx)
+        # ids = wrap_padder(jets, taus)
+        # exit()
+        
+        jets["valid_idx"] = ak.local_index(jets, axis=1)
+        
+        return jets
 
     @zero_handler
     def muons_valid(self, data):
@@ -489,7 +627,7 @@ class Processor(pepper.ProcessorBasicPhysics):
             (taus.pt > self.config["tau_pt"])
             & (taus.eta < self.config["tau_eta_max"])
             & (taus.eta > self.config["tau_eta_min"])
-            & (taus.idDeepTau2017v2p1VSjet >= self.config["tau_idDeepTau_vsjet"])
+            # & (taus.idDeepTau2017v2p1VSjet >= self.config["tau_idDeepTau_vsjet"])
             # & (taus.idDeepTau2017v2p1VSmu >= self.config["tau_idDeepTau_vsmu"])
             # & (taus.idDeepTau2017v2p1VSe >= self.config["tau_idDeepTau_vsele"])
             # & (taus.idDeepTau2018v2p5VSe >= self.config["tau_idDeepTau_vsele"])
