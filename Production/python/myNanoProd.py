@@ -49,6 +49,8 @@ d_procConfig = {
     }
 }
 
+d_procConfig["Embed"] = d_procConfig["Data"]
+
 isMC = (args.sampleType == "MC")
 condition_str = d_procConfig[args.sampleType][args.era]["condition"]
 era_str = d_procConfig[args.sampleType][args.era]["era"]
@@ -121,6 +123,12 @@ if isMC :
 else :
     outputCommands = process.NANOAODEventContent.outputCommands
 
+if (args.sampleType == "Embed") :
+    
+    process.unpackedPatTrigger.triggerResults = cms.InputTag("TriggerResults::SIMembedding")
+    outputCommands.append("keep edmTriggerResults_*_*_SIMembedding")  # Trigger information
+    outputCommands.append("keep edmTriggerResults_*_*_MERGE")  # MET filter flags
+
 if args.disTauTagOutputOpt == 1 :
     
     args.outFile = args.outFile.replace(".root", "_with-disTauTagScore.root")
@@ -157,6 +165,22 @@ if isMC :
     process.nanoAOD_step = cms.Path(process.nanoSequenceMC)
 else :
     process.nanoAOD_step = cms.Path(process.nanoSequence)
+
+if (args.sampleType == "Embed") :
+    
+    process.nanoAOD_step += cms.Path(
+        process.genParticleSequence +
+        #process.nanoSequenceCommon +
+        #process.nanoSequenceOnlyFullSim +
+        process.muonMC +
+        process.electronMC +
+        process.photonMC +
+        process.tauMC +
+        process.globalTablesMC +
+        process.btagWeightTable +
+        process.genWeightsTable +
+        process.genParticleTables
+    )
 
 process.endjob_step = cms.EndPath(process.endOfProcess)
 process.NANOAODoutput_step = cms.EndPath(process.NANOAODoutput)

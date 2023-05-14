@@ -53,7 +53,7 @@ def get_args() :
         "", # Default value
         VarParsing.multiplicity.singleton, # singleton or list
         VarParsing.varType.string, # string, int, or float
-        "Must be one of the following: [Data, MC]" # Description
+        "Must be one of the following: [Data, MC, Embed]" # Description
     )
     
     args.register("era",
@@ -104,8 +104,8 @@ def get_args() :
         outDir = args.outFile[0: args.outFile.rfind("/")]
         os.system("mkdir -p %s" %(outDir))
     
-    if (args.sampleType not in ["Data", "MC"]) :
-        raise ValueError("sampleType must be one of the following: [Data, MC]")
+    if (args.sampleType not in ["Data", "MC", "Embed"]) :
+        raise ValueError("sampleType must be one of the following: [Data, MC, Embed]")
     
     if (args.era not in ["2016", "2017", "2018"]) :
         raise ValueError("Era must be one of the following: [2016, 2017, 2018]")
