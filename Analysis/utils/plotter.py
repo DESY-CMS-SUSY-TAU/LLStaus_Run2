@@ -73,7 +73,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     fill_color = color_setup[0] 
                     _histograms[isSignal][-1].SetMarkerStyle(8)
                     _histograms[isSignal][-1].SetMarkerSize(2)
-                    _histograms[isSignal][-1].SetLineWidth(0)
+                    _histograms[isSignal][-1].SetLineWidth(1)
                 else:
                     color_setup = config["MC_bkgd"][_group_name]  
                     line_color = color_setup[1]

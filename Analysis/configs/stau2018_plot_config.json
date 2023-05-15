@@ -4,9 +4,13 @@
     "crosssections": "$CONFDIR/crosssections.json",
     "cuts" : ["Cut-005"],
     "Categories" : [
-                    ["CR","SR"],
-                    ["PP", "PD", "PDtag","DD", "DDtag", "D_INCL"],
-                    ["S_INCL"]
+                    // ["ALL"],
+                    ["M1", "M2", "ALL"],
+                    // ["NOMATCH"],
+                    // ["NOMATCH"],
+                    // ["D_INCL"]
+                    // ["D_INCL"]
+                    // ["PP", "PD", "PDtag","DD", "DDtag", "PP_inv","PDtag_inv", "DDtag_inv", "D_INCL"]
                     // ["D_INCL"],
                     // ["S_INCL"]
                 ],
@@ -86,7 +90,6 @@
         "$\\mathrm{stau400GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
         "$\\mathrm{stau250GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
         "$\\mathrm{stau250GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
-        "$\\mathrm{stau250GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
         "$\\mathrm{stau250GeV0p01mm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"],
 
         "$\\mathrm{Data}$" : ["DATA_MET"]
@@ -124,11 +127,14 @@
     "SetupBins" : {
         // "Histogram name" : [x_min, x_max, rebin_bins, overflow_includ, axis labels]
         "dphi_jet1_jet2": [-3.2, 3.2, 5, true, null],
-        "HT_miss_pt_miss": [0, 10, 5, true, null],
-        "HT_miss": [0, 800, 10, true, null],
-        "HT": [0, 800, 1, true, null],
-        "jet1_score": [0.0, 1.0, 11, true, null],
-        "jet2_score": [0.0, 1.0, 11, true, null],
+        // "HT_miss_pt_miss": [0, 10, 5, true, null],
+        // "HT_miss": [0, 800, 10, true, null],
+        // "HT": [0, 800, 1, true, null],
+        // "HT_miss_pt_miss_validt": [0, 10, 5, true, null],
+        // "HT_miss_validt": [0, 800, 10, true, null],
+        // "HT_valid": [0, 800, 1, true, null],
+        "jet1_score": [0.0, 1.0, 3, true, null],
+        "jet2_score": [0.0, 1.0, 3, true, null],
         "sum_jet1_jet2_score": [0.0, 1.0, 11, true, null],
         "jet1_SVn": [0, 12, 1, true, null],
         "jet2_SVn": [0, 12, 1, true, null],

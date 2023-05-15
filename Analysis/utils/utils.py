@@ -286,7 +286,7 @@ def root_plot1D(
                 SandB = accume_hist.Clone()
                 SandB.SetDirectory(0)
                 h1_ratio.Divide(SandB)
-                stack_ratio.Add(h1_ratio, "HISTP")
+                stack_ratio.Add(h1_ratio, "HISTPE1")
     
         stack_ratio.Draw("nostack")
         stack_ratio.GetXaxis().SetRangeUser(xrange[0], xrange[1])
