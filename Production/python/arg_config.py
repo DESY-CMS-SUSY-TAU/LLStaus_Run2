@@ -17,8 +17,8 @@ def get_args() :
         "File containing list of input files" # Description
     )
 
-    # args.register('fileList',
-    #     '[]',
+    # args.register("fileList",
+    #     "[]",
     #     VarParsing.multiplicity.list,
     #     VarParsing.varType.string,
     #     "List of root files to process (alternative to sourceFile option).")
@@ -30,30 +30,37 @@ def get_args() :
         "Output file base name (w/o extension): [base name].root" # Description
     )
 
-    args.register('fileNamePrefix',
-        '',
+    args.register("fileNamePrefix",
+        "",
         VarParsing.multiplicity.singleton,
         VarParsing.varType.string,
         "Prefix to add to input file names.")
 
-    args.register('lumiFile',
-        '', 
+    args.register("lumiFile",
+        "", 
         VarParsing.multiplicity.singleton, 
         VarParsing.varType.string,
         "JSON file with lumi mask.")
     
     args.register("eventRange",
-        '', # Default value
+        "", # Default value
         VarParsing.multiplicity.singleton, # singleton
         VarParsing.varType.string, # string, int, or float
         "Syntax: Run1:Event1-Run2:Event2 Run3:Event3-Run4:Event4(includes both)" # Description
     )
     
-    args.register("isMC",
-        True, # Default value
+    args.register("sampleType",
+        "", # Default value
         VarParsing.multiplicity.singleton, # singleton or list
-        VarParsing.varType.bool, # string, int, or float
-        "Whether Data or MC" # Description
+        VarParsing.varType.string, # string, int, or float
+        "Must be one of the following: [Data, MC, Embed]" # Description
+    )
+    
+    args.register("era",
+        "", # Default value
+        VarParsing.multiplicity.singleton, # singleton or list
+        VarParsing.varType.string, # string, int, or float
+        "Must be one of the following: [2016, 2017, 2018]" # Description
     )
     
     args.register("disTauTagOutputOpt",
@@ -82,10 +89,7 @@ def get_args() :
     fNames = []
     
     if(len(args.inputFiles) and len(args.sourceFile)):
-        raise ValueError(
-            'Error: fileList and sourceFile are interchangeable, \
-             only one should be specified.'
-            )
+        raise ValueError("Error: fileList and sourceFile are interchangeable, only one should be specified.")
 
     if (len(args.inputFiles)) :
         fNames = args.inputFiles
@@ -99,5 +103,11 @@ def get_args() :
     if ("/" in args.outFile) :
         outDir = args.outFile[0: args.outFile.rfind("/")]
         os.system("mkdir -p %s" %(outDir))
+    
+    if (args.sampleType not in ["Data", "MC", "Embed"]) :
+        raise ValueError("sampleType must be one of the following: [Data, MC, Embed]")
+    
+    if (args.era not in ["2016", "2017", "2018"]) :
+        raise ValueError("Era must be one of the following: [2016, 2017, 2018]")
     
     return args
