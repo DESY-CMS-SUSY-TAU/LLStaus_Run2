@@ -11,6 +11,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
     categories_list = list(itertools.product(*config["Categories"]))
     # categories_list = [f"{cat1}_{cat2}_{cat3}" for cat1,cat2,cat3 in categories_list]
     categories_list = ["_".join(cat) for cat in categories_list]
+    categories_list = [""]
 
     for _ci, _categ in enumerate(categories_list):
 
@@ -22,6 +23,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
             if not any([cut in str(_histfile) for cut in config["cuts"]]):
                 continue
 
+            print("OPEN:", _histfile)
             file = ROOT.TFile.Open(str(_histfile), 'read')
 
             _histograms = {"background":[], "signal":[], "data":[]}
@@ -38,10 +40,11 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                 for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
                     
                     # Rescaling according to cross-section and luminosity
-                    # print("Histogram: ", _histname)
+                    # print("Histogram: ",  _histname)
                     # print("Reading data:", _histogram_data + "_" + _categ)
-                    hist = file.Get(_histogram_data + "_" + _categ)
-                    # hist = file.Get(_histogram_data)
+                    # hist = file.Get(_histogram_data + "_" + _categ)
+                    # print(_histogram_data)
+                    hist = file.Get(_histogram_data)
                     
                     if isSignal != "data": # Scaling of the MC to the lumi and xsection
                         # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
@@ -49,7 +52,12 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                         hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
 
                     if _histname in config["SetupBins"]:
-                        hist.Rebin(config["SetupBins"][_histname][2])
+                        rebin_setup = config["SetupBins"][_histname][2]
+                        if type(rebin_setup) == list:
+                            hist = hist.Rebin(len(rebin_setup)-1, hist.GetName()+"_rebin", np.array(rebin_setup))
+                        else: 
+                            hist.Rebin(rebin_setup)
+                            
                         if config["SetupBins"][_histname][4]:
                             for bin_i, label in enumerate(config["SetupBins"][_histname][4]):
                                 hist.GetXaxis().SetBinLabel(bin_i, label)
@@ -149,13 +157,14 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     l_hist_overlay = _histograms["signal"],
                     outfile = output + "/" + os.path.splitext(os.path.basename(_histfile))[0] + ".png",
                     xrange = [xrange_min, xrange_max],
-                    yrange = (0.0001,  1000*y_max),
-                    logx = False, logy = True,
+                    # yrange = (0.0001,  1000*y_max),
+                    yrange = (0.0,  1.5*y_max),
+                    logx = False, logy = False,
                     include_overflow = overflow,
                     xtitle = _histograms["background"][0].GetXaxis().GetTitle(),
                     ytitle = "events",
                     xtitle_ratio = _histograms["background"][0].GetXaxis().GetTitle(),
-                    ytitle_ratio = "S/(S+B)",
+                    ytitle_ratio = "S/#sqrt{S+B}",
                     centertitlex = True, centertitley = True,
                     centerlabelx = False, centerlabely = False,
                     gridx = True, gridy = True,
@@ -172,7 +181,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     lumiText = "2018 (13 TeV)",
                     signal_to_background_ratio = True,
                     ratio_mode = "SB",
-                    yrange_ratio = (1E-05, 10),
+                    yrange_ratio = (1E-04, 1),
                     draw_errors = True
                 )
 

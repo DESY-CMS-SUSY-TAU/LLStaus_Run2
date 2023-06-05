@@ -188,7 +188,7 @@ def root_plot1D(
         else:
             hist.SetDirectory(0)
             accume_hist.Add(hist)
-    
+
     stack.Draw(stackdrawopt)
     
     accume_hist.SetFillStyle(3004)
@@ -280,7 +280,10 @@ def root_plot1D(
                 SandB = accume_hist.Clone()
                 SandB.SetDirectory(0)
                 SandB.Add(hist)
-                h1_ratio.Divide(SandB)
+                # h1_ratio.Divide(SandB)
+                for bin_i in range(hist.GetNcells()):
+                    if SandB.GetBinContent(bin_i) != 0:
+                        h1_ratio.SetBinContent(bin_i, h1_ratio.GetBinContent(bin_i) / ROOT.TMath.Sqrt(SandB.GetBinContent(bin_i)))
                 stack_ratio.Add(h1_ratio, "HIST")
             elif ratio_mode=="DATA":
                 SandB = accume_hist.Clone()
