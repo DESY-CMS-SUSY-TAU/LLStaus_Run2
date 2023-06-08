@@ -8,7 +8,6 @@ import mt2
 import numba as nb
 
 from coffea.nanoevents import NanoAODSchema
-import utils.processor_stau_basic as stau_basic
 # np.set_printoptions(threshold=np.inf)
 
 

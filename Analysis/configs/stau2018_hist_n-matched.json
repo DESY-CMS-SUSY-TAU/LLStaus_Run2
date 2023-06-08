@@ -1,0 +1,258 @@
+{
+    "MET": {
+        "bins": [
+            {
+                "name": "MET",
+                "label": "MET",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 1000,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "MET": [
+                "MET",
+                "pt"
+            ]
+        }
+    },
+
+    "Jet_pt": {
+        "bins": [
+            {
+                "name": "Jet_pt",
+                "label": "Jet_pt",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 1000,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "Jet_pt": [
+                "Jet",
+                "pt"
+            ]
+        }
+    },
+
+    "Jet_eta": {
+        "bins": [
+            {
+                "name": "Jet_eta",
+                "label": "Jet_eta",
+                "n_or_arr": 100,
+                "lo": -2.5,
+                "hi": 2.5,
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "Jet_eta": [
+                "Jet",
+                "eta"
+            ]
+        }
+    },
+
+    "bJet_n": {
+        "bins": [
+            {
+                "name": "bjet_n",
+                "label": "b-tagged_jets_n",
+                "n_or_arr": 10,
+                "lo": 0,
+                "hi": 10,
+                "unit": "n."
+            }
+        ],
+        "fill": {
+            "bjet_n": [
+                "jet_b",
+                {"function": "num"}
+            ]
+        }
+    },
+
+    "SVn": {
+        "bins": [
+            {
+                "name": "SVn",
+                "label": "SVn",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n."
+            }
+        ],
+        "fill": {
+            "SVn": [
+                "SV",
+                {"function": "num"}
+            ]
+        }
+    },
+
+    "n_distautag_loose" : {
+        "bins" : [
+            {
+                "name": "n_distautag",
+                "label": "number of jets n_distautag_loose",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n"
+            }
+        ],
+        "fill": {
+            "n_distautag":[
+                "n_distautag_loose"
+            ]
+        }
+    },
+
+    "n_distautag_medium" : {
+        "bins" : [
+            {
+                "name": "n_distautag",
+                "label": "number of jets n_distautag_medium",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n"
+            }
+        ],
+        "fill": {
+            "n_distautag":[
+                "n_distautag_medium"
+            ]
+        }
+    },
+
+    "n_distautag_tight" : {
+        "bins" : [
+            {
+                "name": "n_distautag",
+                "label": "number of jets n_distautag_tight",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n"
+            }
+        ],
+        "fill": {
+            "n_distautag":[
+                "n_distautag_tight"
+            ]
+        }
+    },
+
+    "n_distautag_tau_loose" : {
+        "bins" : [
+            {
+                "name": "n_distautag",
+                "label": "number of jets n_distautag_loose",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n"
+            }
+        ],
+        "fill": {
+            "n_distautag":[
+                "n_distautag_tau_loose"
+            ]
+        }
+    },
+
+    "n_distautag_tau_medium" : {
+        "bins" : [
+            {
+                "name": "n_distautag",
+                "label": "number of jets n_distautag_medium",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n"
+            }
+        ],
+        "fill": {
+            "n_distautag":[
+                "n_distautag_tau_medium"
+            ]
+        }
+    },
+
+    "n_distautag_tau_tight" : {
+        "bins" : [
+            {
+                "name": "n_distautag",
+                "label": "number of jets n_distautag_tight",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n"
+            }
+        ],
+        "fill": {
+            "n_distautag":[
+                "n_distautag_tau_tight"
+            ]
+        }
+    },
+
+    "n_distautag_fake_loose" : {
+        "bins" : [
+            {
+                "name": "n_distautag",
+                "label": "number of jets n_distautag_loose",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n"
+            }
+        ],
+        "fill": {
+            "n_distautag":[
+                "n_distautag_fake_loose"
+            ]
+        }
+    },
+
+    "n_distautag_fake_medium" : {
+        "bins" : [
+            {
+                "name": "n_distautag",
+                "label": "number of jets n_distautag_medium",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n"
+            }
+        ],
+        "fill": {
+            "n_distautag":[
+                "n_distautag_fake_medium"
+            ]
+        }
+    },
+
+    "n_distautag_fake_tight" : {
+        "bins" : [
+            {
+                "name": "n_distautag",
+                "label": "number of jets n_distautag_tight",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20,
+                "unit": "n"
+            }
+        ],
+        "fill": {
+            "n_distautag":[
+                "n_distautag_fake_tight"
+            ]
+        }
+    }
+}

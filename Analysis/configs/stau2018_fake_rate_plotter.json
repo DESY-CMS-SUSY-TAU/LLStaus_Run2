@@ -7,7 +7,7 @@
     "Labels": {
 
         "$\\mathrm{QCD}$": [
-            // "QCD_Pt_15to30_TuneCP5_13TeV_pythi a8",
+            "QCD_Pt_15to30_TuneCP5_13TeV_pythi a8",
             "QCD_Pt_30to50_TuneCP5_13TeV_pythia8",
             "QCD_Pt_50to80_TuneCP5_13TeV_pythia8",
             "QCD_Pt_80to120_TuneCP5_13TeV_pythia8",
@@ -59,14 +59,13 @@
             "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            
             "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8", 
             "ZZTo4L_TuneCP5_13TeV_powheg_pythia8"
-                    ],
-        "$\\mathrm{W}+\\mathrm{jets}\\mathrm{LNu}$": [
-            "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
         ],
-        "$\\mathrm{W}+\\mathrm{jets}\\mathrm{qq}$": [
+        "$\\mathrm{W}+\\mathrm{jets}\\,\\mathrm{l\\nu}$": [
+            "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8"
+        ],
+        "$\\mathrm{W}+\\mathrm{jets}\\,\\mathrm{QQ}$": [
             "WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
             "WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
             "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
@@ -84,7 +83,7 @@
             "ZJetsToNuNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8",
             "ZJetsToNuNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8",
             "ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8",
-            // "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
+            "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
         ],
         "$\\mathrm{stau100GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
         "$\\mathrm{stau100GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
@@ -105,8 +104,8 @@
         "$\\mathrm{t}/\\bar{\\mathrm{t}}$":        [623, 623],
         "$\\mathrm{DY}$":                          [403, 403],
         "$\\mathrm{DY-low}$":                         [406, 406],
-        "$\\mathrm{W}+\\mathrm{jets}\\mathrm{LNu}$":  [410, 410],
-        "$\\mathrm{W}+\\mathrm{jets}\\mathrm{qq}$":   [626, 626],
+        "$\\mathrm{W}+\\mathrm{jets}\\,\\mathrm{l\\nu}$":  [410, 410],
+        "$\\mathrm{W}+\\mathrm{jets}\\,\\mathrm{QQ}$":   [626, 626],
         "$\\mathrm{Z}+\\mathrm{jets}$":            [616, 616],
         "$\\mathrm{VV}/\\mathrm{VVV}$":            [795, 795],
         "$\\mathrm{ggZZ}$":                        [597, 597]
