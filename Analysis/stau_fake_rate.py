@@ -64,6 +64,7 @@ class Processor(pepper.ProcessorSTau):
         
         # add cuts and selections on the jets
         selector.set_column("valid_jets", self.jet_selection)
+        selector.set_column("n_jets", self.n_jets)
         selector.add_cut("n_loose_bjets", self.n_loose_bjets_cut)
         selector.add_cut("n_valid_jets", self.n_valid_jets_cut)
 
@@ -151,9 +152,14 @@ class Processor(pepper.ProcessorSTau):
             & (jets.eta < self.config["jet_eta_max"])
             & (self.config["jet_pt_min"] < jets.pt)
             )]
+        print(jets)
         matches_h, dRlist = jets.nearest(data["muon_tag"], return_metric=True, threshold=self.config["tag_muon_veto_dR"])
         isoJets = jets[ak.is_none(matches_h, axis=-1)]
         return isoJets
+    
+    @zero_handler
+    def n_jets(self, data):
+        return ak.num(data["valid_jets"])
     
     @zero_handler
     def n_loose_bjets_cut(self, data):
@@ -161,7 +167,7 @@ class Processor(pepper.ProcessorSTau):
     
     @zero_handler
     def n_valid_jets_cut(self,data):
-        return ak.num(data["valid_jets"]) < 3
+        return (ak.num(data["valid_jets"]) < 3) & (ak.num(data["valid_jets"]) > 0)
     
     @zero_handler
     def jets_updated_all(self, data):

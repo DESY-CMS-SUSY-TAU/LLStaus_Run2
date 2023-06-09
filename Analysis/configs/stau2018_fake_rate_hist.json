@@ -12,8 +12,7 @@
         ],
         "fill": {
             "jet_n": [
-                "valid_jets",
-                {"function": "num"}
+                "n_jets"
             ]
         }
     },
@@ -102,9 +101,9 @@
             {
                 "name": "jet_dxy",
                 "label": "valid jets dxy",
-                "n_or_arr": 100,
-                "lo": -20,
-                "hi": 20,
+                "n_or_arr": 400,
+                "lo": -200,
+                "hi": 200,
                 "unit": "cm"
             }
         ],
@@ -137,9 +136,9 @@
             {
                 "name": "jet_dxy",
                 "label": "valid jets dxy",
-                "n_or_arr": 100,
-                "lo": -20,
-                "hi": 20,
+                "n_or_arr": 400,
+                "lo": -200,
+                "hi": 200,
                 "unit": "cm"
             }
         ],
@@ -204,9 +203,9 @@
             {
                 "name": "jet_dxy",
                 "label": "valid loose jets dxy",
-                "n_or_arr": 100,
-                "lo": -20,
-                "hi": 20,
+                "n_or_arr": 400,
+                "lo": -200,
+                "hi": 200,
                 "unit": "cm"
             }
         ],
@@ -239,9 +238,9 @@
             {
                 "name": "jet_dxy",
                 "label": "valid loose jets dxy",
-                "n_or_arr": 100,
-                "lo": -20,
-                "hi": 20,
+                "n_or_arr": 1000,
+                "lo": -250,
+                "hi": 250,
                 "unit": "cm"
             }
         ],
@@ -306,9 +305,9 @@
             {
                 "name": "jet_dxy",
                 "label": "valid tight jets dxy",
-                "n_or_arr": 100,
-                "lo": -20,
-                "hi": 20,
+                "n_or_arr": 400,
+                "lo": -200,
+                "hi": 200,
                 "unit": "cm"
             }
         ],
@@ -341,9 +340,9 @@
             {
                 "name": "jet_dxy",
                 "label": "valid tight jets dxy",
-                "n_or_arr": 100,
-                "lo": -20,
-                "hi": 20,
+                "n_or_arr": 400,
+                "lo": -200,
+                "hi": 200,
                 "unit": "cm"
             }
         ],
