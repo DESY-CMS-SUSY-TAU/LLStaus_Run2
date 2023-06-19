@@ -38,7 +38,7 @@ def natural_sort(l):
 def _confirm(prompt, silent_mode=False):
     if silent_mode:
         return True
-    ans = raw_input('%s [yn] ' % prompt)
+    ans = input('%s [yn] ' % prompt)
     if ans.lower()[0] == 'y':
         return True
     else:
@@ -405,7 +405,7 @@ def status(args):
             if ret['status'] == 'COMPLETED':
                 finished += 1
             elif ret['dbStatus'] == 'SUBMITFAILED':
-                if not args.no_resubmit:
+                if args.resubmit:
                     logger.info('Resubmitting submit-failed job %s.' % dirname)
                     shutil.rmtree('%s/%s' % (work_area, dirname))
                     cfgpath = os.path.join(work_area, 'configs', dirname.lstrip('crab_') + '.py')
@@ -414,9 +414,9 @@ def status(args):
                     p.communicate()
                     if p.returncode != 0:
                         submit_failed.append(ret['inputDataset'])
-            #elif states.get('failed', 0) > 0 and 'killed' not in ret['status'].lower() and not args.no_resubmit:
-            #    logger.info('Resubmitting job %s with options %s' % (dirname, str(kwargs)))
-            #    runCrabCommand('resubmit', dir='%s/%s' % (work_area, dirname), **kwargs)
+            elif states.get('failed', 0) > 0 and 'killed' not in ret['status'].lower() and args.resubmit:
+                logger.info('Resubmitting job %s with options %s' % (dirname, str(kwargs)))
+                runCrabCommand('resubmit', dir='%s/%s' % (work_area, dirname), **kwargs)
 
             if ret['publication'].get('failed', 0) > 0:
                 logger.info('Resubmitting job %s for failed publication' % dirname)
@@ -542,10 +542,10 @@ def main():
                         action='store_true', default=False,
                         help='Check job status. Will resubmit if there are failed jobs. Default: %(default)s'
                         )
-    parser.add_argument('--no-resubmit',
-                        action='store_true', default=False,
-                        help='Disable auto resubmit of SUBMITFAILED tasks when checking job status. Default: %(default)s'
-                        )
+    #parser.add_argument('--no-resubmit',
+    #                    action='store_true', default=False,
+    #                    help='Disable auto resubmit of SUBMITFAILED tasks when checking job status. Default: %(default)s'
+    #                    )
     parser.add_argument('--resubmit',
                         action='store_true', default=False,
                         help='Resubmit jobs. Default: %(default)s'
