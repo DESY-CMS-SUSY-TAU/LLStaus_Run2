@@ -4,10 +4,14 @@
     "crosssections": "$CONFDIR/crosssections.json",
     "cuts" : ["Cut-008"],
     "Categories" : [],
+    
+    "nominator" : "Cut-008_n_valid_jets_jet_fake_tight",
+    "denominator" : "Cut-008_n_valid_jets_jet_fake_loose",
+    
     "Labels": {
 
         "$\\mathrm{QCD}$": [
-            "QCD_Pt_15to30_TuneCP5_13TeV_pythi a8",
+            // "QCD_Pt_15to30_TuneCP5_13TeV_pythi a8",
             "QCD_Pt_30to50_TuneCP5_13TeV_pythia8",
             "QCD_Pt_50to80_TuneCP5_13TeV_pythia8",
             "QCD_Pt_80to120_TuneCP5_13TeV_pythia8",
@@ -83,15 +87,15 @@
             "ZJetsToNuNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8",
             "ZJetsToNuNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8",
             "ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
+            // "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
         ],
-        "$\\mathrm{stau100GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
-        "$\\mathrm{stau100GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
-        "$\\mathrm{stau400GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
-        "$\\mathrm{stau400GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
-        "$\\mathrm{stau250GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
-        "$\\mathrm{stau250GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
-        "$\\mathrm{stau250GeV0p01mm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"],
+        // "$\\mathrm{stau100GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
+        // "$\\mathrm{stau100GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
+        // "$\\mathrm{stau400GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
+        // "$\\mathrm{stau400GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
+        // "$\\mathrm{stau250GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
+        // "$\\mathrm{stau250GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
+        // "$\\mathrm{stau250GeV0p01mm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"],
 
         // "$\\mathrm{Data}$" : ["DATA_MET"]
     },
@@ -124,6 +128,14 @@
         "jet_fake_all", "jet_fake_loose", "jet_fake_tight"
     ],
     "SetupBins" : {
-
+        // "jet_pt_all" : [0.0, 1100, [20, 25, 30, 35, 40, 50, 70, 120, 1000], true, null],
+        // "jet_pt_loose" : [0.0, 1100, [20, 25, 30, 35, 40, 50, 70, 120, 1000], true, null],
+        // "jet_pt_tight" : [0.0, 1100, [20, 25, 30, 35, 40, 50, 70, 120, 1000], true, null],
+        // "jet_eta_all" : [-2.5, 2.5, [-2.4, -1.5, 0.0, 1.5, 2.4], true, null],
+        // "jet_eta_loose" : [-2.5, 2.5, [-2.4, -1.5, 0.0, 1.5, 2.4], true, null],
+        // "jet_eta_tight" : [-2.5, 2.5, [-2.4, -1.5, 0.0, 1.5, 2.4], true, null],
+        "jet_dxy_all" : [ -25, 25, [-20.0, -16.0, -10.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 10.0, 16.0, 20.0], true, null],
+        "jet_dxy_loose" : [ -25, 25, [-20.0, -16.0, -10.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 10.0, 16.0, 20.0], true, null],
+        "jet_dxy_tight" : [ -25, 25, [-20.0, -16.0, -10.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 10.0, 16.0, 20.0], true, null],
     }
 }
