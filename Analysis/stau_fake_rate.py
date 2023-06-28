@@ -172,7 +172,8 @@ class Processor(pepper.ProcessorSTau):
     @zero_handler
     def jets_updated_all(self, data):
         jets = data["valid_jets"]
-        jets["dxy"] = data["jets_lead_pfcands"].dxy
+        jets["dxy"] = np.abs(data["jets_lead_pfcands"].dxy)
+        jets["dz"] = np.abs(data["jets_lead_pfcands"].dz)
         return jets
     
     @zero_handler

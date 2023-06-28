@@ -6,8 +6,23 @@
     "Categories" : [],
     
     "nominator" : "Cut-008_n_valid_jets_jet_fake_tight",
-    "denominator" : "Cut-008_n_valid_jets_jet_fake_loose",
+    "denominator" : "Cut-008_n_valid_jets_jet_fake_all",
     
+    "rate_bins" : {
+        "jet_pt" :  [20, 40, 60, 80, 110],
+        "jet_eta" :  [-2.4, -1.5, 0.0, 1.5, 2.4],
+        "jet_dxy" : [0.0, 1.0, 2.0, 4.0, 6.0, 10.0, 16.0]
+    },
+
+    "sf_project" : {
+        // name : "axis"
+        "jet_pt_eta" : "xy",
+        "jet_pt_dxy" : "xz",
+        "jet_pt" : "x",
+        "jet_eta" : "y",
+        "jet_dxy" : "z"
+    },
+
     "Labels": {
 
         "$\\mathrm{QCD}$": [
@@ -115,14 +130,14 @@
         "$\\mathrm{ggZZ}$":                        [597, 597]
     },
     "Signal_samples":{
-        "$\\mathrm{stau100GeV10cm}$" : [0, 810],
-        "$\\mathrm{stau100GeV100cm}$" : [0, 910],
-        "$\\mathrm{stau400GeV10cm}$" : [0, 600], 
-        "$\\mathrm{stau400GeV100cm}$" : [0, 603],
-        "$\\mathrm{stau250GeV10cm}$": [0, 418],
-        "$\\mathrm{stau250GeV100cm}$": [0, 420],
-        "$\\mathrm{stau250GeV100cm}$": [0, 420],
-        "$\\mathrm{stau250GeV0p01mm}$": [0, 1]
+        // "$\\mathrm{stau100GeV10cm}$" : [0, 810],
+        // "$\\mathrm{stau100GeV100cm}$" : [0, 910],
+        // "$\\mathrm{stau400GeV10cm}$" : [0, 600], 
+        // "$\\mathrm{stau400GeV100cm}$" : [0, 603],
+        // "$\\mathrm{stau250GeV10cm}$": [0, 418],
+        // "$\\mathrm{stau250GeV100cm}$": [0, 420],
+        // "$\\mathrm{stau250GeV100cm}$": [0, 420],
+        // "$\\mathrm{stau250GeV0p01mm}$": [0, 1]
     },
     "mask_hists": [
         "jet_fake_all", "jet_fake_loose", "jet_fake_tight"
@@ -134,8 +149,8 @@
         // "jet_eta_all" : [-2.5, 2.5, [-2.4, -1.5, 0.0, 1.5, 2.4], true, null],
         // "jet_eta_loose" : [-2.5, 2.5, [-2.4, -1.5, 0.0, 1.5, 2.4], true, null],
         // "jet_eta_tight" : [-2.5, 2.5, [-2.4, -1.5, 0.0, 1.5, 2.4], true, null],
-        "jet_dxy_all" : [ -25, 25, [-20.0, -16.0, -10.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 10.0, 16.0, 20.0], true, null],
-        "jet_dxy_loose" : [ -25, 25, [-20.0, -16.0, -10.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 10.0, 16.0, 20.0], true, null],
-        "jet_dxy_tight" : [ -25, 25, [-20.0, -16.0, -10.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 10.0, 16.0, 20.0], true, null],
+        "jet_dxy_all" : [ 0.0, 120.0, [0.0, 1.0, 2.0, 4.0, 6.0, 10.0, 16.0, 30.0, 50.0, 100.0], true, null],
+        "jet_dxy_loose" : [ 0.0, 120.0, [0.0, 1.0, 2.0, 4.0, 6.0, 10.0, 16.0, 30.0, 50.0, 100.0], true, null],
+        "jet_dxy_tight" : [ 0.0, 120.0, [0.0, 1.0, 2.0, 4.0, 6.0, 10.0, 16.0, 30.0, 50.0, 100.0], true, null]
     }
 }
