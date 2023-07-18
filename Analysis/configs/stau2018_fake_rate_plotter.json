@@ -2,16 +2,24 @@
     "year": "2018",
     "luminosity": 59.7,
     "crosssections": "$CONFDIR/crosssections.json",
-    "cuts" : ["Cut-008"],
+    "cuts" : ["Cut-"],
     "Categories" : [],
     
-    "nominator" : "Cut-008_n_valid_jets_jet_fake_tight",
-    "denominator" : "Cut-008_n_valid_jets_jet_fake_all",
-    
+    // "nominator" : "Cut-002_loose_electron_veto_jet_fake_tight",
+
+    // "nominator" : "Cut-005_n_valid_jets_jet_fake_loose",
+    // "denominator" : "Cut-002_loose_electron_veto_jet_fake_all",
+
+    // "nominator" : "Cut-005_n_valid_jets_jet_fake_tight",
+    // "denominator" : "Cut-005_n_valid_jets_jet_fake_all",
+
+    "nominator" : "Cut-003_loose_electron_veto_jet_fake_tight",
+    "denominator" : "Cut-003_loose_electron_veto_jet_fake_all",
+
     "rate_bins" : {
         "jet_pt" :  [20, 40, 60, 80, 110],
         "jet_eta" :  [-2.4, -1.5, 0.0, 1.5, 2.4],
-        "jet_dxy" : [0.0, 1.0, 2.0, 4.0, 6.0, 10.0, 16.0]
+        "jet_dxy" : [0.0, 1.0, 2.0, 4.0, 6.0, 10.0]
     },
 
     "sf_project" : {

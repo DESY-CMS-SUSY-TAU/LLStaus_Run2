@@ -148,9 +148,22 @@
     "pfcand_eta_max"    : 2.4,
     "track"             : "hasTrackDetails",
 
+
+    // for new model:
+    // "eff99p8": 0.1716,
+    // "eff99p6": 0.4612,
+    // "eff99p4": 0.6631,
+    // "eff99p2": 0.786,
+    // "eff99": 0.846,
+    // "eff98": 0.9529,
+    // "eff95": 0.9889,
+    // "eff90": 0.9972,
+    // "eff80": 0.9996
+
     // loose and tight tag def
-    "tag_loose" : 0.7785,
-    "tag_tight"  : 0.9995,
+    // "tag_tight"  : 0.9995,
+    "tag_loose" : 0.9529,
+    "tag_tight"  : 0.9972, // try random but not very tight
 
     "hists": "$CONFDIR/stau2018_fake_rate_hist.json",
 }

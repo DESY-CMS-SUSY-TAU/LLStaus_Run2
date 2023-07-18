@@ -115,6 +115,25 @@
         }
     },
 
+    "jet_dxy_weight_all" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "valid jets pt-weighted dxy",
+                "n_or_arr": 100,
+                "lo": 0.0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "jets_updated_all",
+                "dxy_weight"
+            ]
+        }
+    },
+
     "jet_fake_all" : {
         "bins": [
             {
@@ -217,6 +236,25 @@
         }
     },
 
+    "jet_dxy_weight_loose" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "valid loose jets pt-weighted dxy",
+                "n_or_arr": 100,
+                "lo": 0.0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "jets_updated_loose",
+                "dxy_weight"
+            ]
+        }
+    },
+
     "jet_fake_loose" : {
         "bins": [
             {
@@ -256,6 +294,37 @@
             "jet_dxy": [
                 "jets_updated_loose",
                 "dxy"
+            ]
+        }
+    },
+
+    "jet_fake_2D_loose" : {
+        "bins": [
+            {
+                "name": "jet_pt",
+                "label": "valid loose jets pt",
+                "n_or_arr": 200,
+                "lo": 0,
+                "hi": 1000,
+                "unit": "GeV"
+            },
+            {
+                "name": "jet_eta",
+                "label": "valid loose jets eta",
+                "n_or_arr": 100,
+                "lo": -2.5,
+                "hi": 2.5,
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "jet_pt": [
+                "jets_updated_loose",
+                "pt"
+            ],
+            "jet_eta": [
+                "jets_updated_loose",
+                "eta"
             ]
         }
     },
@@ -319,6 +388,25 @@
         }
     },
 
+    "jet_dxy_weight_tight" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "valid tight jets pt-weighted dxy",
+                "n_or_arr": 100,
+                "lo": 0.0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "jets_updated_tight",
+                "dxy_weight"
+            ]
+        }
+    },
+
     "jet_fake_tight" : {
         "bins": [
             {
@@ -358,6 +446,37 @@
             "jet_dxy": [
                 "jets_updated_tight",
                 "dxy"
+            ]
+        }
+    },
+
+    "jet_fake_2D_tight" : {
+        "bins": [
+            {
+                "name": "jet_pt",
+                "label": "valid tight jets pt",
+                "n_or_arr": 200,
+                "lo": 0,
+                "hi": 1000,
+                "unit": "GeV"
+            },
+            {
+                "name": "jet_eta",
+                "label": "valid tight jets eta",
+                "n_or_arr": 100,
+                "lo": -2.5,
+                "hi": 2.5,
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "jet_pt": [
+                "jets_updated_tight",
+                "pt"
+            ],
+            "jet_eta": [
+                "jets_updated_tight",
+                "eta"
             ]
         }
     },

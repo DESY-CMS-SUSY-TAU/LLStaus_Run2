@@ -172,8 +172,12 @@ class Processor(pepper.ProcessorSTau):
     @zero_handler
     def jets_updated_all(self, data):
         jets = data["valid_jets"]
+        # Mask jets with dxy nan (no selected pfcands matching)
+        bad_jets = ak.is_none(data["jets_lead_pfcands"].dxy, axis=-1)
+        jets = ak.mask(jets, ~bad_jets)
         jets["dxy"] = np.abs(data["jets_lead_pfcands"].dxy)
         jets["dz"] = np.abs(data["jets_lead_pfcands"].dz)
+        jets["dxy_weight"] = np.abs(data["jets_lead_pfcands"].dxy_weight)
         return jets
     
     @zero_handler

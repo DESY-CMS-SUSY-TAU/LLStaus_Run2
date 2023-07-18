@@ -18,7 +18,7 @@ import mt2
 import numba as nb
 
 from coffea.nanoevents import NanoAODSchema
-import utils.processor_stau as processor_stau
+# import utils.processor_stau as processor_stau
 # np.set_printoptions(threshold=np.inf)
 
 # @nb.njit
@@ -52,7 +52,7 @@ import utils.processor_stau as processor_stau
 #     return idDeepTau2017v2p1VSe
 
 # All processors should inherit from pepper.ProcessorBasicPhysics
-class Processor(processor_stau.ProcessorSTau):
+class Processor(pepper.ProcessorSTau):
     # We use the ConfigTTbarLL instead of its base Config, to use some of its
     # predefined extras
     config_class = pepper.ConfigBasicPhysics
