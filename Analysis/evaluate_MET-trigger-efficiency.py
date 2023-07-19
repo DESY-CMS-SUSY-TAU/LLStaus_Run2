@@ -173,7 +173,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         is_good = (
             (abs(trig_muons.id) == 13)
-            & (trig_muons.filterBits >= 8)
+            #& (trig_muons.filterBits >= 8)
+            & (trig_muons.filterBits == 3)
         )
         
         return trig_muons[is_good]
