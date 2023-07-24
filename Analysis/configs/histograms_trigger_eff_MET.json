@@ -1,0 +1,21 @@
+{   
+    
+    "MET": {
+        "bins": [
+            {
+                "name": "MET",
+                "label": "p^{miss}_{T}",
+                "n_or_arr": 200,
+                "lo": 0,
+                "hi": 2000,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "MET": [
+                "MET",
+                "pt"
+            ]
+        }
+    }
+}

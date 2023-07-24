@@ -1,0 +1,158 @@
+{
+
+    "year": "2018",
+    "file_mode": "local",
+    "xrootddomain": "xrootd-cms.infn.it",
+    "datadir": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD",
+    //"store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/",
+    "bad_file_paths": "$CONFDIR/nano_v11_bad-pnfs-files.json",
+    "rng_seed_file": "$CONFDIR/seed.txt",
+    "compute_systematics": false,
+    //"lumimask": "",
+    "luminosity": 1.0,
+    "crosssections": "$CONFDIR/crosssections.json",
+    "exp_datasets": {
+        "SingleMuon_2018A" :  [
+            "$DATADIR/SingleMuon/crab_SingleMuon_2018A_UL/230609_094540/*/*.root"
+        ],
+        "SingleMuon_2018B" :  [
+            "$DATADIR/SingleMuon/crab_SingleMuon_2018B_UL/230608_152338/*/*.root"
+        ],
+        "SingleMuon_2018C" :  [
+            "$DATADIR/SingleMuon/crab_SingleMuon_2018C_UL/230608_152344/*/*.root"
+        ],
+        "SingleMuon_2018D" :  [
+            "$DATADIR/SingleMuon/crab_SingleMuon_2018D_UL/230608_152349/*/*.root"
+        ]
+    },
+    "mc_datasets": {
+        "WJetsToLNu" :  [
+            "$DATADIR/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_WJetsToLNu/230311_122159/*/*.root"
+        ],
+        "W1JetsToLNu" :  [
+            "$DATADIR/W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W1JetsToLNu/230608_152444/*/*.root"
+        ],
+        "W2JetsToLNu" :  [
+            "$DATADIR/W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W2JetsToLNu/230608_152449/*/*.root"
+        ],
+        "W3JetsToLNu" :  [
+            "$DATADIR/W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W3JetsToLNu/230608_152454/*/*.root"
+        ],
+        "W4JetsToLNu" :  [
+            "$DATADIR/W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W4JetsToLNu/230608_152500/*/*.root"
+        ]
+    },
+    "dataset_for_systematics": {
+    },
+    
+    "dataset_trigger_order": [
+        "SingleMuon_2018A",
+        "SingleMuon_2018B",
+        "SingleMuon_2018C",
+        "SingleMuon_2018D"
+    ],
+    
+    "tag_trigger_map": {
+        "SingleMuon_2018A": [
+            "HLT_IsoMu24",
+            "HLT_IsoMu24_eta2p1",
+            "HLT_IsoMu27"
+        ],
+        "SingleMuon_2018B": [
+            "HLT_IsoMu24",
+            "HLT_IsoMu24_eta2p1",
+            "HLT_IsoMu27"
+        ],
+        "SingleMuon_2018C": [
+            "HLT_IsoMu24",
+            "HLT_IsoMu24_eta2p1",
+            "HLT_IsoMu27"
+        ],
+        "SingleMuon_2018D": [
+            "HLT_IsoMu24",
+            "HLT_IsoMu24_eta2p1",
+            "HLT_IsoMu27"
+        ],
+        
+        "WJetsToLNu": [
+            "HLT_IsoMu24",
+            "HLT_IsoMu24_eta2p1",
+            "HLT_IsoMu27"
+        ],
+        "W1JetsToLNu": [
+            "HLT_IsoMu24",
+            "HLT_IsoMu24_eta2p1",
+            "HLT_IsoMu27"
+        ],
+        "W2JetsToLNu": [
+            "HLT_IsoMu24",
+            "HLT_IsoMu24_eta2p1",
+            "HLT_IsoMu27"
+        ],
+        "W3JetsToLNu": [
+            "HLT_IsoMu24",
+            "HLT_IsoMu24_eta2p1",
+            "HLT_IsoMu27"
+        ],
+        "W4JetsToLNu": [
+            "HLT_IsoMu24",
+            "HLT_IsoMu24_eta2p1",
+            "HLT_IsoMu27"
+        ]
+    },
+    
+    "probe_trigger_map": {
+        "SingleMuon_2018A": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ],
+        "SingleMuon_2018B": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ],
+        "SingleMuon_2018C": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ],
+        "SingleMuon_2018D": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ],
+        
+        "WJetsToLNu": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ],
+        "W1JetsToLNu": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ],
+        "W2JetsToLNu": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ],
+        "W3JetsToLNu": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ],
+        "W4JetsToLNu": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ]
+    },
+
+    "hists": "$CONFDIR/histograms_trigger_eff_MET.json"
+}
+//"HLT_PFMETNoMu110_PFMHTNoMu110_IDTight",
+//"HLT_PFMETNoMu120_PFMHTNoMu120_IDTight",
+//"HLT_PFMETNoMu130_PFMHTNoMu130_IDTight",
+//"HLT_PFMETNoMu140_PFMHTNoMu140_IDTight"
