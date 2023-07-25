@@ -1,0 +1,308 @@
+{   "npvs" : {
+        "bins": [
+            {
+                "name": "npvsGood",
+                "label": "number of good reconstructed primary vertices",
+                "n_or_arr": 200,
+                "lo": 0,
+                "hi": 200,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "npvsGood": [
+                "PV",
+                "npvsGood"
+            ]
+        }
+    },
+    "1st_mu_pt": {
+        "bins": [
+            {
+                "name": "pt",
+                "label": "1-st\\ muon $p_{\\mathrm{T}}$",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 400,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "pt": [
+                "Muon",
+                "pt",
+                {"leading": 1}
+            ]
+        }
+    },
+    "2nd_mu_pt": {
+        "bins": [
+            {
+                "name": "pt",
+                "label": "2-nd\\ muon $p_{\\mathrm{T}}$",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 400,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "pt": [
+                "Muon",
+                "pt",
+                {"leading": 2}
+            ]
+        }
+    },
+    "njetselect": {
+        "bins": [
+            {
+                "name": "njet",
+                "label": "Number of jets",
+                "n_or_arr": 9,
+                "lo": 0,
+                "hi": 9
+            }
+        ],
+        "fill": {
+            "njet": [
+                "Jet_select",
+                {"function": "num"}
+            ]
+        }
+    },
+    "mumu_mass": {
+        "bins": [
+            {
+                "name": "mll",
+                "label": "$m_{\\mathrm{ll}}$",
+                "n_or_arr": 30,
+                "lo": 0,
+                "hi": 150,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mll": [
+                "sum_mumu",
+                "mass"
+            ]
+        }
+    },
+    "mumu_pt": {
+        "bins": [
+            {
+                "name": "pt_ll",
+                "label": "$p_{\\mathrm{T}}(\\mu\\mu)$",
+                "n_or_arr": 30,
+                "lo": 0,
+                "hi": 150,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mll": [
+                "sum_mumu",
+                "pt"
+            ]
+        }
+    },
+    "METpt": {
+        "bins": [
+            {
+                "name": "pt",
+                "label": "MET $p_{\\mathrm{T}}$",
+                "n_or_arr": 40,
+                "lo": 0,
+                "hi": 200,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "pt": [
+                "MET",
+                "pt"
+            ]
+        }
+    },
+    "METphi": {
+        "bins": [
+            {
+                "name": "phi",
+                "label": "MET $\\phi$",
+                "n_or_arr": 40,
+                "lo": -3.14,
+                "hi": 3.14
+            }
+        ],
+        "fill": {
+            "phi": [
+                "MET",
+                "phi"
+            ]
+        }
+    },
+    "deltaphi": {
+        "bins": [
+            {
+                "name": "deltaphi",
+                "label": "Leading\\ leptons $|\\Delta \\varphi|$",
+                "n_or_arr": 33,
+                "lo": 0,
+                "hi": 3.3
+            }
+        ],
+        "fill": {
+            "deltaphi": [
+                "Muon",
+                "phi",
+                {"function": "leaddiff"},
+                {"function": "abs"}
+            ]
+        }
+    },
+    "jetselect_pt" : {
+        "bins": [
+            {
+                "name": "jet_pt",
+                "label": "Jet $p_{\\mathrm{T}}$",
+                "n_or_arr": 200,
+                "lo": 0,
+                "hi": 1000,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "jet_pt": [
+                "Jet_select",
+                "pt"
+            ]
+        }
+    },
+    "jetselect_eta" : {
+        "bins": [
+            {
+                "name": "jet_eta",
+                "label": "Jet eta",
+                "n_or_arr": 100,
+                "lo": -2.5,
+                "hi": 2.5,
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "jet_eta": [
+                "Jet_select",
+                "eta"
+            ]
+        }
+    },
+    "jetselect_dxy" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxy",
+                "n_or_arr": 100,
+                "lo": 0.0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_select",
+                "dxy"
+            ]
+        }
+    },
+    "jetselect_score" : {
+        "bins": [
+            {
+                "name": "jet_score",
+                "label": "Jet score",
+                "n_or_arr": 140,
+                "lo": -0.2,
+                "hi": 1.2,
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "jet_score": [
+                "Jet",
+                "disTauTag_score1"
+            ]
+        }
+    },
+    "jet_pt" : {
+        "bins": [
+            {
+                "name": "jet_pt",
+                "label": "Jet $p_{\\mathrm{T}}$",
+                "n_or_arr": 200,
+                "lo": 0,
+                "hi": 1000,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "jet_pt": [
+                "Jet_obj",
+                "pt"
+            ]
+        }
+    },
+    "jet_eta" : {
+        "bins": [
+            {
+                "name": "jet_eta",
+                "label": "Jet eta",
+                "n_or_arr": 100,
+                "lo": -2.5,
+                "hi": 2.5,
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "jet_eta": [
+                "Jet_obj",
+                "eta"
+            ]
+        }
+    },
+    "jet_dxy" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxy",
+                "n_or_arr": 100,
+                "lo": 0.0,
+                "hi": 100,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_obj",
+                "dxy"
+            ]
+        }
+    },
+    "jet_score" : {
+        "bins": [
+            {
+                "name": "jet_score",
+                "label": "Jet score",
+                "n_or_arr": 140,
+                "lo": -0.2,
+                "hi": 1.2,
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "jet_score": [
+                "Jet_obj",
+                "disTauTag_score1"
+            ]
+        }
+    },
+}
