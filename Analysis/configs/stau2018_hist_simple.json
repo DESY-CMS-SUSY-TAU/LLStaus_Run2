@@ -37,24 +37,24 @@
         }
     },
 
-    "bJet_n": {
-        "bins": [
-            {
-                "name": "bjet_n",
-                "label": "number of b-tagged jets",
-                "n_or_arr": 10,
-                "lo": 0,
-                "hi": 10,
-                "unit": "n."
-            }
-        ],
-        "fill": {
-            "bjet_n": [
-                "jet_b",
-                {"function": "num"}
-            ]
-        }
-    },
+    // "bJet_n": {
+    //     "bins": [
+    //         {
+    //             "name": "bjet_n",
+    //             "label": "number of b-tagged jets",
+    //             "n_or_arr": 10,
+    //             "lo": 0,
+    //             "hi": 10,
+    //             "unit": "n."
+    //         }
+    //     ],
+    //     "fill": {
+    //         "bjet_n": [
+    //             "jet_b",
+    //             {"function": "num"}
+    //         ]
+    //     }
+    // },
 
     "MET": {
         "bins": [

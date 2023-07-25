@@ -60,9 +60,9 @@ for region in [nominator, denominator]:
             print(file_path, _histogram_data)
             hist = file.Get(_histogram_data)
             hist.SetDirectory(0)
-            print("No scaling!")
-            # N = cutflow[_histogram_data]["all"]["Before cuts"]
-            # hist.Scale( (crosssections[_histogram_data] * config["luminosity"]) / N)
+            # print("No scaling!")
+            N = cutflow[_histogram_data]["all"]["Before cuts"]
+            hist.Scale( (crosssections[_histogram_data] * config["luminosity"]) / N)
             if hist_fake[region] is None:
                 hist_fake[region] = hist
             else:
@@ -70,16 +70,41 @@ for region in [nominator, denominator]:
     file.Close()
     # print(hist_fake[region].Integral())   
 
+def OverflowIntegralTHN(hist_th3):
+    
+    # Calculate integral of all TH3/TH2/TH1 histogram bins including overflow bins
 
-print("Integral:", hist_fake[nominator].Integral())
-print("Integral:", hist_fake[denominator].Integral())
+    Integral = 0
+    if hist_th3.GetDimension() == 1:
+        for i in range(0, hist_th3.GetNbinsX()+2):
+            Integral += hist_th3.GetBinContent(i)
+        return Integral
+    elif hist_th3.GetDimension() == 2:
+        for i in range(0, hist_th3.GetNbinsX()+2):
+            for j in range(0, hist_th3.GetNbinsY()+2):
+                Integral += hist_th3.GetBinContent(i, j)
+        return Integral
+    elif hist_th3.GetDimension() == 3:
+        for i in range(0, hist_th3.GetNbinsX()+2):
+            for j in range(0, hist_th3.GetNbinsY()+2):
+                for k in range(0, hist_th3.GetNbinsZ()+2):
+                    Integral += hist_th3.GetBinContent(i, j, k)
+        return Integral
+    else:
+        raise ValueError("Wrong dimension of histogram")
+
+
+    
+
+print("Integral pre-rebin nom:", OverflowIntegralTHN(hist_fake[nominator]))
+print("Integral pre-rebin den:", OverflowIntegralTHN(hist_fake[denominator]))
 print("Divide histogram:")
 nominator_th3 = TH3Histogram(hist_fake[nominator], *list(config["rate_bins"].values()))
 nominator_th3_hist = nominator_th3.get_rebinned_histogram()
 denominator_th3 = TH3Histogram(hist_fake[denominator], *list(config["rate_bins"].values()))
 denominator_th3_hist = denominator_th3.get_rebinned_histogram()
-print("Integral:", nominator_th3_hist.Integral())
-print("Integral:", denominator_th3_hist.Integral())
+print("Integral post-rebin nom:", OverflowIntegralTHN(nominator_th3_hist))
+print("Integral post-rebin den:", OverflowIntegralTHN(denominator_th3_hist))
 fake_sf = nominator_th3_hist.Clone()
 fake_sf.SetDirectory(0)
 fake_sf.Divide(denominator_th3_hist)
@@ -99,7 +124,12 @@ for name in config["sf_project"]:
     project = config["sf_project"][name]
     print(name, project)
     hist_projection_nom.append(nominator_th3_hist.Project3D("nom_"+project))
-    hist_projection_den.append(nominator_th3_hist.Project3D("den_"+project))
+    hist_projection_den.append(denominator_th3_hist.Project3D("den_"+project))
+    print("Integral projection nom:", OverflowIntegralTHN(hist_projection_nom[-1]))
+    print("Integral projection den:", OverflowIntegralTHN(hist_projection_den[-1]))
+    if hist_projection_nom[-1].GetDimension() == 1:
+        hist_projection_nom[-1].Print("all")
+        hist_projection_den[-1].Print("all")
     hist_projection_nom[-1].Divide(hist_projection_den[-1])
     output = ROOT.TFile(args.outdir+f"/fake_rate_{name}.root", "RECREATE")
     hist_projection_nom[-1].SetName(f"fake_rate_{name}")
