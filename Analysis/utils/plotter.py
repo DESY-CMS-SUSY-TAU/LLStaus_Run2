@@ -19,11 +19,11 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
 
         for _histfile, _histname in zip(histfiles,histnames):
             
-            # The plots are done for specific cut step specified in config.
+            # print([cut in str(_histfile) for cut in config["cuts"]])
             if not any([cut in str(_histfile) for cut in config["cuts"]]):
                 continue
 
-            print("OPEN:", _histfile)
+            # print("OPEN:", _histfile)
             file = ROOT.TFile.Open(str(_histfile), 'read')
 
             _histograms = {"background":[], "signal":[], "data":[]}
@@ -40,12 +40,15 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                 for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
                     
                     # Rescaling according to cross-section and luminosity
-                    # print("Histogram: ",  _histname)
                     # print("Reading data:", _histogram_data + "_" + _categ)
                     # hist = file.Get(_histogram_data + "_" + _categ)
-                    # print(_histogram_data)
                     hist = file.Get(_histogram_data)
-                    
+
+                    if not hist:
+                        print("Warning: Histogram not found! ", end='')
+                        print("Histogram->", file, _histname, _histogram_data)
+                        continue
+
                     if isSignal != "data": # Scaling of the MC to the lumi and xsection
                         # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
                         N = cutflow[_histogram_data]["all"]["Before cuts"]
@@ -54,7 +57,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     if _histname in config["SetupBins"]:
                         rebin_setup = config["SetupBins"][_histname][2]
                         if type(rebin_setup) == list:
-                            hist = hist.Rebin(len(rebin_setup)-1, hist.GetName()+"_rebin", np.array(rebin_setup))
+                            hist = hist.Rebin(len(rebin_setup)-1, hist.GetName()+"_rebin", np.array(rebin_setup, dtype=np.double))
                         else: 
                             hist.Rebin(rebin_setup)
                             
@@ -80,7 +83,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     line_color = color_setup[1]
                     fill_color = color_setup[0] 
                     _histograms[isSignal][-1].SetMarkerStyle(8)
-                    _histograms[isSignal][-1].SetMarkerSize(2)
+                    _histograms[isSignal][-1].SetMarkerSize(1)
                     _histograms[isSignal][-1].SetLineWidth(1)
                 else:
                     color_setup = config["MC_bkgd"][_group_name]  
@@ -141,13 +144,13 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     legendpos = "UR",
                     legendtitle = f"",
                     legendncol = 3,
-                    legendtextsize = 0.025,
+                    legendtextsize = 0.035,
                     legendwidthscale = 1.9,
-                    legendheightscale = 0.26,
+                    legendheightscale = 0.36,
                     lumiText = "2018 (13 TeV)",
                     signal_to_background_ratio = True,
                     ratio_mode = "DATA",
-                    yrange_ratio = (0.0, 5.0),
+                    yrange_ratio = (0.4, 1.6),
                     draw_errors = True
                 )
             
@@ -157,9 +160,9 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     l_hist_overlay = _histograms["signal"],
                     outfile = output + "/" + os.path.splitext(os.path.basename(_histfile))[0] + ".png",
                     xrange = [xrange_min, xrange_max],
-                    # yrange = (0.0001,  1000*y_max),
-                    yrange = (0.0,  1.5*y_max),
-                    logx = False, logy = False,
+                    yrange = (0.0001,  1000*y_max),
+                    # yrange = (0.0,  1.5*y_max),
+                    logx = False, logy = True,
                     include_overflow = overflow,
                     xtitle = _histograms["background"][0].GetXaxis().GetTitle(),
                     ytitle = "events",
@@ -179,7 +182,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     legendwidthscale = 1.9,
                     legendheightscale = 0.26,
                     lumiText = "2018 (13 TeV)",
-                    signal_to_background_ratio = True,
+                    signal_to_background_ratio = False,
                     ratio_mode = "SB",
                     yrange_ratio = (1E-04, 1),
                     draw_errors = True

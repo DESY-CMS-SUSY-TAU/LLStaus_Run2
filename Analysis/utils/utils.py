@@ -30,7 +30,7 @@ def get_canvas(ratio = False) :
     ROOT.gROOT.SetStyle("tdrStyle")
     ROOT.gROOT.ForceStyle(True)
     
-    canvas = ROOT.TCanvas("canvas", "canvas", 1600, 1300)
+    canvas = ROOT.TCanvas("canvas", "canvas", 1000, 800)
     canvas.UseCurrentStyle()
     
     #canvas.SetLeftMargin(0.16)
@@ -199,6 +199,7 @@ def root_plot1D(
     accume_hist.SetMarkerSize(0)
  
     if draw_errors:
+        # accume_hist.Print("all")
         accume_hist.Draw("e2same")
     
     stack.GetXaxis().SetRangeUser(xrange[0], xrange[1])
@@ -262,8 +263,8 @@ def root_plot1D(
     CMS_lumi.CMS_lumi(pad = canvas.cd(1), iPeriod = 0, iPosX = 0, CMSextraText = CMSextraText, lumiText = lumiText)
     
     accume_hist.SetDirectory(0)
+    
     if signal_to_background_ratio:
-        
         canvas.cd(2)
         stack_ratio = ROOT.THStack()
         #h1_xRange_ratio = h1_xRange.Clone()
@@ -286,15 +287,39 @@ def root_plot1D(
                         h1_ratio.SetBinContent(bin_i, h1_ratio.GetBinContent(bin_i) / ROOT.TMath.Sqrt(SandB.GetBinContent(bin_i)))
                 stack_ratio.Add(h1_ratio, "HIST")
             elif ratio_mode=="DATA":
-                SandB = accume_hist.Clone()
-                SandB.SetDirectory(0)
-                h1_ratio.Divide(SandB)
-                stack_ratio.Add(h1_ratio, "HISTPE1")
-    
+                h1_ratioErr = accume_hist.Clone()
+                h1_ratioErr.SetDirectory(0)
+                for bin_i in range(hist.GetNcells()):
+                    num_data = h1_ratio.GetBinContent(bin_i)
+                    num_data_err = h1_ratio.GetBinError(bin_i)
+                    den_bkgr = accume_hist.GetBinContent(bin_i)
+                    den_bkgr_err = accume_hist.GetBinError(bin_i)
+                    h1_ratioErr.SetBinContent(bin_i, 1.0)
+                    h1_ratioErr.SetBinError(bin_i, 0.0)
+                    if den_bkgr > 0:
+                        relErr = den_bkgr_err / den_bkgr
+                        h1_ratioErr.SetBinError(bin_i, numpy.sqrt(relErr))
+                    if num_data > 0 and den_bkgr > 0:
+                        ratio = num_data / den_bkgr
+                        ratio_err = num_data_err / den_bkgr
+                        h1_ratio.SetBinContent(bin_i, ratio)
+                        h1_ratio.SetBinError(bin_i, ratio_err)
+                h1_ratioErr.SetFillStyle(3002)
+                h1_ratioErr.SetFillColor(435)
+                h1_ratioErr.SetMarkerStyle(21)
+                h1_ratioErr.SetMarkerSize(0)
+                stack_ratio.Add(h1_ratioErr, "E2")
+                stack_ratio.Add(h1_ratio, "E1same")
+                
         stack_ratio.Draw("nostack")
         stack_ratio.GetXaxis().SetRangeUser(xrange[0], xrange[1])
         stack_ratio.SetMinimum(yrange_ratio[0])
         stack_ratio.SetMaximum(yrange_ratio[1])
+        line = ROOT.TLine(xrange[0],1,xrange[1],1)
+        line.SetLineColor(1)
+        line.SetLineWidth(2)
+        line.SetLineStyle(9)
+        line.Draw()
         
         if (ndivisionsx is not None) :
             
