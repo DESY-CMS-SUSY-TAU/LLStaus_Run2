@@ -40,6 +40,12 @@ class Processor(pepper.ProcessorBasicPhysics):
         if "pileup_reweighting" not in config:
             logger.warning("No pileup reweigthing specified")
 
+        if "DY_lo_sfs" not in config:
+            logger.warning("No DY k-factor specified")
+
+        if "DY_jet_reweight" not in config or len(config["DY_jet_reweight"]) == 0:
+            logger.warning("No DY jet-binned sample stitching is specified")
+
         if "muon_sf" not in config or len(config["muon_sf"]) == 0:
             logger.warning("No muon scale factors specified")
 
@@ -59,6 +65,14 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("Trigger", partial(
             self.passing_trigger, pos_triggers, neg_triggers))
         
+        if is_mc and ( dsname.startswith("DYJetsToLL_M-50") or \
+                       dsname.startswith("DY1JetsToLL_M-50") or \
+                       dsname.startswith("DY2JetsToLL_M-50") or \
+                       dsname.startswith("DY3JetsToLL_M-50") or \
+                       dsname.startswith("DY4JetsToLL_M-50") ):
+            selector.add_cut("DY jet reweighting",
+                partial(self.do_dy_jet_reweighting))
+
         if is_mc and "pileup_reweighting" in self.config:
             selector.add_cut("Pileup reweighting", partial(
                 self.do_pileup_reweighting, dsname))
@@ -70,8 +84,12 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("Muon", self.select_muons) 
         selector.add_cut("two_muons", self.two_muons_cut)
         selector.set_column("sum_mumu", self.sum_mumu)
-        
+        if is_mc:
+            selector.set_column("sum_ll_gen", self.sum_ll_gen)
+
+        selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
         selector.add_cut("muon_sfs", partial(self.get_muon_sfs, is_mc=is_mc))
+
         selector.add_cut("mass_window", self.mass_window)
         selector.add_cut("charge", self.charge)
         
@@ -80,13 +98,24 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
         
-        selector.add_cut("mark_1st_jet", partial(self.jets_available, n_available=1))
+        # Tagger part for calculating scale factors
+        # Scale factors should be calculated -
+        # before cuts on the number of the jets
+        
+        selector.add_cut("req_1st_jet", partial(self.jets_available, n_available=1))
         selector.set_column("Jet_obj", partial(self.leading_jet, order=0))
-        selector.add_cut("mark_2st_jet", partial(self.jets_available, n_available=2))
+        selector.add_cut("req_2st_jet", partial(self.jets_available, n_available=2))
         selector.set_column("Jet_obj", partial(self.leading_jet, order=1))
-        selector.add_cut("mark_3st_jet", partial(self.jets_available, n_available=3))
+        selector.add_cut("req_3st_jet", partial(self.jets_available, n_available=3))
         selector.set_column("Jet_obj", partial(self.leading_jet, order=2))
     
+    @zero_handler
+    def do_dy_jet_reweighting(self, data):
+        njet = data["LHE"]["Njets"]
+        weights = self.config["DY_jet_reweight"][njet]
+        print(weights)
+        return weights
+
     @zero_handler
     def MET_cut_max(self, data):
         return data["MET"].pt < self.config["MET_cut_max"]
@@ -125,6 +154,31 @@ class Processor(pepper.ProcessorBasicPhysics):
     def sum_mumu(self, data):
         return data['Muon'][:,0].add(data['Muon'][:,1])
     
+    @zero_handler
+    def sum_ll_gen(self, data):
+        part = data["GenPart"]
+        part = part[ part.hasFlags("isLastCopy")
+                & (part.hasFlags("fromHardProcess")
+                & ((abs(part["pdgId"]) == 11) 
+                | (abs(part["pdgId"]) == 13)
+                | (abs(part["pdgId"]) == 12)
+                | (abs(part["pdgId"]) == 14)))
+                | (part.hasFlags("isDirectHardProcessTauDecayProduct"))
+        ]
+        sum_p4 = part.sum(axis=1) # sum over all particles in event
+        return sum_p4
+
+    @zero_handler
+    def get_dy_gen_sfs(self, data, is_mc, dsname):
+        weight = np.ones(len(data))
+        if is_mc and dsname.startswith("DY"):
+            z_boson = data["sum_ll_gen"]
+            dy_gen_sfs = self.config["DY_lo_sfs"](mass=z_boson.mass, pt=z_boson.pt)
+            weight *= ak.to_numpy(dy_gen_sfs)
+            return weight
+        else:
+            return weight
+
     @zero_handler
     def mass_window(self, data):
         is_good = (
