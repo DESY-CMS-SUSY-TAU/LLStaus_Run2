@@ -182,7 +182,7 @@
     "mass_ll_upper" : 120,
 
     // Tagger part
-    
+    "score_pass" : [0.0, 0.1716, 0.4612, 0.6631, 0.786, 0.846, 0.9529, 0.9889, 0.9972, 0.9996],
 
     "hists": "$CONFDIR/stau2018_ztomumu_hist.json",
 }

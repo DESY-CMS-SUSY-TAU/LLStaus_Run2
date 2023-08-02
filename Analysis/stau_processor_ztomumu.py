@@ -52,7 +52,12 @@ class Processor(pepper.ProcessorBasicPhysics):
         if "single_mu_trigger_sfs" not in config or\
             len(config["single_mu_trigger_sfs"]) == 0:
             logger.warning("No single muon trigger scale factors specified")
-
+        
+        if "jet_fake_rate" not in config and len(config["jet_fake_rate"]) == 0:
+            self.predict_jet_fakes = False
+            logger.warning("No jet fake rate specified")
+        else:
+            self.predict_jet_fakes = True
 
     def process_selection(self, selector, dsname, is_mc, filler):
         
@@ -101,6 +106,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Tagger part for calculating scale factors
         # Scale factors should be calculated -
         # before cuts on the number of the jets
+        selector.set_multiple_columns(self.set_njets_pass)
+        if self.config["predict_yield"]:
+            selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
         
         selector.add_cut("req_1st_jet", partial(self.jets_available, n_available=1))
         selector.set_column("Jet_obj", partial(self.leading_jet, order=0))
@@ -113,7 +121,6 @@ class Processor(pepper.ProcessorBasicPhysics):
     def do_dy_jet_reweighting(self, data):
         njet = data["LHE"]["Njets"]
         weights = self.config["DY_jet_reweight"][njet]
-        print(weights)
         return weights
 
     @zero_handler
@@ -297,12 +304,13 @@ class Processor(pepper.ProcessorBasicPhysics):
         jets = data["Jet_select"]
         # Mask jets with dxy nan (no selected pfcands matching)
         bad_jets = ak.is_none(data["Jet_lead_pfcand"].dxy, axis=-1)
-        jets = ak.mask(jets, ~bad_jets)
+        jets = ak.mask(jets, ~bad_jets) # mask bad jets to keep coorect shape
         jets["dz"] = np.abs(data["Jet_lead_pfcand"].dz)
         jets["dxy"] = np.abs(data["Jet_lead_pfcand"].dxy)
         jets["dxy_weight"] = np.abs(data["Jet_lead_pfcand"].dxy_weight)
         jets["dxysig"] = np.abs(data["Jet_lead_pfcand"].dxysig)
         jets["dxysig_weight"] = np.abs(data["Jet_lead_pfcand"].dxysig_weight)
+        jets = jets[~bad_jets] # remove bad jets
         return jets
     
     @zero_handler
@@ -317,3 +325,70 @@ class Processor(pepper.ProcessorBasicPhysics):
     def jets_available(self, data, n_available=1):
         jets = data["Jet_select"][~ak.is_none(data["Jet_select"].pt, axis=-1)]
         return ak.num(jets) >= n_available
+    
+    @zero_handler
+    def set_njets_pass(self, data):
+        jets_score = data["Jet_select"].disTauTag_score1
+        n_pass = []
+        for score in self.config["score_pass"]:
+            jets_pass = jets_score[(jets_score>score)]
+            passed = ak.num(jets_pass, axis=1)
+            n_pass.append( passed )
+        n_pass = ak.from_regular(
+            np.stack(n_pass, axis=1), axis=-1)
+        return {
+            "n_pass" : n_pass,
+            "n_pass_score_bin" : ak.local_index(n_pass, axis=1)
+        }
+        
+    @zero_handler
+    def predict_yield(self, data, weight=None):
+        jets = data["Jet_select"]
+        
+        # from bin 0 to bin 1
+        weights_bin0to1 = []
+        for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
+            events_0tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 0) # events with 0 tag
+            jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask
+            jets_counted = jets[events_0tag * jets_notag] # to select only jets in events with 0 tag
+            fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
+            weight_sfs = ak.sum(fake_sf, axis=1)
+            weights_bin0to1.append(weight_sfs)
+        yield_bin0to1 = ak.from_regular(np.stack(weights_bin0to1, axis=1), axis=-1)
+        # print(yield_bin0to1)
+
+        # from bin 1 to bin 2
+        weights_bin1to2 = []
+        for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
+            events_1tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 1) # events with 1 tag
+            jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask and not to count the tagged jet
+            jets_counted = jets[events_1tag * jets_notag]  # to select only jets in events with 1 tag
+            fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
+            weight_sfs = ak.sum(fake_sf, axis=1)
+            weights_bin1to2.append(weight_sfs)
+        yield_bin1to2 = ak.from_regular(np.stack(weights_bin1to2, axis=1), axis=-1)
+        # print(yield_bin1to2)
+        
+        # from bin 0 to bin 2
+        weights_bin0to2 = []
+        for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
+            events_0tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 0) # events with 0 tag
+            jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask
+            jets_counted = jets[events_0tag * jets_notag] # to select only jets in events with 1 tag
+            fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
+            combinations = ak.combinations(fake_sf, 2, axis=1) # to have all possible combinations of 2 jets
+            combinations_unzipped = ak.unzip(combinations)
+            products = combinations_unzipped[0] * combinations_unzipped[1]
+            weight_sfs = ak.sum(products, axis=1)
+            weights_bin0to2.append(weight_sfs)
+        yield_bin0to2 = ak.from_regular(np.stack(weights_bin0to2, axis=1), axis=-1)
+        # print(yield_bin0to2)
+        
+        # now we need to each predicted yield assign cooresponding score bin
+        score_bin = ak.local_index(yield_bin0to1, axis=1) + 1 # +1 because we skip first bin
+        # print(score_bin)
+        
+        return {"yield_bin0to1" : weight*yield_bin0to1,
+                "yield_bin1to2" : weight*yield_bin1to2,
+                "yield_bin0to2" : weight*yield_bin0to2,
+                "score_bin"     : score_bin}

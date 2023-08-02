@@ -50,9 +50,28 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                         continue
 
                     if isSignal != "data": # Scaling of the MC to the lumi and xsection
-                        # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
-                        N = cutflow[_histogram_data]["all"]["Before cuts"]
-                        hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
+                        if xsec[_histogram_data] == -1 and "DY" in _histogram_data:
+                            # -1 is assigned e.g: for DY sample which
+                            # has correct normalization from processor
+                            # dy_to_scale = [
+                            #     "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+                            #     "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+                            #     "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+                            #     "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+                            #     "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8"
+                            #     ]
+                            # dy_scale_factor_nom = 0.0
+                            # dy_scale_factor_den = 0.0
+                            # for cut_flow_data_name in dy_to_scale:
+                            #     dy_scale_factor_nom += cutflow[cut_flow_data_name]["all"]["two_muons"]
+                            #     dy_scale_factor_den += cutflow[cut_flow_data_name]["all"]["dy_gen_sfs"]
+                            # factor = dy_scale_factor_nom / dy_scale_factor_den
+                            # hist.Scale(config["luminosity"] * factor)
+                            hist.Scale(config["luminosity"])
+                        else:
+                            # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
+                            N = cutflow[_histogram_data]["all"]["Before cuts"]
+                            hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
 
                     if _histname in config["SetupBins"]:
                         rebin_setup = config["SetupBins"][_histname][2]
