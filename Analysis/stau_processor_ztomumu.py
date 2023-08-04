@@ -57,7 +57,7 @@ class Processor(pepper.ProcessorBasicPhysics):
             self.predict_jet_fakes = False
             logger.warning("No jet fake rate specified")
         else:
-            self.predict_jet_fakes = True
+            self.predict_jet_fakes = config["predict_yield"]
 
     def process_selection(self, selector, dsname, is_mc, filler):
         
