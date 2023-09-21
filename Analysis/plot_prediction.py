@@ -46,6 +46,7 @@ except:
 
 if True:
 
+    # Z -> mu mu
     # ---------------------------
     # data_TH2 = os.path.dirname(args.histfile[0]) + "/Cut-007_charge_n_jet_pass.root"
     # data_TH2_bin = 4
@@ -53,11 +54,11 @@ if True:
     # data = "SingleMuon"
     # output_name = "data_preditcion_bin0to2.png"
     #---------------------------
-    data_TH2 = os.path.dirname(args.histfile[0]) + "/Cut-007_charge_n_jet_pass.root"
-    data_TH2_bin = 3
-    predicted_TH1 = os.path.dirname(args.histfile[0]) + "/Cut-007_charge_yield_bin0to1.root"
-    data = "SingleMuon"
-    output_name = "data_preditcion_bin0to1.png"
+    # data_TH2 = os.path.dirname(args.histfile[0]) + "/Cut-007_charge_n_jet_pass.root"
+    # data_TH2_bin = 3
+    # predicted_TH1 = os.path.dirname(args.histfile[0]) + "/Cut-007_charge_yield_bin0to1.root"
+    # data = "SingleMuon"
+    # output_name = "data_preditcion_bin0to1.png"
     #---------------------------
     # data_TH2 = os.path.dirname(args.histfile[0]) + "/Cut-007_charge_n_jet_pass.root"
     # data_TH2_bin = 4
@@ -65,6 +66,13 @@ if True:
     # data = "SingleMuon"
     # output_name = "data_preditcion_bin1to2.png"
     #---------------------------
+    
+    # Z -> mu tau
+    data_TH2 = os.path.dirname(args.histfile[0]) + "/Cut-008_charge_n_jet_pass.root"
+    data_TH2_bin = 3
+    predicted_TH1 = os.path.dirname(args.histfile[0]) + "/Cut-008_charge_yield_bin0to1.root"
+    data = "SingleMuon"
+    output_name = "data_preditcion_bin0to1.png"
 
     file = ROOT.TFile.Open(str(data_TH2), 'read')
     hist_data = file.Get(data).ProjectionX("SingleMuon pred.",data_TH2_bin,data_TH2_bin).Clone("SingleMuon pred.")

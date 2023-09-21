@@ -2,6 +2,7 @@ import os
 import json
 from argparse import ArgumentParser
 import re
+import numpy as np
 
 import ROOT
 ROOT.gROOT.SetBatch(True)
@@ -152,10 +153,10 @@ if config["fake_rate"]["mode"] == "score-dim": # calculated for data
             print(file_path, _histogram_data)
             hist = file.Get(_histogram_data)
             hist.SetDirectory(0)
+            hist.Sumw2()
             if not _group_name in config["Data"]:
                 N = cutflow[_histogram_data]["all"]["Before cuts"]
                 hist.Scale( (crosssections[_histogram_data] * config["luminosity"]) / N)
-            
             if hist_fake is None:
                 hist_fake = hist
             else:
@@ -177,8 +178,16 @@ if config["fake_rate"]["mode"] == "score-dim": # calculated for data
         for bin_z in range(0, n_bins_z + 1):
             for bin_x in range(0, n_bins_x + 1):
                 content_nom = th3_to_cumulative.GetBinContent(bin_x, bin_y, bin_z)
+                content_nom_err = th3_to_cumulative.GetBinError(bin_x, bin_y, bin_z)
                 content_den = th3_to_cumulative.GetBinContent(1, bin_y, bin_z)
+                content_den_err = th3_to_cumulative.GetBinError(1, bin_y, bin_z)
                 th3_to_cumulative_rate.SetBinContent(bin_x, bin_y, bin_z, (content_nom/content_den) if content_den != 0 else 0)
+                if content_den != 0:
+                    error = np.sqrt((content_nom_err/content_den)**2+(content_nom*content_den_err/(content_den**2))**2)
+                    th3_to_cumulative_rate.SetBinError(bin_x, bin_y, bin_z, error)
+                if content_nom > content_den and content_den!=0:
+                    raise("Detected rate > 1.0:", bin_x, bin_y, bin_z,
+                          "nom:",content_nom, "den:", content_den)
                 
     print("3D scale factors")
     output = ROOT.TFile(args.outdir + f"/fake_rate_score_{'_'.join(list(config['fake_rate']['rate_bins'].keys()))}.root", "RECREATE")
@@ -205,13 +214,23 @@ if config["fake_rate"]["mode"] == "score-dim": # calculated for data
                 for bin_y in range(0, n_bins_y + 1):
                     content_nom = hist_projection[-1].GetBinContent(bin_x, bin_y)
                     content_den = hist_projection[-1].GetBinContent(1, bin_y)
+                    content_nom_error = hist_projection[-1].GetBinError(bin_x, bin_y)
+                    content_den_error = hist_projection[-1].GetBinError(1, bin_y)
                     hist_projection_rate[-1].SetBinContent(bin_x, bin_y, content_nom/content_den if content_den != 0 else 0)
+                    if content_den != 0:
+                        error = np.sqrt((content_nom_error/content_den)**2+(content_nom*content_den_error/(content_den**2))**2)
+                        hist_projection_rate[-1].SetBinError(bin_x, bin_y, error)
         elif hist_projection[-1].GetDimension() == 1:
             n_bins_x = hist_projection[-1].GetNbinsX()
             for bin_x in range(0, n_bins_x + 1):
                 content_nom = hist_projection[-1].GetBinContent(bin_x)
                 content_den = hist_projection[-1].GetBinContent(1)
+                content_nom_error = hist_projection[-1].GetBinError(bin_x)
+                content_den_error = hist_projection[-1].GetBinError(1)
                 hist_projection_rate[-1].SetBinContent(bin_x, content_nom/content_den if content_den != 0 else 0)
+                if content_den != 0:
+                    error = np.sqrt((content_nom_error/content_den)**2+(content_nom*content_den_error/(content_den**2))**2)
+                    hist_projection_rate[-1].SetBinError(bin_x, error)
         else:
             raise ValueError("Wrong dimension of the histogram")
 

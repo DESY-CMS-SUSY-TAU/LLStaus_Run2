@@ -1,6 +1,7 @@
 import numpy as np
 import ROOT
 import unittest
+import ctypes
 
 class TH3Histogram:
     def __init__(self, hist, new_bin_edges_x, new_bin_edges_y, new_bin_edges_z):
@@ -46,16 +47,35 @@ class TH3Histogram:
             len(self._new_bin_edges_z) - 1,
             self._new_bin_edges_z
         )
+        # Create sum sqr weight
+        hist_sumw2 = ROOT.TH3D(
+            f"{self._hist.GetName()}hist_sumw2",
+            f"hist_sumw2",
+            len(self._new_bin_edges_x) - 1,
+            self._new_bin_edges_x,
+            len(self._new_bin_edges_y) - 1,
+            self._new_bin_edges_y,
+            len(self._new_bin_edges_z) - 1,
+            self._new_bin_edges_z
+        )
 
         # Fill the rebinned histogram
         for i in range(0, self._hist.GetNbinsX() + 2):
             for j in range(0, self._hist.GetNbinsY() + 2):
                 for k in range(0, self._hist.GetNbinsZ() + 2):
                     content = self._hist.GetBinContent(i, j, k)
+                    w2 = self._hist.GetBinError(i, j, k)**2
                     bin_x = self._hist.GetXaxis().GetBinCenter(i)
                     bin_y = self._hist.GetYaxis().GetBinCenter(j)
                     bin_z = self._hist.GetZaxis().GetBinCenter(k)
                     rebinned_hist.Fill(bin_x, bin_y, bin_z, content)
+                    hist_sumw2.Fill(bin_x, bin_y, bin_z, w2)
+        
+        for i in range(0, self._hist.GetNbinsX() + 2):
+            for j in range(0, self._hist.GetNbinsY() + 2):
+                for k in range(0, self._hist.GetNbinsZ() + 2):
+                    w2 = hist_sumw2.GetBinError(i, j, k)
+                    rebinned_hist.SetBinError(bin_x, bin_y, bin_z, sqrt(w2))
 
         self._rebinned_hist = rebinned_hist
 
@@ -143,12 +163,15 @@ def th3_to_cumulative(hist, axis_to_integrate):
     for bin_x in range(0, n_bins_x + 1):
         for bin_y in range(0, n_bins_y + 1):
             for bin_z in range(0, n_bins_z + 1):
-                cumulative_content = hist.Integral(
+                error = ctypes.c_double(0)
+                cumulative_content = hist.IntegralAndError(
                     bin_x, ((n_bins_x + 1) if (axis_to_integrate == 0) else bin_x),
                     bin_y, ((n_bins_y + 1) if (axis_to_integrate == 1) else bin_y),
-                    bin_z, ((n_bins_z + 1) if (axis_to_integrate == 2) else bin_z)
+                    bin_z, ((n_bins_z + 1) if (axis_to_integrate == 2) else bin_z),
+                    error
                     )
                 cumulative_hist.SetBinContent(bin_x, bin_y, bin_z, cumulative_content)
+                cumulative_hist.SetBinError(bin_x, bin_y, bin_z, error)
     
     return cumulative_hist
 

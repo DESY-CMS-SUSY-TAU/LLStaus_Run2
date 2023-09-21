@@ -15,8 +15,6 @@ import numpy as np
 import mt2
 import numba as nb
 import coffea
-import uproot
-import os
 
 from coffea.nanoevents import NanoAODSchema
 
@@ -45,8 +43,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         if "DY_lo_sfs" not in config:
             logger.warning("No DY k-factor specified")
 
-        if "DY_jet_reweight" not in config or len(config["DY_jet_reweight"]) == 0:
-            logger.warning("No DY jet-binned sample stitching is specified")
+        # if "DY_jet_reweight" not in config or len(config["DY_jet_reweight"]) == 0:
+        #     logger.warning("No DY jet-binned sample stitching is specified")
 
         if "muon_sf" not in config or len(config["muon_sf"]) == 0:
             logger.warning("No muon scale factors specified")
@@ -72,25 +70,21 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("Trigger", partial(
             self.passing_trigger, pos_triggers, neg_triggers))
         
-        if is_mc and ( dsname.startswith("DYJetsToLL_M-50") or \
-                       dsname.startswith("DY1JetsToLL_M-50") or \
-                       dsname.startswith("DY2JetsToLL_M-50") or \
-                       dsname.startswith("DY3JetsToLL_M-50") or \
-                       dsname.startswith("DY4JetsToLL_M-50") ):
-            selector.add_cut("DY jet reweighting",
-                partial(self.do_dy_jet_reweighting))
 
         if is_mc and "pileup_reweighting" in self.config:
             selector.add_cut("Pileup reweighting", partial(
                 self.do_pileup_reweighting, dsname))
 
         # MET cut
-        selector.add_cut("MET", self.MET_cut_max)
+        # selector.add_cut("MET", self.MET_cut_max)
         
         # 2 muons
-        selector.set_column("Muon", self.select_muons) 
-        selector.add_cut("two_muons", self.two_muons_cut)
-        selector.set_column("sum_mumu", self.sum_mumu)
+        selector.set_column("Muon", self.select_muons)
+        selector.set_column("Tau", self.select_taus)
+        
+        selector.add_cut("one_muon_cut", self.one_muon_cut)
+        selector.add_cut("one_tau_cut", self.one_tau_cut)
+        selector.set_column("sum_ll", self.sum_mutau)
         if is_mc:
             selector.set_column("sum_ll_gen", self.sum_ll_gen)
 
@@ -105,10 +99,6 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
         
-        selector.add_cut("two_valid_jets", self.has_two_valid_jets)
-
-        # selector.set_column("logger", self.skim_jets)
-        
         # Tagger part for calculating scale factors
         # Scale factors should be calculated -
         # before cuts on the number of the jets
@@ -116,38 +106,17 @@ class Processor(pepper.ProcessorBasicPhysics):
         if self.config["predict_yield"]:
             selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
         
-        selector.add_cut("req_1st_jet", partial(self.jets_available, n_available=1))
-        selector.set_column("Jet_obj", partial(self.leading_jet, order=0))
-        selector.add_cut("req_2st_jet", partial(self.jets_available, n_available=2))
-        selector.set_column("Jet_obj", partial(self.leading_jet, order=1))
-        selector.add_cut("req_3st_jet", partial(self.jets_available, n_available=3))
-        selector.set_column("Jet_obj", partial(self.leading_jet, order=2))
+        # selector.add_cut("req_1st_jet", partial(self.jets_available, n_available=1))
+        # selector.set_column("Jet_obj", partial(self.leading_jet, order=0))
+        # selector.add_cut("req_2st_jet", partial(self.jets_available, n_available=2))
+        # selector.set_column("Jet_obj", partial(self.leading_jet, order=1))
+        # selector.add_cut("req_3st_jet", partial(self.jets_available, n_available=3))
+        # selector.set_column("Jet_obj", partial(self.leading_jet, order=2))
     
-    @zero_handler
-    def skim_jets(self, data):
-        jets = data["Jet_select"]
-        file_name = os.path.basename(data.metadata["filename"])
-        dataset_name = data.metadata["dataset"]
-        prefix = f"evn_{data.metadata['entrystart']}_{data.metadata['entrystop']}_"
-        path = f"{self.config["skim_path"]}/{dataset_name}"
-        if not os.path.exists(path):
-            os.makedirs(path)
-        ak.to_parquet(jets, f"{path}/"+prefix+file_name+".parquet")
-        return np.ones(len(data))
     
-    @zero_handler
-    def has_two_valid_jets(self, data):
-        return ak.num(data["Jet_select"]) >= 2
-
-    @zero_handler
-    def do_dy_jet_reweighting(self, data):
-        njet = data["LHE"]["Njets"]
-        weights = self.config["DY_jet_reweight"][njet]
-        return weights
-
-    @zero_handler
-    def MET_cut_max(self, data):
-        return data["MET"].pt < self.config["MET_cut_max"]
+    # @zero_handler
+    # def MET_cut_max(self, data):
+    #     return data["MET"].pt < self.config["MET_cut_max"]
     
     @zero_handler
     def select_muons(self, data):
@@ -176,12 +145,31 @@ class Processor(pepper.ProcessorBasicPhysics):
         return results
     
     @zero_handler
-    def two_muons_cut(self, data):
-        return ak.num(data["Muon"]) == 2
+    def select_taus(self, data):
+        taus = data["Tau"]
+        is_good = (
+            (taus.pt > self.config["tau_pt_min"])
+            & (taus.eta < self.config["tau_eta_max"])
+            & (taus.eta > self.config["tau_eta_min"])
+            & (taus.idDeepTau2017v2p1VSjet >= self.config["tau_idDeepTau_vsjet"])
+            & (taus.idDeepTau2017v2p1VSmu >= self.config["tau_idDeepTau_vsmu"])
+            & (taus.idDeepTau2017v2p1VSe >= self.config["tau_idDeepTau_vsele"])
+            # & (abs(taus.dxy) <= self.config["tau_absdxy"])
+            # & (abs(taus.dz) <= self.config["tau_absdz"])
+        )
+        return taus[is_good]
     
     @zero_handler
-    def sum_mumu(self, data):
-        return data['Muon'][:,0].add(data['Muon'][:,1])
+    def one_muon_cut(self, data):
+        return ak.num(data["Muon"]) == 1
+    
+    @zero_handler
+    def one_tau_cut(self, data):
+        return ak.num(data["Tau"]) == 1
+    
+    @zero_handler
+    def sum_mutau(self, data):
+        return data['Muon'][:,0].add(data['Tau'][:,0])
     
     @zero_handler
     def sum_ll_gen(self, data):
@@ -191,7 +179,9 @@ class Processor(pepper.ProcessorBasicPhysics):
                 & ((abs(part["pdgId"]) == 11) 
                 | (abs(part["pdgId"]) == 13)
                 | (abs(part["pdgId"]) == 12)
-                | (abs(part["pdgId"]) == 14)))
+                | (abs(part["pdgId"]) == 14)
+                | (abs(part["pdgId"]) == 15)
+                | (abs(part["pdgId"]) == 16)))
                 | (part.hasFlags("isDirectHardProcessTauDecayProduct"))
         ]
         sum_p4 = part.sum(axis=1) # sum over all particles in event
@@ -211,14 +201,14 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def mass_window(self, data):
         is_good = (
-              (data["sum_mumu"].mass > self.config["mass_ll_lower"])
-            & (data["sum_mumu"].mass < self.config["mass_ll_upper"])
+              (data["sum_ll"].mass > self.config["mass_ll_lower"])
+            & (data["sum_ll"].mass < self.config["mass_ll_upper"])
             )
         return is_good
     
     @zero_handler
     def charge(self, data):
-        return data["sum_mumu"].charge == 0
+        return data["sum_ll"].charge == 0
     
     @zero_handler
     def get_muon_sfs(self, data, is_mc):
@@ -280,9 +270,11 @@ class Processor(pepper.ProcessorBasicPhysics):
             & (self.config["jet_pt_min"] < jets.pt)
             & (jets.jetId >= self.config["jet_jetId"] )
             )]
-        matches_h, dRlist = jets.nearest(data["Muon"], return_metric=True, threshold=0.4)
-        isoJets = jets[ak.is_none(matches_h, axis=-1)]
-        return isoJets
+        # matches_h, dRlist = jets.nearest(data["Tau"], return_metric=True, threshold=self.config["jet_jetId"])
+        # isoJets = jets[ak.is_none(matches_h, axis=-1)]
+        matches_h, dRlist = data["Tau"].nearest(jets, return_metric=True, threshold=self.config["jet_dr_tau"])
+        taujets = matches_h[~ak.is_none(matches_h, axis=1)]
+        return taujets
     
     @zero_handler
     def pfcand_valid(self, data):
@@ -335,25 +327,25 @@ class Processor(pepper.ProcessorBasicPhysics):
         jets = jets[~bad_jets] # remove bad jets
         return jets
     
-    @zero_handler
-    def leading_jet(self, data, order=0):
-        jets = data["Jet_select"]
-        idx_leading = \
-            ak.argsort(jets.pt, ascending=False)[:,order:order+1]
-        jets = jets[idx_leading]
-        return jets
+    # @zero_handler
+    # def leading_jet(self, data, order=0):
+    #     jets = data["Jet_select"]
+    #     idx_leading = \
+    #         ak.argsort(jets.pt, ascending=False)[:,order:order+1]
+    #     jets = jets[idx_leading]
+    #     return jets
     
-    @zero_handler
-    def jets_available(self, data, n_available=1):
-        jets = data["Jet_select"][~ak.is_none(data["Jet_select"].pt, axis=-1)]
-        return ak.num(jets) >= n_available
+    # @zero_handler
+    # def jets_available(self, data, n_available=1):
+    #     jets = data["Jet_select"][~ak.is_none(data["Jet_select"].pt, axis=-1)]
+    #     return ak.num(jets) >= n_available
     
     @zero_handler
     def set_njets_pass(self, data):
         jets_score = data["Jet_select"].disTauTag_score1
         n_pass = []
         for score in self.config["score_pass"]:
-            jets_pass = jets_score[(jets_score>=score)]
+            jets_pass = jets_score[(jets_score>score)]
             passed = ak.num(jets_pass, axis=1)
             n_pass.append( passed )
         n_pass = ak.from_regular(
@@ -366,18 +358,14 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def predict_yield(self, data, weight=None):
         jets = data["Jet_select"]
-
-        for score in self.config["score_pass"]:
-            print(self.config["jet_fake_rate"](jet_score=[score])[0])
         
         # from bin 0 to bin 1
         weights_bin0to1 = []
         for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
-            events_0tag = (ak.num(jets[(jets.disTauTag_score1 >= score)]) == 0) # events with 0 tag
+            events_0tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 0) # events with 0 tag
             jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask
             jets_counted = jets[events_0tag * jets_notag] # to select only jets in events with 0 tag
-            # fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
-            fake_sf = ak.full_like(jets_counted.pt, self.config["jet_fake_rate"](jet_score=[score])[0])
+            fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
             weight_sfs = ak.sum(fake_sf, axis=1)
             weights_bin0to1.append(weight_sfs)
         yield_bin0to1 = ak.from_regular(np.stack(weights_bin0to1, axis=1), axis=-1)
@@ -386,10 +374,10 @@ class Processor(pepper.ProcessorBasicPhysics):
         # from bin 1 to bin 2
         weights_bin1to2 = []
         for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
-            events_1tag = (ak.num(jets[(jets.disTauTag_score1 >= score)]) == 1) # events with 1 tag
+            events_1tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 1) # events with 1 tag
             jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask and not to count the tagged jet
             jets_counted = jets[events_1tag * jets_notag]  # to select only jets in events with 1 tag
-            fake_sf = ak.full_like(jets_counted.pt, self.config["jet_fake_rate"](jet_score=[score])[0])
+            fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
             weight_sfs = ak.sum(fake_sf, axis=1)
             weights_bin1to2.append(weight_sfs)
         yield_bin1to2 = ak.from_regular(np.stack(weights_bin1to2, axis=1), axis=-1)
@@ -398,10 +386,10 @@ class Processor(pepper.ProcessorBasicPhysics):
         # from bin 0 to bin 2
         weights_bin0to2 = []
         for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
-            events_0tag = (ak.num(jets[(jets.disTauTag_score1 >= score)]) == 0) # events with 0 tag
+            events_0tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 0) # events with 0 tag
             jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask
             jets_counted = jets[events_0tag * jets_notag] # to select only jets in events with 1 tag
-            fake_sf = ak.full_like(jets_counted.pt, self.config["jet_fake_rate"](jet_score=[score])[0])
+            fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
             combinations = ak.combinations(fake_sf, 2, axis=1) # to have all possible combinations of 2 jets
             combinations_unzipped = ak.unzip(combinations)
             products = combinations_unzipped[0] * combinations_unzipped[1]
@@ -413,12 +401,6 @@ class Processor(pepper.ProcessorBasicPhysics):
         # now we need to each predicted yield assign cooresponding score bin
         score_bin = ak.local_index(yield_bin0to1, axis=1) + 1 # +1 because we skip first bin
         # print(score_bin)
-        
-        print("yield_bin0to1", yield_bin0to1)
-        print("weight", weight)
-        print("yield_bin0to1*weight", yield_bin0to1*weight)
-        print(score_bin)
-        exit()
         
         return {"yield_bin0to1" : weight*yield_bin0to1,
                 "yield_bin1to2" : weight*yield_bin1to2,

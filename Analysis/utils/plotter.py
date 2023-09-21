@@ -50,23 +50,13 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                         continue
 
                     if isSignal != "data": # Scaling of the MC to the lumi and xsection
-                        if xsec[_histogram_data] == -1 and "DY" in _histogram_data:
-                            # -1 is assigned e.g: for DY sample which
-                            # has correct normalization from processor
-                            # dy_to_scale = [
-                            #     "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
-                            #     "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-                            #     "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-                            #     "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-                            #     "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8"
-                            #     ]
-                            # dy_scale_factor_nom = 0.0
-                            # dy_scale_factor_den = 0.0
-                            # for cut_flow_data_name in dy_to_scale:
-                            #     dy_scale_factor_nom += cutflow[cut_flow_data_name]["all"]["two_muons"]
-                            #     dy_scale_factor_den += cutflow[cut_flow_data_name]["all"]["dy_gen_sfs"]
-                            # factor = dy_scale_factor_nom / dy_scale_factor_den
-                            # hist.Scale(config["luminosity"] * factor)
+                        if config["DY_stitching_applied"] and (
+                                "DYJetsToLL_M-50" in _histogram_data or
+                                "DY1JetsToLL_M-50" in _histogram_data or
+                                "DY2JetsToLL_M-50" in _histogram_data or
+                                "DY3JetsToLL_M-50" in _histogram_data or
+                                "DY4JetsToLL_M-50" in _histogram_data
+                            ):
                             hist.Scale(config["luminosity"])
                         else:
                             # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
@@ -145,6 +135,8 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     l_hist_overlay = _histograms["data"],
                     outfile = output + "/" + os.path.splitext(os.path.basename(_histfile))[0] + ".png",
                     xrange = [xrange_min, xrange_max],
+                    # yrange = (0.0,  1.5*y_max), 
+                    # logx = False, logy = False,
                     yrange = (0.001,  10000*y_max),
                     logx = False, logy = True,
                     logx_ratio = False, logy_ratio = False,
@@ -169,7 +161,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     lumiText = "2018 (13 TeV)",
                     signal_to_background_ratio = True,
                     ratio_mode = "DATA",
-                    yrange_ratio = (0.4, 1.6),
+                    yrange_ratio = (0.0, 2.0),
                     draw_errors = True
                 )
             
