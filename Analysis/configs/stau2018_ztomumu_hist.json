@@ -1,4 +1,5 @@
-{   "npvs" : {
+{   
+    "npvs" : {
         "bins": [
             {
                 "name": "npvsGood",
@@ -54,7 +55,7 @@
             ]
         }
     },
-   "njetselect": {
+    "njetselect": {
        "bins": [
            {
                "name": "njet",
@@ -70,7 +71,7 @@
                {"function": "num"}
            ]
        }
-   },
+    },
     "mumu_mass": {
         "bins": [
             {
@@ -114,7 +115,7 @@
                 "label": "MET $p_{\\mathrm{T}}$",
                 "n_or_arr": 100,
                 "lo": 0,
-                "hi": 200,
+                "hi": 1000,
                 "unit": "GeV"
             }
         ],
@@ -161,6 +162,127 @@
             ]
         }
     },
+    "jj_mass": {
+        "bins": [
+            {
+                "name": "mjj",
+                "label": "$m_{\\mathrm{jj}}$",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 1000,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mjj": [
+                "sum_jj",
+                "mass"
+            ]
+        }
+    },
+    "jj_pt": {
+        "bins": [
+            {
+                "name": "pt_jj",
+                "label": "$p_{\\mathrm{T}}(jj)$",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 2000,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "pt_jj": [
+                "sum_jj",
+                "pt"
+            ]
+        }
+    },
+    "mt_jet1": {
+        "bins": [
+            {
+                "name": "mt_jet1",
+                "label": "mt of the jet1",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 1500,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mt_jet1": [
+                "mt_jet1"
+            ]
+        }
+    },
+    "mt_jet2": {
+        "bins": [
+            {
+                "name": "mt_jet2",
+                "label": "mt of the jet1",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 1500,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mt_jet2": [
+                "mt_jet2"
+            ]
+        }
+    },
+    "mt_sum": {
+        "bins": [
+            {
+                "name": "mt_sum",
+                "label": "mt_jet1 + mt_jet2",
+                "n_or_arr": 200,
+                "lo": 0,
+                "hi": 2000,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mt_sum": [
+                "mt_sum"
+            ]
+        }
+    },
+    "dphi_jet1_jet2": {
+        "bins": [
+            {
+                "name": "dphi_jet1_jet2",
+                "label": "dphi_jet1_jet2",
+                "n_or_arr": 100,
+                "lo": -3.14,
+                "hi": 3.14,
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "dphi_jet1_jet2": [
+                "dphi_jet1_jet2"
+            ]
+        }
+    },
+    "mt2_j1_j2_MET": {
+        "bins": [
+            {
+                "name": "mt2_j1_j2_MET",
+                "label": "mt2_j1_j2_MET",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 500,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mt2_j1_j2_MET": [
+                "mt2_j1_j2_MET"
+            ]
+        }
+    },
     "jetselect_pt" : {
         "bins": [
             {
@@ -202,9 +324,9 @@
             {
                 "name": "jet_dxy",
                 "label": "Jet dxy",
-                "n_or_arr": 100,
+                "n_or_arr": 200,
                 "lo": 0.0,
-                "hi": 100,
+                "hi": 20,
                 "unit": "cm"
             }
         ],
@@ -220,9 +342,9 @@
             {
                 "name": "jet_dxy",
                 "label": "Jet dxySig",
-                "n_or_arr": 100,
+                "n_or_arr": 200,
                 "lo": 0.0,
-                "hi": 2000,
+                "hi": 500,
                 "unit": "cm"
             }
         ],
@@ -238,9 +360,9 @@
             {
                 "name": "jet_dxy",
                 "label": "Jet dxy weighted",
-                "n_or_arr": 100,
+                "n_or_arr": 200,
                 "lo": 0.0,
-                "hi": 100,
+                "hi": 20,
                 "unit": "cm"
             }
         ],
@@ -256,9 +378,9 @@
             {
                 "name": "jet_dxy",
                 "label": "Jet dxySig weighted",
-                "n_or_arr": 100,
+                "n_or_arr": 200,
                 "lo": 0.0,
-                "hi": 2000,
+                "hi": 500,
                 "unit": "cm"
             }
         ],
@@ -328,9 +450,9 @@
             {
                 "name": "jet_dxy",
                 "label": "Jet dxy",
-                "n_or_arr": 100,
+                "n_or_arr": 200,
                 "lo": 0.0,
-                "hi": 100,
+                "hi": 20,
                 "unit": "cm"
             }
         ],
@@ -346,9 +468,9 @@
             {
                 "name": "jet_dxy",
                 "label": "Jet dxySig",
-                "n_or_arr": 100,
+                "n_or_arr": 200,
                 "lo": 0.0,
-                "hi": 2000,
+                "hi": 500,
                 "unit": "cm"
             }
         ],
@@ -364,9 +486,9 @@
             {
                 "name": "jet_dxy",
                 "label": "Jet dxy weighted",
-                "n_or_arr": 100,
+                "n_or_arr": 200,
                 "lo": 0.0,
-                "hi": 100,
+                "hi": 20,
                 "unit": "cm"
             }
         ],
@@ -382,9 +504,9 @@
             {
                 "name": "jet_dxy",
                 "label": "Jet dxySig weighted",
-                "n_or_arr": 100,
+                "n_or_arr": 200,
                 "lo": 0.0,
-                "hi": 1000,
+                "hi": 500,
                 "unit": "cm"
             }
         ],
@@ -418,7 +540,7 @@
             {
                 "name": "jet_score",
                 "label": "Jet score",
-                "n_or_arr": [0.0, 0.1716, 0.4612, 0.6631, 0.786, 0.846, 0.9529, 0.9889, 0.9972, 0.9996, 1.1],
+                "n_or_arr": [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
                 "unit": "-"
             },
             // {
@@ -459,6 +581,22 @@
             ]
         }
     },
+    "fake_rate_hist_probonly" : {
+        "bins": [
+            {
+                "name": "jet_score",
+                "label": "Jet score",
+                "n_or_arr": [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "jet_score": [
+                "Jet_select",
+                "disTauTag_score1"
+            ]
+        }
+    },
     "n_jet_pass" : {
         "bins": [
             {
@@ -487,7 +625,6 @@
             ]
         }
     },
-
     "yield_bin0to1" : {
         "bins": [
             {
@@ -506,7 +643,6 @@
         },
         "weight" : ["yield_bin0to1"]
     },
-
     "yield_bin1to2" : {
         "bins": [
             {
@@ -525,7 +661,6 @@
         },
         "weight" : ["yield_bin1to2"]
     },
-
     "yield_bin0to2" : {
         "bins": [
             {

@@ -41,34 +41,34 @@
         "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8" : [ "$STOREDIR/GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8/crab_GluGluToContinToZZTo2mu2tau/230311_174235/*/*.root", ],
         "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8" : [ "$STOREDIR/GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8/crab_GluGluToContinToZZTo4tau/230311_174241/*/*.root", ],
         
-        // "QCD_Pt_15to30_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/crab_QCD_Pt_15to30/230311_140730/*/*.root", ],
-        // "QCD_Pt_30to50_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/crab_QCD_Pt_30to50/230311_140736/*/*.root", ],
-        // "QCD_Pt_50to80_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/crab_QCD_Pt_50to80/230311_140741/*/*.root", ],
-        // "QCD_Pt_80to120_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/crab_QCD_Pt_80to120/230311_140747/*/*.root", ],
-        // "QCD_Pt_120to170_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/crab_QCD_Pt_120to170/230311_140752/*/*.root", ],
-        // "QCD_Pt_170to300_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/crab_QCD_Pt_170to300/230311_140757/*/*.root", ],
-        // "QCD_Pt_300to470_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/crab_QCD_Pt_300to470/230311_140802/*/*.root", ],
-        // "QCD_Pt_470to600_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/crab_QCD_Pt_470to600/230311_140807/*/*.root", ],
-        // "QCD_Pt_600to800_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/crab_QCD_Pt_600to800/230311_140814/*/*.root", ],
-        // "QCD_Pt_800to1000_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/crab_QCD_Pt_800to1000/230311_140821/*/*.root", ],
-        // "QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1000to1400/230311_140827/*/*.root", ],
-        // "QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1400to1800/230311_140832/*/*.root", ],
-        // "QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1800to2400/230311_140838/*/*.root", ],
-        // "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/crab_QCD_Pt_2400to3200/230311_140844/*/*.root", ],
-        // "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/crab_QCD_Pt_3200toInf/230311_140850/*/*.root", ],
+        "QCD_Pt_15to30_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/crab_QCD_Pt_15to30/230311_140730/*/*.root", ],
+        "QCD_Pt_30to50_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/crab_QCD_Pt_30to50/230311_140736/*/*.root", ],
+        "QCD_Pt_50to80_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/crab_QCD_Pt_50to80/230311_140741/*/*.root", ],
+        "QCD_Pt_80to120_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/crab_QCD_Pt_80to120/230311_140747/*/*.root", ],
+        "QCD_Pt_120to170_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/crab_QCD_Pt_120to170/230311_140752/*/*.root", ],
+        "QCD_Pt_170to300_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/crab_QCD_Pt_170to300/230311_140757/*/*.root", ],
+        "QCD_Pt_300to470_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/crab_QCD_Pt_300to470/230311_140802/*/*.root", ],
+        "QCD_Pt_470to600_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/crab_QCD_Pt_470to600/230311_140807/*/*.root", ],
+        "QCD_Pt_600to800_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/crab_QCD_Pt_600to800/230311_140814/*/*.root", ],
+        "QCD_Pt_800to1000_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/crab_QCD_Pt_800to1000/230311_140821/*/*.root", ],
+        "QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1000to1400/230311_140827/*/*.root", ],
+        "QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1400to1800/230311_140832/*/*.root", ],
+        "QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1800to2400/230311_140838/*/*.root", ],
+        "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/crab_QCD_Pt_2400to3200/230311_140844/*/*.root", ],
+        "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/crab_QCD_Pt_3200toInf/230311_140850/*/*.root", ],
         
         "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_ST_tW_antitop_5f_inclusiveDecays/230311_153850/*/*.root", ],
         "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_ST_tW_top_5f_inclusiveDecays/230311_153856/*/*.root", ],
         "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [ "$STOREDIR/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/crab_ST_t-channel_antitop_4f_InclusiveDecays_incl/230311_153838/*/*.root", ],
         "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [ "$STOREDIR/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/crab_ST_t-channel_top_4f_InclusiveDecays_incl/230311_153845/*/*.root", ],
         
-        // "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6/crab_stau100_lsp1_ctau100mm/230311_014322/*/*.root", ],
-        // "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4/crab_stau100_lsp1_ctau1000mm/230311_014328/*/*.root", ],
-        // "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6/crab_stau250_lsp1_ctau0p01mm/230311_014333/*/*.root", ],
-        // "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6/crab_stau250_lsp1_ctau100mm/230311_014339/*/*.root", ],
-        // "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4/crab_stau250_lsp1_ctau1000mm/230311_014344/*/*.root", ],
-        // "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6/crab_stau400_lsp1_ctau100mm/230311_014924/*/*.root", ],
-        // "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4/crab_stau400_lsp1_ctau1000mm/230311_083252/*/*.root", ],
+        "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6/crab_stau100_lsp1_ctau100mm/230311_014322/*/*.root", ],
+        "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4/crab_stau100_lsp1_ctau1000mm/230311_014328/*/*.root", ],
+        "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6/crab_stau250_lsp1_ctau0p01mm/230311_014333/*/*.root", ],
+        "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6/crab_stau250_lsp1_ctau100mm/230311_014339/*/*.root", ],
+        "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4/crab_stau250_lsp1_ctau1000mm/230311_014344/*/*.root", ],
+        "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6/crab_stau400_lsp1_ctau100mm/230311_014924/*/*.root", ],
+        "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4/crab_stau400_lsp1_ctau1000mm/230311_083252/*/*.root", ],
         
         "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/crab_TTTo2L2Nu/230311_084405/*/*.root", ],
         "TTToHadronic_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/crab_TTToHadronic/230311_084410/*/*.root", ],
@@ -154,12 +154,19 @@
     },
 
     // data-driven n-pass yield prediction:
+    // "jet_fake_rate" : [
+    //     "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_zmumu/zmumu_v7_fake/fake_rate/fake_rate_score_jet_score_jet_pt_jet_dxy.root",
+    //     "fake_rate_score_jet_score_jet_pt_jet_dxy",
+    //     ["jet_score", "jet_pt", "jet_dxy"]
+    // ],
+    // "predict_yield" : true,
+
     "jet_fake_rate" : [
-        "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_zmumu/zmumu_v7_fake/fake_rate/fake_rate_score_jet_score_jet_pt_jet_dxy.root",
-        "fake_rate_score_jet_score_jet_pt_jet_dxy",
-        ["jet_score", "jet_pt", "jet_dxy"]
+        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_zmumu/zmumu_v9_predict/fake_rate/fake_rate_jet_prob.root",
+        "fake_rate_jet_prob",
+        ["jet_score"]
     ],
-    "predict_yield" : true,
+    "predict_yield" : false,
     
     "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/",
 
@@ -185,14 +192,16 @@
     "track"             : "hasTrackDetails",
 
     // MET cut
-    "MET_cut_max"   : 100,
+    "MET_cut_max"   : 200,
 
     // ZtoLL window
     "mass_ll_lower" : 70,
     "mass_ll_upper" : 120,
 
     // Tagger part
-    "score_pass" : [0.0, 0.1716, 0.4612, 0.6631, 0.786, 0.846, 0.9529, 0.9889, 0.9972, 0.9996],
+    "score_pass" : [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
+    "loose_thr" : 0.1716,
+    "tight_thr" : 0.9900,
 
     "hists": "$CONFDIR/stau2018_ztomumu_hist.json",
 }

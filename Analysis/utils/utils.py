@@ -212,14 +212,15 @@ def root_plot1D(
             hist.SetBinContent(hist.GetNbinsX() , hist.GetBinContent(hist.GetNbinsX() ) +  hist.GetBinContent(hist.GetNbinsX() + 1))
             
         if stackdrawopt == 'nostack':
-            if hist.Integral()!=0: hist.Scale(1.0/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
+            # if hist.Integral()!=0: hist.Scale(1.0/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
+            pass
         elif normilize_overlay and include_overflow:
             if hist.Integral()!=0: hist.Scale(1.0/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
         elif normilize_overlay:
             if hist.Integral()!=0: hist.Scale(1.0/(hist.Integral()))
         
         if ratio_mode=="DATA":
-            hist.SetOption("HISTP")
+            hist.SetOption("HISTPE")
         else:
             hist.SetOption("HIST")
         hist.Draw(f"same {hist.GetOption()}")

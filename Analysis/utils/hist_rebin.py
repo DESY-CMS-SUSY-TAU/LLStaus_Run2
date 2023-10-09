@@ -160,15 +160,15 @@ def th3_to_cumulative(hist, axis_to_integrate):
     #                             n_bins_z, hist.GetZaxis().GetXmin(), hist.GetZaxis().GetXmax())
     cumulative_hist = hist.Clone(f"{hist.GetName()}_cumulative_{axis_to_integrate}")
     
-    for bin_x in range(0, n_bins_x + 1):
-        for bin_y in range(0, n_bins_y + 1):
-            for bin_z in range(0, n_bins_z + 1):
+    for bin_x in range(0, n_bins_x + 2):
+        for bin_y in range(0, n_bins_y + 2):
+            for bin_z in range(0, n_bins_z + 2):
                 error = ctypes.c_double(0)
                 cumulative_content = hist.IntegralAndError(
                     bin_x, ((n_bins_x + 1) if (axis_to_integrate == 0) else bin_x),
                     bin_y, ((n_bins_y + 1) if (axis_to_integrate == 1) else bin_y),
                     bin_z, ((n_bins_z + 1) if (axis_to_integrate == 2) else bin_z),
-                    error
+                    error # error will be filled correctly
                     )
                 cumulative_hist.SetBinContent(bin_x, bin_y, bin_z, cumulative_content)
                 cumulative_hist.SetBinError(bin_x, bin_y, bin_z, error)

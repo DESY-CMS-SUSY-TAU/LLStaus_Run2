@@ -7,7 +7,6 @@
 # applied once. This is because a chunk of events are processed simultaneously.
 # You change adjust the number of events in a chunk and thereby the memory
 from nis import match
-from unittest import result
 import pepper
 import awkward as ak
 from functools import partial
@@ -104,8 +103,17 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("PfCands", self.pfcand_valid)
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
+        selector.add_cut("charge2", self.charge)
         
-        selector.add_cut("two_valid_jets", self.has_two_valid_jets)
+        selector.set_column("Jet_select", self.getloose_jets)
+        selector.add_cut("two_loose_jets", self.has_two_jets)
+
+        # Variables related to the two jets:
+        selector.set_column("sum_jj", self.sum_jj)
+        selector.set_column("mt2_j1_j2_MET", self.get_mt2)
+        selector.set_multiple_columns(self.missing_energy)
+        selector.set_multiple_columns(self.mt_jets)
+        selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
 
         # selector.set_column("logger", self.skim_jets)
         
@@ -120,24 +128,114 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("Jet_obj", partial(self.leading_jet, order=0))
         selector.add_cut("req_2st_jet", partial(self.jets_available, n_available=2))
         selector.set_column("Jet_obj", partial(self.leading_jet, order=1))
-        selector.add_cut("req_3st_jet", partial(self.jets_available, n_available=3))
-        selector.set_column("Jet_obj", partial(self.leading_jet, order=2))
+        
+        selector.set_column("Jet_select", self.gettight_jets)
+        selector.add_cut("two_tight_jets", self.has_two_jets)
+        
     
     @zero_handler
-    def skim_jets(self, data):
+    def sum_jj(self, data):
+        return data['Jet_select'][:,0].add(data['Jet_select'][:,1])
+    
+    
+    @zero_handler
+    def missing_energy(self, data):
         jets = data["Jet_select"]
-        file_name = os.path.basename(data.metadata["filename"])
-        dataset_name = data.metadata["dataset"]
-        prefix = f"evn_{data.metadata['entrystart']}_{data.metadata['entrystop']}_"
-        path = f"{self.config["skim_path"]}/{dataset_name}"
-        if not os.path.exists(path):
-            os.makedirs(path)
-        ak.to_parquet(jets, f"{path}/"+prefix+file_name+".parquet")
-        return np.ones(len(data))
+        HT_valid = ak.sum(jets.pt, axis=-1)
+    
+        px = ak.sum(jets.px, axis=-1)
+        py = ak.sum(jets.py, axis=-1)
+        HT_miss_valid = np.sqrt(px*px + py*py)
+
+        jets = data["Jet"]
+        HT = ak.sum(jets.pt, axis=-1)
+
+        px = ak.sum(jets.px, axis=-1)
+        py = ak.sum(jets.py, axis=-1)
+        HT_miss= np.sqrt(px*px + py*py)
+        
+        return {
+            "HT_valid" : HT_valid, "HT_miss_valid" : HT_miss_valid,
+            "HT" : HT, "HT_miss" : HT_miss
+        }
+    
+    def delta_phi(self, phi1_ak, phi2_ak):
+        phi1 = np.array(phi1_ak)
+        phi2 = np.array(phi2_ak)
+        assert phi1.shape == phi2.shape
+        d = phi1 - phi2
+        indx_pos = d>np.pi
+        d[indx_pos] -= np.pi*2
+        indx_neg = d<=-np.pi
+        d[indx_neg] += np.pi*2
+        return d
     
     @zero_handler
-    def has_two_valid_jets(self, data):
-        return ak.num(data["Jet_select"]) >= 2
+    def mt_jets(self, data):
+        jet1 = data["Jet_select"][:,0]
+        jet2 = data["Jet_select"][:,1]
+        
+        MET = data["MET"]
+        one_min_cs = 1.0 - np.cos(self.delta_phi(jet1.phi, MET.phi))
+        prod = 2*jet1.pt*MET.pt
+        mt_j1 = np.sqrt( prod * one_min_cs)
+        
+        one_min_cs = 1.0 - np.cos(self.delta_phi(jet2.phi, MET.phi))
+        prod = 2*jet2.pt*MET.pt
+        mt_j2 = np.sqrt( prod * one_min_cs) 
+    
+        return {
+            "mt_jet1" : mt_j1,
+            "mt_jet2" : mt_j2,
+            "mt_sum" : mt_j1 + mt_j2
+        }
+        
+    @zero_handler
+    def dphi_jet1_jet2(self, data):
+        return self.delta_phi(data["Jet_select"][:,0].phi,
+                              data["Jet_select"][:,1].phi)
+    
+    
+    @zero_handler    
+    def get_mt2(self, data):
+        jet1 = data["Jet_select"][:,0]
+        jet2 = data["Jet_select"][:,1]
+        met = data["MET"]
+        return mt2.mt2(
+            jet1.mass, jet1.px, jet1.py,
+            jet2.mass, jet2.px, jet2.py,
+            met.px, met.py,
+            0, 0
+        )
+    
+    # @zero_handler
+    # def skim_jets(self, data):
+    #     jets = data["Jet_select"]
+    #     file_name = os.path.basename(data.metadata["filename"])
+    #     dataset_name = data.metadata["dataset"]
+    #     prefix = f"evn_{data.metadata['entrystart']}_{data.metadata['entrystop']}_"
+    #     path = f"{self.config["skim_path"]}/{dataset_name}"
+    #     if not os.path.exists(path):
+    #         os.makedirs(path)
+    #     ak.to_parquet(jets, f"{path}/"+prefix+file_name+".parquet")
+    #     return np.ones(len(data))
+    
+    @zero_handler
+    def has_two_jets(self, data):
+        jets = data["Jet_select"]
+        return ak.num(jets) == 2
+
+    @zero_handler
+    def getloose_jets(self, data):
+        jets = data["Jet_select"]
+        jets = jets[(jets.disTauTag_score1 >= self.config["loose_thr"])]
+        return jets
+
+    @zero_handler
+    def gettight_jets(self, data):
+        jets = data["Jet_select"]
+        jets = jets[(jets.disTauTag_score1 >= self.config["tight_thr"])]
+        return jets
 
     @zero_handler
     def do_dy_jet_reweighting(self, data):
@@ -367,9 +465,6 @@ class Processor(pepper.ProcessorBasicPhysics):
     def predict_yield(self, data, weight=None):
         jets = data["Jet_select"]
 
-        for score in self.config["score_pass"]:
-            print(self.config["jet_fake_rate"](jet_score=[score])[0])
-        
         # from bin 0 to bin 1
         weights_bin0to1 = []
         for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
@@ -414,11 +509,6 @@ class Processor(pepper.ProcessorBasicPhysics):
         score_bin = ak.local_index(yield_bin0to1, axis=1) + 1 # +1 because we skip first bin
         # print(score_bin)
         
-        print("yield_bin0to1", yield_bin0to1)
-        print("weight", weight)
-        print("yield_bin0to1*weight", yield_bin0to1*weight)
-        print(score_bin)
-        exit()
         
         return {"yield_bin0to1" : weight*yield_bin0to1,
                 "yield_bin1to2" : weight*yield_bin1to2,
