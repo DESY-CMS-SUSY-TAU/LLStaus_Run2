@@ -9,41 +9,70 @@
         "req_2st_jet_",
         "two_tight_jets_"],
     "Categories" : [],
-    
-    // "nominator" : "Cut-002_loose_electron_veto_jet_fake_tight",
-
-    // "nominator" : "Cut-005_n_valid_jets_jet_fake_loose",
-    // "denominator" : "Cut-002_loose_electron_veto_jet_fake_all",
-
-    // "nominator" : "Cut-005_n_valid_jets_jet_fake_tight",
-    // "denominator" : "Cut-005_n_valid_jets_jet_fake_all",
-
-    "nominator" : "Cut-003_loose_electron_veto_jet_fake_tight",
-    "denominator" : "Cut-003_loose_electron_veto_jet_fake_all",
     "DY_stitching_applied" : false,
+
+    // "fake_rate" : {
+    //     // "ratio" - calculate by the ration of two hist
+    //     // "score-dim" - assumes one of the dimention of score
+    //     "mode" : "score-dim",
+
+    //     // "nominator" : "Cut-003_loose_electron_veto_jet_fake_tight",
+    //     // "denominator" : "Cut-003_loose_electron_veto_jet_fake_all",
+    
+    //     "histogram" : "Cut-010_two_loose_jets_fake_rate_hist",
+    //     // "histogram" : "Cut-007_charge_fake_rate_hist",
+    //     // "histogram" : "Cut-008_charge_fake_rate_hist",
+
+    //     "rate_bins" : {
+    //         "jet_score" : [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
+    //         "jet_pt" :  [20, 30, 40, 50, 70, 120, 1000],
+    //         "jet_dxy" : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
+    //     },
+    
+    //     "sf_project" : {
+    //         // name : "axis", score should be first argument
+    //         "jet_prob_pt" : "yx",
+    //         "jet_prob_dxy" : "zx",
+    //         "jet_prob" : "x"
+    //     },
+    // },
+
     "fake_rate" : {
         // "ratio" - calculate by the ration of two hist
         // "score-dim" - assumes one of the dimention of score
-        "mode" : "score-dim",
+        "mode" : "ratio",
 
-        // "nominator" : "Cut-003_loose_electron_veto_jet_fake_tight",
-        // "denominator" : "Cut-003_loose_electron_veto_jet_fake_all",
-    
-        "histogram" : "Cut-010_two_loose_jets_fake_rate_hist",
-        // "histogram" : "Cut-007_charge_fake_rate_hist",
-        // "histogram" : "Cut-008_charge_fake_rate_hist",
-
+        // "nominator" : ["file name w/o extention", "category prefix"]
+        "nominator"   : ["Cut-008_two_loose_jets_final_fake_rate_hist", "_p9900"],
+        "denominator" : ["Cut-008_two_loose_jets_final_fake_rate_hist", "_p1716"],
+        // "nominator"   : ["Cut-002_two_loose_jets_final_fake_rate_hist_flav", "_p9900"],
+        // "denominator" : ["Cut-002_two_loose_jets_final_fake_rate_hist_flav", "_p1716"],
+        
+        "NOF" : false, // no overflow bins in projection
+        "NUF" : false, // no underflow bins in projection
         "rate_bins" : {
-            "jet_score" : [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
-            "jet_pt" :  [20, 30, 40, 50, 70, 120, 1000],
-            "jet_dxy" : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
+            // "jet_flav" : [0, 1, 4, 5, 6, 15, 16, 21, 22, 25],
+            // "jet_flav" : [1, 4, 5, 6, 15, 16, 21, 22],
+            "jet_eta": [-2.3, 2.3],
+            "jet_pt" :  [30, 40, 50, 70, 120, 1000],
+            // "jet_pt" :  [30, 40, 50, 1000],
+            // "jet_dxy" : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
+            "jet_dxy" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
         },
     
+        // "sf_project" : {
+        //     // name : "axis", score should be first argument
+        //     "jet_flav" : "x",
+        //     "jet_pt"   : "y",
+        //     "jet_flav_pt" : "xy",
+        //     "jet_flav_dxy" : "xz"
+        // },
         "sf_project" : {
             // name : "axis", score should be first argument
-            "jet_prob_pt" : "yx",
-            "jet_prob_dxy" : "zx",
-            "jet_prob" : "x"
+            "jet_eta" : "x",
+            "jet_pt"   : "y",
+            "jet_eta_pt" : "xy",
+            "jet_eta_dxy" : "xz"
         },
     },
 
@@ -66,73 +95,77 @@
         //     "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8",
         //     "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8",
         // ],
-        "$\\mathrm{DY}$": [
-			"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
-		],
-        "$\\mathrm{t}/\\bar{\\mathrm{t}}$": [
-            "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
-            "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
-            "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
-            "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"       
-		],
-        "$\\mathrm{t}\\bar{\\mathrm{t}}$": [
-            "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",
-            "TTToHadronic_TuneCP5_13TeV-powheg-pythia8",
-            "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",
-            "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
-            "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
-            "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8",
-            "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8",
-        ],
-        "$\\mathrm{VV}/\\mathrm{VVV}$": [
-            "VHToNonbb_M125_TuneCP5_13TeV-amcatnloFXFX_madspin_pythia8",
-            "VVTo2L2Nu_MLL-1toInf_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",
-            "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",
-            "WZTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        // "$\\mathrm{DY}$": [
+		// 	"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
+		// ],
+        // "$\\mathrm{t}/\\bar{\\mathrm{t}}$": [
+        //     "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
+        //     "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
+        //     "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
+        //     "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"       
+		// ],
+        // "$\\mathrm{t}\\bar{\\mathrm{t}}$": [
+        //     "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",
+        //     "TTToHadronic_TuneCP5_13TeV-powheg-pythia8",
+        //     "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",
+        //     "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
+        //     "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
+        //     "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8",
+        //     "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8",
+        // ],
+        // "$\\mathrm{VV}/\\mathrm{VVV}$": [
+        //     "VHToNonbb_M125_TuneCP5_13TeV-amcatnloFXFX_madspin_pythia8",
+        //     "VVTo2L2Nu_MLL-1toInf_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        //     "WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        //     "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",
+        //     "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",
+        //     "WZTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        //     "WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        //     "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        //     "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        //     "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             
-            "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8", 
-            "ZZTo4L_TuneCP5_13TeV_powheg_pythia8",
+        //     "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8", 
+        //     "ZZTo4L_TuneCP5_13TeV_powheg_pythia8",
 
-            "GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8",
-            "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8",
-            "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",
-        ],
-        "$\\mathrm{W}+\\mathrm{jets}$": [
-            "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8"
-        ],
-        "$\\mathrm{other-Z}+\\mathrm{jets}$": [
-            "ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8",
+        //     "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8",
+        //     "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",
+        // ],
+        // "$\\mathrm{W}+\\mathrm{jets}$": [
+        //     "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8"
+        // ],
+        // "$\\mathrm{other-Z}+\\mathrm{jets}$": [
+        //     "ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8",
 
-            "ZJetsToNuNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
-        ],
-        "$\\mathrm{stau100GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
-        "$\\mathrm{stau100GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
-        "$\\mathrm{stau400GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
-        "$\\mathrm{stau400GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
-        "$\\mathrm{stau250GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
-        "$\\mathrm{stau250GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
-        "$\\mathrm{stau250GeV0p01mm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"],
+        //     // "ZJetsToNuNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     // "ZJetsToNuNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     // "ZJetsToNuNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     // "ZJetsToNuNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     // "ZJetsToNuNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     // "ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     // "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
+        // ],
+        // "$\\mathrm{stau100GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
+        // "$\\mathrm{stau100GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
+        // "$\\mathrm{stau400GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
+        // "$\\mathrm{stau400GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
+        // "$\\mathrm{stau250GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
+        // "$\\mathrm{stau250GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
+        // "$\\mathrm{stau250GeV0p01mm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"],
 
         "$\\mathrm{Data}$" : ["SingleMuon"]
     },
@@ -285,17 +318,17 @@
             "jj_pt"   : [0, 600, [0.0, 50, 100, 150, 600], true, null],
             "mt_jet1" : [0, 600, [0.0, 50, 100, 150, 600], true, null],
             "mt_jet2" : [0, 600, [0.0, 50, 100, 150, 600], true, null],
-            "mt_sum"  : [0, 600, [0.0, 50, 100, 150, 600], true, null],
+            "mt_sum"  : [0, 600, [0.0, 50, 100, 150, 200, 300, 600], true, null],
             "dphi_jet1_jet2" : [-3.15, 3.15, [-3.15, -2.4, -1.6, 0.0, 1.6, 2.4, 3.15], true, null],
             "jet1_pt"  : [0, 600, [0.0, 50, 150, 300, 600], true, null],
             "jet1_eta" : [-2.1, 2.1, 10, true, null],
-            "jet1_dxy" : [0, 50.0, [0.0, 5.0, 10.0, 50.0], true, null],
-            "jet1_dxysig" : [0, 200.0, [0.0, 50.0, 100.0, 200.0], true, null],
+            "jet1_dxy" : [0, 10.0, [0, 0.2, 0.4, 0.6, 1, 2, 3, 5, 10], true, null],
+            "jet1_dxysig" : [0, 200.0, [0, 5, 10, 15, 25, 50, 75, 125, 200], true, null],
             // "jet1_IP3D"   : [0, 200.0, [0.0, 50.0, 100.0, 200.0], true, null],
             "jet2_pt"     : [0, 600, [0.0, 50, 150, 300, 600], true, null],
             "jet2_eta"    : [-2.1, 2.1, 10, true, null],
-            "jet2_dxy"    : [0, 50.0, [0.0, 5.0, 10.0, 50.0], true, null],
-            "jet2_dxysig" : [0, 200.0, [0.0, 50.0, 100.0, 200.0], true, null],
+            "jet2_dxy"    : [0, 10.0, [0, 0.2, 0.4, 0.6, 1, 2, 3, 5, 10], true, null],
+            "jet2_dxysig" : [0, 200.0, [0, 5, 10, 15, 25, 50, 75, 125, 200], true, null],
             // "jet2_IP3D"   : [0, 200.0, [0.0, 50.0, 100.0, 200.0], true, null]
         }
     }

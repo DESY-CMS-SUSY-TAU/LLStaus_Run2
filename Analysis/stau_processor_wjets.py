@@ -48,6 +48,16 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     def process_selection(self, selector, dsname, is_mc, filler):
         
+        if self.config["flavour_fake_rate_study"]:
+            # Alternative processor which aims
+            # calculating jet fake rate basing
+            # on the gen level flavour matching
+            # used only with WJet dataset at the moment
+            selector.systematics["weight"] = \
+                ak.full_like(selector.systematics["weight"], 1.0)
+            self.process_flav_study(selector, dsname, is_mc, filler)
+            return
+        
         # Triggers
         pos_triggers, neg_triggers = pepper.misc.get_trigger_paths_for(
             dsname, is_mc, self.config["dataset_trigger_map"],
@@ -106,7 +116,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("two_loose_jets_final", self.has_two_jets)
         
         # selector.set_column("Jet_select", self.gettight_jets)
-        # selector.add_cut("two_tight_jets", self.has_two_jets)
+        # selector.add_cut("two_tight_jets", self.has_two_jets)        
     
     @zero_handler
     def get_muon_sfs(self, data, is_mc):
@@ -277,7 +287,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         pfCands = self.match_jet_to_pfcand(data, jet_name=match_object, pf_name="PfCands", dR=dR)
         pfCands_lead = ak.firsts(pfCands, axis=-1)
         pfCands_lead["dxysig"] = pfCands_lead.dxy / pfCands_lead.dxyError
-        pfCands_lead["Lrel"] = np.sqrt(pfCands_lead.dxy**2 + pfCands_lead.dz**2)
+        pfCands_lead["ip3d"] = np.sqrt(pfCands_lead.dxy**2 + pfCands_lead.dz**2)
         pfCands_lead["dxy_weight"] = ak.mean(pfCands.dxy, weight=pfCands.pt, axis=-1)
         pfCands_lead["dxysig_weight"] = ak.mean(pfCands.dxy / pfCands.dxyError, weight=pfCands.pt, axis=-1)
         return pfCands_lead
@@ -287,13 +297,16 @@ class Processor(pepper.ProcessorBasicPhysics):
         jets = data["Jet_select"]
         # Mask jets with dxy nan (no selected pfcands matching)
         bad_jets = ak.is_none(data["Jet_lead_pfcand"].dxy, axis=-1)
-        jets = ak.mask(jets, ~bad_jets) # mask bad jets to keep coorect shape
+        jets = ak.mask(jets, ~bad_jets) # mask bad jets to keep correct shape
         jets["dz"] = np.abs(data["Jet_lead_pfcand"].dz)
         jets["dxy"] = np.abs(data["Jet_lead_pfcand"].dxy)
         jets["dxy_weight"] = np.abs(data["Jet_lead_pfcand"].dxy_weight)
         jets["dxysig"] = np.abs(data["Jet_lead_pfcand"].dxysig)
         jets["dxysig_weight"] = np.abs(data["Jet_lead_pfcand"].dxysig_weight)
+        jets["ip3d"] = data["Jet_lead_pfcand"].ip3d
         jets = jets[~bad_jets] # remove bad jets
+        # add dxy cut
+        jets = jets[jets.dxy >= self.config["jet_dxy_min"]]
         return jets
     
     @zero_handler
@@ -385,7 +398,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         for score in self.config["score_pass"]:
             
-            fake =  self.config["jet_fake_rate"](jet_pt=jets.pt, jet_score=score)
+            fake =  self.config["jet_fake_rate"](jet_pt=jets.pt)
             
             # from bin 0 to bin 1 and 2
             events_0tag = (ak.num(jets[(jets.disTauTag_score1 >= score)]) == 0)
@@ -497,8 +510,7 @@ class Processor(pepper.ProcessorBasicPhysics):
     def dphi_jet1_jet2(self, data):
         return self.delta_phi(data["Jet_select"][:,0].phi,
                               data["Jet_select"][:,1].phi)
-    
-    
+
     @zero_handler    
     def get_mt2(self, data):
         jet1 = data["Jet_select"][:,0]
@@ -526,4 +538,83 @@ class Processor(pepper.ProcessorBasicPhysics):
     def gettight_jets(self, data):
         jets = data["Jet_select"]
         jets = jets[(jets.disTauTag_score1 >= self.config["tight_thr"])]
+        return jets
+    
+    # Gen Study -------------------------------------------------------------------------
+    
+    def process_flav_study(self, selector, dsname, is_mc, filler):
+        
+        # if not (dsname.startswith("W") or \
+        #         dsname.startswith("DY")) :
+        #     raise NameError('Error: Gen study of jet flavour available only for WJet.')
+        # set event weight to one because of the wronggly esigned
+    
+        selector.set_multiple_columns(self.gen_lep)    
+        # add cuts and selections on the jets
+        selector.set_column("Jet_select", self.jet_selection_genveto)
+        selector.set_column("Jet_select", self.getloose_jets)
+        selector.set_column("PfCands", self.pfcand_valid)
+        selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
+        selector.set_column("Jet_select", self.set_jet_dxy)
+        selector.add_cut("two_loose_jets", self.has_two_jets)
+        # Variables related to the two jets:
+        selector.set_column("sum_jj", self.sum_jj)
+        selector.set_multiple_columns(self.mt_jets)
+        selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
+        selector.set_column("mt2_j1_j2_MET", self.get_mt2)
+        selector.add_cut("two_loose_jets_final", self.has_two_jets)
+                
+    @zero_handler
+    def gen_lep(self, data):
+        gen_tau = data.GenPart[
+            (abs(data.GenPart.pdgId) == 15)
+            & data.GenPart.hasFlags(["isHardProcess"])
+            & data.GenPart.hasFlags(["isFirstCopy"])
+        ]
+        gen_mu = data.GenPart[
+            (abs(data.GenPart.pdgId) == 13)
+            & data.GenPart.hasFlags(["isHardProcess"])
+            & data.GenPart.hasFlags(["isFirstCopy"])
+        ]
+        gen_ele = data.GenPart[
+            (abs(data.GenPart.pdgId) == 11)
+            & data.GenPart.hasFlags(["isHardProcess"])
+            & data.GenPart.hasFlags(["isFirstCopy"])
+        ]
+        return {
+            "gen_tau" : gen_tau,
+            "gen_mu"  : gen_mu,
+            "gen_ele" : gen_ele
+        }
+        
+    @zero_handler
+    def jet_selection_genveto(self, data):
+        
+        jets = data["Jet"]
+        jets = jets[(
+            (self.config["jet_eta_min"] < jets.eta)
+            & (jets.eta < self.config["jet_eta_max"])
+            & (self.config["jet_pt_min"] < jets.pt)
+            & (jets.jetId >= self.config["jet_jetId"] )
+            )]
+        
+        # add hadronic tau flavour:
+        tau_vis = data.GenVisTau[ ((data.GenVisTau.pt > 30) & (abs(data.GenVisTau.eta) < 2.4) &
+                                  (data.GenVisTau.parent.hasFlags(["fromHardProcess"])))
+                                ]
+        matches_tauhad, _ = jets.nearest(tau_vis, return_metric=True, threshold=self.config["tag_muon_veto_dR"])
+        updFlavour = ak.where(~ak.is_none(matches_tauhad, axis=-1), 15, jets.partonFlavour)
+        jets["partonFlavour_upd"] = updFlavour
+        
+        # mask the jets if they match to gen level but not hadron tau
+        matches_tau, _ = jets.nearest(data["gen_tau"], return_metric=True, threshold=self.config["tag_muon_veto_dR"])
+        matches_mu, _  = jets.nearest(data["gen_mu"], return_metric=True, threshold=self.config["tag_muon_veto_dR"])
+        matches_ele, _ = jets.nearest(data["gen_ele"], return_metric=True, threshold=self.config["tag_muon_veto_dR"])
+        
+        jets = jets[
+            ak.is_none(matches_ele, axis=1) &
+            ak.is_none(matches_mu, axis=1) &
+            ( ak.is_none(matches_tau, axis=1) | (~ak.is_none(matches_tau, axis=1) & ~ak.is_none(matches_tauhad, axis=1)))
+        ]
+        
         return jets

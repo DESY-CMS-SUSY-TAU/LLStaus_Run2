@@ -79,6 +79,11 @@
         // "WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/crab_WGToLNuG/230311_174132/*/*.root", ],
         
         // "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_WJetsToLNu/230311_122159/*/*.root", ],
+        // "W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W1JetsToLNu/230608_152444/*/*.root" ],
+        // "W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W2JetsToLNu/230608_152449/*/*.root" ],
+        // "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W3JetsToLNu/230608_152454/*/*.root" ],
+        // "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W4JetsToLNu/230608_152500/*/*.root" ],
+
         // "WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8/crab_WJetsToQQ_HT-200to400/230311_122205/*/*.root", ],
         // "WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/crab_WJetsToQQ_HT-400to600/230311_122210/*/*.root", ],
         // "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/crab_WJetsToQQ_HT-600to800/230311_122215/*/*.root", ],
@@ -137,11 +142,13 @@
 
     "jet_fake_rate" : [
         // "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v1/fake_rate_test/fake_rate_jet_prob_pt.root",
-        "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_zmumu/zmumu_v1/fake_rate_test/fake_rate_jet_prob_pt.root",
-        "fake_rate_jet_prob_pt",
-        ["jet_score", "jet_pt"]
+        // "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_zmumu/zmumu_v1/fake_rate_test/fake_rate_jet_prob_pt.root",
+        "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v8_mindxy/fake_rate/fake_rate_jet_pt.root",
+        "fake_rate_jet_pt",
+        ["jet_pt"]
     ],
     "predict_yield" : true,
+    "flavour_fake_rate_study" : false,
     
     // tag muon:
     "muon_pt_min"   :  28,
@@ -177,6 +184,7 @@
     "jet_eta_max"  :  2.1,
     "jet_jetId"    :  6, // tight lepton veto
     "tag_muon_veto_dR" :  0.4,
+    "jet_dxy_min"  : 0.5, // cm
 
     // pfCand selection:
     "pfcand_pt"         : 1.0,
