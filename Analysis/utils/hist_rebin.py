@@ -1,6 +1,7 @@
 import numpy as np
 import ROOT
 import unittest
+import ctypes
 
 class TH3Histogram:
     def __init__(self, hist, new_bin_edges_x, new_bin_edges_y, new_bin_edges_z):
@@ -46,16 +47,35 @@ class TH3Histogram:
             len(self._new_bin_edges_z) - 1,
             self._new_bin_edges_z
         )
+        # Create sum sqr weight
+        hist_sumw2 = ROOT.TH3D(
+            f"{self._hist.GetName()}hist_sumw2",
+            f"hist_sumw2",
+            len(self._new_bin_edges_x) - 1,
+            self._new_bin_edges_x,
+            len(self._new_bin_edges_y) - 1,
+            self._new_bin_edges_y,
+            len(self._new_bin_edges_z) - 1,
+            self._new_bin_edges_z
+        )
 
         # Fill the rebinned histogram
         for i in range(0, self._hist.GetNbinsX() + 2):
             for j in range(0, self._hist.GetNbinsY() + 2):
                 for k in range(0, self._hist.GetNbinsZ() + 2):
                     content = self._hist.GetBinContent(i, j, k)
+                    w2 = self._hist.GetBinError(i, j, k)**2
                     bin_x = self._hist.GetXaxis().GetBinCenter(i)
                     bin_y = self._hist.GetYaxis().GetBinCenter(j)
                     bin_z = self._hist.GetZaxis().GetBinCenter(k)
                     rebinned_hist.Fill(bin_x, bin_y, bin_z, content)
+                    hist_sumw2.Fill(bin_x, bin_y, bin_z, w2)
+        
+        for i in range(0, self._hist.GetNbinsX() + 2):
+            for j in range(0, self._hist.GetNbinsY() + 2):
+                for k in range(0, self._hist.GetNbinsZ() + 2):
+                    w2 = hist_sumw2.GetBinError(i, j, k)
+                    rebinned_hist.SetBinError(bin_x, bin_y, bin_z, sqrt(w2))
 
         self._rebinned_hist = rebinned_hist
 
@@ -112,8 +132,69 @@ class TH3HistogramTest(unittest.TestCase):
                                projection_after.Integral() + projection_after.GetBinContent(0) +  projection_after.GetBinContent(projection_after.GetNbinsX()+1)
                                )
         
-        
-
-if __name__ == '__main__':
+def th3_to_cumulative(hist, axis_to_integrate):
+    """
+    Convert TH3 histogram to cumulative distribution over one axis.
     
+    Parameters:
+        hist (ROOT.TH3): The TH3 histogram to convert.
+        axis_to_integrate (int): The axis number (0, 1, or 2) to integrate over.
+        
+    Returns:
+        ROOT.TH3: The cumulative distribution histogram.
+    """
+    if not isinstance(hist, ROOT.TH3):
+        raise ValueError("Input histogram should be TH3 type.")
+        
+    if axis_to_integrate not in [0, 1, 2]:
+        raise ValueError("axis_to_integrate should be 0, 1, or 2.")
+    
+    n_bins_x = hist.GetNbinsX()
+    n_bins_y = hist.GetNbinsY()
+    n_bins_z = hist.GetNbinsZ()
+    
+    # cumulative_hist = ROOT.TH3D(f"{hist.GetName()}_cumulative_{axis_to_integrate}",
+    #                             f"{hist.GetTitle()} Cumulative {axis_to_integrate}",
+    #                             n_bins_x, hist.GetXaxis().GetXmin(), hist.GetXaxis().GetXmax(),
+    #                             n_bins_y, hist.GetYaxis().GetXmin(), hist.GetYaxis().GetXmax(),
+    #                             n_bins_z, hist.GetZaxis().GetXmin(), hist.GetZaxis().GetXmax())
+    cumulative_hist = hist.Clone(f"{hist.GetName()}_cumulative_{axis_to_integrate}")
+    
+    for bin_x in range(0, n_bins_x + 2):
+        for bin_y in range(0, n_bins_y + 2):
+            for bin_z in range(0, n_bins_z + 2):
+                error = ctypes.c_double(0)
+                cumulative_content = hist.IntegralAndError(
+                    bin_x, ((n_bins_x + 1) if (axis_to_integrate == 0) else bin_x),
+                    bin_y, ((n_bins_y + 1) if (axis_to_integrate == 1) else bin_y),
+                    bin_z, ((n_bins_z + 1) if (axis_to_integrate == 2) else bin_z),
+                    error # error will be filled correctly
+                    )
+                cumulative_hist.SetBinContent(bin_x, bin_y, bin_z, cumulative_content)
+                cumulative_hist.SetBinError(bin_x, bin_y, bin_z, error)
+    
+    return cumulative_hist
+
+
+class TestTH3ToCumulative(unittest.TestCase):
+    
+    def test_cumulative_x(self):
+        # Create a sample TH3 histogram for testing
+        hist = ROOT.TH3F("hist3d", "Sample TH3 Histogram;X;Y;Z", 3, 0, 3, 3, 0, 3, 3, 0, 3)
+        # Set some arbitrary bin contents
+        hist.SetBinContent(1, 1, 1, 1)
+        hist.SetBinContent(2, 1, 1, 2)
+        hist.SetBinContent(3, 1, 1, 3)
+
+        # Calculate the cumulative histogram for the X-axis
+        cumulative_hist_x = th3_to_cumulative(hist, axis_to_integrate=0)
+
+        # Expected cumulative values for the X-axis
+        expected_cumulative_x = [6, 6, 5, 3, 0]
+        
+        # Check the cumulative values for the X-axis
+        for bin_x in range(0, cumulative_hist_x.GetNbinsX() + 1):
+            self.assertEqual(cumulative_hist_x.GetBinContent(bin_x, 1, 1), expected_cumulative_x[bin_x])
+    
+if __name__ == "__main__":
     unittest.main()

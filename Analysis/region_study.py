@@ -461,7 +461,8 @@ class JetMatching(coffea.processor.ProcessorABC):
         # Second way of calculating pairs
         objects["genTau"] = events[self.collections.GenVisTaus.name][eval(self.collections.GenVisTaus.cut.format(name = "events.%s" %(self.collections.GenVisTaus.name)))]
         objects["genSUSYTaus"] = events.GenPart[ (abs(events.GenPart.pdgId) == 1000015) & (events.GenPart.hasFlags(["isLastCopy"])) ]
-
+        objects["genSUSYTaus"] = objects["genSUSYTaus"][( abs(objects["genSUSYTaus"].children[:,:,0].vertexZ) < self.collections.STau.vertexZ )]
+        
         objects["genTau","disp"] = objects["genTau"].parent.vertexRho
         objects["genSUSYTaus","disp"] = objects["genSUSYTaus"].children[:,:,0].vertexRho
 
@@ -605,7 +606,7 @@ def regionStudy(cfg: DictConfig) -> None:
                     xrange = [0, 0.5],
                     yrange = (0, dR_Tau_Jet_project.GetMaximum()+0.5*dR_Tau_Jet_project.GetMaximum()),
                     logx = False, logy = False,
-                    ytitle = "Efficiency",
+                    ytitle = "arb. units",
                     xtitle = "dR (#tau, jet)",
                     centertitlex = True, centertitley = True,
                     centerlabelx = False, centerlabely = False,
@@ -639,7 +640,7 @@ def regionStudy(cfg: DictConfig) -> None:
                     xrange = [0, 0.5],
                     yrange = (0, dR_STau_Jet_project.GetMaximum()+0.5*dR_STau_Jet_project.GetMaximum()),
                     logx = False, logy = False,
-                    ytitle = "Efficiency",
+                    ytitle = "arb. units",
                     xtitle = "dR (s#tau, jet)",
                     centertitlex = True, centertitley = True,
                     centerlabelx = False, centerlabely = False,

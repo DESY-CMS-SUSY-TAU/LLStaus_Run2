@@ -37,18 +37,18 @@ class Processor(pepper.ProcessorSTau):
     def process_selection(self, selector, dsname, is_mc, filler):
         
         # Triggers
-        pos_triggers, neg_triggers = pepper.misc.get_trigger_paths_for(
-            dsname, is_mc, self.config["dataset_trigger_map"],
-            self.config["dataset_trigger_order"])
-        selector.add_cut("Trigger", partial(
-            self.passing_trigger, pos_triggers, neg_triggers))
+        # pos_triggers, neg_triggers = pepper.misc.get_trigger_paths_for(
+        #     dsname, is_mc, self.config["dataset_trigger_map"],
+        #     self.config["dataset_trigger_order"])
+        # selector.add_cut("Trigger", partial(
+        #     self.passing_trigger, pos_triggers, neg_triggers))
         
         # MET cut
         selector.add_cut("MET", self.MET_cut)
         
         # one tight tag muon
-        selector.set_column("muon_tag", self.muons_tag) 
-        selector.add_cut("single_muon_tag", self.single_muon_tag_cut)
+        # selector.set_column("muon_tag", self.muons_tag) 
+        # selector.add_cut("single_muon_tag", self.single_muon_tag_cut)
         
         # veto all loose muons
         selector.set_column("muon_veto", self.muons_veto)
@@ -59,14 +59,14 @@ class Processor(pepper.ProcessorSTau):
         selector.add_cut("loose_electron_veto", self.loose_electron_veto_cut)
         
         # mt of muon and pt_miss
-        selector.set_column("mt_muon", partial(self.mt, name="muon_tag"))
-        selector.add_cut("mt_muon", self.mt_muon_cut)
+        # selector.set_column("mt_muon", partial(self.mt, name="muon_tag"))
+        # selector.add_cut("mt_muon", self.mt_muon_cut)
         
         # add cuts and selections on the jets
         selector.set_column("valid_jets", self.jet_selection)
         selector.set_column("n_jets", self.n_jets)
-        selector.add_cut("n_loose_bjets", self.n_loose_bjets_cut)
-        selector.add_cut("n_valid_jets", self.n_valid_jets_cut)
+        # selector.add_cut("n_loose_bjets", self.n_loose_bjets_cut)
+        # selector.add_cut("n_valid_jets", self.n_valid_jets_cut)
 
         # match pfcands for dxy
         selector.set_column("pfcand_valid", self.pfcand_valid)
@@ -118,14 +118,15 @@ class Processor(pepper.ProcessorSTau):
             & (muons[self.config["muon_veto_ID"]] == 1)
             )
         
-        is_tag =(
-              (muons.pt > self.config["muon_pt_min"])
-            & (muons.eta < self.config["muon_eta_max"])
-            & (muons.eta > self.config["muon_eta_min"])
-            & (muons[self.config["muon_ID"]] == 1)
-            )
+        # is_tag =(
+        #       (muons.pt > self.config["muon_pt_min"])
+        #     & (muons.eta < self.config["muon_eta_max"])
+        #     & (muons.eta > self.config["muon_eta_min"])
+        #     & (muons[self.config["muon_ID"]] == 1)
+        #     )
+        # return muons[(is_good & (~is_tag))]
         
-        return muons[(is_good & (~is_tag))]
+        return muons[is_good]
     
     @zero_handler
     def electron_veto(self, data):
@@ -152,9 +153,9 @@ class Processor(pepper.ProcessorSTau):
             & (jets.eta < self.config["jet_eta_max"])
             & (self.config["jet_pt_min"] < jets.pt)
             )]
-        print(jets)
-        matches_h, dRlist = jets.nearest(data["muon_tag"], return_metric=True, threshold=self.config["tag_muon_veto_dR"])
-        isoJets = jets[ak.is_none(matches_h, axis=-1)]
+        # matches_h, dRlist = jets.nearest(data["muon_tag"], return_metric=True, threshold=self.config["tag_muon_veto_dR"])
+        # isoJets = jets[ak.is_none(matches_h, axis=-1)]
+        isoJets = jets
         return isoJets
     
     @zero_handler
@@ -172,8 +173,12 @@ class Processor(pepper.ProcessorSTau):
     @zero_handler
     def jets_updated_all(self, data):
         jets = data["valid_jets"]
+        # Mask jets with dxy nan (no selected pfcands matching)
+        bad_jets = ak.is_none(data["jets_lead_pfcands"].dxy, axis=-1)
+        jets = ak.mask(jets, ~bad_jets)
         jets["dxy"] = np.abs(data["jets_lead_pfcands"].dxy)
         jets["dz"] = np.abs(data["jets_lead_pfcands"].dz)
+        jets["dxy_weight"] = np.abs(data["jets_lead_pfcands"].dxy_weight)
         return jets
     
     @zero_handler
