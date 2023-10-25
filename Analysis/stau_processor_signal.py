@@ -40,6 +40,15 @@ class Processor(pepper.ProcessorBasicPhysics):
 
         if "pileup_reweighting" not in config:
             logger.warning("No pileup reweigthing specified")
+            
+        if "DY_lo_sfs" not in config:
+            logger.warning("No DY k-factor specified")
+
+        if "DY_jet_reweight" not in config or len(config["DY_jet_reweight"]) == 0:
+            logger.warning("No DY jet-binned sample stitching is specified")
+            
+        if "W_jet_reweight" not in config or len(config["W_jet_reweight"]) == 0:
+            logger.warning("No WjetsToLNu jet-binned sample stitching is specified")
 
         if "jet_fake_rate" not in config and len(config["jet_fake_rate"]) == 0:
             self.predict_jet_fakes = False
@@ -57,6 +66,22 @@ class Processor(pepper.ProcessorBasicPhysics):
             self.config["dataset_trigger_order"])
         selector.add_cut("Trigger", partial(
             self.passing_trigger, pos_triggers, neg_triggers))
+        
+        if is_mc and ( dsname.startswith("DYJetsToLL_M-50") or \
+                    dsname.startswith("DY1JetsToLL_M-50") or \
+                    dsname.startswith("DY2JetsToLL_M-50") or \
+                    dsname.startswith("DY3JetsToLL_M-50") or \
+                    dsname.startswith("DY4JetsToLL_M-50") ):
+            selector.add_cut("DY jet reweighting",
+                partial(self.do_dy_jet_reweighting))
+        
+        if is_mc and ( dsname.startswith("WJetsToLNu") or \
+                    dsname.startswith("W1JetsToLNu") or \
+                    dsname.startswith("W2JetsToLNu") or \
+                    dsname.startswith("W3JetsToLNu") or \
+                    dsname.startswith("W4JetsToLNu") ):
+            selector.add_cut("W jet reweighting",
+                partial(self.do_w_jet_reweighting))
 
         if is_mc and "pileup_reweighting" in self.config:
             selector.add_cut("Pileup reweighting", partial(
@@ -65,6 +90,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         # HEM 15/16 failure (2018)
         if self.config["year"] == "2018":
             selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+
+        selector.add_cut("MET filters", partial(self.met_filters, is_mc))
 
         # MET cut
         selector.add_cut("MET", self.MET_cut)
@@ -75,20 +102,29 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("muon_veto", self.muon_veto)
         selector.add_cut("elec_veto", self.elec_veto)
         
+    
         selector.set_column("Jet_select", self.jet_selection)
+        selector.set_column("Jet_select", self.getloose_jets)
+
         selector.set_column("PfCands", self.pfcand_valid)
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
         
-        selector.add_cut("has_two_valid_jets", self.has_two_valid_jets)
-        selector.set_column("sum_jj", self.sum_jj)
+        # selector.add_cut("has_jets", self.has_jets)
+        # return
         
-        selector.set_column("mt2_j1_j2_MET", self.get_mt2)
+        selector.add_cut("two_loose_jets", self.has_two_jets)
+        # selector.add_cut("b_tagged_jet_cut", self.b_tagged_jet_cut)
+        
+        if is_mc and dsname.startswith("DY"):
+            selector.set_column("sum_ll_gen", self.sum_ll_gen)
+        selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
+
+        selector.set_column("sum_jj", self.sum_jj)
         selector.set_multiple_columns(self.missing_energy)
         selector.set_multiple_columns(self.mt_jets)
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
-        
-        selector.add_cut("b_tagged_jet_cut", self.b_tagged_jet_cut)
+        selector.set_column("mt2_j1_j2_MET", self.get_mt2)
         
         # selector.add_cut("skim_jets", self.skim_jets)
         
@@ -99,10 +135,17 @@ class Processor(pepper.ProcessorBasicPhysics):
         if self.config["predict_yield"]:
             selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
         
-        # Selection of the jet is performed only for two leading jets:
-
-        selector.set_column("Jet_pass", self.jet_passed)
+        # Jets that match to tau
         selector.set_column("Jet_tau", partial(self.jet_tau, is_mc=is_mc))
+        
+        # Selection of the jet is performed only for two leading jets:
+        selector.add_cut("two_loose_jets_final", self.has_two_jets)
+        
+        # To be sure Jet_select is not redefined
+        selector.add_cut("two_loose_jets_final2", self.has_two_jets)
+        
+        selector.set_column("Jet_select", self.gettight_jets)
+        selector.add_cut("two_tight_jets", self.has_two_jets)       
         
         # # 1. Leading jet is selected by pt
         # selector.add_cut("point", self.b_tagged_jet_cut) # dummy cut to make sure correct Jet_select is used
@@ -119,7 +162,46 @@ class Processor(pepper.ProcessorBasicPhysics):
         # if self.config["predict_yield"]:
         #     selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
         # selector.add_cut("redefine_jets_lead2prob", self.b_tagged_jet_cut)
+
+    @zero_handler
+    def sum_ll_gen(self, data):
+        part = data["GenPart"]
+        part = part[ part.hasFlags("isLastCopy")
+                & (part.hasFlags("fromHardProcess")
+                & ((abs(part["pdgId"]) == 11) 
+                | (abs(part["pdgId"]) == 13)
+                | (abs(part["pdgId"]) == 12)
+                | (abs(part["pdgId"]) == 14)
+                | (abs(part["pdgId"]) == 15)
+                | (abs(part["pdgId"]) == 16)))
+                | (part.hasFlags("isDirectHardProcessTauDecayProduct"))
+        ]
+        sum_p4 = part.sum(axis=1) # sum over all particles in event
+        return sum_p4
+
+    @zero_handler
+    def get_dy_gen_sfs(self, data, is_mc, dsname):
+        weight = np.ones(len(data))
+        if is_mc and dsname.startswith("DY"):
+            z_boson = data["sum_ll_gen"]
+            dy_gen_sfs = self.config["DY_lo_sfs"](mass=z_boson.mass, pt=z_boson.pt)
+            weight *= ak.to_numpy(dy_gen_sfs)
+            return weight
+        else:
+            return weight
+
+    @zero_handler
+    def do_dy_jet_reweighting(self, data):
+        njet = data["LHE"]["Njets"]
+        weights = self.config["DY_jet_reweight"][njet]
+        return weights
     
+    @zero_handler
+    def do_w_jet_reweighting(self, data):
+        njet = data["LHE"]["Njets"]
+        weights = self.config["W_jet_reweight"][njet]
+        return weights
+
     @zero_handler
     def skim_jets(self, data):
         jets = data["Jet_select"]
@@ -157,11 +239,22 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def jet_passed(self, data):
         jets = data["Jet_select"]
-        jets = jets[jets.disTauTag_score1 >= 0.9972]
+        jets = jets[jets.disTauTag_score1 >= self.config["tight_thr"]]
         return jets
     
     @zero_handler
     def jet_tau(self, data, is_mc):
+        jets = data["Jet_select"]
+        if not is_mc: return jets
+        tau_vis = data.GenVisTau[ ((data.GenVisTau.pt > 30) & (abs(data.GenVisTau.eta) < 2.4) &
+                                  (data.GenVisTau.parent.hasFlags(["fromHardProcess"])))
+                                ]
+        matches_h, dRlist = jets.nearest(tau_vis, return_metric=True, threshold=0.3)
+        tau_jet = jets[~ak.is_none(matches_h, axis=1)]
+        return tau_jet
+    
+    @zero_handler
+    def jet_taupass(self, data, is_mc):
         jets = data["Jet_pass"]
         if not is_mc: return jets
         tau_vis = data.GenVisTau[ ((data.GenVisTau.pt > 30) & (abs(data.GenVisTau.eta) < 2.4) &
@@ -169,6 +262,18 @@ class Processor(pepper.ProcessorBasicPhysics):
                                 ]
         matches_h, dRlist = jets.nearest(tau_vis, return_metric=True, threshold=0.3)
         tau_jet = jets[~ak.is_none(matches_h, axis=1)]
+        return tau_jet
+    
+    @zero_handler
+    def jet_taupass2(self, data, is_mc):
+        jets = data["Jet_pass"]
+        if not is_mc: return jets
+        tau_vis = data.GenVisTau[ ((data.GenVisTau.pt > 30) & (abs(data.GenVisTau.eta) < 2.4) &
+                                  (data.GenVisTau.parent.hasFlags(["fromHardProcess"])))
+                                ]
+        matches_h, dRlist = jets.nearest(tau_vis, return_metric=True, threshold=0.3)
+        two_jets_pass = (ak.num(jets) == 2)
+        tau_jet = jets[ (~ak.is_none(matches_h, axis=1)) & two_jets_pass]
         return tau_jet
     
     @zero_handler
@@ -260,7 +365,7 @@ class Processor(pepper.ProcessorBasicPhysics):
             & (muons.eta < self.config["muon_eta_max"])
             & (muons.eta > self.config["muon_eta_min"])
             & (muons[self.config["muon_ID"]] == 1)
-            & (muons.pfIsoId >= self.config["muon_pfIsoId"])
+            # & (muons.pfIsoId >= self.config["muon_pfIsoId"])
             )
         return muons[is_good]
     
@@ -276,7 +381,7 @@ class Processor(pepper.ProcessorBasicPhysics):
             & (ele.eta < self.config["ele_eta_max"])
             & (ele.eta > self.config["ele_eta_min"])
             & (ele[self.config["eleVeto"]] == 1)
-            & (ele[self.config["eleID"]] == 1)
+            # & (ele[self.config["eleID"]] == 1)
             )
         return ele[is_good]
     
@@ -300,9 +405,26 @@ class Processor(pepper.ProcessorBasicPhysics):
         return jets
     
     @zero_handler
-    def has_two_valid_jets(self, data):
-        return ak.num(data["Jet_select"]) >= 2
-    
+    def has_jets(self, data):
+        return ak.num(data["Jet_select"]) > 0
+
+    @zero_handler
+    def has_two_jets(self, data):
+        jets = data["Jet_select"]
+        return ak.num(jets) == 2
+
+    @zero_handler
+    def getloose_jets(self, data):
+        jets = data["Jet_select"]
+        jets = jets[(jets.disTauTag_score1 >= self.config["loose_thr"])]
+        return jets
+
+    @zero_handler
+    def gettight_jets(self, data):
+        jets = data["Jet_select"]
+        jets = jets[(jets.disTauTag_score1 >= self.config["tight_thr"])]
+        return jets
+
     @zero_handler
     def pfcand_valid(self, data):
         pfCands = data["PFCandidate"]
@@ -335,7 +457,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         pfCands = self.match_jet_to_pfcand(data, jet_name=match_object, pf_name="PfCands", dR=dR)
         pfCands_lead = ak.firsts(pfCands, axis=-1)
         pfCands_lead["dxysig"] = pfCands_lead.dxy / pfCands_lead.dxyError
-        pfCands_lead["Lrel"] = np.sqrt(pfCands_lead.dxy**2 + pfCands_lead.dz**2)
+        pfCands_lead["ip3d"] = np.sqrt(pfCands_lead.dxy**2 + pfCands_lead.dz**2)
         pfCands_lead["dxy_weight"] = ak.mean(pfCands.dxy, weight=pfCands.pt, axis=-1)
         pfCands_lead["dxysig_weight"] = ak.mean(pfCands.dxy / pfCands.dxyError, weight=pfCands.pt, axis=-1)
         return pfCands_lead
@@ -351,7 +473,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         jets["dxy_weight"] = np.abs(data["Jet_lead_pfcand"].dxy_weight)
         jets["dxysig"] = np.abs(data["Jet_lead_pfcand"].dxysig)
         jets["dxysig_weight"] = np.abs(data["Jet_lead_pfcand"].dxysig_weight)
+        jets["ip3d"] = data["Jet_lead_pfcand"].ip3d
         jets = jets[~bad_jets] # remove bad jets
+        jets = jets[jets.dxy >= self.config["jet_dxy_min"]]
         return jets
     
     @zero_handler
@@ -372,67 +496,123 @@ class Processor(pepper.ProcessorBasicPhysics):
         jets_score = data["Jet_select"].disTauTag_score1
         n_pass = []
         for score in self.config["score_pass"]:
-            jets_pass = jets_score[(jets_score>score)]
+            jets_pass = jets_score[(jets_score>=score)]
             passed = ak.num(jets_pass, axis=1)
             n_pass.append( passed )
         n_pass = ak.from_regular(
             np.stack(n_pass, axis=1), axis=-1)
+        tight_wp = self.config["score_pass"].index(self.config["tight_thr"])
+        tight_pass = n_pass[:,tight_wp]
+        tight_bin0 = (n_pass[:,tight_wp] == 0)
+        tight_bin1 = (n_pass[:,tight_wp] == 1)
+        tight_bin2 = (n_pass[:,tight_wp] == 2)
         return {
             "n_pass" : n_pass,
-            "n_pass_score_bin" : ak.local_index(n_pass, axis=1)
+            "n_pass_score_bin" : ak.local_index(n_pass, axis=1),
+            "tight_pass" : tight_pass,
+            "tight_bin0" : tight_bin0,
+            "tight_bin1" : tight_bin1,
+            "tight_bin2" : tight_bin2
         }
-        
+
     @zero_handler
     def predict_yield(self, data, weight=None):
         jets = data["Jet_select"]
         
         # from bin 0 to bin 1
-        weights_bin0to1 = []
-        for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
-            events_0tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 0) # events with 0 tag
-            jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask
-            jets_counted = jets[events_0tag * jets_notag] # to select only jets in events with 0 tag
-            # fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
-            fake_sf =  self.config["jet_fake_rate"](jet_pt=jets_counted.pt, jet_score=score)
-            weight_sfs = ak.sum(fake_sf, axis=1)
-            weights_bin0to1.append(weight_sfs)
-        yield_bin0to1 = ak.from_regular(np.stack(weights_bin0to1, axis=1), axis=-1)
-        # print(yield_bin0to1)
+        # weights_bin0to1 = []
+        # for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
+        #     events_0tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 0) # events with 0 tag
+        #     jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask
+        #     jets_counted = jets[events_0tag * jets_notag] # to select only jets in events with 0 tag
+        #     # fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
+        #     fake_sf =  self.config["jet_fake_rate"](jet_pt=jets_counted.pt, jet_score=score)
+        #     weight_sfs = ak.sum(fake_sf, axis=1)
+        #     weights_bin0to1.append(weight_sfs)
+        # yield_bin0to1 = ak.from_regular(np.stack(weights_bin0to1, axis=1), axis=-1)
+        # # print(yield_bin0to1)
 
-        # from bin 1 to bin 2
-        weights_bin1to2 = []
-        for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
-            events_1tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 1) # events with 1 tag
-            jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask and not to count the tagged jet
-            jets_counted = jets[events_1tag * jets_notag]  # to select only jets in events with 1 tag
-            # fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
-            fake_sf =  self.config["jet_fake_rate"](jet_pt=jets_counted.pt, jet_score=score)
-            weight_sfs = ak.sum(fake_sf, axis=1)
-            weights_bin1to2.append(weight_sfs)
-        yield_bin1to2 = ak.from_regular(np.stack(weights_bin1to2, axis=1), axis=-1)
-        # print(yield_bin1to2)
+        # # from bin 1 to bin 2
+        # weights_bin1to2 = []
+        # for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
+        #     events_1tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 1) # events with 1 tag
+        #     jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask and not to count the tagged jet
+        #     jets_counted = jets[events_1tag * jets_notag]  # to select only jets in events with 1 tag
+        #     # fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
+        #     fake_sf =  self.config["jet_fake_rate"](jet_pt=jets_counted.pt, jet_score=score)
+        #     weight_sfs = ak.sum(fake_sf, axis=1)
+        #     weights_bin1to2.append(weight_sfs)
+        # yield_bin1to2 = ak.from_regular(np.stack(weights_bin1to2, axis=1), axis=-1)
+        # # print(yield_bin1to2)
         
-        # from bin 0 to bin 2
+        # # from bin 0 to bin 2
+        # weights_bin0to2 = []
+        # for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
+        #     events_0tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 0) # events with 0 tag
+        #     jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask
+        #     jets_counted = jets[events_0tag * jets_notag] # to select only jets in events with 1 tag
+        #     # fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
+        #     fake_sf =  self.config["jet_fake_rate"](jet_pt=jets_counted.pt, jet_score=score)
+        #     combinations = ak.combinations(fake_sf, 2, axis=1) # to have all possible combinations of 2 jets
+        #     combinations_unzipped = ak.unzip(combinations)
+        #     products = combinations_unzipped[0] * combinations_unzipped[1]
+        #     weight_sfs = ak.sum(products, axis=1)
+        #     weights_bin0to2.append(weight_sfs)
+        # yield_bin0to2 = ak.from_regular(np.stack(weights_bin0to2, axis=1), axis=-1)
+        # # print(yield_bin0to2)
+        
+        # # now we need to each predicted yield assign cooresponding score bin
+        # score_bin = ak.local_index(yield_bin0to1, axis=1) + 1 # +1 because we skip first bin
+        # print(score_bin)
+        
+        
+        weights_bin0to1 = []
         weights_bin0to2 = []
-        for score in self.config["score_pass"][1:]: # skip first bin because it is just 1
-            events_0tag = (ak.num(jets[(jets.disTauTag_score1 > score)]) == 0) # events with 0 tag
-            jets_notag = (jets.disTauTag_score1 < score) # to have a per jet mask
-            jets_counted = jets[events_0tag * jets_notag] # to select only jets in events with 1 tag
-            # fake_sf =  self.config["jet_fake_rate"](jet_dxy=jets_counted.dxy, jet_pt=jets_counted.pt, jet_score=score)
-            fake_sf =  self.config["jet_fake_rate"](jet_pt=jets_counted.pt, jet_score=score)
-            combinations = ak.combinations(fake_sf, 2, axis=1) # to have all possible combinations of 2 jets
-            combinations_unzipped = ak.unzip(combinations)
-            products = combinations_unzipped[0] * combinations_unzipped[1]
-            weight_sfs = ak.sum(products, axis=1)
-            weights_bin0to2.append(weight_sfs)
-        yield_bin0to2 = ak.from_regular(np.stack(weights_bin0to2, axis=1), axis=-1)
-        # print(yield_bin0to2)
+        weights_bin1to2 = []
         
+        for score in self.config["score_pass"]:
+            
+            fake =  self.config["jet_fake_rate"](jet_pt=jets.pt)
+            
+            # from bin 0 to bin 1 and 2
+            events_0tag = (ak.num(jets[(jets.disTauTag_score1 >= score)]) == 0)
+            masked_jets = ak.broadcast_arrays(jets.disTauTag_score1, True)[1]
+            masked_jets = events_0tag * masked_jets
+            fake0 = ak.mask(fake, masked_jets)
+            f_1, f_2 = fake0[:,0], fake0[:,1]
+            from0to1 = ( f_1*(1-f_2) + f_2*(1-f_1) ) / ((1-f_2)*(1-f_1))
+            from0to2 = ( f_1*f_2 ) / ((1-f_2)*(1-f_1))
+            from0to1 = ak.fill_none(from0to1, 0.0)
+            from0to2 = ak.fill_none(from0to2, 0.0)
+            weights_bin0to1.append(from0to1)
+            weights_bin0to2.append(from0to2)
+            
+            # from bin 1 to bin 2
+            events_1tag = (ak.num(jets[(jets.disTauTag_score1 >= score)]) == 1)
+            masked_jets = ak.broadcast_arrays(jets.disTauTag_score1, True)[1]
+            masked_jets = events_1tag * masked_jets
+            fake1 = ak.mask(fake, masked_jets)
+            f_1, f_2 = fake1[:,0], fake1[:,1]
+            from1to2 = ( f_1*f_2 ) / (f_1*(1-f_2) + f_2*(1-f_1))
+            from1to2 = ak.fill_none(from1to2, 0.0)
+            weights_bin1to2.append(from1to2)
+            
+        yield_bin0to1 = ak.from_regular(np.stack(weights_bin0to1, axis=1), axis=-1)
+        yield_bin0to2 = ak.from_regular(np.stack(weights_bin0to2, axis=1), axis=-1)
+        yield_bin1to2 = ak.from_regular(np.stack(weights_bin1to2, axis=1), axis=-1)
+            
         # now we need to each predicted yield assign cooresponding score bin
         score_bin = ak.local_index(yield_bin0to1, axis=1) + 1 # +1 because we skip first bin
-        # print(score_bin)
+        
+        # One of the WP (called tight) is used for the final analysis
+        # the weight for this will be saved saparetly to have one weight per event
+        tight_wp = self.config["score_pass"].index(self.config["tight_thr"])
         
         return {"yield_bin0to1" : weight*yield_bin0to1,
                 "yield_bin1to2" : weight*yield_bin1to2,
                 "yield_bin0to2" : weight*yield_bin0to2,
+                "tight_yield_bin0to1" : weight*yield_bin0to1[:,tight_wp],
+                "tight_yield_bin1to2" : weight*yield_bin1to2[:,tight_wp],
+                "tight_yield_bin0to2" : weight*yield_bin0to2[:,tight_wp],
                 "score_bin"     : score_bin}
+        
