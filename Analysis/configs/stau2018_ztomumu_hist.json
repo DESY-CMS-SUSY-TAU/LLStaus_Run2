@@ -535,20 +535,76 @@
             ]
         }
     },
+    // "fake_rate_hist" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
+    //             "unit": "-"
+    //         },
+    //         // {
+    //         //     "name": "jet_eta",
+    //         //     "label": "Jet eta",
+    //         //     "n_or_arr": [-2.5, -2.0, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.5],
+    //         //     "unit": "-"
+    //         // },
+    //         {
+    //             "name": "jet_pt",
+    //             "label": "Jet $p_{\\mathrm{T}}$",
+    //             "n_or_arr": [20, 30, 40, 50, 70, 120, 1000],
+    //             "unit": "GeV"
+    //         },
+    //         {
+    //             "name": "jet_dxy",
+    //             "label": "Jet dxy",
+    //             "n_or_arr": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
+    //             "unit": "cm"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_select",
+    //             "disTauTag_score1"
+    //         ],
+    //         // "jet_eta": [
+    //         //     "Jet_select",
+    //         //     "eta"
+    //         // ],
+    //         "jet_pt": [
+    //             "Jet_select",
+    //             "pt"
+    //         ],
+    //         "jet_dxy": [
+    //             "Jet_select",
+    //             "dxy"
+    //         ]
+    //     }
+    // },
+    // "fake_rate_hist_probonly" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
+    //             "unit": "-"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_select",
+    //             "disTauTag_score1"
+    //         ]
+    //     }
+    // },
+
     "fake_rate_hist" : {
         "bins": [
             {
-                "name": "jet_score",
-                "label": "Jet score",
-                "n_or_arr": [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
-                "unit": "-"
+                "name": "jet_eta",
+                "label": "Jet eta",
+                "n_or_arr": [-2.3, -1.5, -0.5, 0.5, 1.5, 2.3]
             },
-            // {
-            //     "name": "jet_eta",
-            //     "label": "Jet eta",
-            //     "n_or_arr": [-2.5, -2.0, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.5],
-            //     "unit": "-"
-            // },
             {
                 "name": "jet_pt",
                 "label": "Jet $p_{\\mathrm{T}}$",
@@ -560,17 +616,19 @@
                 "label": "Jet dxy",
                 "n_or_arr": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
                 "unit": "cm"
+            },
+        ],
+        "cats" : [
+            {
+                "name": "score_wp",
+                "label": "score_wp"
             }
         ],
         "fill": {
-            "jet_score": [
+            "jet_eta": [
                 "Jet_select",
-                "disTauTag_score1"
+                "eta"
             ],
-            // "jet_eta": [
-            //     "Jet_select",
-            //     "eta"
-            // ],
             "jet_pt": [
                 "Jet_select",
                 "pt"
@@ -578,25 +636,40 @@
             "jet_dxy": [
                 "Jet_select",
                 "dxy"
-            ]
-        }
-    },
-    "fake_rate_hist_probonly" : {
-        "bins": [
-            {
-                "name": "jet_score",
-                "label": "Jet score",
-                "n_or_arr": [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
-                "unit": "-"
+            ],
+            "score_wp": {
+                "p05": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.05}}
+                ],
+                "p1": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.10}}
+                ],
+                "p15": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.15}}
+                ],
+                "p2": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.20}}
+                ],
+                "p9900": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.99}}
+                ],
+                "p9972": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.9972}}
+                ],
+                "p9996": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.9996}}
+                ]
             }
-        ],
-        "fill": {
-            "jet_score": [
-                "Jet_select",
-                "disTauTag_score1"
-            ]
         }
     },
+
     "n_jet_pass" : {
         "bins": [
             {
@@ -625,59 +698,59 @@
             ]
         }
     },
-    "yield_bin0to1" : {
-        "bins": [
-            {
-                "name": "jet_score_bin",
-                "label": "Jet score bin",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            },
-        ],
-        "fill": {
-            "jet_score_bin": [
-                "score_bin"
-            ]
-        },
-        "weight" : ["yield_bin0to1"]
-    },
-    "yield_bin1to2" : {
-        "bins": [
-            {
-                "name": "jet_score_bin",
-                "label": "Jet score bin",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            },
-        ],
-        "fill": {
-            "jet_score_bin": [
-                "score_bin"
-            ]
-        },
-        "weight" : ["yield_bin1to2"]
-    },
-    "yield_bin0to2" : {
-        "bins": [
-            {
-                "name": "jet_score_bin",
-                "label": "Jet score bin",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            },
-        ],
-        "fill": {
-            "jet_score_bin": [
-                "score_bin"
-            ]
-        },
-        "weight" : ["yield_bin0to2"]
-    },
+    // "yield_bin0to1" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score_bin",
+    //             "label": "Jet score bin",
+    //             "n_or_arr": 21,
+    //             "lo": -1,
+    //             "hi": 20,
+    //             "unit": "-"
+    //         },
+    //     ],
+    //     "fill": {
+    //         "jet_score_bin": [
+    //             "score_bin"
+    //         ]
+    //     },
+    //     "weight" : ["yield_bin0to1"]
+    // },
+    // "yield_bin1to2" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score_bin",
+    //             "label": "Jet score bin",
+    //             "n_or_arr": 21,
+    //             "lo": -1,
+    //             "hi": 20,
+    //             "unit": "-"
+    //         },
+    //     ],
+    //     "fill": {
+    //         "jet_score_bin": [
+    //             "score_bin"
+    //         ]
+    //     },
+    //     "weight" : ["yield_bin1to2"]
+    // },
+    // "yield_bin0to2" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score_bin",
+    //             "label": "Jet score bin",
+    //             "n_or_arr": 21,
+    //             "lo": -1,
+    //             "hi": 20,
+    //             "unit": "-"
+    //         },
+    //     ],
+    //     "fill": {
+    //         "jet_score_bin": [
+    //             "score_bin"
+    //         ]
+    //     },
+    //     "weight" : ["yield_bin0to2"]
+    // },
 
 }
