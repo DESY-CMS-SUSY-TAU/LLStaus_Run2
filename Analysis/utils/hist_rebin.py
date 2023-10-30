@@ -71,11 +71,11 @@ class TH3Histogram:
                     rebinned_hist.Fill(bin_x, bin_y, bin_z, content)
                     hist_sumw2.Fill(bin_x, bin_y, bin_z, w2)
         
-        for i in range(0, self._hist.GetNbinsX() + 2):
-            for j in range(0, self._hist.GetNbinsY() + 2):
-                for k in range(0, self._hist.GetNbinsZ() + 2):
-                    w2 = hist_sumw2.GetBinError(i, j, k)
-                    rebinned_hist.SetBinError(bin_x, bin_y, bin_z, sqrt(w2))
+        for i in range(0, rebinned_hist.GetNbinsX() + 2):
+            for j in range(0, rebinned_hist.GetNbinsY() + 2):
+                for k in range(0, rebinned_hist.GetNbinsZ() + 2):
+                    w2 = hist_sumw2.GetBinContent(i, j, k)
+                    rebinned_hist.SetBinError(i, j, k, np.sqrt(w2))
 
         self._rebinned_hist = rebinned_hist
 

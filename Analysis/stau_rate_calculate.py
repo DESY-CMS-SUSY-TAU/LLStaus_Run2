@@ -72,42 +72,47 @@ if config["fake_rate"]["mode"] == "ratio":
     dirname = os.path.dirname(args.histfile[0])
 
     hist_fake = {}
-    for region in [nominator, denominator]:
-        file_path = dirname + "/" + region + ".root"
+    for region, name in zip([nominator, denominator], ["nom", "denom"]):
+        file_path = dirname + "/" + region[0] + ".root"
         file = ROOT.TFile.Open(str(file_path), 'read')
-        hist_fake[region] = None
+        hist_fake[name] = None
         for _group_idx, _group_name in enumerate(config["Labels"].keys()):
-            if (not _group_name in config["MC_bkgd"]) and (not _group_name in config["Signal_samples"]):
-                continue
+            # if (not _group_name in config["MC_bkgd"]) and (not _group_name in config["Signal_samples"]):
+            #     continue
+            # if not( _group_name in config["Data"]): continue
             # Accumulate the dataset for the particular data group as specified in config "Labels".
             for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
-                print(file_path, _histogram_data)
-                hist = file.Get(_histogram_data)
+                print("File:",file_path)
+                print("Open:",_histogram_data+region[1])
+                hist = file.Get(_histogram_data+region[1])
                 hist.SetDirectory(0)
                 # print("No scaling!")
-                N = cutflow[_histogram_data]["all"]["Before cuts"]
-                hist.Scale( (crosssections[_histogram_data] * config["luminosity"]) / N)
-                if hist_fake[region] is None:
-                    hist_fake[region] = hist
+                # N = cutflow[_histogram_data]["all"]["Before cuts"]
+                # hist.Scale( (crosssections[_histogram_data] * config["luminosity"]) / N)
+                if hist_fake[name] is None:
+                    hist_fake[name] = hist
                 else:
-                    hist_fake[region].Add(hist)
+                    hist_fake[name].Add(hist)
         file.Close()
         # print(hist_fake[region].Integral())   
 
-    print("Integral pre-rebin nom:", OverflowIntegralTHN(hist_fake[nominator]))
-    print("Integral pre-rebin den:", OverflowIntegralTHN(hist_fake[denominator]))
+    nominator = config["fake_rate"]["nominator"][0]
+    denominator = config["fake_rate"]["denominator"][0]
+
+    print("Integral pre-rebin nom:", OverflowIntegralTHN(hist_fake["nom"]))
+    print("Integral pre-rebin den:", OverflowIntegralTHN(hist_fake["denom"]))
     print("Divide histogram:")
-    nominator_th3 = TH3Histogram(hist_fake[nominator], *list(config["rate_bins"].values()))
+    nominator_th3 = TH3Histogram(hist_fake["nom"], *list(config['fake_rate']["rate_bins"].values()))
     nominator_th3_hist = nominator_th3.get_rebinned_histogram()
-    denominator_th3 = TH3Histogram(hist_fake[denominator], *list(config["rate_bins"].values()))
+    denominator_th3 = TH3Histogram(hist_fake["denom"], *list(config['fake_rate']["rate_bins"].values()))
     denominator_th3_hist = denominator_th3.get_rebinned_histogram()
     print("Integral post-rebin nom:", OverflowIntegralTHN(nominator_th3_hist))
     print("Integral post-rebin den:", OverflowIntegralTHN(denominator_th3_hist))
     fake_sf = nominator_th3_hist.Clone()
     fake_sf.SetDirectory(0)
     fake_sf.Divide(denominator_th3_hist)
-    output = ROOT.TFile(args.outdir + f"/fake_rate_{'_'.join(list(config['rate_bins'].keys()))}.root", "RECREATE")
-    fake_sf.SetName(f"fake_rate_{'_'.join(list(config['rate_bins'].keys()))}")
+    output = ROOT.TFile(args.outdir + f"/fake_rate_{'_'.join(list(config['fake_rate']['rate_bins'].keys()))}.root", "RECREATE")
+    fake_sf.SetName(f"fake_rate_{'_'.join(list(config['fake_rate']['rate_bins'].keys()))}")
     fake_sf.Write()
     output.Close()
 
@@ -118,16 +123,20 @@ if config["fake_rate"]["mode"] == "ratio":
     hist_projection_nom = []
     hist_projection_den = []
 
-    for name in config["sf_project"]:
-        project = config["sf_project"][name]
+    options = ""
+    if config["fake_rate"]["NOF"]: options+="_NOF"
+    if config["fake_rate"]["NUF"]: options+="_NUF"
+    
+    for name in config['fake_rate']["sf_project"]:
+        project = config['fake_rate']["sf_project"][name]
         print(name, project)
-        hist_projection_nom.append(nominator_th3_hist.Project3D("nom_"+project))
-        hist_projection_den.append(denominator_th3_hist.Project3D("den_"+project))
+        hist_projection_nom.append(nominator_th3_hist.Project3D("nom_" + project + options))
+        hist_projection_den.append(denominator_th3_hist.Project3D("den_" + project + options))
         print("Integral projection nom:", OverflowIntegralTHN(hist_projection_nom[-1]))
         print("Integral projection den:", OverflowIntegralTHN(hist_projection_den[-1]))
-        if hist_projection_nom[-1].GetDimension() == 1:
-            hist_projection_nom[-1].Print("all")
-            hist_projection_den[-1].Print("all")
+        # if hist_projection_nom[-1].GetDimension() == 1:
+        #     hist_projection_nom[-1].Print("all")
+        #     hist_projection_den[-1].Print("all")
         hist_projection_nom[-1].Divide(hist_projection_den[-1])
         output = ROOT.TFile(args.outdir+f"/fake_rate_{name}.root", "RECREATE")
         hist_projection_nom[-1].SetName(f"fake_rate_{name}")
@@ -143,14 +152,20 @@ if config["fake_rate"]["mode"] == "score-dim": # calculated for data
 
     file_path = dirname + "/" + config["fake_rate"]["histogram"] + ".root"
     file = ROOT.TFile.Open(str(file_path), 'read')
+    print(file_path)
     for _group_idx, _group_name in enumerate(config["Labels"].keys()):
-        if not ((_group_name in config["MC_bkgd"]) or
-                (_group_name in config["Signal_samples"]) or
-                (_group_name in config["Data"])):
-            continue
+        
+    #     if not ((_group_name in config["MC_bkgd"]) or
+    #             (_group_name in config["Signal_samples"]) or
+    #             (_group_name in config["Data"])):
+    #         continue
+    
+        # Only data is taken for the calculation of fake rate
+        if not( _group_name in config["Data"]): continue
+        
         # Accumulate the dataset for the particular data group as specified in config “Labels”.
         for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
-            print(file_path, _histogram_data)
+            print("SF data:", _histogram_data)
             hist = file.Get(_histogram_data)
             hist.SetDirectory(0)
             hist.Sumw2()
@@ -169,21 +184,50 @@ if config["fake_rate"]["mode"] == "score-dim": # calculated for data
     th3_to_cumulative_rate = th3_to_cumulative.Clone("th3_to_cumulative_rate")
     print("Integral post-rebin nom:", OverflowIntegralTHN(th3_to_cumulative_rate))
     
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~test
+    # prob_projection = th3_hist.Project3D("proj_x")
+    # print("From TH3")
+    # print(prob_projection.Print("all"))
+    
+    # projected_hist_path = "Cut-008_two_valid_jets_fake_rate_hist_probonly.root"
+    # file_path = dirname + "/" + projected_hist_path
+    # file = ROOT.TFile.Open(str(file_path), 'read')
+    # proj_origin = file.Get("SingleMuon")
+    # print("From prob hist")
+    # print(proj_origin.Print("all"))
+    
+    # print("Comulative!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    
+    # prob_projection = th3_to_cumulative.Project3D("proj_x")
+    # print("From TH3")
+    # print(prob_projection.Print("all"))
+    
+    # projected_hist_path = "Cut-008_two_valid_jets_fake_rate_hist_probonly.root"
+    # file_path = dirname + "/" + projected_hist_path
+    # proj_origin_comul = proj_origin.GetCumulative(False)
+    # print("From prob hist")
+    # print(proj_origin_comul.Print("all"))
+    
+    # exit()
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~test
+    
     # Perform bin-by-bin division by the first bin in x for all bins in y and z
     n_bins_x = th3_to_cumulative_rate.GetNbinsX()
     n_bins_y = th3_to_cumulative_rate.GetNbinsY()
     n_bins_z = th3_to_cumulative_rate.GetNbinsZ()
     
-    for bin_y in range(0, n_bins_y + 1):
-        for bin_z in range(0, n_bins_z + 1):
-            for bin_x in range(0, n_bins_x + 1):
+    for bin_y in range(0, n_bins_y + 2):
+        for bin_z in range(0, n_bins_z + 2):
+            for bin_x in range(0, n_bins_x + 2):
                 content_nom = th3_to_cumulative.GetBinContent(bin_x, bin_y, bin_z)
                 content_nom_err = th3_to_cumulative.GetBinError(bin_x, bin_y, bin_z)
                 content_den = th3_to_cumulative.GetBinContent(1, bin_y, bin_z)
                 content_den_err = th3_to_cumulative.GetBinError(1, bin_y, bin_z)
-                th3_to_cumulative_rate.SetBinContent(bin_x, bin_y, bin_z, (content_nom/content_den) if content_den != 0 else 0)
-                if content_den != 0:
-                    error = np.sqrt((content_nom_err/content_den)**2+(content_nom*content_den_err/(content_den**2))**2)
+                rate = (content_nom/content_den) if content_den != 0 else 0
+                th3_to_cumulative_rate.SetBinContent(bin_x, bin_y, bin_z, rate)
+                th3_to_cumulative_rate.SetBinError(bin_x, bin_y, bin_z, 0)
+                if content_den != 0 and content_nom != 0:
+                    error = rate * np.sqrt((content_nom_err/content_nom)**2+(content_den_err/content_den)**2)
                     th3_to_cumulative_rate.SetBinError(bin_x, bin_y, bin_z, error)
                 if content_nom > content_den and content_den!=0:
                     raise("Detected rate > 1.0:", bin_x, bin_y, bin_z,
@@ -205,31 +249,40 @@ if config["fake_rate"]["mode"] == "score-dim": # calculated for data
         hist_projection = []
         hist_projection_rate = []
         project = config['fake_rate']["sf_project"][name]
+        # underflow/overflow are included by default in the projection 
+        # To exclude underflow and/or overflow (for both axis in case of a projection to a 1D histogram) 
+        # use option "NUF" and/or "NOF" With SetRange() you can have all bins except underflow/overflow 
+        # only if you set the axis bit range as following after having called SetRange: axis->SetRange(1, axis->GetNbins());
         hist_projection.append(th3_to_cumulative.Project3D("nom_"+project))
         hist_projection_rate.append(hist_projection[-1].Clone("rate_"+project))
         if hist_projection[-1].GetDimension() == 2:
             n_bins_x = hist_projection[-1].GetNbinsX()
             n_bins_y = hist_projection[-1].GetNbinsY()
-            for bin_x in range(0, n_bins_x + 1):
-                for bin_y in range(0, n_bins_y + 1):
+            for bin_x in range(0, n_bins_x + 2):
+                for bin_y in range(0, n_bins_y + 2):
                     content_nom = hist_projection[-1].GetBinContent(bin_x, bin_y)
                     content_den = hist_projection[-1].GetBinContent(1, bin_y)
                     content_nom_error = hist_projection[-1].GetBinError(bin_x, bin_y)
                     content_den_error = hist_projection[-1].GetBinError(1, bin_y)
-                    hist_projection_rate[-1].SetBinContent(bin_x, bin_y, content_nom/content_den if content_den != 0 else 0)
-                    if content_den != 0:
-                        error = np.sqrt((content_nom_error/content_den)**2+(content_nom*content_den_error/(content_den**2))**2)
+                    rate = (content_nom/content_den) if content_den != 0 else 0
+                    hist_projection_rate[-1].SetBinContent(bin_x, bin_y, rate)
+                    hist_projection_rate[-1].SetBinError(bin_x, bin_y, 0)
+                    th3_to_cumulative_rate.SetBinError(bin_x, bin_y, 0)
+                    if content_den != 0 and content_nom != 0:
+                        error = rate * np.sqrt((content_nom_err/content_nom)**2+(content_den_err/content_den)**2)
                         hist_projection_rate[-1].SetBinError(bin_x, bin_y, error)
         elif hist_projection[-1].GetDimension() == 1:
             n_bins_x = hist_projection[-1].GetNbinsX()
-            for bin_x in range(0, n_bins_x + 1):
+            for bin_x in range(0, n_bins_x + 2):
                 content_nom = hist_projection[-1].GetBinContent(bin_x)
                 content_den = hist_projection[-1].GetBinContent(1)
+                rate = (content_nom/content_den) if content_den != 0 else 0
                 content_nom_error = hist_projection[-1].GetBinError(bin_x)
                 content_den_error = hist_projection[-1].GetBinError(1)
-                hist_projection_rate[-1].SetBinContent(bin_x, content_nom/content_den if content_den != 0 else 0)
-                if content_den != 0:
-                    error = np.sqrt((content_nom_error/content_den)**2+(content_nom*content_den_error/(content_den**2))**2)
+                hist_projection_rate[-1].SetBinContent(bin_x, rate)
+                th3_to_cumulative_rate.SetBinError(bin_x, 0)
+                if content_den != 0 and content_nom != 0:
+                    error = rate * np.sqrt((content_nom_err/content_nom)**2+(content_den_err/content_den)**2)
                     hist_projection_rate[-1].SetBinError(bin_x, error)
         else:
             raise ValueError("Wrong dimension of the histogram")
