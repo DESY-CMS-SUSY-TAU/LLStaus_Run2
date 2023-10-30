@@ -636,13 +636,25 @@
             "dxy"
         ],
         "score_wp": {
-            "p1716": [
+            "p05": [
                 "Jet_select",
-                {"function" : "pass_score", "kwargs" : {"thr" : 0.1716}}
+                {"function" : "pass_score", "kwargs" : {"thr" : 0.05}}
+            ],
+            "p1": [
+                "Jet_select",
+                {"function" : "pass_score", "kwargs" : {"thr" : 0.10}}
+            ],
+            "p15": [
+                "Jet_select",
+                {"function" : "pass_score", "kwargs" : {"thr" : 0.15}}
+            ],
+            "p2": [
+                "Jet_select",
+                {"function" : "pass_score", "kwargs" : {"thr" : 0.20}}
             ],
             "p9900": [
                 "Jet_select",
-                {"function" : "pass_score", "kwargs" : {"thr" : 0.9900}}
+                {"function" : "pass_score", "kwargs" : {"thr" : 0.99}}
             ],
             "p9972": [
                 "Jet_select",

@@ -69,8 +69,20 @@ class Processor(pepper.ProcessorBasicPhysics):
             selector.add_cut("Pileup reweighting", partial(
                 self.do_pileup_reweighting, dsname))
         
+        if is_mc and ( dsname.startswith("WJetsToLNu") or \
+                    dsname.startswith("W1JetsToLNu") or \
+                    dsname.startswith("W2JetsToLNu") or \
+                    dsname.startswith("W3JetsToLNu") or \
+                    dsname.startswith("W4JetsToLNu") ):
+            selector.systematics["weight"] = \
+                ak.full_like(selector.systematics["weight"], 1.0)
+            selector.add_cut("W jet reweighting",
+                partial(self.do_w_jet_reweighting))
+
         # MET cut
         selector.add_cut("MET", self.MET_cut)
+
+        selector.add_cut("MET filters", partial(self.met_filters, is_mc))
         
         # one tight tag muon
         selector.set_column("muon_tag", self.muons_tag) 
@@ -104,6 +116,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("sum_jj", self.sum_jj)
         selector.set_multiple_columns(self.mt_jets)
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
+        selector.add_cut("dphi_min_cut", self.dphi_min_cut)
         selector.set_column("mt2_j1_j2_MET", self.get_mt2)
         
         # Tagger part for calculating scale factors
@@ -169,6 +182,12 @@ class Processor(pepper.ProcessorBasicPhysics):
             weight = weight * central
         return weight, systematics
     
+    @zero_handler
+    def do_w_jet_reweighting(self, data):
+        njet = data["LHE"]["Njets"]
+        weights = self.config["W_jet_reweight"][njet]
+        return weights
+
     @zero_handler
     def MET_cut(self, data):
         return data["MET"].pt > self.config["MET_pt"]
@@ -539,7 +558,11 @@ class Processor(pepper.ProcessorBasicPhysics):
         jets = data["Jet_select"]
         jets = jets[(jets.disTauTag_score1 >= self.config["tight_thr"])]
         return jets
-    
+
+    @zero_handler
+    def dphi_min_cut(self, data):
+        return abs(data["dphi_jet1_jet2"]) > self.config["dphi_j1j2"]
+
     # Gen Study -------------------------------------------------------------------------
     
     def process_flav_study(self, selector, dsname, is_mc, filler):
