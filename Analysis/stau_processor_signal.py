@@ -80,6 +80,8 @@ class Processor(pepper.ProcessorBasicPhysics):
                     dsname.startswith("W2JetsToLNu") or \
                     dsname.startswith("W3JetsToLNu") or \
                     dsname.startswith("W4JetsToLNu") ):
+            selector.systematics["weight"] = \
+                ak.full_like(selector.systematics["weight"], 1.0)
             selector.add_cut("W jet reweighting",
                 partial(self.do_w_jet_reweighting))
 
@@ -88,8 +90,8 @@ class Processor(pepper.ProcessorBasicPhysics):
                 self.do_pileup_reweighting, dsname))
             
         # HEM 15/16 failure (2018)
-        if self.config["year"] == "2018":
-            selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+        # if self.config["year"] == "2018ul":
+        selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
 
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
 
@@ -124,6 +126,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_multiple_columns(self.missing_energy)
         selector.set_multiple_columns(self.mt_jets)
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
+        selector.add_cut("dphi_min_cut", self.dphi_min_cut)
         selector.set_column("mt2_j1_j2_MET", self.get_mt2)
         
         # selector.add_cut("skim_jets", self.skim_jets)
@@ -140,9 +143,6 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         # Selection of the jet is performed only for two leading jets:
         selector.add_cut("two_loose_jets_final", self.has_two_jets)
-        
-        # To be sure Jet_select is not redefined
-        selector.add_cut("two_loose_jets_final2", self.has_two_jets)
         
         selector.set_column("Jet_select", self.gettight_jets)
         selector.add_cut("two_tight_jets", self.has_two_jets)       
@@ -199,6 +199,7 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def do_w_jet_reweighting(self, data):
         njet = data["LHE"]["Njets"]
+        
         weights = self.config["W_jet_reweight"][njet]
         return weights
 
@@ -483,6 +484,11 @@ class Processor(pepper.ProcessorBasicPhysics):
         return data['Jet_select'][:,0].add(data['Jet_select'][:,1])
     
     @zero_handler
+    def dphi_min_cut(self, data):
+        return abs(data["dphi_jet1_jet2"]) > self.config["dphi_j1j2"]
+
+    
+    @zero_handler
     def b_tagged_jet_cut(self, data):
         # To leading jets are excluded! 
         jet_not_signal = data["Jet_select"][:,2:]
@@ -572,7 +578,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         for score in self.config["score_pass"]:
             
-            fake =  self.config["jet_fake_rate"](jet_pt=jets.pt)
+            # fake =  self.config["jet_fake_rate"](jet_pt=jets.pt)
+            fake =  self.config["jet_fake_rate"](jet_dxy=jets.dxy)
             
             # from bin 0 to bin 1 and 2
             events_0tag = (ak.num(jets[(jets.disTauTag_score1 >= score)]) == 0)

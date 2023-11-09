@@ -436,6 +436,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         jets["dxysig"] = np.abs(data["Jet_lead_pfcand"].dxysig)
         jets["dxysig_weight"] = np.abs(data["Jet_lead_pfcand"].dxysig_weight)
         jets = jets[~bad_jets] # remove bad jets
+        jets = jets[jets.dxy >= self.config["jet_dxy_min"]]
         return jets
     
     @zero_handler

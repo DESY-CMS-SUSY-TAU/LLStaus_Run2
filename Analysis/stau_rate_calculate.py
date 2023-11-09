@@ -64,13 +64,14 @@ try:
 except:
     raise ValueError('Error reading/open file with cutflow')
 
+
 if config["fake_rate"]["mode"] == "ratio":
     
     nominator = config["fake_rate"]["nominator"]
     denominator = config["fake_rate"]["denominator"]
 
     dirname = os.path.dirname(args.histfile[0])
-
+    isDATA = False
     hist_fake = {}
     for region, name in zip([nominator, denominator], ["nom", "denom"]):
         file_path = dirname + "/" + region[0] + ".root"
@@ -85,10 +86,44 @@ if config["fake_rate"]["mode"] == "ratio":
                 print("File:",file_path)
                 print("Open:",_histogram_data+region[1])
                 hist = file.Get(_histogram_data+region[1])
+                if not hist:
+                    print("Warning: Histogram not found! ", end='')
+                    print("Histogram->", file, _histogram_data+region[1])
+                    continue
                 hist.SetDirectory(0)
+
                 # print("No scaling!")
                 # N = cutflow[_histogram_data]["all"]["Before cuts"]
                 # hist.Scale( (crosssections[_histogram_data] * config["luminosity"]) / N)
+
+                if _group_name in config["Data"]:
+                    isDATA = True
+                    pass
+                else:
+                    if isDATA: raise("Can not combine data and MC")
+
+                    if config["DY_stitching_applied"] and (
+                            "DYJetsToLL_M-50" in _histogram_data or
+                            "DY1JetsToLL_M-50" in _histogram_data or
+                            "DY2JetsToLL_M-50" in _histogram_data or
+                            "DY3JetsToLL_M-50" in _histogram_data or
+                            "DY4JetsToLL_M-50" in _histogram_data ):
+                        # print("Stitching:", _histogram_data)
+                        hist.Scale(config["luminosity"])
+                    elif config["W_stitching_applied"] and (
+                            ("WJetsToLNu" in _histogram_data and (not "TTWJets" in _histogram_data)) or
+                            "W1JetsToLNu" in _histogram_data or
+                            "W2JetsToLNu" in _histogram_data or
+                            "W3JetsToLNu" in _histogram_data or
+                            "W4JetsToLNu" in _histogram_data ):
+                        # print("Stitching:", _histogram_data)
+                        hist.Scale(config["luminosity"])
+                    else:
+                        # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
+                        N = cutflow[_histogram_data]["all"]["Before cuts"]
+                        hist.Scale( (crosssections[_histogram_data] * config["luminosity"]) / N)
+
+                        
                 if hist_fake[name] is None:
                     hist_fake[name] = hist
                 else:
