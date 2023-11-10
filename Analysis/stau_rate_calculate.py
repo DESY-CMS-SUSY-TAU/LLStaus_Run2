@@ -10,6 +10,7 @@ ROOT.gROOT.SetBatch(True)
 from pepper import Config
 import utils.utils as utils
 from utils.hist_rebin import TH3Histogram, th3_to_cumulative
+ROOT.gInterpreter.Declare('#include "utils/histogram2d.cpp"')
 
 def OverflowIntegralTHN(hist_th3):
     # Calculate integral of all TH3/TH2/TH1 histogram bins including overflow bins
@@ -155,28 +156,64 @@ if config["fake_rate"]["mode"] == "ratio":
     # X - jet_pt
     # Y - jet_eta
     # Z - jet_dxy
-    hist_projection_nom = []
-    hist_projection_den = []
-
     options = ""
     if config["fake_rate"]["NOF"]: options+="_NOF"
     if config["fake_rate"]["NUF"]: options+="_NUF"
     
     for name in config['fake_rate']["sf_project"]:
-        project = config['fake_rate']["sf_project"][name]
+        project = config['fake_rate']["sf_project"][name][0]
+        rebin_non_unifor = config['fake_rate']["sf_project"][name][1]
         print(name, project)
-        hist_projection_nom.append(nominator_th3_hist.Project3D("nom_" + project + options))
-        hist_projection_den.append(denominator_th3_hist.Project3D("den_" + project + options))
-        print("Integral projection nom:", OverflowIntegralTHN(hist_projection_nom[-1]))
-        print("Integral projection den:", OverflowIntegralTHN(hist_projection_den[-1]))
+        hist_projection_nom = nominator_th3_hist.Project3D("nom_" + project + options)
+        hist_projection_den = denominator_th3_hist.Project3D("den_" + project + options)
+        print("Integral projection nom:", OverflowIntegralTHN(hist_projection_nom))
+        print("Integral projection den:", OverflowIntegralTHN(hist_projection_den))
         # if hist_projection_nom[-1].GetDimension() == 1:
         #     hist_projection_nom[-1].Print("all")
         #     hist_projection_den[-1].Print("all")
-        hist_projection_nom[-1].Divide(hist_projection_den[-1])
-        output = ROOT.TFile(args.outdir+f"/fake_rate_{name}.root", "RECREATE")
-        hist_projection_nom[-1].SetName(f"fake_rate_{name}")
-        hist_projection_nom[-1].Write()
-        output.Close()
+        if rebin_non_unifor:
+            assert(isinstance(rebin_non_unifor, dict))
+            assert("y_axis" in rebin_non_unifor)
+            assert("x_axis" in rebin_non_unifor)
+            
+            x_axis = rebin_non_unifor["x_axis"]
+            y_axis =  np.array(rebin_non_unifor["y_axis"], dtype=np.double)
+            xmin, xmax = float(x_axis[0][0]), float(x_axis[0][-1])
+            nom_nonunif = ROOT.Histogram_2D("nom_nonunif_" + project + options, y_axis, xmin, xmax)
+            den_nonunif = ROOT.Histogram_2D("den_nonunif_" + project + options, y_axis, xmin, xmax)
+            for i in range(len(x_axis)):
+                nom_nonunif.add_x_binning_by_index(i, np.array(x_axis[i], dtype=np.double))
+                den_nonunif.add_x_binning_by_index(i, np.array(x_axis[i], dtype=np.double))
+            
+            try:
+                nom_nonunif.th2d_add(hist_projection_nom)
+                den_nonunif.th2d_add(hist_projection_den)
+            except:
+                print("Error is inside project nonunif histograms")
+                print("Error: can not add histogram because of the inconsistency")
+                del nom_nonunif
+                del den_nonunif
+                exit()
+                
+            nom_nonunif.divide(den_nonunif)
+            weight_hist = nom_nonunif.get_weights_th2d_simpl("hist_weight","hist_weight")
+            # weight_hist.Print("all")
+            
+            output = ROOT.TFile(args.outdir+f"/fake_rate_{name}.root", "RECREATE")
+            weight_hist.SetName(f"fake_rate_{name}")
+            weight_hist.Write()
+            output.Close()
+            
+            del nom_nonunif
+            del den_nonunif
+            del weight_hist
+
+        else:
+            hist_projection_nom.Divide(hist_projection_den)
+            output = ROOT.TFile(args.outdir+f"/fake_rate_{name}.root", "RECREATE")
+            hist_projection_nom.SetName(f"fake_rate_{name}")
+            hist_projection_nom.Write()
+            output.Close()
 
 
 if config["fake_rate"]["mode"] == "score-dim": # calculated for data

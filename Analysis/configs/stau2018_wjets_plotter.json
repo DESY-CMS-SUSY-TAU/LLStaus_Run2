@@ -41,21 +41,21 @@
         "mode" : "ratio",
 
         // "nominator" : ["file name w/o extention", "category prefix"]
-        "nominator"   : ["Cut-013_two_loose_jets_final_fake_rate_hist", "_p9900"],
-        "denominator" : ["Cut-013_two_loose_jets_final_fake_rate_hist", "_p05"],
+        "nominator"   : ["Cut-011_two_loose_jets_final_fake_rate_hist", "_p9900"],
+        "denominator" : ["Cut-011_two_loose_jets_final_fake_rate_hist", "_p05"],
         // "nominator"   : ["Cut-002_two_loose_jets_final_fake_rate_hist_flav", "_p9900"],
-        // "denominator" : ["Cut-002_two_loose_jets_final_fake_rate_hist_flav", "_p1716"],
+        // "denominator" : ["Cut-002_two_loose_jets_final_fake_rate_hist_flav", "_p05"],
         
         "NOF" : false, // no overflow bins in projection
-        "NUF" : false, // no underflow bins in projection
+        "NUF" : true, // no underflow bins in projection
         "rate_bins" : {
             // "jet_flav" : [0, 1, 4, 5, 6, 15, 16, 21, 22, 25],
-            // "jet_flav" : [1, 4, 5, 6, 15, 16, 21, 22],
+            // "jet_flav" : [1, 4, 6, 15, 16, 21, 22],
             "jet_eta": [-2.3, -1.5, -0.5,  0.5,  1.5,  2.3],
             "jet_pt" :  [30, 40, 50, 70, 120, 1000],
             // "jet_pt" :  [30, 40, 50, 1000],
             // "jet_dxy" : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
-            "jet_dxy" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
+            "jet_dxy" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 50.0],
         },
     
         // "sf_project" : {
@@ -66,14 +66,29 @@
         //     "jet_flav_dxy" : "xz"
         // },
         "sf_project" : {
+            "jet_dxy_pt" : ["zy", {
+                    "y_axis" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 50.0],
+                    "x_axis" : [
+                        [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                        [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                        [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                        [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                        [30.0, 1000.0],
+                        [30.0, 1000.0],
+                    ]
+                }],
+            // "jet_dxy_pt" : ["zy", false],
+            "jet_pt"   : ["y", false],
             // name : "axis", score should be first argument
-            "jet_eta" : "x",
-            "jet_pt"   : "y",
-            "jet_dxy"   : "z",
-            "jet_pt_dxy" : "yz",
-            "jet_eta_pt" : "xy",
-            "jet_eta_dxy" : "xz"
+            // "jet_flav" : "x",
+            // "jet_pt"   : "y",
+            // "jet_dxy"   : "z",
+            // "jet_pt_dxy" : "yz",
+            // "jet_flav_pt" : "xy",
+            // "jet_flav_dxy" : "xz",
+
         },
+        // "exlude_bin"
     },
 
     "Labels": {
@@ -151,13 +166,13 @@
         //     "ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
         //     "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8",
 
-        //     "ZJetsToNuNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
+            // "ZJetsToNuNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8",
+            // "ZJetsToNuNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8",
+            // "ZJetsToNuNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8",
+            // "ZJetsToNuNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8",
+            // "ZJetsToNuNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8",
+            // "ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8",
+            // "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
         // ],
         // "$\\mathrm{stau100GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
         // "$\\mathrm{stau100GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
