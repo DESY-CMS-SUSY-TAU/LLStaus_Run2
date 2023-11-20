@@ -32,7 +32,38 @@ def OverflowIntegralTHN(hist_th3):
         return Integral
     else:
         raise ValueError("Wrong dimension of histogram")
-    
+
+def duplicate_uf_of_bins(hist_th2, NOF=False, NUF=False):
+    n_bins_x = hist_th2.GetNbinsX()
+    n_bins_y = hist_th2.GetNbinsY()
+    for bin_y in range(1, n_bins_y + 1):
+        # underflow
+        if hist_th2.GetBinContent(0, bin_y) == 0.0 and not NUF:
+            content = hist_th2.GetBinContent(1, bin_y)
+            err = hist_th2.GetBinError(1, bin_y)
+            hist_th2.SetBinContent(0, bin_y, content)
+            hist_th2.SetBinError(0, bin_y, err)
+        # overflow
+        if hist_th2.GetBinContent(n_bins_x+1, bin_y) == 0.0 and not NOF:
+            content = hist_th2.GetBinContent(n_bins_x, bin_y)
+            err = hist_th2.GetBinError(n_bins_x, bin_y)
+            hist_th2.SetBinContent(n_bins_x + 1, bin_y, content)
+            hist_th2.SetBinError(n_bins_x + 1, bin_y, err)
+    for bin_x in range(0, n_bins_x + 2):
+        # underflow
+        if hist_th2.GetBinContent(bin_x, 0) == 0.0 and not NUF:
+            content = hist_th2.GetBinContent(bin_x, 1)
+            err = hist_th2.GetBinError(bin_x, 1)
+            hist_th2.SetBinContent(bin_x, 0, content)
+            hist_th2.SetBinError(bin_x, 0, err)
+        # overflow
+        if hist_th2.GetBinContent(bin_x, n_bins_y + 1) == 0.0 and not NOF:
+            content = hist_th2.GetBinContent(bin_x, n_bins_y)
+            err = hist_th2.GetBinError(bin_x, n_bins_y)
+            hist_th2.SetBinContent(bin_x, n_bins_y + 1, content)
+            hist_th2.SetBinError(bin_x, n_bins_y + 1, err)
+
+
 parser = ArgumentParser(
     description="The following script calculate fake rate for stau analysis.")
 parser.add_argument(
@@ -179,6 +210,7 @@ if config["fake_rate"]["mode"] == "ratio":
             x_axis = rebin_non_unifor["x_axis"]
             y_axis =  np.array(rebin_non_unifor["y_axis"], dtype=np.double)
             xmin, xmax = float(x_axis[0][0]), float(x_axis[0][-1])
+            # print("nom_nonunif_" + project + options, y_axis, xmin, xmax)
             nom_nonunif = ROOT.Histogram_2D("nom_nonunif_" + project + options, y_axis, xmin, xmax)
             den_nonunif = ROOT.Histogram_2D("den_nonunif_" + project + options, y_axis, xmin, xmax)
             for i in range(len(x_axis)):
@@ -197,7 +229,8 @@ if config["fake_rate"]["mode"] == "ratio":
                 
             nom_nonunif.divide(den_nonunif)
             weight_hist = nom_nonunif.get_weights_th2d_simpl("hist_weight","hist_weight")
-            # weight_hist.Print("all")
+            
+            duplicate_uf_of_bins(weight_hist, NUF=bool(config["fake_rate"]["NOF"]), NOF=bool(config["fake_rate"]["NOF"]))
             
             output = ROOT.TFile(args.outdir+f"/fake_rate_{name}.root", "RECREATE")
             weight_hist.SetName(f"fake_rate_{name}")

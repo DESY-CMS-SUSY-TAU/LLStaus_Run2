@@ -299,10 +299,10 @@ def root_plot1D(
                     h1_ratioErr.SetBinError(bin_i, 0.0)
                     if den_bkgr > 0:
                         relErr = den_bkgr_err / den_bkgr
-                        h1_ratioErr.SetBinError(bin_i, numpy.sqrt(relErr))
+                        h1_ratioErr.SetBinError(bin_i, relErr)
                     if num_data > 0 and den_bkgr > 0:
                         ratio = num_data / den_bkgr
-                        ratio_err = num_data_err / den_bkgr
+                        ratio_err = num_data_err / num_data
                         h1_ratio.SetBinContent(bin_i, ratio)
                         h1_ratio.SetBinError(bin_i, ratio_err)
                 h1_ratioErr.SetFillStyle(3002)

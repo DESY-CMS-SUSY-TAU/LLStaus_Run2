@@ -151,7 +151,7 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 yrange_ratio = (0.0, 3.0),
                 ndivisionsy_ratio = (6, 5, 0),
                 signal_to_background_ratio = True,
-                draw_errors = False
+                draw_errors = True
             )
 
 
@@ -160,7 +160,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
     categories_list = list(itertools.product(*config["Categories"]))
     # categories_list = [f"{cat1}_{cat2}_{cat3}" for cat1,cat2,cat3 in categories_list]
     categories_list = ["_".join(cat) for cat in categories_list]
-    categories_list = [""]
+    # categories_list = [""]
 
     for _ci, _categ in enumerate(categories_list):
 
@@ -301,7 +301,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     xrange = [xrange_min, xrange_max],
                     # yrange = (0.0,  1.5*y_max), 
                     # logx = False, logy = False,
-                    yrange = (0.001,  10000*y_max),
+                    yrange = (0.001,  1000*y_max),
                     logx = False, logy = True,
                     logx_ratio = False, logy_ratio = False,
                     include_overflow = overflow,
@@ -335,7 +335,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     l_hist_overlay = _histograms["signal"],
                     outfile = output + "/" + os.path.splitext(os.path.basename(_histfile))[0] + ".png",
                     xrange = [xrange_min, xrange_max],
-                    yrange = (0.0001,  1000*y_max),
+                    yrange = (0.001,  1000*y_max),
                     # yrange = (0.0,  1.5*y_max),
                     logx = False, logy = True,
                     include_overflow = overflow,

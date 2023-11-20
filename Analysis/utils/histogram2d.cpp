@@ -45,10 +45,16 @@ Histogram_2D::~Histogram_2D(){
 
 Histogram_2D::Histogram_2D(const char* name, std::vector<double> yaxis, const double xmin, const double xmax){
   yaxis_ = yaxis;
+  // std::cout << "start" << std::endl;
   for (std::vector<double>::iterator it = yaxis.begin(); it != std::prev(yaxis.end()); it++){
+    // std::cout << *it << std::endl;
     yaxis_content_.push_back(std::make_shared<TH1D>());
     occupancy_.push_back(false);
   }
+  // add two more for overflow and underflow bins
+  yaxis_content_.push_back(std::make_shared<TH1D>()); occupancy_.push_back(false);
+  yaxis_content_.push_back(std::make_shared<TH1D>()); occupancy_.push_back(false);
+
   xmin_ = xmin;
   xmax_ = xmax;
   name_ = name;
@@ -56,7 +62,7 @@ Histogram_2D::Histogram_2D(const char* name, std::vector<double> yaxis, const do
 
 void Histogram_2D::add_x_binning_by_index(const int index, const std::vector<double> xaxis){
   std::string name = name_+std::to_string(index);
-  if(index >= yaxis_content_.size()){
+  if(index > yaxis_content_.size() || index < 0){
     std::runtime_error("Index "+std::to_string(index)+" out of y-axis range");
   }
   if (xaxis.front() != xmax_ || xaxis.back() != xmin_){
@@ -91,7 +97,7 @@ bool Histogram_2D::can_be_imported(TH2D* histo){
     return false;
   }
 
-  for(int iy = 0; iy < yaxis_.size()-1; iy++){
+  for(int iy = 0; iy < yaxis_.size(); iy++){
     auto this_histo = yaxis_content_[iy];
     load_axis_into_vector(this_histo->GetXaxis(), this_xaxis);
     if(!check_axis(input_xaxis, this_xaxis)){
@@ -104,8 +110,10 @@ bool Histogram_2D::can_be_imported(TH2D* histo){
 }
 
 int Histogram_2D::find_bin_by_value_(const double& y){
-  for(int iy = 0; iy < yaxis_.size() - 1; iy++){
-    if(y >= yaxis_[iy] && y < yaxis_[iy+1]) return iy;
+  for(int iy = 0; iy < yaxis_.size(); iy++){
+    if(y < yaxis_[iy] && iy == 0) return iy; // underflow
+    if(y >= yaxis_[iy] && iy == (yaxis_.size() - 1)) return iy+1; // overflow
+    if(y >= yaxis_[iy] && y < yaxis_[iy+1]) return iy+1;
   }
   throw std::range_error("Value "+std::to_string(y)+" is not in the range of the y axis");
 }
@@ -118,12 +126,13 @@ void Histogram_2D::th2d_add (TH2D* histo){
   auto input_yaxis = histo->GetYaxis();
   auto input_xaxis = histo->GetXaxis();
 
-  for (int iy = 1; iy <= input_yaxis->GetNbins(); iy++){
-  for (int ix = 1; ix <= input_xaxis->GetNbins(); ix++){
+  for (int iy = 0; iy <= input_yaxis->GetNbins()+1; iy++){
+  for (int ix = 0; ix <= input_xaxis->GetNbins()+1; ix++){
     auto bincy = input_yaxis->GetBinCenter(iy);
     auto bincx = input_xaxis->GetBinCenter(ix);
-
-    if(bincx < xmin_ || bincx >= xmax_ || bincy < yaxis_.front() || bincy >= yaxis_.back()) continue;
+    // std::cout << iy << " " << ix << " " << bincy << " " << bincx << std::endl;
+    // if(bincx < xmin_ || bincx >= xmax_ || bincy < yaxis_.front() || bincy >= yaxis_.back()) continue;
+    // if(bincy < yaxis_.front() || bincy >= yaxis_.back()) continue;
 
     auto xhisto = yaxis_content_[find_bin_by_value_(bincy)];
     xhisto->SetBinContent(
@@ -211,8 +220,8 @@ std::shared_ptr<TH2D> Histogram_2D::get_weights_th2d_simpl(const char* name, con
   auto xhisto = yaxis_content_[0]; // just take first axis and make final histogram in this biining
   load_axis_into_vector(xhisto->GetXaxis(), xaxis_);
   auto histo_ = std::make_shared<TH2D>(name, title, xaxis_.size()-1, &xaxis_[0], yaxis_.size()-1, &yaxis_[0]);
-  for(int iy = 1; iy <= histo_->GetNbinsY(); iy++){
-    for(int ix = 1; ix <= histo_->GetNbinsX(); ix++){
+  for(int iy = 0; iy <= histo_->GetNbinsY()+1; iy++){
+    for(int ix = 0; ix <= histo_->GetNbinsX()+1; ix++){
       double bincx = histo_->GetXaxis()->GetBinCenter(ix);
       double bincy = histo_->GetYaxis()->GetBinCenter(iy);
 
