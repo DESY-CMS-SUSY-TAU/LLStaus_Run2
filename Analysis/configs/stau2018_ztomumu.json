@@ -154,20 +154,13 @@
         ]
     },
 
-    // data-driven n-pass yield prediction:
-    // "jet_fake_rate" : [
-    //     "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_zmumu/zmumu_v7_fake/fake_rate/fake_rate_score_jet_score_jet_pt_jet_dxy.root",
-    //     "fake_rate_score_jet_score_jet_pt_jet_dxy",
-    //     ["jet_score", "jet_pt", "jet_dxy"]
-    // ],
-    // "predict_yield" : true,
-
     "jet_fake_rate" : [
-        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_zmumu/zmumu_v9_predict/fake_rate/fake_rate_jet_prob.root",
-        "fake_rate_jet_prob",
-        ["jet_score"]
+        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v11/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
+        "fake_rate_jet_dxy_pt",
+        ["jet_pt", "jet_dxy"]
     ],
-    "predict_yield" : false,
+
+    "predict_yield" : true,
     
     "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/",
 
@@ -186,6 +179,7 @@
     "jet_eta_max"  :  2.1,
     "jet_jetId"    :  6, // tight lepton veto
     "dphi_j1j2"    :  0.5,
+    "jet_dxy_min"  :  0.5, // to test MC/Data modeling
 
     // pfCand selection:
     "pfcand_pt"         : 1.0,
