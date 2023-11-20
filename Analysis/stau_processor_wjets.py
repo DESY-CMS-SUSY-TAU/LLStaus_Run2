@@ -48,6 +48,7 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     def process_selection(self, selector, dsname, is_mc, filler):
         
+        
         if self.config["flavour_fake_rate_study"]:
             # Alternative processor which aims
             # calculating jet fake rate basing
@@ -109,6 +110,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("PfCands", self.pfcand_valid)
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
+        selector.add_cut("mt_muon2", self.mt_muon_cut)
 
         selector.add_cut("two_loose_jets", self.has_two_jets)
         
@@ -417,7 +419,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         for score in self.config["score_pass"]:
             
-            fake =  self.config["jet_fake_rate"](jet_pt=jets.pt)
+            fake =  self.config["jet_fake_rate"](jet_pt=jets.pt, jet_dxy=jets.dxy)
+            # fake =  self.config["jet_fake_rate"](jet_pt=jets.pt)
             
             # from bin 0 to bin 1 and 2
             events_0tag = (ak.num(jets[(jets.disTauTag_score1 >= score)]) == 0)

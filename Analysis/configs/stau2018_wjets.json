@@ -151,16 +151,21 @@
         ]
     ],
 
+    // "jet_fake_rate" : [
+    //     // "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_zmumu/zmumu_v3/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
+    //     // "fake_rate_jet_dxy_pt",
+    //     // ["jet_pt", "jet_dxy"]
+    //     "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_zmumu/zmumu_v3/fake_rate_nonunif_final/fake_rate_jet_pt.root",
+    //     "fake_rate_jet_pt",
+    //     ["jet_pt"]
+    // ],
     "jet_fake_rate" : [
-        // "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v1/fake_rate_test/fake_rate_jet_prob_pt.root",
-        // "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_zmumu/zmumu_v1/fake_rate_test/fake_rate_jet_prob_pt.root",
-        // "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v8_mindxy/fake_rate/fake_rate_jet_pt.root",
-        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_zmumu/zmumu_v2/fake_rate/fake_rate_jet_pt.root",
-        "fake_rate_jet_pt",
-        ["jet_pt"]
+        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v11/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
+        "fake_rate_jet_dxy_pt",
+        ["jet_pt", "jet_dxy"]
     ],
     "predict_yield" : true,
-    "flavour_fake_rate_study" : false,
+    "flavour_fake_rate_study" : false, // all other analysis tools will be disabled
     
     // tag muon:
     "muon_pt_min"   :  28,
