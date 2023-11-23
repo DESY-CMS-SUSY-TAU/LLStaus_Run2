@@ -1,214 +1,179 @@
+import array
+import numpy
+import ROOT
 
-# This file illustrates how to implement a processor, realizing the selection
-# steps and outputting histograms and a cutflow with efficiencies.
-# Here we create a very simplified version of the ttbar-to-dilep processor.
-# One can run this processor using
-# 'python3 -m pepper.runproc --debug example_processor.py example_config.json'
-# Above command probably will need a little bit of time before all cuts are
-# applied once. This is because a chunk of events are processed simultaneously.
-# You change adjust the number of events in a chunk and thereby the memory
-# usage by using the --chunksize parameter (the default value is 500000).
-
-from nis import match
-from unittest import result
-import pepper
-import awkward as ak
-from functools import partial
-import numpy as np
-
-from coffea.nanoevents import NanoAODSchema
-# np.set_printoptions(threshold=np.inf)
+import utils.utils
 
 
-# All processors should inherit from pepper.ProcessorBasicPhysics
-class Processor(pepper.ProcessorBasicPhysics):
-    # We use the ConfigTTbarLL instead of its base Config, to use some of its
-    # predefined extras
-    config_class = pepper.ConfigTTbarLL
-    # schema_class = NanoAODSchema
-    # schema_class.mixins.update({
-    #     "PFCandidate": "PtEtaPhiMCollection",
-    #     "SV": "PtEtaPhiMCollection",
-    # })
+fname_num = "output/pepper_condor/MET-trigger-efficiency/hists/Cut-009_passed_probe_triggers_MET.root"
+fname_den = "output/pepper_condor/MET-trigger-efficiency/hists/Cut-008_has_2_jets_MET.root"
 
-    def __init__(self, config, eventdir):
-        # Initialize the class, maybe overwrite some config variables and
-        # load additional files if needed
-        # Can set and modify configuration here as well
-        config["histogram_format"] = "root"
-        # Need to call parent init to make histograms and such ready
-        super().__init__(config, eventdir)
+infile_num = ROOT.TFile.Open(fname_num)
+infile_den = ROOT.TFile.Open(fname_den)
 
-        # It is not recommended to put anything as member variable into a
-        # a Processor because the Processor instance is sent as raw bytes
-        # between nodes when running on HTCondor.
+l_histname_mc = [
+#"W3JetsToLNu",
+#"W2JetsToLNu",
+#"W4JetsToLNu",
+#"W1JetsToLNu",
+"WNJetsToLNu",
+]
 
-    def zero_handler(func):
-        def _function(self, data, *args, **kwargs):
-            if len(data) > 0: return func(self, data, *args, **kwargs)
-            else: return ak.Array([])
-        return _function
+l_histname_data = [
+#"SingleMuon_2018D",
+#"SingleMuon_2018C",
+#"SingleMuon_2018B",
+#"SingleMuon_2018A",
+"SingleMuon_2018"
+]
 
-    def process_selection(self, selector, dsname, is_mc, filler):
-        # Implement the selection steps: add cuts, define objects and/or
-        # compute event weights
+h1_num_mc = None
+h1_num_data = None
+h1_den_mc = None
+h1_den_data = None
 
-        # Add a cut only allowing events according to the golden JSON
-        # The good_lumimask method is specified in pepper.ProcessorBasicPhysics
-        # It also requires a lumimask to be specified in config
-        if not is_mc:
-            selector.add_cut("Lumi", partial(
-                self.good_lumimask, is_mc, dsname))
+a_bins = array.array(
+    "d",
+    list(range(0, 100, 20)) + list(range(100, 300, 10)) + list(range(300, 400, 20)) + list(range(400, 600, 50)) + list(range(600, 1000, 200)) + [1000, 2000]
+)
 
-        # Only allow events that pass triggers specified in config
-        # This also takes into account a trigger order to avoid triggering
-        # the same event if it's in two different data datasets.
-        pos_triggers_tag, neg_triggers_tag = pepper.misc.get_trigger_paths_for(
-            dsname,
-            is_mc,
-            self.config["tag_trigger_map"],
-            self.config["dataset_trigger_order"]
-        )
-        
-        selector.add_cut("passed_tag_triggers", partial(
-            self.passing_trigger,
-            pos_triggers_tag,
-            neg_triggers_tag
-        ))
+print(a_bins)
 
-        # Select valid objects
-        selector.set_column("trig_muons", partial(self.trig_muons)) 
-        selector.set_column("muons_valid", partial(self.muons, l_match_coll = ["trig_muons"], match_dR = 0.1))
-        selector.set_column("jets_valid", partial(self.jets, l_clean_coll = ["muons_valid"], clean_dR = 0.4))
-
-        # Add basics cuts (at least 2 good jets)
-
-        # Pick up leading jet (by score)
-        # selector.set_column("jet_1", partial(self.leading_jet, order=0)) #1-st jet
-        # selector.set_column("jet_2", partial(self.leading_jet, order=1)) #2-nd jet
-
-        selector.add_cut("has_1_muon", partial(self.has_n_objs, collname = "muons_valid", min_count = 1))
-        selector.add_cut("has_2_jets", partial(self.has_n_objs, collname = "jets_valid", min_count = 2))
-        #selector.add_cut("passed_probe_triggers", self.passed_probe_triggers, probe_triggers = self.config["probe_triggers"])
-        
-        pos_triggers_probe, neg_triggers_probe = pepper.misc.get_trigger_paths_for(
-            dsname,
-            is_mc,
-            self.config["probe_trigger_map"],
-            self.config["dataset_trigger_order"]
-        )
-        
-        selector.add_cut("passed_probe_triggers", partial(
-            self.passing_trigger,
-            pos_triggers_probe,
-            neg_triggers_probe
-        ))
+for hname in l_histname_mc :
     
+    if(h1_num_mc is None) :
+        h1_num_mc = infile_num.Get(hname).Clone("h1_num_mc")
+        h1_num_mc.SetDirectory(0)
+    else :
+        h1_num_mc.Add(infile_num.Get(hname).Clone())
     
-    @zero_handler
-    def match_and_clean(self, data, coll, l_match_coll = [], match_dR = 0.4, l_clean_coll = [], clean_dR = 0.4) :
-        
-        for collname in l_match_coll :
-            
-            coll = self.match_nearest(data, coll1 = coll, coll2 = collname, dR = match_dR, not_matched = False)
-        
-        for collname in l_clean_coll :
-            
-            coll = self.match_nearest(data, coll1 = coll, coll2 = collname, dR = clean_dR, not_matched = True)
-        
-        return coll
-    
-    
-    @zero_handler
-    def jets(self, data, l_match_coll = [], match_dR = 0.4, l_clean_coll = [], clean_dR = 0.4):
-        jets = data["Jet"]
+    if(h1_den_mc is None) :
+        h1_den_mc = infile_den.Get(hname).Clone("h1_den_mc")
+        h1_den_mc.SetDirectory(0)
+    else :
+        h1_den_mc.Add(infile_den.Get(hname).Clone())
 
-        is_good = (
-            (jets.pt > 30)
-            & (abs(jets.eta) < 2.4)
-            & (jets.jetId >= 4)
-        )
-        
-        jets = jets[is_good]
-        
-        result = self.match_and_clean(
-            data = data,
-            coll = jets,
-            l_match_coll = l_match_coll,
-            match_dR = match_dR,
-            l_clean_coll = l_clean_coll,
-            clean_dR = clean_dR,
-        )
-        
-        return result
+
+for hname in l_histname_data :
     
+    if(h1_num_data is None) :
+        h1_num_data = infile_num.Get(hname).Clone("h1_num_data")
+        h1_num_data.SetDirectory(0)
+    else :
+        h1_num_data.Add(infile_num.Get(hname).Clone())
     
-    @zero_handler
-    def muons(self, data, l_match_coll = [], match_dR = 0.1, l_clean_coll = [], clean_dR = 0.1):
-        muons = data["Muon"]
-        
-        is_good = (
-            (muons.pt > 30)
-            & (abs(muons.eta) < 2.4)
-            & (muons.tightId)
-        )
-        
-        muons =  muons[is_good]
-        
-        result = self.match_and_clean(
-            data = data,
-            coll = muons,
-            l_match_coll = l_match_coll,
-            match_dR = match_dR,
-            l_clean_coll = l_clean_coll,
-            clean_dR = clean_dR,
-        )
-        
-        return result
+    if(h1_den_data is None) :
+        h1_den_data = infile_den.Get(hname).Clone("h1_den_data")
+        h1_den_data.SetDirectory(0)
+    else :
+        h1_den_data.Add(infile_den.Get(hname).Clone())
+
+d_hist = {
+    "h1_num_mc": h1_num_mc,
+    "h1_num_data": h1_num_data,
+    "h1_den_mc": h1_den_mc,
+    "h1_den_data": h1_den_data,
+}
+
+#h1_num_mc.Rebin(1, f"{h1_num_mc.GetName()}_rebinned", a_bins)
+#h1_num_data.Rebin(1, f"{h1_num_data.GetName()}_rebinned", a_bins)
+#h1_den_mc.Rebin(1, f"{h1_den_mc.GetName()}_rebinned", a_bins)
+#h1_den_data.Rebin(1, f"{h1_den_data.GetName()}_rebinned", a_bins)
+
+#h1_num_mc = h1_num_mc.Rebin(len(a_bins)-1, "h1_num_mc", a_bins)
+#h1_num_data = h1_num_data.Rebin(len(a_bins)-1, "h1_num_data", a_bins)
+#h1_den_mc = h1_den_mc.Rebin(len(a_bins)-1, "h1_den_mc", a_bins)
+#h1_den_data = h1_den_data.Rebin(len(a_bins)-1, "h1_den_data", a_bins)
+
+for key, hist in d_hist.items() :
     
+    hist = hist.Rebin(len(a_bins)-1, "", a_bins)
+    nBin = hist.GetNbinsX()
     
-    @zero_handler
-    def trig_muons(self, data):
-        trig_muons = data["TrigObj"]
-        
-        is_good = (
-            (abs(trig_muons.id) == 13)
-            #& (trig_muons.filterBits >= 8)
-            & (trig_muons.filterBits == 3)
-        )
-        
-        return trig_muons[is_good]
+    # Set the last and overflow bins to the same value (sum of these two bins)
+    val1 = hist.GetBinContent(nBin)
+    val2 = hist.GetBinContent(nBin+1)
+    hist.AddBinContent(nBin, val2)
+    hist.AddBinContent(nBin+1, val1)
     
+    d_hist[key] = hist
+
+teff_mc = ROOT.TEfficiency(d_hist["h1_num_mc"], d_hist["h1_den_mc"])
+teff_mc.SetName("teff_mc")
+teff_data = ROOT.TEfficiency(d_hist["h1_num_data"], d_hist["h1_den_data"])
+teff_data.SetName("teff_data")
+
+h1_eff_mc = d_hist["h1_num_mc"].Clone("h1_eff_mc")
+h1_eff_mc.Divide(d_hist["h1_num_mc"], d_hist["h1_den_mc"])#, 1, 1, "B")
+h1_eff_mc.SetTitle("MC")
+h1_eff_mc.SetMarkerColor(2)
+h1_eff_mc.SetMarkerSize(2)
+h1_eff_mc.SetMarkerStyle(20)
+h1_eff_mc.SetLineColor(2)
+h1_eff_mc.SetLineWidth(2)
+h1_eff_mc.SetDrawOption("PE1")
+
+h1_eff_data = d_hist["h1_num_data"].Clone("h1_eff_data")
+h1_eff_data.Divide(d_hist["h1_num_data"], d_hist["h1_den_data"])#, 1, 1, "B")
+h1_eff_data.SetTitle("Data")
+h1_eff_data.SetMarkerColor(1)
+h1_eff_data.SetMarkerSize(2)
+h1_eff_data.SetMarkerStyle(20)
+h1_eff_data.SetLineColor(1)
+h1_eff_data.SetLineWidth(2)
+h1_eff_data.SetDrawOption("PE1")
+
+# Set the error on the efficiency to the binomial error from the TEfficiency object
+nBin = h1_eff_mc.GetNbinsX()
+for iBin in range(1, nBin+2) :
     
-    @zero_handler
-    def has_n_objs(self, data, collname, min_count):
-        return ak.num(data[collname]) >= min_count
+    #print(iBin, h1_sf.GetXaxis().GetBinLowEdge(iBin), h1_sf.GetXaxis().GetBinUpEdge(iBin), h1_sf.IsBinOverflow(iBin), h1_sf.GetBinContent(iBin))
     
+    h1_eff_mc.SetBinError(iBin, 0.5*(teff_mc.GetEfficiencyErrorUp(iBin) + teff_mc.GetEfficiencyErrorLow(iBin)))
+    h1_eff_data.SetBinError(iBin, 0.5*(teff_data.GetEfficiencyErrorUp(iBin) + teff_data.GetEfficiencyErrorLow(iBin)))
+
+h1_sf = h1_eff_data.Clone("h1_sf")
+h1_sf.Divide(h1_eff_mc)
+
+fout = ROOT.TFile.Open("trigger-eff-sfs_MET.root", "RECREATE")
+fout.cd()
+
+# Write
+for key, hist in d_hist.items() :
     
-    #@zero_handler    
-    #def passed_probe_triggers(self, data, probe_triggers):
-    #    return data["MET"].pt > 100 #GeV
-    
-    
-    @zero_handler
-    def match_nearest(self, data, coll1=None, coll2=None, dR = 0.4, not_matched = False):
-        obj1 = coll1
-        obj2 = coll2
-        
-        if isinstance(coll1, str):
-            obj1 = data[coll1]
-        
-        if isinstance(coll2, str):
-            obj2 = data[coll2]
-        
-        matches, dRlist = obj1.nearest(obj2, return_metric=True, threshold=dR)
-        if not_matched:
-            idx_matches_jets = ak.is_none(matches, axis=1)
-        else:
-            idx_matches_jets = ~ak.is_none(matches, axis=1)
-        # results = obj1.mask[idx_matches_jets] # this function convert False to None e.g: [[obj, obj, None, None,..],..]
-        results = obj1[idx_matches_jets] # this function drops all False e.g: [[obj, obj,..],..]
-        #sort_idx = ak.argsort(results.pt, axis=-1, ascending=False)
-        #return results[sort_idx]
-        
-        return results
+    hist.Write()
+
+h1_eff_mc.Write()
+h1_eff_data.Write()
+
+h1_sf.Write()
+
+teff_mc.Write()
+teff_data.Write()
+
+fout.Close()
+
+utils.utils.root_plot1D_legacy(
+    l_hist = [h1_eff_data, h1_eff_mc],
+    ratio_num_den_pairs = [(h1_eff_data, h1_eff_mc)],
+    outfile = "trigger-eff-sfs_MET.pdf",
+    xrange = (0, 800),
+    yrange = (0, 1.2),
+    logx = False, logy = False,
+    ytitle = "Efficiency",
+    xtitle_ratio = "p^{miss}_{T} [GeV]",
+    ytitle_ratio = "Data / MC",
+    yrange_ratio = (0.5, 1.5),
+    centertitlex = True, centertitley = True,
+    centerlabelx = False, centerlabely = False,
+    gridx = True, gridy = True,
+    ndivisionsx = None,
+    ndivisionsy_ratio = (4, 5, 0), 
+    stackdrawopt = "nostack",
+    ratiodrawopt = "PE1",
+    legendpos = "UL",
+    legendncol = 1,
+    legendwidthscale = 1.3,
+    legendheightscale = 1.5,
+    lumiText = "2018 (13 TeV)",
+)

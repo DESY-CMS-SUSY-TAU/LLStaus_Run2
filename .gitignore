@@ -5,6 +5,10 @@
 .#*
 .*.swp
 
+# VScode stuff
+*.code-workspace
+.vscode*
+
 # We probaly do not want to push plots
 *plots*
 *.pdf

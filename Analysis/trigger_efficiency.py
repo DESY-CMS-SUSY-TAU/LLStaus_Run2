@@ -5,6 +5,7 @@ import coffea
 import coffea.hist
 import coffea.processor
 import dataclasses
+import glob
 import logging
 import numba
 import numpy
@@ -16,12 +17,12 @@ import ROOT
 ROOT.gROOT.SetBatch(True)
 
 #import CMS_lumi, tdrstyle
-import utils
+import utils.utils
 
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 
 
-@numba.njit
+#@numba.njit
 def find_objpair(events_obj1, events_obj2, areSameObjs, builder) :
     
     for objs1, objs2 in zip(events_obj1, events_obj2) :
@@ -150,7 +151,7 @@ class MyProcessor(coffea.processor.ProcessorABC) :
             & (abs(events.GenPart.pdgId[events.GenPart.genPartIdxMother]) != 1000015)
         ]
         
-        print(genStau.pdgId)
+        #print(genStau.pdgId)
         
         #print(len(genStau))
         #print(len(awkward.flatten(genStau)))
@@ -167,7 +168,7 @@ class MyProcessor(coffea.processor.ProcessorABC) :
         # Will only work for leptons
         events["GenPart", "charge"] = -events.GenPart.pdgId
         events["GenVisTau", "vertexR"] = events.GenPart.vertexR[events.GenVisTau.genPartIdxMother]
-        print(events.GenVisTau.vertexR)
+        #print(events.GenVisTau.vertexR)
         
         d_events_obj = {}
         
@@ -191,8 +192,8 @@ class MyProcessor(coffea.processor.ProcessorABC) :
                 
                 logging.error("%s not a valid option." %(objOpt))
             
-        print(self.genObj1opt, self.genObj2opt)
-        print(d_events_obj)
+        #print(self.genObj1opt, self.genObj2opt)
+        #print(d_events_obj)
         
         objPair_idx = find_objpair(
             events_obj1 = d_events_obj[self.genObj1opt],
@@ -201,7 +202,7 @@ class MyProcessor(coffea.processor.ProcessorABC) :
             builder = awkward.ArrayBuilder(),
         ).snapshot()
         
-        print("objPair_idx", len(objPair_idx), objPair_idx)
+        #print("objPair_idx", len(objPair_idx), objPair_idx)
         
         # Skip processing as it is an EmptyArray
         if awkward.all(awkward.num(objPair_idx) == 0) :
@@ -213,11 +214,11 @@ class MyProcessor(coffea.processor.ProcessorABC) :
         events = events[sel_idx]
         objPair_idx = objPair_idx[sel_idx]
         
-        print("objPair_idx[sel_idx]", len(objPair_idx), objPair_idx)
+        #print("objPair_idx[sel_idx]", len(objPair_idx), objPair_idx)
         
         for objOpt in set([self.genObj1opt, self.genObj2opt]) :
             
-            print("d_events_obj[%s]" %(objOpt), len(d_events_obj[objOpt]), d_events_obj[objOpt])
+            #print("d_events_obj[%s]" %(objOpt), len(d_events_obj[objOpt]), d_events_obj[objOpt])
             
             d_events_obj[objOpt] = d_events_obj[objOpt][sel_idx]
         
@@ -280,11 +281,17 @@ class MyProcessor(coffea.processor.ProcessorABC) :
 
 def main() :
     
+    base_storage_dir = "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD"
+    
     datasets = sortedcontainers.SortedDict({
-        "stau100_lsp1_ctau1000mm": ["tmp/nanoaod_stau100_lsp1_ctau1000mm.root"],
-        "stau250_lsp1_ctau1000mm": ["tmp/nanoaod_stau250_lsp1_ctau1000mm.root"],
-        "stau400_lsp1_ctau1000mm": ["tmp/nanoaod_stau400_lsp1_ctau1000mm.root"],
+        "stau100_lsp1_ctau100mm": f"{base_storage_dir}/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6/crab_stau100_lsp1_ctau100mm/230311_014322/*/*.root",
+        "stau250_lsp1_ctau100mm": f"{base_storage_dir}/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6/crab_stau250_lsp1_ctau100mm/230311_014339/*/*.root",
+        "stau400_lsp1_ctau100mm": f"{base_storage_dir}/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6/crab_stau400_lsp1_ctau100mm/230311_014924/*/*.root",
     })
+    
+    for key, val in datasets.items() :
+        
+        datasets[key] = glob.glob(val)[0: 50]
     
     #trigger_str = ""
     
@@ -297,7 +304,7 @@ def main() :
         " | HLT_PFMETNoMu130_PFMHTNoMu130_IDTight "
         " | HLT_PFMETNoMu140_PFMHTNoMu140_IDTight "
         
-        " | HLT_IsoMu24 "
+        #" | HLT_IsoMu24 "
         #" | HLT_TkMu100 "
         
         #" | HLT_IsoMu27_MET90 "
@@ -307,14 +314,14 @@ def main() :
         #" | HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg "
         #" | HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg "
         
-        " | HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET100 "
-        " | HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET110 "
-        " | HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET120 "
-        " | HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET130 "
-        " | HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET140 "
-        
-        " | HLT_MET105_IsoTrk50 "
-        " | HLT_MET120_IsoTrk50 "
+        #" | HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET100 "
+        #" | HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET110 "
+        #" | HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET120 "
+        #" | HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET130 "
+        #" | HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET140 "
+        #
+        #" | HLT_MET105_IsoTrk50 "
+        #" | HLT_MET120_IsoTrk50 "
         
         #" | HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1 "
         #" | HLT_IsoMu24_eta2p1_MediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg_CrossL1 "
@@ -326,12 +333,14 @@ def main() :
     
     trigger_str = trigger_str.replace("HLT_", "events.HLT.")
     
-    genObj1opt, genObj2opt = "mu", "tauh"
-    #genObj1opt, genObj2opt = "tauh", "tauh"
+    #genObj1opt, genObj2opt = "mu", "tauh"
+    genObj1opt, genObj2opt = "tauh", "tauh"
     
     #extraTag = ""
     #extraTag = "excl-HLT-MET-IsoTrk-PFTau"
-    extraTag = "incl-HLT-MET-IsoTrk-PFTau"
+    #extraTag = "incl-HLT-MET-IsoTrk-PFTau"
+    #extraTag = "HLT-MET_excl-NoMu"
+    extraTag = "HLT-MET_incl-NoMu"
     
     output_den = coffea.processor.run_uproot_job(
         datasets,
@@ -340,8 +349,15 @@ def main() :
             genObj1opt = genObj1opt,
             genObj2opt = genObj2opt,
         ),
-        coffea.processor.iterative_executor,
-        {"schema": NanoAODSchema},
+        #coffea.processor.iterative_executor,
+        #{"schema": NanoAODSchema},
+        executor = coffea.processor.futures_executor,
+        executor_args = {
+            "schema": NanoAODSchema,
+            #"skipbadfiles": True,
+            "xrootdtimeout": 600, #sec
+            "workers": 10
+        },
     )
     
     output_num = coffea.processor.run_uproot_job(
@@ -352,8 +368,15 @@ def main() :
             genObj1opt = genObj1opt,
             genObj2opt = genObj2opt,
         ),
-        coffea.processor.iterative_executor,
-        {"schema": NanoAODSchema},
+        #coffea.processor.iterative_executor,
+        #{"schema": NanoAODSchema},
+        executor = coffea.processor.futures_executor,
+        executor_args = {
+            "schema": NanoAODSchema,
+            #"skipbadfiles": True,
+            "xrootdtimeout": 600, #sec
+            "workers": 10
+        },
     )
     
     
@@ -388,7 +411,7 @@ def main() :
             extraTag = "_%s" %(extraTag) if len(extraTag) else ""
         )
         
-        outdir = "output/plots/%s/%s" %(dataset, tag)
+        outdir = "output/plots/signal_trigger_studies/%s/%s" %(dataset, tag)
         os.system("mkdir -p %s" %(outdir))
         
         for histName in d_hist.keys() :
@@ -423,9 +446,12 @@ def main() :
             
             outfile = "%s/%s.pdf" %(outdir, histName)
             
-            utils.utils.root_plot1D(
+            utils.utils.root_plot1D_legacy(
                 l_hist = l_hist,
+                #l_hist = [h1_num],
+                #l_hist_overlay = [h1_den],
                 ratio_num_den_pairs = [(h1_num, h1_den)],
+                #signal_to_background_ratio = True,
                 outfile = outfile,
                 xrange = d_hist[histName]["xrange"],
                 yrange = (0, max([_h.GetMaximum() for _h in l_hist])),
@@ -440,10 +466,10 @@ def main() :
                 legendpos = "UR",
                 legendtitle = "#splitline{%s}{(%s)}" %(dataset, tag),
                 legendncol = 1,
-                #legendtextsize = 0.04,
+                #legendtextsize = 0.03,
                 legendwidthscale = 1.3,
                 legendheightscale = 1.5,
-                lumiText = "2018 (13 TeV)"
+                lumiText = "2018 (13 TeV)",
             )
             #
             #
