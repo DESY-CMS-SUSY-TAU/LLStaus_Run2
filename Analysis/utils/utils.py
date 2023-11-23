@@ -30,7 +30,7 @@ def get_canvas(ratio = False) :
     ROOT.gROOT.SetStyle("tdrStyle")
     ROOT.gROOT.ForceStyle(True)
     
-    canvas = ROOT.TCanvas("canvas", "canvas", 1000, 800)
+    canvas = ROOT.TCanvas("canvas", "canvas", 550, 500)
     canvas.UseCurrentStyle()
     
     #canvas.SetLeftMargin(0.16)
@@ -116,7 +116,7 @@ def root_plot1D(
     
     # canvas = get_canvas(ratio = len(ratio_num_den_pairs))
     canvas = get_canvas(ratio = signal_to_background_ratio)
-    
+    canvas.SaveAs("empty_canvas.pdf")
     canvas.cd(1)
     
     
@@ -302,13 +302,14 @@ def root_plot1D(
                         h1_ratioErr.SetBinError(bin_i, relErr)
                     if num_data > 0 and den_bkgr > 0:
                         ratio = num_data / den_bkgr
-                        ratio_err = num_data_err / num_data
+                        ratio_err = num_data_err / den_bkgr
                         h1_ratio.SetBinContent(bin_i, ratio)
                         h1_ratio.SetBinError(bin_i, ratio_err)
-                h1_ratioErr.SetFillStyle(3002)
-                h1_ratioErr.SetFillColor(435)
+                h1_ratioErr.SetFillStyle(3004)
+                h1_ratioErr.SetFillColor(1)
                 h1_ratioErr.SetMarkerStyle(21)
                 h1_ratioErr.SetMarkerSize(0)
+                h1_ratioErr.SetLineWidth(2)
                 stack_ratio.Add(h1_ratioErr, "E2")
                 stack_ratio.Add(h1_ratio, "E1same")
                 
