@@ -87,6 +87,14 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("MET", self.MET_cut_max)
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
         
+        # # veto all loose muons
+        # selector.set_column("muon_veto", self.muons_veto)
+        # selector.add_cut("loose_muon_veto", self.loose_muon_veto_cut)
+        
+        # # veto all loose electrons
+        # selector.set_column("electron_veto", self.electron_veto)
+        # selector.add_cut("loose_electron_veto", self.loose_electron_veto_cut)
+        
         # 2 muons
         selector.set_column("Muon", self.select_muons) 
         selector.add_cut("two_muons", self.two_muons_cut)
@@ -101,6 +109,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("charge", self.charge)
         
         selector.set_column("Jet_select", self.jet_selection)
+        selector.add_cut("has_more_two_jets", self.has_more_two_jets)
+        selector.set_column("Jet_obj1", partial(self.leading_jet, order=0))
+        selector.set_column("Jet_obj2", partial(self.leading_jet, order=1))
         selector.set_column("Jet_select", self.getloose_jets)
  
         selector.set_column("PfCands", self.pfcand_valid)
@@ -127,16 +138,60 @@ class Processor(pepper.ProcessorBasicPhysics):
         if self.config["predict_yield"]:
             selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
         
+        selector.set_column("Jet_obj1", partial(self.leading_jet, order=0))
+        selector.set_column("Jet_obj2", partial(self.leading_jet, order=1))
+        
         selector.add_cut("two_loose_jets_final", self.has_two_jets)
-
-        # selector.add_cut("req_1st_jet", partial(self.jets_available, n_available=1))
-        selector.set_column("Jet_obj", partial(self.leading_jet, order=0))
-        # selector.add_cut("req_2st_jet", partial(self.jets_available, n_available=2))
-        selector.set_column("Jet_obj", partial(self.leading_jet, order=1))
         
         selector.set_column("Jet_select", self.gettight_jets)
         selector.add_cut("two_tight_jets", self.has_two_jets)
+    
+    # @zero_handler
+    # def muons_veto(self, data):
+    #     muons = data["Muon"]
         
+    #     is_good = (
+    #           (muons.pt > self.config["muon_veto_pt_min"])
+    #         & (muons.eta < self.config["muon_veto_eta_max"])
+    #         & (muons.eta > self.config["muon_veto_eta_min"])
+    #         & (muons[self.config["muon_veto_ID"]] == 1)
+    #         )
+        
+    #     is_tag =(
+    #           (muons.pt > self.config["muon_pt_min"])
+    #         & (muons.eta < self.config["muon_eta_max"])
+    #         & (muons.eta > self.config["muon_eta_min"])
+    #         & (muons[self.config["muon_ID"]] == 1)
+    #         & (muons.pfIsoId >= self.config["muon_pfIsoId"])
+    #         & (abs(muons.dxy) <= self.config["muon_absdxy"])
+    #         & (abs(muons.dz) <= self.config["muon_absdz"])
+    #         )
+        
+    #     return muons[(is_good & (~is_tag))]
+        
+    # @zero_handler
+    # def loose_muon_veto_cut(self, data):
+    #     return ak.num(data["muon_veto"])==0
+    
+    # @zero_handler
+    # def loose_electron_veto_cut(self, data):
+    #     return ak.num(data["electron_veto"])==0
+    
+    # @zero_handler
+    # def electron_veto(self, data):
+    #     ele = data["Electron"]
+    #     # ele_low_eta_iso =  ((np.abs(ele.eta) < 1.479) & (ele.pfRelIso03_all < (0.198+0.506/ele.pt)))
+    #     # ele_high_eta_iso = ((np.abs(ele.eta) > 1.479) & (np.abs(ele.eta) < 2.5) & (ele.pfRelIso03_all < (0.203+0.963/ele.pt)))
+    #     # isolation_cut = ( ele_low_eta_iso | ele_high_eta_iso )
+    #     is_good = (
+    #         # isolation_cut
+    #         & (ele.pt > self.config["elec_veto_pt"])
+    #         & (ele.eta < self.config["elec_veto_eta_min"])
+    #         & (ele.eta > self.config["elec_veto_eta_max"])
+    #         & (ele[self.config["elec_Veto"]] == 1)
+    #         )
+    #     return ele[is_good]
+    
     @zero_handler
     def sum_jj(self, data):
         return data['Jet_select'][:,0].add(data['Jet_select'][:,1])
@@ -227,6 +282,11 @@ class Processor(pepper.ProcessorBasicPhysics):
     def has_two_jets(self, data):
         jets = data["Jet_select"]
         return ak.num(jets) == 2
+    
+    @zero_handler
+    def has_more_two_jets(self, data):
+        jets = data["Jet_select"]
+        return ak.num(jets) >= 2
 
     @zero_handler
     def getloose_jets(self, data):

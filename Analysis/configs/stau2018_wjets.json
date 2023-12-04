@@ -169,8 +169,8 @@
     
     // tag muon:
     "muon_pt_min"   :  28,
-    "muon_eta_min"  : -2.1,
-    "muon_eta_max"  :  2.1,
+    "muon_eta_min"  : -2.4,
+    "muon_eta_max"  :  2.4,
     "muon_ID"       :  "tightId",
     "muon_pfIsoId"  : 4, // tight: >= 4
     "muon_absdxy"   : 0.2,

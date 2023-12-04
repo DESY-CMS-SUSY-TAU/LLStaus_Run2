@@ -26,7 +26,7 @@ parser.add_argument(
     "where histfile is located", default='hist_output')
 parser.add_argument(
     "--ext", choices=["pdf", "svg", "png"], help="Output file format",
-    default="pdf")
+    default="png")
 
 
 args = parser.parse_args()
@@ -150,11 +150,11 @@ if True:
         stackdrawopt = "nostack",
         # normilize = True,
         normilize_overlay = False,
-        legendpos = "UR",
+        legendpos = "UL",
         legendtitle = f"",
         legendncol = 2,
         legendtextsize = 0.055,
-        legendwidthscale = 1.0,
+        legendwidthscale = 2.0,
         legendheightscale = 3.0,
         lumiText = "2018 (13 TeV)",
         signal_to_background_ratio = True,

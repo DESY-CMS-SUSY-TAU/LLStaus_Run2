@@ -4,7 +4,8 @@ import itertools
 import numpy as np
 import os
 
-from .utils import ColorIterator, root_plot1D, root_plot2D
+from .utils import ColorIterator, root_plot1D, root_plot2D, root_plots2D_simple
+ROOT.gInterpreter.Declare('#include "utils/histogram2d.cpp"')
 
 def plot_predict(dirname, config, xsec, cutflow, output_path):
     
@@ -41,6 +42,7 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
             hist_prediction.SetFillColor(0)
             hist_prediction.SetLineWidth(3)
             hist_prediction.SetTitle(f"Pred. ({str(prediction_bin)})")
+            
             # print("Prediction:")
             # print(hist_prediction.Print("all"))
             hists_main = [hist_prediction]
@@ -153,6 +155,140 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 ndivisionsy_ratio = (5, 5, 0),
                 signal_to_background_ratio = True,
                 draw_errors = True
+            )
+
+def plot_predict2D(dirname, config, xsec, cutflow, output_path):
+    
+    for prediction_bin, data_bin in zip(config["prediction_hist2D"]["predictions"], config["prediction_hist2D"]["bin_data"]):
+        for hist in config["prediction_hist2D"]["hists"]:
+
+            # ~~~~~~~~~~~~~~~ Prediction 
+            print("Prediction bin:", prediction_bin, "Histogram:", hist)
+            # Extracting histogram information
+            axis_rebin, overflow, bin_labels = \
+                config["prediction_hist2D"]["hists"][hist]
+            cut = config["prediction_hist2D"]["cut"]
+            path_predict = dirname+"/"+cut+"_"+hist+"_"+prediction_bin+".root"
+            print(path_predict)
+            file_predict = ROOT.TFile.Open(path_predict, 'read')
+            hist_prediction = None
+            for data_group in config["Data"].keys():
+                for data_name in config["Labels"][data_group]:
+                    print("Extract prediction:", data_name)
+                    if hist_prediction == None:
+                        hist_prediction = file_predict.Get(data_name)
+                    else:
+                        hist_prediction.Add(file_predict.Get(data_name))
+            
+            x_axis = axis_rebin["x_axis"]
+            y_axis =  np.array(axis_rebin["y_axis"], dtype=np.double)
+            xmin, xmax = float(x_axis[0][0]), float(x_axis[0][-1])
+    
+            hist_prediction_nonunif = ROOT.Histogram_2D("nonunif_pred", y_axis, xmin, xmax)
+            for i in range(len(x_axis)):
+                hist_prediction_nonunif.add_x_binning_by_index(i, np.array(x_axis[i], dtype=np.double))
+            
+            try:
+                hist_prediction_nonunif.th2d_add(hist_prediction)
+            except:
+                print("Error is inside project nonunif histograms")
+                print("Error: can not add histogram because of the inconsistency")
+                del hist_prediction_nonunif
+                exit()
+            hist_prediction_nonunif.print("")
+            hist_prediction_nonunif_th2 = hist_prediction_nonunif.get_weights_th2d_simpl("hist_prediction_nonunif_th2",
+                                                                                         "hist_prediction_nonunif_th2")
+            del hist_prediction_nonunif
+            
+            ## ~~~~~~~~~~~~~~~ Signal
+            path_data = dirname+"/"+cut+"_"+hist+"_pass.root"
+            print(path_data)
+            file_n_pass_sig = ROOT.TFile.Open(path_data, 'read')
+            _signal_name = config["prediction_hist2D"]["signal_model"]
+            signal_hists = None
+            for _dataset_idx, _histogram_data in enumerate(config["Labels"][_signal_name]):
+                print("Adding signal dataset:", _histogram_data)
+                if isinstance(data_bin, str):
+                    _hist = file_n_pass_sig.Get(_histogram_data+"_"+data_bin)
+                elif isinstance(data_bin, int):
+                    _hist = file_n_pass_sig.Get(_histogram_data)
+                    _hist = _hist.ProjectionX(_histogram_data+"_proj", data_bin, data_bin)
+                _hist.SetDirectory(0)
+                N = cutflow[_histogram_data]["all"]["Before cuts"]
+                scale =  xsec[_histogram_data] * config["luminosity"] / N
+                _hist.Scale(scale)
+                if signal_hists == None:
+                    signal_hists = _hist
+                else:
+                    signal_hists.Add(_hist)
+                    
+            hist_sig_nonunif = ROOT.Histogram_2D("nonunif_sig", y_axis, xmin, xmax)
+            for i in range(len(x_axis)):
+                hist_sig_nonunif.add_x_binning_by_index(i, np.array(x_axis[i], dtype=np.double))
+            
+            try:
+                hist_sig_nonunif.th2d_add(signal_hists)
+            except:
+                print("Error is inside project nonunif histograms")
+                print("Error: can not add histogram because of the inconsistency")
+                del hist_sig_nonunif
+                exit()
+            hist_sig_nonunif.print("")
+            hist_sig_nonunif_th2 = hist_sig_nonunif.get_weights_th2d_simpl("hist_sig_nonunif_th2",
+                                                                           "hist_sig_nonunif_th2")
+            del hist_sig_nonunif
+            
+        root_plots2D_simple(
+                hist_prediction_nonunif_th2,
+                outfile = output_path + "/" + hist + "_" + prediction_bin +"_predict"+ ".pdf",
+                yrange=(y_axis[0], y_axis[-1]),
+                xrange=(x_axis[0][0], x_axis[0][-1]),
+                logx = False, logy = False, logz = False,
+                title = "",
+                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "m_{T2} [GeV]",
+                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
+                xtitle = "m_{T2} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
+                centertitlex = True, centertitley = True,
+                centerlabelx = False, centerlabely = False,
+                gridx = False, gridy = False,
+                CMSextraText = "Private work (Prediction)",
+                lumiText = "(13 TeV)",
+            )
+        
+        root_plots2D_simple(
+                hist_sig_nonunif_th2,
+                outfile = output_path + "/" + hist + "_" + prediction_bin +"_signal"+ ".pdf",
+                yrange=(y_axis[0], y_axis[-1]),
+                xrange=(x_axis[0][0], x_axis[0][-1]),
+                logx = False, logy = False, logz = False,
+                title = "",
+                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "m_{T2} [GeV]",
+                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
+                xtitle = "m_{T2} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
+                centertitlex = True, centertitley = True,
+                centerlabelx = False, centerlabely = False,
+                gridx = False, gridy = False,
+                CMSextraText = f"Private work (Signal 250 GeV,10 cm)",
+                lumiText = "(13 TeV)",
+            )
+        
+        hist_prediction_nonunif_th2.Add(hist_sig_nonunif_th2)
+        hist_sig_nonunif_th2.Divide(hist_prediction_nonunif_th2)
+        root_plots2D_simple(
+                hist_sig_nonunif_th2,
+                outfile = output_path + "/" + hist + "_" + prediction_bin +"_RATIO"+ ".pdf",
+                yrange=(y_axis[0], y_axis[-1]),
+                xrange=(x_axis[0][0], x_axis[0][-1]),
+                logx = False, logy = False, logz = False,
+                title = "",
+                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "m_{T2} [GeV]",
+                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
+                xtitle = "m_{T2} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
+                centertitlex = True, centertitley = True,
+                centerlabelx = False, centerlabely = False,
+                gridx = False, gridy = False,
+                CMSextraText = f"Private work ( S/(S+B) )",
+                lumiText = "(13 TeV)",
             )
 
 

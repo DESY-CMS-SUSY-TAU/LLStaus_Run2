@@ -160,7 +160,7 @@
         ["jet_pt", "jet_dxy"]
     ],
 
-    "predict_yield" : true,
+    "predict_yield" : false,
     
     "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/",
 
@@ -172,6 +172,19 @@
     "muon_pfIsoId"  : 4, // tight: >= 4
     "muon_absdxy"   : 0.2,
     "muon_absdz"    : 0.5,
+
+    // // veto electron:
+    // "elec_veto_pt"        :  20,
+    // "elec_veto_eta_min"   : -2.4,
+    // "elec_veto_eta_max"   :  2.4,
+    // "elec_Veto"           : "convVeto",
+    // "elec_ID"             : "",
+
+    // // veto muon:
+    // "muon_veto_pt_min"   :  20,
+    // "muon_veto_eta_min"  : -2.4,
+    // "muon_veto_eta_max"  :  2.4,
+    // "muon_veto_ID"       :  "looseId",
 
     // reco Jet:
     "jet_pt_min"   :  30,
