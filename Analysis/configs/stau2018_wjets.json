@@ -177,16 +177,18 @@
     "muon_absdz"    : 0.5,
 
     // veto electron:
-    "elec_veto_pt"        :  15,
-    "elec_veto_eta_min"   : -2.1,
-    "elec_veto_eta_max"   :  2.1,
-    "elec_Veto"           : "convVeto",
+    "elec_veto_pt"        :  20,
+    "elec_veto_eta_min"   : -2.4,
+    "elec_veto_eta_max"   :  2.4,
+    "elec_veto"           : "convVeto",
+    "elec_ID"             : "mvaIso_WPL",
 
     // veto muon:
-    "muon_veto_pt_min"   :  15,
-    "muon_veto_eta_min"  : -2.1,
-    "muon_veto_eta_max"  :  2.1,
+    "muon_veto_pt_min"   :  20,
+    "muon_veto_eta_min"  : -2.4,
+    "muon_veto_eta_max"  :  2.4,
     "muon_veto_ID"       :  "looseId",
+    "muon_veto_pfIsoId"  : 2, // loose: >= 2
 
     // MET cut
     "MET_pt"             : 50,

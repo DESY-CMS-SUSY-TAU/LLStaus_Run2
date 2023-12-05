@@ -80,6 +80,10 @@ class Processor(pepper.ProcessorBasicPhysics):
             selector.add_cut("W jet reweighting",
                 partial(self.do_w_jet_reweighting))
 
+        # HEM 15/16 failure (2018)
+        # if self.config["year"] == "2018ul":
+        selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+
         # MET cut
         selector.add_cut("MET", self.MET_cut)
 
@@ -132,6 +136,20 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         # selector.set_column("Jet_select", self.gettight_jets)
         # selector.add_cut("two_tight_jets", self.has_two_jets)        
+    
+    @zero_handler
+    def HEM_veto(self, data, is_mc):
+        weight = np.ones(len(data), dtype=np.float32)
+        jets = data["Jet"]
+        elctron = data["Electron"]
+        electron_in15or16_hem = ( (elctron.pt > 20) & (elctron.eta > -3.0) & (elctron.eta < -1.3) & (elctron.phi > -1.57) & (elctron.phi < -0.87) )
+        jet_in15or16_hem = ( (jets.pt > 20) & (jets.eta > -3.2) & (jets.eta < -1.3) & (jets.phi > -1.77) & (jets.phi < -0.67) )
+        in_hem = (ak.any(electron_in15or16_hem, axis=-1) | ak.any(jet_in15or16_hem, axis=-1))
+        if is_mc:
+            weight[in_hem] = (1-0.66)
+        else:
+            weight[in_hem] = 0.0
+        return weight   
     
     @zero_handler
     def get_muon_sfs(self, data, is_mc):
@@ -233,6 +251,7 @@ class Processor(pepper.ProcessorBasicPhysics):
             & (muons.eta < self.config["muon_veto_eta_max"])
             & (muons.eta > self.config["muon_veto_eta_min"])
             & (muons[self.config["muon_veto_ID"]] == 1)
+            & (muons.pfIsoId >= self.config["muon_veto_pfIsoId"])
             )
         
         is_tag =(
@@ -251,15 +270,12 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def electron_veto(self, data):
         ele = data["Electron"]
-        ele_low_eta_iso =  ((np.abs(ele.eta) < 1.479) & (ele.pfRelIso03_all < (0.198+0.506/ele.pt)))
-        ele_high_eta_iso = ((np.abs(ele.eta) > 1.479) & (np.abs(ele.eta) < 2.5) & (ele.pfRelIso03_all < (0.203+0.963/ele.pt)))
-        isolation_cut = ( ele_low_eta_iso | ele_high_eta_iso )
         is_good = (
-            isolation_cut
-            & (ele.pt > self.config["elec_veto_pt"])
+            (ele.pt > self.config["elec_veto_pt"])
             & (ele.eta < self.config["elec_veto_eta_min"])
             & (ele.eta > self.config["elec_veto_eta_max"])
-            & (ele[self.config["elec_Veto"]] == 1)
+            & (ele[self.config["elec_veto"]] == 1)
+            & (ele[self.config["elec_ID"]] == 1)
             )
         return ele[is_good]
     
