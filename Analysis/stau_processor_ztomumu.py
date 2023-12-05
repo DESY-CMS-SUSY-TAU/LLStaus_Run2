@@ -82,26 +82,31 @@ class Processor(pepper.ProcessorBasicPhysics):
         if is_mc and "pileup_reweighting" in self.config:
             selector.add_cut("Pileup reweighting", partial(
                 self.do_pileup_reweighting, dsname))
-
+        
+        # HEM 15/16 failure (2018)
+        # if self.config["year"] == "2018ul":
+        selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+        
+        # Select veto objects before modifying Muon collection
+        selector.set_column("muon_veto", self.muons_veto)
+        selector.set_column("electron_veto", self.electron_veto)
+        
         # MET cut
-        selector.add_cut("MET", self.MET_cut_max)
+        # selector.add_cut("MET", self.MET_cut_max)
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
         
-        # # veto all loose muons
-        # selector.set_column("muon_veto", self.muons_veto)
-        # selector.add_cut("loose_muon_veto", self.loose_muon_veto_cut)
-        
-        # # veto all loose electrons
-        # selector.set_column("electron_veto", self.electron_veto)
-        # selector.add_cut("loose_electron_veto", self.loose_electron_veto_cut)
-        
-        # 2 muons
+        # 2 tag muons
         selector.set_column("Muon", self.select_muons) 
         selector.add_cut("two_muons", self.two_muons_cut)
         selector.set_column("sum_mumu", self.sum_mumu)
         if is_mc:
             selector.set_column("sum_ll_gen", self.sum_ll_gen)
 
+        # veto all loose muons
+        selector.add_cut("loose_muon_veto", self.loose_muon_veto_cut)
+        # veto all loose electrons
+        selector.add_cut("loose_electron_veto", self.loose_electron_veto_cut)
+        
         selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
         selector.add_cut("muon_sfs", partial(self.get_muon_sfs, is_mc=is_mc))
 
@@ -146,51 +151,57 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("Jet_select", self.gettight_jets)
         selector.add_cut("two_tight_jets", self.has_two_jets)
     
-    # @zero_handler
-    # def muons_veto(self, data):
-    #     muons = data["Muon"]
-        
-    #     is_good = (
-    #           (muons.pt > self.config["muon_veto_pt_min"])
-    #         & (muons.eta < self.config["muon_veto_eta_max"])
-    #         & (muons.eta > self.config["muon_veto_eta_min"])
-    #         & (muons[self.config["muon_veto_ID"]] == 1)
-    #         )
-        
-    #     is_tag =(
-    #           (muons.pt > self.config["muon_pt_min"])
-    #         & (muons.eta < self.config["muon_eta_max"])
-    #         & (muons.eta > self.config["muon_eta_min"])
-    #         & (muons[self.config["muon_ID"]] == 1)
-    #         & (muons.pfIsoId >= self.config["muon_pfIsoId"])
-    #         & (abs(muons.dxy) <= self.config["muon_absdxy"])
-    #         & (abs(muons.dz) <= self.config["muon_absdz"])
-    #         )
-        
-    #     return muons[(is_good & (~is_tag))]
-        
-    # @zero_handler
-    # def loose_muon_veto_cut(self, data):
-    #     return ak.num(data["muon_veto"])==0
+    @zero_handler
+    def HEM_veto(self, data, is_mc):
+        weight = np.ones(len(data), dtype=np.float32)
+        jets = data["Jet"]
+        elctron = data["Electron"]
+        electron_in15or16_hem = ( (elctron.pt > 20) & (elctron.eta > -3.0) & (elctron.eta < -1.3) & (elctron.phi > -1.57) & (elctron.phi < -0.87) )
+        jet_in15or16_hem = ( (jets.pt > 20) & (jets.eta > -3.2) & (jets.eta < -1.3) & (jets.phi > -1.77) & (jets.phi < -0.67) )
+        in_hem = (ak.any(electron_in15or16_hem, axis=-1) | ak.any(jet_in15or16_hem, axis=-1))
+        if is_mc:
+            weight[in_hem] = (1-0.66)
+        else:
+            weight[in_hem] = 0.0
+        return weight   
     
-    # @zero_handler
-    # def loose_electron_veto_cut(self, data):
-    #     return ak.num(data["electron_veto"])==0
+    @zero_handler
+    def muons_veto(self, data):
+        muons = data["Muon"]
+        is_good = (
+              (muons.pt > self.config["muon_veto_pt_min"])
+            & (muons.eta < self.config["muon_veto_eta_max"])
+            & (muons.eta > self.config["muon_veto_eta_min"])
+            & (muons[self.config["muon_veto_ID"]] == 1)
+            & (muons.pfIsoId >= self.config["muon_veto_pfIsoId"])
+            )
+        muons = muons[is_good]
+        # Remove trigger matched muons
+        tag_muons = self.select_muons(data)
+        matches_h, dRlist = muons.nearest(tag_muons, return_metric=True, threshold=0.4)
+        muons = muons[ak.is_none(matches_h, axis=-1)]
+        return muons
+        
+    @zero_handler
+    def electron_veto(self, data):
+        ele = data["Electron"]
+        is_good = (
+            (ele.pt > self.config["elec_veto_pt"])
+            & (ele.eta < self.config["elec_veto_eta_min"])
+            & (ele.eta > self.config["elec_veto_eta_max"])
+            & (ele[self.config["elec_veto"]] == 1)
+            & (ele[self.config["elec_ID"]] == 1)
+            )
+        return ele[is_good]
     
-    # @zero_handler
-    # def electron_veto(self, data):
-    #     ele = data["Electron"]
-    #     # ele_low_eta_iso =  ((np.abs(ele.eta) < 1.479) & (ele.pfRelIso03_all < (0.198+0.506/ele.pt)))
-    #     # ele_high_eta_iso = ((np.abs(ele.eta) > 1.479) & (np.abs(ele.eta) < 2.5) & (ele.pfRelIso03_all < (0.203+0.963/ele.pt)))
-    #     # isolation_cut = ( ele_low_eta_iso | ele_high_eta_iso )
-    #     is_good = (
-    #         # isolation_cut
-    #         & (ele.pt > self.config["elec_veto_pt"])
-    #         & (ele.eta < self.config["elec_veto_eta_min"])
-    #         & (ele.eta > self.config["elec_veto_eta_max"])
-    #         & (ele[self.config["elec_Veto"]] == 1)
-    #         )
-    #     return ele[is_good]
+    @zero_handler
+    def loose_muon_veto_cut(self, data):
+        return ak.num(data["muon_veto"])==0
+    
+    @zero_handler
+    def loose_electron_veto_cut(self, data):
+        return ak.num(data["electron_veto"])==0
+    
     
     @zero_handler
     def sum_jj(self, data):

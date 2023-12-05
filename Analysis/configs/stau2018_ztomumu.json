@@ -160,7 +160,7 @@
         ["jet_pt", "jet_dxy"]
     ],
 
-    "predict_yield" : false,
+    "predict_yield" : true,
     
     "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/",
 
@@ -173,18 +173,20 @@
     "muon_absdxy"   : 0.2,
     "muon_absdz"    : 0.5,
 
-    // // veto electron:
-    // "elec_veto_pt"        :  20,
-    // "elec_veto_eta_min"   : -2.4,
-    // "elec_veto_eta_max"   :  2.4,
-    // "elec_Veto"           : "convVeto",
-    // "elec_ID"             : "",
+    // veto electron:
+    "elec_veto_pt"        :  20,
+    "elec_veto_eta_min"   : -2.4,
+    "elec_veto_eta_max"   :  2.4,
+    "elec_veto"           : "convVeto",
+    "elec_ID"             : "mvaIso_WPL",
 
-    // // veto muon:
-    // "muon_veto_pt_min"   :  20,
-    // "muon_veto_eta_min"  : -2.4,
-    // "muon_veto_eta_max"  :  2.4,
-    // "muon_veto_ID"       :  "looseId",
+    // veto muon:
+    "muon_veto_pt_min"   :  20,
+    "muon_veto_eta_min"  : -2.4,
+    "muon_veto_eta_max"  :  2.4,
+    "muon_veto_ID"       :  "looseId",
+    // PFIso ID from miniAOD selector (1=PFIsoVeryLoose, 2=PFIsoLoose, 3=PFIsoMedium, 4=PFIsoTight, 5=PFIsoVeryTight, 6=PFIsoVeryVeryTight)
+    "muon_veto_pfIsoId"  : 2, // loose: >= 2
 
     // reco Jet:
     "jet_pt_min"   :  30,
@@ -201,7 +203,7 @@
     "track"             : "hasTrackDetails",
 
     // MET cut
-    "MET_cut_max"   : 500,
+    // "MET_cut_max"   : 500,
 
     // ZtoLL window
     "mass_ll_lower" : 70,
