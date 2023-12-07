@@ -22,7 +22,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "1-st\\ jet $p_{\\mathrm{T}}$",
+            "label": "1-st\\ jet p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -42,7 +42,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "2-nd\\ jet $p_{\\mathrm{T}}$",
+            "label": "2-nd\\ jet p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -80,7 +80,7 @@
     "bins": [
         {
             "name": "mjj",
-            "label": "$m_{\\mathrm{jj}}$",
+            "label": "m_{jj}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -99,7 +99,7 @@
     "bins": [
         {
             "name": "pt_jj",
-            "label": "$p_{\\mathrm{T}}(jj)$",
+            "label": "p_{T}(jj)",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 2000,
@@ -190,7 +190,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 600,
@@ -209,7 +209,7 @@
     "bins": [
         {
             "name": "phi",
-            "label": "MET $\\phi$",
+            "label": "MET \\phi",
             "n_or_arr": 100,
             "lo": -3.14,
             "hi": 3.14
@@ -318,7 +318,7 @@
     "bins": [
         {
             "name": "jet_pt",
-            "label": "Jet $p_{\\mathrm{T}}$",
+            "label": "Jet p_{T}",
             "n_or_arr": 200,
             "lo": 0,
             "hi": 1000,
@@ -357,9 +357,9 @@
         {
             "name": "jet_dxy",
             "label": "Jet dxy",
-            "n_or_arr": 100,
+            "n_or_arr": 200,
             "lo": 0.0,
-            "hi": 100,
+            "hi": 50,
             "unit": "cm"
         }
     ],
@@ -451,7 +451,7 @@
     "bins": [
         {
             "name": "jet_pt",
-            "label": "Jet $p_{\\mathrm{T}}$",
+            "label": "Jet p_{T}",
             "n_or_arr": 200,
             "lo": 0,
             "hi": 1000,
@@ -490,9 +490,9 @@
         {
             "name": "jet_dxy",
             "label": "Jet dxy",
-            "n_or_arr": 100,
+            "n_or_arr": 200,
             "lo": 0.0,
-            "hi": 100,
+            "hi": 50,
             "unit": "cm"
         }
     ],
@@ -589,7 +589,7 @@
         },
         {
             "name": "jet_pt",
-            "label": "Jet $p_{\\mathrm{T}}$",
+            "label": "Jet p_{T}",
             "n_or_arr": [20, 30, 40, 50, 70, 120, 1000],
             "unit": "GeV"
         },
@@ -1388,7 +1388,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -1423,7 +1423,7 @@
     "bins": [
         {
             "name": "mjj",
-            "label": "$m_{\\mathrm{jj}}$",
+            "label": "m_{jj}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -1458,7 +1458,7 @@
     "bins": [
         {
             "name": "pt_jj",
-            "label": "$p_{\\mathrm{T}}(jj)$",
+            "label": "p_{T}(jj)",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 2000,
@@ -1633,7 +1633,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -1652,7 +1652,7 @@
     "bins": [
         {
             "name": "mjj",
-            "label": "$m_{\\mathrm{jj}}$",
+            "label": "m_{jj}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -1671,7 +1671,7 @@
     "bins": [
         {
             "name": "pt_jj",
-            "label": "$p_{\\mathrm{T}}(jj)$",
+            "label": "p_{T}(jj)",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 2000,
@@ -1764,7 +1764,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -1783,7 +1783,7 @@
     "bins": [
         {
             "name": "mjj",
-            "label": "$m_{\\mathrm{jj}}$",
+            "label": "m_{jj}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -1802,7 +1802,7 @@
     "bins": [
         {
             "name": "pt_jj",
-            "label": "$p_{\\mathrm{T}}(jj)$",
+            "label": "p_{T}(jj)",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 2000,
@@ -1895,7 +1895,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -1914,7 +1914,7 @@
     "bins": [
         {
             "name": "mjj",
-            "label": "$m_{\\mathrm{jj}}$",
+            "label": "m_{jj}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -1933,7 +1933,7 @@
     "bins": [
         {
             "name": "pt_jj",
-            "label": "$p_{\\mathrm{T}}(jj)$",
+            "label": "p_{T}(jj)",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 2000,
@@ -2028,7 +2028,7 @@
     "bins": [
         {
             "name": "jet_pt",
-            "label": "Jet1 $p_{\\mathrm{T}}$",
+            "label": "Jet1 p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -2209,7 +2209,7 @@
     "bins": [
         {
             "name": "jet_pt",
-            "label": "Jet2 $p_{\\mathrm{T}}$",
+            "label": "Jet2 p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -2392,7 +2392,7 @@
     "bins": [
         {
             "name": "jet_pt",
-            "label": "Jet1 $p_{\\mathrm{T}}$",
+            "label": "Jet1 p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -2493,7 +2493,7 @@
     "bins": [
         {
             "name": "jet_pt",
-            "label": "Jet2 $p_{\\mathrm{T}}$",
+            "label": "Jet2 p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -2594,7 +2594,7 @@
     "bins": [
         {
             "name": "jet_pt",
-            "label": "Jet1 $p_{\\mathrm{T}}$",
+            "label": "Jet1 p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -2695,7 +2695,7 @@
     "bins": [
         {
             "name": "jet_pt",
-            "label": "Jet2 $p_{\\mathrm{T}}$",
+            "label": "Jet2 p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -2796,7 +2796,7 @@
     "bins": [
         {
             "name": "jet_pt",
-            "label": "Jet1 $p_{\\mathrm{T}}$",
+            "label": "Jet1 p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -2897,7 +2897,7 @@
     "bins": [
         {
             "name": "jet_pt",
-            "label": "Jet2 $p_{\\mathrm{T}}$",
+            "label": "Jet2 p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -3000,7 +3000,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -3047,7 +3047,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -3140,7 +3140,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -3171,7 +3171,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -3232,7 +3232,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -3263,7 +3263,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -3324,7 +3324,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
@@ -3355,7 +3355,7 @@
     "bins": [
         {
             "name": "pt",
-            "label": "MET $p_{\\mathrm{T}}$",
+            "label": "MET p_{T}",
             "n_or_arr": 100,
             "lo": 0,
             "hi": 1000,
