@@ -22,14 +22,16 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
             path_predict = dirname+"/"+cut+"_"+hist+"_yield_"+prediction_bin+".root"
             print(path_predict)
             file_predict = ROOT.TFile.Open(path_predict, 'read')
+            # print(file_predict.ls())
             hist_prediction = None
             for data_group in config["Data"].keys():
                 for data_name in config["Labels"][data_group]:
                     print("Extract prediction:", data_name)
+                    open_tag = data_name+"/hist"
                     if hist_prediction == None:
-                        hist_prediction = file_predict.Get(data_name)
+                        hist_prediction = file_predict.Get(open_tag)
                     else:
-                        hist_prediction.Add(file_predict.Get(data_name))
+                        hist_prediction.Add(file_predict.Get(open_tag))
                         
             if type(rebin_setup) == list:
                 hist_prediction = hist_prediction.Rebin(len(rebin_setup)-1, hist_prediction.GetName()+"_rebin", np.array(rebin_setup, dtype=np.double))
@@ -53,6 +55,8 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
             print(path_data)
             file_n_pass_sig = ROOT.TFile.Open(path_data, 'read')
             file_n_pass = ROOT.TFile.Open(path_data, 'read')
+            # print(file_n_pass_sig.ls())
+            # print(file_n_pass.ls())
             if config["prediction_hist"]["plot_unblind"]:
                 hist_data = None
                 for data_group in config["Data"].keys():
@@ -60,7 +64,8 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                         # print(file_n_pass.ls())
                         # print(data_name+"_"+data_bin)
                         if isinstance(data_bin, str):
-                            _hist_data = file_n_pass.Get(data_name+"_"+data_bin)
+                            open_tag = data_name+"/"+data_bin+"/hist"
+                            _hist_data = file_n_pass.Get(open_tag)
                         elif isinstance(data_bin, int):
                             _hist_data = file_n_pass.Get(data_name)
                             _hist_data = _hist_data.ProjectionX(data_name+"_proj", data_bin, data_bin)
@@ -90,7 +95,8 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                     for _dataset_idx, _histogram_data in enumerate(config["Labels"][_group_name]):
                         print("Adding signal dataset:", _histogram_data)
                         if isinstance(data_bin, str):
-                            _hist = file_n_pass_sig.Get(_histogram_data+"_"+data_bin)
+                            open_tag = _histogram_data+"/"+data_bin+"/hist"
+                            _hist = file_n_pass_sig.Get(open_tag)
                         elif isinstance(data_bin, int):
                             _hist = file_n_pass_sig.Get(_histogram_data)
                             _hist = _hist.ProjectionX(_histogram_data+"_proj", data_bin, data_bin)
@@ -122,6 +128,10 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
 
             # print(signal_hists)
 
+            # remove $ char from the title name
+            x_axis_title = hist_prediction.GetXaxis().GetTitle()
+            x_axis_title = x_axis_title.replace("$", "")
+
             root_plot1D(
                 l_hist = hists_main,
                 l_hist_overlay = signal_hists,
@@ -132,9 +142,9 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 logx = False, logy = True,
                 logx_ratio = False, logy_ratio = False,
                 include_overflow = overflow,
-                xtitle = signal_hists[-1].GetXaxis().GetTitle(),
+                xtitle = x_axis_title,
                 ytitle = "Events",
-                xtitle_ratio = signal_hists[-1].GetXaxis().GetTitle(),
+                xtitle_ratio = x_axis_title,
                 ytitle_ratio = "Data/Pred.",
                 centertitlex = True, centertitley = True,
                 centerlabelx = False, centerlabely = False,
