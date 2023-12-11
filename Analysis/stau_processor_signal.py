@@ -93,7 +93,7 @@ class Processor(pepper.ProcessorBasicPhysics):
                 self.do_pileup_reweighting, dsname))
         
         if is_mc:
-            selector.add_cut("Pileup reweighting", self.MET_trigger_sfs)
+            selector.add_cut("MET_trigger_sfs", self.MET_trigger_sfs)
         
         # HEM 15/16 failure (2018)
         # if self.config["year"] == "2018ul":
@@ -148,12 +148,13 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Selection of the jet is performed only for two leading jets:
         selector.add_cut("two_loose_jets_final", self.has_two_jets)
         
+        # Prediction should be done in following state <->
+        
         # Dummy basemark to have cut where regions were not categories yet
-        selector.add_cut("two_loose_jets_final2", self.has_two_jets)
-
-        selector.set_cat("control_region", {"RT0", "RT1", "RT2"})
-        selector.set_multiple_columns(partial(self.categories_bins))
-        selector.add_cut("two_loose_jets_final3", self.has_two_jets)
+        # selector.add_cut("two_loose_jets_final2", self.has_two_jets)
+        # selector.set_cat("control_region", {"RT0", "RT1", "RT2"})
+        # selector.set_multiple_columns(partial(self.categories_bins))
+        # selector.add_cut("two_loose_jets_final3", self.has_two_jets)
         
         # selector.set_column("Jet_select", self.gettight_jets)
         # selector.add_cut("two_tight_jets", self.has_two_jets)       
@@ -390,27 +391,23 @@ class Processor(pepper.ProcessorBasicPhysics):
     def select_muons(self, data):
         muons = data["Muon"]
         is_good = (
-              (muons.pt > self.config["muon_pt_min"])
-            & (muons.eta < self.config["muon_eta_max"])
-            & (muons.eta > self.config["muon_eta_min"])
-            & (muons[self.config["muon_ID"]] == 1)
-            # & (muons.pfIsoId >= self.config["muon_pfIsoId"])
+              (muons.pt > self.config["muon_veto_pt_min"])
+            & (muons.eta < self.config["muon_veto_eta_max"])
+            & (muons.eta > self.config["muon_veto_eta_min"])
+            & (muons[self.config["muon_veto_ID"]] == 1)
+            & (muons.pfIsoId >= self.config["muon_veto_pfIsoId"])
             )
         return muons[is_good]
     
     @zero_handler
     def select_electrons(self, data):
         ele = data["Electron"]
-        ele_low_eta_iso = eval(self.config["ele_low_eta_iso"])
-        ele_high_eta_iso = eval(self.config["ele_high_eta_iso"])
-        isolation_cut = ( ele_low_eta_iso | ele_high_eta_iso )
         is_good = (
-            isolation_cut
-            & (ele.pt > self.config["ele_pt_min"])
-            & (ele.eta < self.config["ele_eta_max"])
-            & (ele.eta > self.config["ele_eta_min"])
-            & (ele[self.config["eleVeto"]] == 1)
-            # & (ele[self.config["eleID"]] == 1)
+            (ele.pt > self.config["elec_veto_pt"])
+            & (ele.eta < self.config["elec_veto_eta_min"])
+            & (ele.eta > self.config["elec_veto_eta_max"])
+            & (ele[self.config["elec_veto"]] == 1)
+            & (ele[self.config["elec_ID"]] == 1)
             )
         return ele[is_good]
     

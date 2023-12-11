@@ -183,37 +183,35 @@
     //     ["jet_pt"]
     // ],
     "jet_fake_rate" : [
-        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v11/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
+        // "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v11/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
+        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_3/output_wjet/wjet_v13_mb/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
         "fake_rate_jet_dxy_pt",
         ["jet_pt", "jet_dxy"]
     ],
-    "predict_yield" : false,    
+    "predict_yield" : true,    
 
     "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/jets_skims",
 
-
     // muon veto
-    "muon_pt_min"               : 25,
-    "muon_eta_min"          :-2.4,
-    "muon_eta_max"          : 2.4,
-    "muon_ID"               : "tightId",
-    // "muon_pfIsoId"          : 4, // tight: >= 4
+    "muon_veto_pt_min"   :  20,
+    "muon_veto_eta_min"  : -2.4,
+    "muon_veto_eta_max"  :  2.4,
+    "muon_veto_ID"       :  "looseId",
+    "muon_veto_pfIsoId"  :  2, // loose: >= 2
 
     // ele veto
-    "ele_pt_min"     : 25,
-    "ele_eta_min"    :-2.4,
-    "ele_eta_max"    : 2.4,
-    "eleID"          : "mvaIso_WP80",
-    "eleVeto"        : "convVeto",
-    "ele_low_eta_iso"  : "((np.abs(ele.eta) < 1.479) & (ele.pfRelIso03_all < (0.198+0.506/ele.pt)))",
-    "ele_high_eta_iso" : "((np.abs(ele.eta) > 1.479) & (np.abs(ele.eta) < 2.5) & (ele.pfRelIso03_all < (0.203+0.963/ele.pt)))",
-
+    "elec_veto_pt"        :  20,
+    "elec_veto_eta_min"   : -2.4,
+    "elec_veto_eta_max"   :  2.4,
+    "elec_veto"           : "convVeto",
+    "elec_ID"             : "mvaIso_WPL",
+    
     // reco Tau Jet:
     "jet_pt_min"   :  30,
     "jet_eta_min"  : -2.1,
     "jet_eta_max"  :  2.1,
     "jet_jetId"    :  6, // tight lepton veto
-    "jet_dxy_min"  : 0.5, // cm
+    "jet_dxy_min"  :  0.5, // cm
     
     // pfCand selection:
     "pfcand_pt"         : 1.0,
@@ -235,11 +233,11 @@
     "tight_thr" : 0.9900,
 
     "hists": "$CONFDIR/stau2018_signal_hist.json",
+    
+    // There are many histograms in output data, for prediction we need only one 
+    // the load on histograms transfer one of the biggest bottleneck in the code
     "cuts_to_histogram" : [
-            "two_loose_jets",
-            "dy_gen_sfs",
-            "dphi_min_cut",
             "two_loose_jets_final",
-            "two_loose_jets_final2"
+            "two_loose_jets_final3"
         ]
 }

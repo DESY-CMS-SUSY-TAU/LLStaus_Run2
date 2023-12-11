@@ -160,9 +160,9 @@
     //     ["jet_pt"]
     // ],
     "jet_fake_rate" : [
-        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v11/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
-        "fake_rate_jet_dxy_pt",
-        ["jet_pt", "jet_dxy"]
+        "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_3/output_zmumu/zmumu_v5/fake_rate_nonunif_final/fake_rate_jet_pt.root",
+        "fake_rate_jet_pt",
+        ["jet_pt"]
     ],
     "predict_yield" : true,
     "flavour_fake_rate_study" : false, // all other analysis tools will be disabled
@@ -219,5 +219,5 @@
 
     "hists": "$CONFDIR/stau2018_wjets_hist.json",
 
-    // "cuts_to_histogram" : ["two_loose_jets_final"],
+    "cuts_to_histogram" : ["mt_muon2", "two_loose_jets", "two_loose_jets_final"]
 }
