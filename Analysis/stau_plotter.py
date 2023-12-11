@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 import re
 
 from pepper import Config
-from utils.plotter import plot1D, plot2D, plot_predict
+from utils.plotter import plot1D, plot2D, plot_predict, plot_predict2D
 
 
 parser = ArgumentParser(
@@ -100,3 +100,9 @@ if "prediction" in args.mode:
         raise ValueError('Json should be provided')
     dirname = os.path.dirname(args.histfile[0])
     plot_predict(dirname, config, crosssections, cutflow, args.outdir)
+
+if "prediction2D" in args.mode:
+    if not args.histfile[0].endswith(".json"):
+        raise ValueError('Json should be provided')
+    dirname = os.path.dirname(args.histfile[0])
+    plot_predict2D(dirname, config, crosssections, cutflow, args.outdir)

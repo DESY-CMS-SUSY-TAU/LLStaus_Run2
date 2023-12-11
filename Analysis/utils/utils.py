@@ -30,7 +30,7 @@ def get_canvas(ratio = False) :
     ROOT.gROOT.SetStyle("tdrStyle")
     ROOT.gROOT.ForceStyle(True)
     
-    canvas = ROOT.TCanvas("canvas", "canvas", 1000, 800)
+    canvas = ROOT.TCanvas("canvas", "canvas", 1000, 1000)
     canvas.UseCurrentStyle()
     
     #canvas.SetLeftMargin(0.16)
@@ -116,7 +116,7 @@ def root_plot1D(
     
     # canvas = get_canvas(ratio = len(ratio_num_den_pairs))
     canvas = get_canvas(ratio = signal_to_background_ratio)
-    
+    canvas.SaveAs("empty_canvas.pdf")
     canvas.cd(1)
     
     
@@ -299,16 +299,17 @@ def root_plot1D(
                     h1_ratioErr.SetBinError(bin_i, 0.0)
                     if den_bkgr > 0:
                         relErr = den_bkgr_err / den_bkgr
-                        h1_ratioErr.SetBinError(bin_i, numpy.sqrt(relErr))
+                        h1_ratioErr.SetBinError(bin_i, relErr)
                     if num_data > 0 and den_bkgr > 0:
                         ratio = num_data / den_bkgr
                         ratio_err = num_data_err / den_bkgr
                         h1_ratio.SetBinContent(bin_i, ratio)
                         h1_ratio.SetBinError(bin_i, ratio_err)
-                h1_ratioErr.SetFillStyle(3002)
-                h1_ratioErr.SetFillColor(435)
+                h1_ratioErr.SetFillStyle(3004)
+                h1_ratioErr.SetFillColor(1)
                 h1_ratioErr.SetMarkerStyle(21)
                 h1_ratioErr.SetMarkerSize(0)
+                h1_ratioErr.SetLineWidth(2)
                 stack_ratio.Add(h1_ratioErr, "E2")
                 stack_ratio.Add(h1_ratio, "E1same")
                 
@@ -365,6 +366,74 @@ def root_plot1D(
     
     return 0
 
+
+def root_plots2D_simple(
+    hist,
+    xrange,
+    yrange,
+    outfile = "TH2_plots.pdf",
+    l_hist_overlay = [],
+    logx = False, logy = False, logz = False,
+    title = "",
+    xtitle = "", ytitle = "",
+    centertitlex = True, centertitley = True,
+    centerlabelx = False, centerlabely = False,
+    gridx = False, gridy = False,
+    CMSextraText = "Private work (CMS simulation)",
+    lumiText = "(13 TeV)",
+    mode = "colz text89"
+):
+    ROOT.gROOT.LoadMacro(os.path.split(os.path.realpath(__file__))[0]+"/tdrstyle.C")
+    ROOT.gROOT.ProcessLine("setTDRStyle()")
+    
+    ROOT.gROOT.SetStyle("tdrStyle")
+    ROOT.gROOT.ForceStyle(True)
+    
+    canvas = ROOT.TCanvas("canvas", "canvas", 800, 800)
+    canvas.UseCurrentStyle()
+    
+    ROOT.gStyle.SetPaintTextFormat("1.3f")
+     
+    
+    canvas.SetLeftMargin(0.10)
+    canvas.SetRightMargin(0.1)
+    # canvas.SetTopMargin(0.1)
+    canvas.SetBottomMargin(0.1)
+    canvas.cd(1)
+       
+    hist.Draw(mode)
+
+    # hist.GetXaxis().SetRangeUser(xrange[0], xrange[1])
+    # hist.GetYaxis().SetRangeUser(yrange[0], yrange[1])
+    
+    hist.GetXaxis().SetTitle(xtitle)
+    hist.GetYaxis().SetTitle(ytitle)
+    hist.GetYaxis().SetTitleOffset(1)
+    hist.GetXaxis().CenterTitle(centertitlex)
+    hist.GetYaxis().CenterTitle(centertitley)
+    hist.GetXaxis().CenterLabels(centerlabelx)
+    hist.GetYaxis().CenterLabels(centerlabely)
+    
+    canvas.cd(1).SetLogx(logx)
+    canvas.cd(1).SetLogy(logy)
+    canvas.cd(1).SetLogz(logz)
+    
+    canvas.cd(1).SetGridx(gridx)
+    canvas.cd(1).SetGridy(gridy)
+    
+    CMS_lumi.lumiTextSize = 0.9
+    CMS_lumi.cmsTextSize = 0.9
+    CMS_lumi.relPosX = 0.045
+    CMS_lumi.CMS_lumi(pad = canvas.cd(1), iPeriod = 0, iPosX = 0, CMSextraText = CMSextraText, lumiText = "   "+lumiText)
+    
+    if ("/" in outfile) :
+        outdir = outfile
+        outdir = outdir[0: outdir.rfind("/")]
+        os.system("mkdir -p %s" %(outdir))
+    
+    canvas.SaveAs(outfile)
+    
+    return 0
 
 def root_plot2D(
     l_hist,

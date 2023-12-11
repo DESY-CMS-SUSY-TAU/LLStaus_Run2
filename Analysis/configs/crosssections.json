@@ -77,12 +77,12 @@
     "QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8": 87.34,
     "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8": 5.237,
     "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8": 0.1352,
-    
-    "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6": 365.7,
-    "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6": 12.92,
-    "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6": 12.92,
-    "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6": 1.86,
-    "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4": 365.7,
-    "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4": 12.92,
-    "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4": 1.86
+
+    "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6": 102.77,
+    "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6": 3.85,
+    "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6": 3.85,
+    "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6": 0.56,
+    "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4": 102.77,
+    "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4": 3.85,
+    "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4": 0.56
 }

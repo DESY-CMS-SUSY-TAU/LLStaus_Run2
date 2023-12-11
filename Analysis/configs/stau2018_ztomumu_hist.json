@@ -21,7 +21,7 @@
         "bins": [
             {
                 "name": "pt",
-                "label": "1-st\\ muon $p_{\\mathrm{T}}$",
+                "label": "1-st\\ muon p_{T}",
                 "n_or_arr": 100,
                 "lo": 0,
                 "hi": 400,
@@ -40,7 +40,7 @@
         "bins": [
             {
                 "name": "pt",
-                "label": "2-nd\\ muon $p_{\\mathrm{T}}$",
+                "label": "2-nd\\ muon p_{T}",
                 "n_or_arr": 100,
                 "lo": 0,
                 "hi": 400,
@@ -112,7 +112,7 @@
         "bins": [
             {
                 "name": "pt",
-                "label": "MET $p_{\\mathrm{T}}$",
+                "label": "MET p_{T}",
                 "n_or_arr": 100,
                 "lo": 0,
                 "hi": 1000,
@@ -166,7 +166,7 @@
         "bins": [
             {
                 "name": "mjj",
-                "label": "$m_{\\mathrm{jj}}$",
+                "label": "m_{jj}",
                 "n_or_arr": 100,
                 "lo": 0,
                 "hi": 1000,
@@ -184,7 +184,7 @@
         "bins": [
             {
                 "name": "pt_jj",
-                "label": "$p_{\\mathrm{T}}(jj)$",
+                "label": "p_{T}(jj)",
                 "n_or_arr": 100,
                 "lo": 0,
                 "hi": 2000,
@@ -287,7 +287,7 @@
         "bins": [
             {
                 "name": "jet_pt",
-                "label": "Jet $p_{\\mathrm{T}}$",
+                "label": "Jet p_{T}",
                 "n_or_arr": 200,
                 "lo": 0,
                 "hi": 1000,
@@ -409,11 +409,11 @@
             ]
         }
     },
-    "jet_pt" : {
+    "jet_lead_pt" : {
         "bins": [
             {
                 "name": "jet_pt",
-                "label": "Jet $p_{\\mathrm{T}}$",
+                "label": "Jet p_{T}",
                 "n_or_arr": 200,
                 "lo": 0,
                 "hi": 1000,
@@ -422,12 +422,12 @@
         ],
         "fill": {
             "jet_pt": [
-                "Jet_obj",
+                "Jet_obj1",
                 "pt"
             ]
         }
     },
-    "jet_eta" : {
+    "jet_lead_eta" : {
         "bins": [
             {
                 "name": "jet_eta",
@@ -440,12 +440,12 @@
         ],
         "fill": {
             "jet_eta": [
-                "Jet_obj",
+                "Jet_obj1",
                 "eta"
             ]
         }
     },
-    "jet_dxy" : {
+    "jet_lead_dxy" : {
         "bins": [
             {
                 "name": "jet_dxy",
@@ -458,12 +458,12 @@
         ],
         "fill": {
             "jet_dxy": [
-                "Jet_obj",
+                "Jet_obj1",
                 "dxy"
             ]
         }
     },
-    "jet_dxysig" : {
+    "jet_lead_dxysig" : {
         "bins": [
             {
                 "name": "jet_dxy",
@@ -476,12 +476,12 @@
         ],
         "fill": {
             "jet_dxy": [
-                "Jet_obj",
+                "Jet_obj1",
                 "dxysig"
             ]
         }
     },
-    "jet_dxy_weight" : {
+    "jet_lead_dxy_weight" : {
         "bins": [
             {
                 "name": "jet_dxy",
@@ -494,12 +494,12 @@
         ],
         "fill": {
             "jet_dxy": [
-                "Jet_obj",
+                "Jet_obj1",
                 "dxy_weight"
             ]
         }
     },
-    "jet_dxysig_weight" : {
+    "jet_lead_dxysig_weight" : {
         "bins": [
             {
                 "name": "jet_dxy",
@@ -512,12 +512,12 @@
         ],
         "fill": {
             "jet_dxy": [
-                "Jet_obj",
+                "Jet_obj1",
                 "dxysig_weight"
             ]
         }
     },
-    "jet_score" : {
+    "jet_lead_score" : {
         "bins": [
             {
                 "name": "jet_score",
@@ -530,28 +530,210 @@
         ],
         "fill": {
             "jet_score": [
-                "Jet_obj",
+                "Jet_obj1",
                 "disTauTag_score1"
             ]
         }
     },
-    "fake_rate_hist" : {
+    "jet_sublead_pt" : {
+        "bins": [
+            {
+                "name": "jet_pt",
+                "label": "Jet p_{T}",
+                "n_or_arr": 200,
+                "lo": 0,
+                "hi": 1000,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "jet_pt": [
+                "Jet_obj2",
+                "pt"
+            ]
+        }
+    },
+    "jet_sublead_eta" : {
+        "bins": [
+            {
+                "name": "jet_eta",
+                "label": "Jet eta",
+                "n_or_arr": 100,
+                "lo": -2.5,
+                "hi": 2.5,
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "jet_eta": [
+                "Jet_obj2",
+                "eta"
+            ]
+        }
+    },
+    "jet_sublead_dxy" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxy",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 20,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_obj2",
+                "dxy"
+            ]
+        }
+    },
+    "jet_sublead_dxysig" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxySig",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 500,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_obj2",
+                "dxysig"
+            ]
+        }
+    },
+    "jet_sublead_dxy_weight" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxy weighted",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 20,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_obj2",
+                "dxy_weight"
+            ]
+        }
+    },
+    "jet_sublead_dxysig_weight" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxySig weighted",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 500,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_obj2",
+                "dxysig_weight"
+            ]
+        }
+    },
+    "jet_sublead_score" : {
         "bins": [
             {
                 "name": "jet_score",
                 "label": "Jet score",
-                "n_or_arr": [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
+                "n_or_arr": 140,
+                "lo": -0.2,
+                "hi": 1.2,
                 "unit": "-"
+            }
+        ],
+        "fill": {
+            "jet_score": [
+                "Jet_obj2",
+                "disTauTag_score1"
+            ]
+        }
+    },
+    // "fake_rate_hist" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
+    //             "unit": "-"
+    //         },
+    //         // {
+    //         //     "name": "jet_eta",
+    //         //     "label": "Jet eta",
+    //         //     "n_or_arr": [-2.5, -2.0, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.5],
+    //         //     "unit": "-"
+    //         // },
+    //         {
+    //             "name": "jet_pt",
+    //             "label": "Jet p_{T}",
+    //             "n_or_arr": [20, 30, 40, 50, 70, 120, 1000],
+    //             "unit": "GeV"
+    //         },
+    //         {
+    //             "name": "jet_dxy",
+    //             "label": "Jet dxy",
+    //             "n_or_arr": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
+    //             "unit": "cm"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_select",
+    //             "disTauTag_score1"
+    //         ],
+    //         // "jet_eta": [
+    //         //     "Jet_select",
+    //         //     "eta"
+    //         // ],
+    //         "jet_pt": [
+    //             "Jet_select",
+    //             "pt"
+    //         ],
+    //         "jet_dxy": [
+    //             "Jet_select",
+    //             "dxy"
+    //         ]
+    //     }
+    // },
+    // "fake_rate_hist_probonly" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
+    //             "unit": "-"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_select",
+    //             "disTauTag_score1"
+    //         ]
+    //     }
+    // },
+
+    "fake_rate_hist" : {
+        "bins": [
+            {
+                "name": "jet_eta",
+                "label": "Jet eta",
+                "n_or_arr": [-2.3, -1.5, -0.5, 0.5, 1.5, 2.3]
             },
-            // {
-            //     "name": "jet_eta",
-            //     "label": "Jet eta",
-            //     "n_or_arr": [-2.5, -2.0, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.5],
-            //     "unit": "-"
-            // },
             {
                 "name": "jet_pt",
-                "label": "Jet $p_{\\mathrm{T}}$",
+                "label": "Jet p_{T}",
                 "n_or_arr": [20, 30, 40, 50, 70, 120, 1000],
                 "unit": "GeV"
             },
@@ -560,17 +742,19 @@
                 "label": "Jet dxy",
                 "n_or_arr": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
                 "unit": "cm"
+            },
+        ],
+        "cats" : [
+            {
+                "name": "score_wp",
+                "label": "score_wp"
             }
         ],
         "fill": {
-            "jet_score": [
+            "jet_eta": [
                 "Jet_select",
-                "disTauTag_score1"
+                "eta"
             ],
-            // "jet_eta": [
-            //     "Jet_select",
-            //     "eta"
-            // ],
             "jet_pt": [
                 "Jet_select",
                 "pt"
@@ -578,25 +762,40 @@
             "jet_dxy": [
                 "Jet_select",
                 "dxy"
-            ]
-        }
-    },
-    "fake_rate_hist_probonly" : {
-        "bins": [
-            {
-                "name": "jet_score",
-                "label": "Jet score",
-                "n_or_arr": [0.1716, 0.4612, 0.786, 0.846, 0.9872, 0.9900, 0.9972, 0.9996],
-                "unit": "-"
+            ],
+            "score_wp": {
+                "p05": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.05}}
+                ],
+                "p1": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.10}}
+                ],
+                "p15": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.15}}
+                ],
+                "p2": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.20}}
+                ],
+                "p9900": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.99}}
+                ],
+                "p9972": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.9972}}
+                ],
+                "p9996": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.9996}}
+                ]
             }
-        ],
-        "fill": {
-            "jet_score": [
-                "Jet_select",
-                "disTauTag_score1"
-            ]
         }
     },
+
     "n_jet_pass" : {
         "bins": [
             {
@@ -625,59 +824,2126 @@
             ]
         }
     },
-    "yield_bin0to1" : {
-        "bins": [
-            {
-                "name": "jet_score_bin",
-                "label": "Jet score bin",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            },
-        ],
-        "fill": {
-            "jet_score_bin": [
-                "score_bin"
-            ]
-        },
-        "weight" : ["yield_bin0to1"]
-    },
-    "yield_bin1to2" : {
-        "bins": [
-            {
-                "name": "jet_score_bin",
-                "label": "Jet score bin",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            },
-        ],
-        "fill": {
-            "jet_score_bin": [
-                "score_bin"
-            ]
-        },
-        "weight" : ["yield_bin1to2"]
-    },
-    "yield_bin0to2" : {
-        "bins": [
-            {
-                "name": "jet_score_bin",
-                "label": "Jet score bin",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            },
-        ],
-        "fill": {
-            "jet_score_bin": [
-                "score_bin"
-            ]
-        },
-        "weight" : ["yield_bin0to2"]
-    },
+    
+    // prediction histograms:
+
+// Real number of cuts per each mt2 bin
+
+// "mt2_j1_j2_MET_pass": {
+//     "bins": [
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "mt2_j1_j2_MET",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "mt2_j1_j2_MET_yield_bin0to2" : {
+//     "bins": [
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "MT2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         },
+//     ],
+//     "fill": {
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "mt2_j1_j2_MET_yield_bin0to1" : {
+//     "bins": [
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "MT2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         },
+//     ],
+//     "fill": {
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "mt2_j1_j2_MET_yield_bin1to2" : {
+//     "bins": [
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "MT2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         },
+//     ],
+//     "fill": {
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+
+// // jj pass hists
+
+// "METpt_pass": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "jj_mass_pass": {
+//     "bins": [
+//         {
+//             "name": "mjj",
+//             "label": "m_{jj}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "mjj": [
+//             "sum_jj",
+//             "mass"
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "jj_pt_pass": {
+//     "bins": [
+//         {
+//             "name": "pt_jj",
+//             "label": "p_{T}(jj)",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "pt_jj": [
+//             "sum_jj",
+//             "pt"
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "mt_jet1_pass": {
+//     "bins": [
+//         {
+//             "name": "mt_jet1",
+//             "label": "mt of the jet1",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1500,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "mt_jet1": [
+//             "mt_jet1"
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "mt_jet2_pass": {
+//     "bins": [
+//         {
+//             "name": "mt_jet2",
+//             "label": "mt of the jet1",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1500,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "mt_jet2": [
+//             "mt_jet2"
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "mt_sum_pass": {
+//     "bins": [
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "mt_sum": [
+//             "mt_sum"
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "dphi_jet1_jet2_pass": {
+//     "bins": [
+//         {
+//             "name": "dphi_jet1_jet2",
+//             "label": "dphi_jet1_jet2",
+//             "n_or_arr": 100,
+//             "lo": -3.14,
+//             "hi": 3.14,
+//             "unit": "-"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "dphi_jet1_jet2": [
+//             "dphi_jet1_jet2"
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+
+// 2D histograms for signal region binning
+
+// "2D_MET_MT2_pass": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "MT2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ],
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+
+// "2D_MET_MTSUM_pass": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ],
+//         "mt_sum": [
+//             "mt_sum"
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+
+// "2D_MT2_MTSUM_pass": {
+//     "bins": [
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "MT2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ],
+//         "mt_sum": [
+//             "mt_sum"
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+
+// "2D_MET_MT2_bin0to2": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "MT2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ],
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ],
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+
+// "2D_MET_MTSUM_bin0to2": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ],
+//         "mt_sum": [
+//             "mt_sum"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+
+// "2D_MT2_MTSUM_bin0to2": {
+//     "bins": [
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "MT2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ],
+//         "mt_sum": [
+//             "mt_sum"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+
+// "2D_MET_MT2_bin0to1": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "MT2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ],
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ],
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+
+// "2D_MET_MTSUM_bin0to1": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ],
+//         "mt_sum": [
+//             "mt_sum"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+
+// "2D_MT2_MTSUM_bin0to1": {
+//     "bins": [
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "MT2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ],
+//         "mt_sum": [
+//             "mt_sum"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+
+// "2D_MET_MT2_bin1to2": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "MT2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ],
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ],
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+
+// "2D_MET_MTSUM_bin1to2": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ],
+//         "mt_sum": [
+//             "mt_sum"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+
+// "2D_MT2_MTSUM_bin1to2": {
+//     "bins": [
+//         {
+//             "name": "mt2_j1_j2_MET",
+//             "label": "MT2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 600,
+//             "unit": "GeV"
+//         },
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt2_j1_j2_MET": [
+//             "mt2_j1_j2_MET"
+//         ],
+//         "mt_sum": [
+//             "mt_sum"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+
+// // jj yield hists
+
+// "METpt_yield_bin0to2": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "jj_mass_yield_bin0to2": {
+//     "bins": [
+//         {
+//             "name": "mjj",
+//             "label": "m_{jj}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mjj": [
+//             "sum_jj",
+//             "mass"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "jj_pt_yield_bin0to2": {
+//     "bins": [
+//         {
+//             "name": "pt_jj",
+//             "label": "p_{T}(jj)",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt_jj": [
+//             "sum_jj",
+//             "pt"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "mt_jet1_yield_bin0to2": {
+//     "bins": [
+//         {
+//             "name": "mt_jet1",
+//             "label": "mt of the jet1",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1500,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt_jet1": [
+//             "mt_jet1"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "mt_jet2_yield_bin0to2": {
+//     "bins": [
+//         {
+//             "name": "mt_jet2",
+//             "label": "mt of the jet1",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1500,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt_jet2": [
+//             "mt_jet2"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "mt_sum_yield_bin0to2": {
+//     "bins": [
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt_sum": [
+//             "mt_sum"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "dphi_jet1_jet2_yield_bin0to2": {
+//     "bins": [
+//         {
+//             "name": "dphi_jet1_jet2",
+//             "label": "dphi_jet1_jet2",
+//             "n_or_arr": 100,
+//             "lo": -3.14,
+//             "hi": 3.14,
+//             "unit": "-"
+//         }
+//     ],
+//     "fill": {
+//         "dphi_jet1_jet2": [
+//             "dphi_jet1_jet2"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+
+// "METpt_yield_bin1to2": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "jj_mass_yield_bin1to2": {
+//     "bins": [
+//         {
+//             "name": "mjj",
+//             "label": "m_{jj}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mjj": [
+//             "sum_jj",
+//             "mass"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "jj_pt_yield_bin1to2": {
+//     "bins": [
+//         {
+//             "name": "pt_jj",
+//             "label": "p_{T}(jj)",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt_jj": [
+//             "sum_jj",
+//             "pt"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "mt_jet1_yield_bin1to2": {
+//     "bins": [
+//         {
+//             "name": "mt_jet1",
+//             "label": "mt of the jet1",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1500,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt_jet1": [
+//             "mt_jet1"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "mt_jet2_yield_bin1to2": {
+//     "bins": [
+//         {
+//             "name": "mt_jet2",
+//             "label": "mt of the jet1",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1500,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt_jet2": [
+//             "mt_jet2"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "mt_sum_yield_bin1to2": {
+//     "bins": [
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt_sum": [
+//             "mt_sum"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "dphi_jet1_jet2_yield_bin1to2": {
+//     "bins": [
+//         {
+//             "name": "dphi_jet1_jet2",
+//             "label": "dphi_jet1_jet2",
+//             "n_or_arr": 100,
+//             "lo": -3.14,
+//             "hi": 3.14,
+//             "unit": "-"
+//         }
+//     ],
+//     "fill": {
+//         "dphi_jet1_jet2": [
+//             "dphi_jet1_jet2"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+
+// "METpt_yield_bin0to1": {
+//     "bins": [
+//         {
+//             "name": "pt",
+//             "label": "MET p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt": [
+//             "MET",
+//             "pt"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "jj_mass_yield_bin0to1": {
+//     "bins": [
+//         {
+//             "name": "mjj",
+//             "label": "m_{jj}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mjj": [
+//             "sum_jj",
+//             "mass"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "jj_pt_yield_bin0to1": {
+//     "bins": [
+//         {
+//             "name": "pt_jj",
+//             "label": "p_{T}(jj)",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "pt_jj": [
+//             "sum_jj",
+//             "pt"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "mt_jet1_yield_bin0to1": {
+//     "bins": [
+//         {
+//             "name": "mt_jet1",
+//             "label": "mt of the jet1",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1500,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt_jet1": [
+//             "mt_jet1"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "mt_jet2_yield_bin0to1": {
+//     "bins": [
+//         {
+//             "name": "mt_jet2",
+//             "label": "mt of the jet1",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1500,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt_jet2": [
+//             "mt_jet2"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "mt_sum_yield_bin0to1": {
+//     "bins": [
+//         {
+//             "name": "mt_sum",
+//             "label": "mt_jet1 + mt_jet2",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 2000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "mt_sum": [
+//             "mt_sum"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "dphi_jet1_jet2_yield_bin0to1": {
+//     "bins": [
+//         {
+//             "name": "dphi_jet1_jet2",
+//             "label": "dphi_jet1_jet2",
+//             "n_or_arr": 100,
+//             "lo": -3.14,
+//             "hi": 3.14,
+//             "unit": "-"
+//         }
+//     ],
+//     "fill": {
+//         "dphi_jet1_jet2": [
+//             "dphi_jet1_jet2"
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+
+
+
+// // jet pass hists
+
+// "jet1_pt_pass" : {
+//     "bins": [
+//         {
+//             "name": "jet_pt",
+//             "label": "Jet1 p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "jet_pt": [
+//             "Jet_select",
+//             "pt",
+//             {"leading": 1}
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "jet1_eta_pass" : {
+//     "bins": [
+//         {
+//             "name": "jet_eta",
+//             "label": "Jet1 eta",
+//             "n_or_arr": 100,
+//             "lo": -2.5,
+//             "hi": 2.5,
+//             "unit": "-"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "jet_eta": [
+//             "Jet_select",
+//             "eta",
+//             {"leading": 1}
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "jet1_dxy_pass" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet1 dxy",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxy",
+//             {"leading": 1}
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "jet1_dxysig_pass" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet1 dxySig",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 500,
+//             "unit": "cm"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxysig",
+//             {"leading": 1}
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "jet1_IP3D_pass" : {
+//     "bins": [
+//         {
+//             "name": "jet_Lrel",
+//             "label": "Jet1 ip3d",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "jet_Lrel": [
+//             "Jet_select",
+//             "ip3d",
+//             {"leading": 1}
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+
+// "jet2_pt_pass" : {
+//     "bins": [
+//         {
+//             "name": "jet_pt",
+//             "label": "Jet2 p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "jet_pt": [
+//             "Jet_select",
+//             "pt",
+//             {"leading": 2}
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "jet2_eta_pass" : {
+//     "bins": [
+//         {
+//             "name": "jet_eta",
+//             "label": "Jet2 eta",
+//             "n_or_arr": 100,
+//             "lo": -2.5,
+//             "hi": 2.5,
+//             "unit": "-"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "jet_eta": [
+//             "Jet_select",
+//             "eta",
+//             {"leading": 2}
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "jet2_dxy_pass" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet2 dxy",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxy",
+//             {"leading": 2}
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "jet2_dxysig_pass" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet2 dxySig",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 500,
+//             "unit": "cm"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxysig",
+//             {"leading": 2}
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+// "jet2_IP3D_pass" : {
+//     "bins": [
+//         {
+//             "name": "jet_Lrel",
+//             "label": "Jet2 ip3d",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "tagged_jets",
+//             "label": "tagged_jets"
+//         }
+//     ],
+//     "fill": {
+//         "jet_Lrel": [
+//             "Jet_select",
+//             "ip3d",
+//             {"leading": 2}
+//         ],
+//         "tagged_jets": {
+//             "bin0": [
+//                 "tight_bin0"
+//             ],
+//             "bin1": [
+//                 "tight_bin1"
+//             ],
+//             "bin2": [
+//                 "tight_bin2"
+//             ]
+//         }
+//     }
+// },
+
+// // jet yield hists
+
+// "jet1_pt_yield_bin0to1" : {
+//     "bins": [
+//         {
+//             "name": "jet_pt",
+//             "label": "Jet1 p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "jet_pt": [
+//             "Jet_select",
+//             "pt",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "jet1_eta_yield_bin0to1" : {
+//     "bins": [
+//         {
+//             "name": "jet_eta",
+//             "label": "Jet1 eta",
+//             "n_or_arr": 100,
+//             "lo": -2.5,
+//             "hi": 2.5,
+//             "unit": "-"
+//         }
+//     ],
+//     "fill": {
+//         "jet_eta": [
+//             "Jet_select",
+//             "eta",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "jet1_dxy_yield_bin0to1" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet1 dxy",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxy",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "jet1_dxysig_yield_bin0to1" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet1 dxySig",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 500,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxysig",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "jet1_IP3D_yield_bin0to1" : {
+//     "bins": [
+//         {
+//             "name": "jet_Lrel",
+//             "label": "Jet1 ip3d",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_Lrel": [
+//             "Jet_select",
+//             "ip3d",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+
+// "jet2_pt_yield_bin0to1" : {
+//     "bins": [
+//         {
+//             "name": "jet_pt",
+//             "label": "Jet2 p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "jet_pt": [
+//             "Jet_select",
+//             "pt",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "jet2_eta_yield_bin0to1" : {
+//     "bins": [
+//         {
+//             "name": "jet_eta",
+//             "label": "Jet2 eta",
+//             "n_or_arr": 100,
+//             "lo": -2.5,
+//             "hi": 2.5,
+//             "unit": "-"
+//         }
+//     ],
+//     "fill": {
+//         "jet_eta": [
+//             "Jet_select",
+//             "eta",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "jet2_dxy_yield_bin0to1" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet2 dxy",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxy",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "jet2_dxysig_yield_bin0to1" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet2 dxySig",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 500,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxysig",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+// "jet2_IP3D_yield_bin0to1" : {
+//     "bins": [
+//         {
+//             "name": "jet_Lrel",
+//             "label": "Jet2 ip3d",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_Lrel": [
+//             "Jet_select",
+//             "ip3d",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to1"]
+// },
+
+// "jet1_pt_yield_bin0to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_pt",
+//             "label": "Jet1 p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "jet_pt": [
+//             "Jet_select",
+//             "pt",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "jet1_eta_yield_bin0to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_eta",
+//             "label": "Jet1 eta",
+//             "n_or_arr": 100,
+//             "lo": -2.5,
+//             "hi": 2.5,
+//             "unit": "-"
+//         }
+//     ],
+//     "fill": {
+//         "jet_eta": [
+//             "Jet_select",
+//             "eta",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "jet1_dxy_yield_bin0to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet1 dxy",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxy",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "jet1_dxysig_yield_bin0to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet1 dxySig",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 500,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxysig",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "jet1_IP3D_yield_bin0to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_Lrel",
+//             "label": "Jet1 ip3d",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_Lrel": [
+//             "Jet_select",
+//             "ip3d",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+
+// "jet2_pt_yield_bin0to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_pt",
+//             "label": "Jet2 p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "jet_pt": [
+//             "Jet_select",
+//             "pt",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "jet2_eta_yield_bin0to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_eta",
+//             "label": "Jet2 eta",
+//             "n_or_arr": 100,
+//             "lo": -2.5,
+//             "hi": 2.5,
+//             "unit": "-"
+//         }
+//     ],
+//     "fill": {
+//         "jet_eta": [
+//             "Jet_select",
+//             "eta",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "jet2_dxy_yield_bin0to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet2 dxy",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxy",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "jet2_dxysig_yield_bin0to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet2 dxySig",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 500,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxysig",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+// "jet2_IP3D_yield_bin0to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_Lrel",
+//             "label": "Jet2 ip3d",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_Lrel": [
+//             "Jet_select",
+//             "ip3d",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin0to2"]
+// },
+
+// "jet1_pt_yield_bin1to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_pt",
+//             "label": "Jet1 p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "jet_pt": [
+//             "Jet_select",
+//             "pt",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "jet1_eta_yield_bin1to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_eta",
+//             "label": "Jet1 eta",
+//             "n_or_arr": 100,
+//             "lo": -2.5,
+//             "hi": 2.5,
+//             "unit": "-"
+//         }
+//     ],
+//     "fill": {
+//         "jet_eta": [
+//             "Jet_select",
+//             "eta",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "jet1_dxy_yield_bin1to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet1 dxy",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxy",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "jet1_dxysig_yield_bin1to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet1 dxySig",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 500,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxysig",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "jet1_IP3D_yield_bin1to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_Lrel",
+//             "label": "Jet1 ip3d",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_Lrel": [
+//             "Jet_select",
+//             "ip3d",
+//             {"leading": 1}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+
+// "jet2_pt_yield_bin1to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_pt",
+//             "label": "Jet2 p_{T}",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 1000,
+//             "unit": "GeV"
+//         }
+//     ],
+//     "fill": {
+//         "jet_pt": [
+//             "Jet_select",
+//             "pt",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "jet2_eta_yield_bin1to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_eta",
+//             "label": "Jet2 eta",
+//             "n_or_arr": 100,
+//             "lo": -2.5,
+//             "hi": 2.5,
+//             "unit": "-"
+//         }
+//     ],
+//     "fill": {
+//         "jet_eta": [
+//             "Jet_select",
+//             "eta",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "jet2_dxy_yield_bin1to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet2 dxy",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxy",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "jet2_dxysig_yield_bin1to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_dxy",
+//             "label": "Jet2 dxySig",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 500,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_dxy": [
+//             "Jet_select",
+//             "dxysig",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
+// "jet2_IP3D_yield_bin1to2" : {
+//     "bins": [
+//         {
+//             "name": "jet_Lrel",
+//             "label": "Jet2 ip3d",
+//             "n_or_arr": 100,
+//             "lo": 0.0,
+//             "hi": 20,
+//             "unit": "cm"
+//         }
+//     ],
+//     "fill": {
+//         "jet_Lrel": [
+//             "Jet_select",
+//             "ip3d",
+//             {"leading": 2}
+//         ]
+//     },
+//     "weight" : ["tight_yield_bin1to2"]
+// },
 
 }

@@ -43,6 +43,9 @@ class Processor(pepper.ProcessorBasicPhysics):
             
         if "DY_lo_sfs" not in config:
             logger.warning("No DY k-factor specified")
+            
+        if "MET_trigger_sfs" not in config:
+            logger.warning("No MET trigger scale factors specified")
 
         if "DY_jet_reweight" not in config or len(config["DY_jet_reweight"]) == 0:
             logger.warning("No DY jet-binned sample stitching is specified")
@@ -80,16 +83,21 @@ class Processor(pepper.ProcessorBasicPhysics):
                     dsname.startswith("W2JetsToLNu") or \
                     dsname.startswith("W3JetsToLNu") or \
                     dsname.startswith("W4JetsToLNu") ):
+            selector.systematics["weight"] = \
+                ak.full_like(selector.systematics["weight"], 1.0)
             selector.add_cut("W jet reweighting",
                 partial(self.do_w_jet_reweighting))
 
         if is_mc and "pileup_reweighting" in self.config:
             selector.add_cut("Pileup reweighting", partial(
                 self.do_pileup_reweighting, dsname))
-            
+        
+        if is_mc:
+            selector.add_cut("MET_trigger_sfs", self.MET_trigger_sfs)
+        
         # HEM 15/16 failure (2018)
-        if self.config["year"] == "2018":
-            selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+        # if self.config["year"] == "2018ul":
+        selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
 
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
 
@@ -110,8 +118,6 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
         
-        # selector.add_cut("has_jets", self.has_jets)
-        # return
         
         selector.add_cut("two_loose_jets", self.has_two_jets)
         # selector.add_cut("b_tagged_jet_cut", self.b_tagged_jet_cut)
@@ -124,6 +130,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_multiple_columns(self.missing_energy)
         selector.set_multiple_columns(self.mt_jets)
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
+        selector.add_cut("dphi_min_cut", self.dphi_min_cut)
         selector.set_column("mt2_j1_j2_MET", self.get_mt2)
         
         # selector.add_cut("skim_jets", self.skim_jets)
@@ -141,11 +148,16 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Selection of the jet is performed only for two leading jets:
         selector.add_cut("two_loose_jets_final", self.has_two_jets)
         
-        # To be sure Jet_select is not redefined
-        selector.add_cut("two_loose_jets_final2", self.has_two_jets)
+        # Prediction should be done in following state <->
         
-        selector.set_column("Jet_select", self.gettight_jets)
-        selector.add_cut("two_tight_jets", self.has_two_jets)       
+        # Dummy basemark to have cut where regions were not categories yet
+        # selector.add_cut("two_loose_jets_final2", self.has_two_jets)
+        # selector.set_cat("control_region", {"RT0", "RT1", "RT2"})
+        # selector.set_multiple_columns(partial(self.categories_bins))
+        # selector.add_cut("two_loose_jets_final3", self.has_two_jets)
+        
+        # selector.set_column("Jet_select", self.gettight_jets)
+        # selector.add_cut("two_tight_jets", self.has_two_jets)       
         
         # # 1. Leading jet is selected by pt
         # selector.add_cut("point", self.b_tagged_jet_cut) # dummy cut to make sure correct Jet_select is used
@@ -162,6 +174,17 @@ class Processor(pepper.ProcessorBasicPhysics):
         # if self.config["predict_yield"]:
         #     selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
         # selector.add_cut("redefine_jets_lead2prob", self.b_tagged_jet_cut)
+
+    def categories_bins(self, data):
+        if len(data) == 0:
+            return {"RT0": ak.Array([]), "RT1":ak.Array([]), "RT2":ak.Array([])}
+        jets = data["Jet_select"]
+        jets = jets[(jets.disTauTag_score1 >= self.config["tight_thr"])]
+        n_tight = ak.num(jets)
+        RT0 = (n_tight == 0)
+        RT1 = (n_tight == 1)
+        RT2 = (n_tight == 2)
+        return {"RT0":RT0, "RT1":RT1, "RT2":RT2}
 
     @zero_handler
     def sum_ll_gen(self, data):
@@ -199,6 +222,7 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def do_w_jet_reweighting(self, data):
         njet = data["LHE"]["Njets"]
+        
         weights = self.config["W_jet_reweight"][njet]
         return weights
 
@@ -216,6 +240,12 @@ class Processor(pepper.ProcessorBasicPhysics):
             os.makedirs(path)
         ak.to_parquet(jets, f"{path}/"+prefix+file_name+".parquet")
         return np.ones(len(data))
+    
+    @zero_handler
+    def MET_trigger_sfs(self, data):
+        met_pt = data["MET"].pt
+        sfs = self.config["MET_trigger_sfs"](pt=met_pt)
+        return sfs
     
     @zero_handler
     def HEM_veto(self, data, is_mc):
@@ -361,27 +391,23 @@ class Processor(pepper.ProcessorBasicPhysics):
     def select_muons(self, data):
         muons = data["Muon"]
         is_good = (
-              (muons.pt > self.config["muon_pt_min"])
-            & (muons.eta < self.config["muon_eta_max"])
-            & (muons.eta > self.config["muon_eta_min"])
-            & (muons[self.config["muon_ID"]] == 1)
-            # & (muons.pfIsoId >= self.config["muon_pfIsoId"])
+              (muons.pt > self.config["muon_veto_pt_min"])
+            & (muons.eta < self.config["muon_veto_eta_max"])
+            & (muons.eta > self.config["muon_veto_eta_min"])
+            & (muons[self.config["muon_veto_ID"]] == 1)
+            & (muons.pfIsoId >= self.config["muon_veto_pfIsoId"])
             )
         return muons[is_good]
     
     @zero_handler
     def select_electrons(self, data):
         ele = data["Electron"]
-        ele_low_eta_iso = eval(self.config["ele_low_eta_iso"])
-        ele_high_eta_iso = eval(self.config["ele_high_eta_iso"])
-        isolation_cut = ( ele_low_eta_iso | ele_high_eta_iso )
         is_good = (
-            isolation_cut
-            & (ele.pt > self.config["ele_pt_min"])
-            & (ele.eta < self.config["ele_eta_max"])
-            & (ele.eta > self.config["ele_eta_min"])
-            & (ele[self.config["eleVeto"]] == 1)
-            # & (ele[self.config["eleID"]] == 1)
+            (ele.pt > self.config["elec_veto_pt"])
+            & (ele.eta < self.config["elec_veto_eta_min"])
+            & (ele.eta > self.config["elec_veto_eta_max"])
+            & (ele[self.config["elec_veto"]] == 1)
+            & (ele[self.config["elec_ID"]] == 1)
             )
         return ele[is_good]
     
@@ -483,6 +509,11 @@ class Processor(pepper.ProcessorBasicPhysics):
         return data['Jet_select'][:,0].add(data['Jet_select'][:,1])
     
     @zero_handler
+    def dphi_min_cut(self, data):
+        return abs(data["dphi_jet1_jet2"]) > self.config["dphi_j1j2"]
+
+    
+    @zero_handler
     def b_tagged_jet_cut(self, data):
         # To leading jets are excluded! 
         jet_not_signal = data["Jet_select"][:,2:]
@@ -572,7 +603,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         for score in self.config["score_pass"]:
             
-            fake =  self.config["jet_fake_rate"](jet_pt=jets.pt)
+            # fake =  self.config["jet_fake_rate"](jet_pt=jets.pt)
+            # fake =  self.config["jet_fake_rate"](jet_dxy=jets.dxy)
+            fake =  self.config["jet_fake_rate"](jet_pt=jets.pt, jet_dxy=jets.dxy)
             
             # from bin 0 to bin 1 and 2
             events_0tag = (ak.num(jets[(jets.disTauTag_score1 >= score)]) == 0)

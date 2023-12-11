@@ -2,14 +2,12 @@
     "year": "2018",
     "luminosity": 59.7,
     "crosssections": "$CONFDIR/crosssections.json",
-    // "cuts" : ["Cut-007","Cut-008","Cut-009","Cut-010"],
     "cuts" : [
-        "two_loose_jets_final",
-        "two_tight_jets"
+        "two_loose_jets_final3",
     ],
     "Categories" : [
-                    ["M1", "M2", "ALL"],
-                ],
+                    ["RT0", "RT1", "RT2"],
+                   ],
     "DY_stitching_applied" : true,
     "W_stitching_applied" : true,
     "fake_rate" : {
@@ -18,35 +16,46 @@
         "mode" : "ratio",
 
         // "nominator" : ["file name w/o extention", "category prefix"]
-        "nominator"   : ["Cut-008_two_loose_jets_final_fake_rate_hist", "_p9900"],
-        "denominator" : ["Cut-008_two_loose_jets_final_fake_rate_hist", "_p1716"],
+        "nominator"   : ["Cut-011_two_loose_jets_final_fake_rate_hist", "_p9900"],
+        "denominator" : ["Cut-011_two_loose_jets_final_fake_rate_hist", "_p05"],
         
         "NOF" : false, // no overflow bins in projection
         "NUF" : false, // no underflow bins in projection
         "rate_bins" : {
             "jet_eta": [-2.3, -1.5, -0.5,  0.5,  1.5,  2.3],
             "jet_pt" :  [30, 40, 50, 70, 120, 1000],
-            "jet_dxy" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
+            "jet_dxy" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 50.0],
         },
         "sf_project" : {
             // name : "axis", score should be first argument
-            "jet_eta" : "x",
-            "jet_pt"   : "y",
-            "jet_dxy"   : "z",
-            "jet_pt_dxy" : "yz",
-            "jet_eta_pt" : "xy",
-            "jet_eta_dxy" : "xz"
+            "jet_eta" : ["x", false],
+            "jet_pt"   : ["y", false],
+            "jet_dxy"   : ["z", false],
+            // "jet_pt_dxy" : "yz",
+            "jet_dxy_pt" : ["zy", {
+                "y_axis" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 50.0],
+                "x_axis" : [
+                    [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                    [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                    [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                    [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                    [30.0, 1000.0],
+                    [30.0, 1000.0],
+                ]
+            }],
+            "jet_eta_pt" : ["xy", false],
+            "jet_eta_dxy" : ["xz", false]
         },
     },
     "Labels": {
 
         "$\\mathrm{QCD}$": [
-            // "QCD_Pt_15to30_TuneCP5_13TeV_pythia8",
-            // "QCD_Pt_30to50_TuneCP5_13TeV_pythia8",
-            // "QCD_Pt_50to80_TuneCP5_13TeV_pythia8",
-            // "QCD_Pt_80to120_TuneCP5_13TeV_pythia8",
-            // "QCD_Pt_120to170_TuneCP5_13TeV_pythia8",
-            // "QCD_Pt_170to300_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_15to30_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_30to50_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_50to80_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_80to120_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_120to170_TuneCP5_13TeV_pythia8",
+            "QCD_Pt_170to300_TuneCP5_13TeV_pythia8",
             "QCD_Pt_300to470_TuneCP5_13TeV_pythia8",
             "QCD_Pt_470to600_TuneCP5_13TeV_pythia8",
             "QCD_Pt_600to800_TuneCP5_13TeV_pythia8",
@@ -57,7 +66,7 @@
             "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8",
             "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8"
         ],
-        "$\\mathrm{DY}$": [
+        "$\\mathrm{DY+jets}$": [
             "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
 			"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
 
@@ -71,13 +80,13 @@
             "ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
             "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8"
 		],
-        "$\\mathrm{t}/\\bar{\\mathrm{t}}$": [
+        "$\\mathrm{Single\\ top}$": [
             "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
             "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
             "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
             "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"       
 		],
-        "$\\mathrm{t}\\bar{\\mathrm{t}}$": [
+        "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$": [
             "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",
             "TTToHadronic_TuneCP5_13TeV-powheg-pythia8",
             "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",
@@ -87,7 +96,7 @@
             "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8",
             "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8",
         ],
-        "$\\mathrm{VV}/\\mathrm{VVV}$": [
+        "$\\mathrm{Other\\ SM}$": [
             "VHToNonbb_M125_TuneCP5_13TeV-amcatnloFXFX_madspin_pythia8",
             "VVTo2L2Nu_MLL-1toInf_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             "WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8",
@@ -120,7 +129,7 @@
             "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
             "WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8"
         ],
-        "$\\mathrm{Z}(nunu)+\\mathrm{jets}$": [
+        "$\\mathrm{Z}(\\nu\\bar{\\nu})+\\mathrm{jets}$": [
             "ZJetsToNuNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8",
             "ZJetsToNuNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8",
             "ZJetsToNuNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8",
@@ -129,13 +138,21 @@
             "ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8",
             "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
         ],
-        "$\\mathrm{stau100GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
-        "$\\mathrm{stau100GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
-        "$\\mathrm{stau400GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
-        "$\\mathrm{stau400GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
-        "$\\mathrm{stau250GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
-        "$\\mathrm{stau250GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
-        "$\\mathrm{stau250GeV0p01mm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"],
+        // "$\\mathrm{stau100GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
+        // "$\\mathrm{stau100GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
+        // "$\\mathrm{stau400GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
+        // "$\\mathrm{stau400GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
+        // "$\\mathrm{stau250GeV10cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
+        // "$\\mathrm{stau250GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
+        // "$\\mathrm{stau250GeV0p01mm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"],
+
+        "m(#tilde{#tau})=100 GeV, c#tau_{0}=10 cm" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
+        "m(#tilde{#tau})=100 GeV, c#tau_{0}=100 cm" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
+        "m(#tilde{#tau})=400 GeV, c#tau_{0}=10 cm" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
+        "m(#tilde{#tau})=400 GeV, c#tau_{0}=100 cm" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
+        "m(#tilde{#tau})=250 GeV, c#tau_{0}=10 cm" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
+        "m(#tilde{#tau})=250 GeV, c#tau_{0}=100 cm" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
+        "m(#tilde{#tau})=250 GeV, c#tau_{0}=0.01 mm" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"],
 
         "$\\mathrm{Data}$" : ["DATA_MET"]
     },
@@ -143,27 +160,29 @@
         "$\\mathrm{Data}$" : [0, 1]
     },
     "MC_bkgd": {
+        // "name" : [filling_color, line_color, line_style]
         "$\\mathrm{QCD}$":                         [423, 423],
-        "$\\mathrm{t}\\bar{\\mathrm{t}}$":          [394, 394],
+        "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$":          [394, 394],
         // "$\\mathrm{t}\\bar{\\mathrm{t}}$ dilep":   [591, 591],
         // "$\\mathrm{t}\\bar{\\mathrm{t}}$ semilep": [607, 607],
         // "$\\mathrm{t}\\bar{\\mathrm{t}}$ hadron.": [394, 394],
-        "$\\mathrm{t}/\\bar{\\mathrm{t}}$":        [623, 623],
-        "$\\mathrm{DY}$":                          [403, 403],
-        "$\\mathrm{DY-low}$":                          [406, 406],
+        "$\\mathrm{Single\\ top}$":        [623, 623],
+        "$\\mathrm{DY+jets}$":                      [403, 403],
+        "$\\mathrm{DY-low}$":                      [406, 406],
         "$\\mathrm{W}+\\mathrm{jets}$":            [410, 410],
-        "$\\mathrm{Z}(nunu)+\\mathrm{jets}$": [616, 616],
-        "$\\mathrm{VV}/\\mathrm{VVV}$":            [795, 795],
+        "$\\mathrm{Z}(\\nu\\bar{\\nu})+\\mathrm{jets}$":   [616, 616],
+        "$\\mathrm{Other\\ SM}$":            [795, 795],
         // "$\\mathrm{ggZZ}$":                         [597, 597]
     },
     "Signal_samples":{
-        "$\\mathrm{stau100GeV10cm}$" : [0, 810],
-        "$\\mathrm{stau100GeV100cm}$" : [0, 910],
-        "$\\mathrm{stau400GeV10cm}$" : [0, 600], 
-        "$\\mathrm{stau400GeV100cm}$" : [0, 603],
-        "$\\mathrm{stau250GeV10cm}$": [0, 418],
-        "$\\mathrm{stau250GeV100cm}$": [0, 420],
-        "$\\mathrm{stau250GeV0p01mm}$": [0, 1],
+        // "name" : [filling_color, line_color, line_style]
+        "m(#tilde{#tau})=100 GeV, c#tau_{0}=10 cm" : [0, 2, 7],
+        "m(#tilde{#tau})=100 GeV, c#tau_{0}=100 cm" : [0, 4, 7],
+        "m(#tilde{#tau})=400 GeV, c#tau_{0}=10 cm" : [0, 2, 8], 
+        "m(#tilde{#tau})=400 GeV, c#tau_{0}=100 cm" : [0, 4, 8],
+        "m(#tilde{#tau})=250 GeV, c#tau_{0}=10 cm": [0, 2, 9],
+        "m(#tilde{#tau})=250 GeV, c#tau_{0}=100 cm": [0, 4, 9],
+        "m(#tilde{#tau})=250 GeV, c#tau_{0}=0.01 mm": [0, 8, 9],
     },
     "mask_hists": [
         "dphi_jet1_jet2_pass",
@@ -241,17 +260,22 @@
         "yield_bin0to1",
         "yield_bin0to2",
         "yield_bin1to2",
-        "fake_rate_hist"
+        "fake_rate_hist",
+        "2D_MET_MT2_pass",
+        "2D_MET_MTSUM_pass",
+        "2D_MT2_MTSUM_pass",
+        "2D_MET_MT2_bin0to2",
+        "2D_MET_MTSUM_bin0to2",
+        "2D_MT2_MTSUM_bin0to2",
+        "2D_MET_MT2_bin0to1",
+        "2D_MET_MTSUM_bin0to1",
+        "2D_MT2_MTSUM_bin0to1",
+        "2D_MET_MT2_bin1to2",
+        "2D_MET_MTSUM_bin1to2",
+        "2D_MT2_MTSUM_bin1to2"
     ],
     "SetupBins" : {
         // "Histogram name" : [x_min, x_max, rebin_bins, overflow_includ, axis labels]
-
-        // "Jet_score" : [0.0, 1.01, [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.01], false, null],
-        // "Jet_score_tight" : [0.0, 1.01, [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.01], false, null],
-        // "Jet_score_valid" : [0.0, 1.01, [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.01], false, null],
-        // // "Jet_score" : [0.0, 1.01, 3, false, null],
-        // "Jet_score_tight" : [0.0, 1.01, 3, false, null],
-        // "Jet_score_valid" : [0.0, 1.01, 3, false, null],
 
         "dphi_jet1_jet2": [-3.2, 3.2, 5, true, null],
         "HT_miss": [0, 800, 10, true, null],
@@ -262,13 +286,13 @@
         "mass_j1_j2": [0, 1400, 2, true, null],
         "mt_jet1": [0, 1000, 2, true, null],
         "mt_jet2": [0, 1000, 2, true, null],
-        "mt_sum": [0, 2000, 2, true, null],
-        "mt2_j1_j2_MET": [0, 500, 2, true, null],
+        "mt_sum": [0, 1000, 4, true, null],
+        "mt2_j1_j2_MET": [0, 500, 4, true, null],
 
         "deltaphi" : [0.0, 3.15, 2, false, null],
         "1st_jet_pt" : [0.0, 400.0, 2, true, null],
         "2nd_jet_pt" : [0.0, 400.0, 2, true, null],
-        "METpt" : [0.0, 500.0, 2, true, null],
+        "METpt" : [0.0, 500.0, 4, true, null],
         "METphi" : [-3.15, 3.15, 2, true, null],
         // "njet" : [], 
         "mumu_mass" : [50.0, 130, 3, true, null],
@@ -276,7 +300,7 @@
         "jetselect_pt" : [0.0, 500.0, 3, true, null], 
         "jetselect_eta" : [-2.1, 2.1, 3, true, null], 
         // "jetselect_score" : [0.8, 1.05, 1, true, null],
-        "jetselect_dxy" : [0.0, 30.0, 1, true, null],
+        "jetselect_dxy" : [0.0, 30.0, 4, true, null],
         "jetselect_dxy_weight" : [0.0, 30.0, 1, true, null], 
         "jetselect_dxysig" : [0.0, 1000.0, 1, true, null], 
         "jetselect_dxysig_weight" : [0.0, 1000.0, 3, true, null], 
@@ -306,7 +330,7 @@
         "jettau_pt" : [0.0, 500.0, 3, true, null], 
         "jettau_eta" : [-2.1, 2.1, 3, true, null], 
         // "jetselect_score" : [0.8, 1.05, 1, true, null],
-        "jettau_dxy" : [0.0, 30.0, 1, true, null],
+        "jettau_dxy" : [0.0, 30.0, 4, true, null],
         "jettau_dxy_weight" : [0.0, 30.0, 1, true, null], 
         "jettau_dxysig" : [0.0, 1000.0, 1, true, null], 
         "jettau_dxysig_weight" : [0.0, 1000.0, 3, true, null], 
@@ -317,72 +341,85 @@
         
 
     },
-    // "prediction_hist" : {
-    //     "true" : "Cut-008_b_tagged_jet_cut_n_jet_pass.root",
-    //     "data_tree" : "DATA_MET",
-    //     "plot_unblind" : true,
-    //     "plot_signal" : true, //signal is taken from "Signal_samples"
-    //     "predict" : { 
-    //         // "name" : [bin_from true, file_name]
-    //         "from0to1" :  [3, "Cut-008_b_tagged_jet_cut_yield_bin0to1.root"],
-    //         "from1to2" :  [4, "Cut-008_b_tagged_jet_cut_yield_bin1to2.root"],
-    //         "from0to2" :  [4, "Cut-008_b_tagged_jet_cut_yield_bin0to2.root"]
-    //     }
-    // }
-    // Cut-010_redefine_jets_lead2pt
-    // "prediction_hist" : {
-    //     "true" : "Cut-010_redefine_jets_lead2pt_n_jet_pass.root",
-    //     "data_tree" : "DATA_MET",
-    //     "plot_unblind" : true,
-    //     "plot_signal" : true, //signal is taken from "Signal_samples"
-    //     "predict" : { 
-    //         // "name" : [bin_from true, file_name]
-    //         "from0to1" :  [3, "Cut-010_redefine_jets_lead2pt_yield_bin0to1.root", 1.0],
-    //         "from1to2" :  [4, "Cut-010_redefine_jets_lead2pt_yield_bin1to2.root", 0.5],
-    //         "from0to2" :  [4, "Cut-010_redefine_jets_lead2pt_yield_bin0to2.root", 1.0]
-    //     }
-    // }
 
-    // // Cut-011_redefine_jets_lead2prob
-    // "prediction_hist" : {
-    //     "true" : "Cut-011_redefine_jets_lead2prob_n_jet_pass.root",
-    //     "data_tree" : "DATA_MET",
-    //     "plot_unblind" : true,
-    //     "plot_signal" : true, //signal is taken from "Signal_samples"
-    //     "predict" : { 
-    //         // "name" : [bin_from true, file_name]
-    //         "from0to1" :  [3, "Cut-011_redefine_jets_lead2prob_yield_bin0to1.root"],
-    //         "from1to2" :  [4, "Cut-011_redefine_jets_lead2prob_yield_bin1to2.root"],
-    //         "from0to2" :  [4, "Cut-011_redefine_jets_lead2prob_yield_bin0to2.root"]
-    //     }
-    // }
     "prediction_hist" : {
         "plot_unblind" : true,
         "plot_signal" : true,
-        "cut"   : "Cut-011_two_loose_jets_final",
+        "cut"   : "Cut-013_two_loose_jets_final",
         "predictions" : ["bin0to2", "bin1to2", "bin0to1"], // Also can be a bin projection
         "bin_data" : ["bin2", "bin2", "bin1"],
         "hists" : {
             // "deltaphi" : [0.0, 3.15, 2, false, null],
-            "mt2_j1_j2_MET" : [0, 600, [0.0, 50, 100, 150, 600], true, null],
-            "METpt"   : [0, 600, [0.0, 50, 100, 150, 600], true, null],
-            "jj_mass" : [0, 600, [0.0, 50, 100, 150, 600], true, null],
-            "jj_pt"   : [0, 600, [0.0, 50, 100, 150, 600], true, null],
-            "mt_jet1" : [0, 600, [0.0, 50, 100, 150, 600], true, null],
-            "mt_jet2" : [0, 600, [0.0, 50, 100, 150, 600], true, null],
-            "mt_sum"  : [0, 600, [0.0, 50, 100, 150, 200, 300, 600], true, null],
-            // "dphi_jet1_jet2" : [-3.15, 3.15, [-3.15, -2.4, -1.6, 0.0, 1.6, 2.4, 3.15], true, null],
-            "dphi_jet1_jet2" : [-3.15, 3.15, [-3.15, 3.15], true, null],
-            "jet1_pt"  : [0, 600, [0.0, 50, 150, 300, 600], true, null],
+            "mt2_j1_j2_MET" : [0, 300, [0.0, 60, 120, 180, 300], true, null],
+            "METpt"   : [120, 600, [120, 140, 160, 200, 300, 600], true, null],
+            "jj_mass" : [0, 600, [0.0, 100, 150, 600], true, null],
+            "jj_pt"   : [0, 200, [0.0, 40, 100, 200], true, null],
+            "mt_jet1" : [0, 600, [0.0, 120, 180, 600], true, null],
+            "mt_jet2" : [0, 600, [0.0, 120, 180, 600], true, null],
+            "mt_sum"  : [0, 600, [0.0, 50, 100, 200, 300, 600], true, null],
+            // "dphi_jet1_jet2" : [-3.14, 3.14, 10, true, null],
+            "dphi_jet1_jet2" : [0.4396, 3.14, [0.4396, 1.256, 1.884, 2.512, 3.14], true, null],
+            // "dphi_jet1_jet2" : [-3.15, 3.15, [-3.15, 3.15], true, null],
+            "jet1_pt"  : [30, 600, [30.0, 50, 100, 200, 400, 600], true, null],
             "jet1_eta" : [-2.1, 2.1, 10, true, null],
-            "jet1_dxy" : [0, 10.0, [0, 0.2, 0.4, 0.6, 1, 2, 3, 5, 10], true, null],
+            "jet1_dxy" : [0.0, 10.0, [0.4, 0.6, 1, 1.6, 5, 10], true, null],
             "jet1_dxysig" : [0, 200.0, [0, 5, 10, 15, 25, 50, 75, 125, 200], true, null],
-            // "jet1_IP3D"   : [0, 200.0, [0.0, 50.0, 100.0, 200.0], true, null],
-            "jet2_pt"     : [0, 600, [0.0, 50, 150, 300, 600], true, null],
+            "jet1_IP3D"   : [0, 20.0, [0.0, 5.0, 10.0, 20.0], true, null],
+            "jet2_pt"     : [30, 600, [30.0, 50, 100, 200, 400, 600], true, null],
             "jet2_eta"    : [-2.1, 2.1, 10, true, null],
-            "jet2_dxy"    : [0, 10.0, [0, 0.2, 0.4, 0.6, 1, 2, 3, 5, 10], true, null],
+            "jet2_dxy"    : [0.0, 10.0, [0.4, 0.6, 1, 1.6,5, 10], true, null],
             "jet2_dxysig" : [0, 200.0, [0, 5, 10, 15, 25, 50, 75, 125, 200], true, null],
-            // "jet2_IP3D"   : [0, 200.0, [0.0, 50.0, 100.0, 200.0], true, null]
+            "jet2_IP3D"   : [0, 20.0, [0.0, 5.0, 10.0, 20.0], true, null],
+        }
+    },
+
+    "prediction_hist2D" : {
+        "plot_unblind" : true,
+        "plot_signal" : true,
+        "signal_model" : "m(#tilde{#tau})=250 GeV, c#tau_{0}=10 cm",
+        "cut"   : "Cut-013_two_loose_jets_final",
+        "predictions" : ["bin1to2"],
+        "bin_data" : ["bin2"],
+        "hists" : {
+            // "2D_MET_MT2" : [
+            //     {
+            //         "y_axis" : [0.0, 60, 120, 180, 300], //MT2
+            //         "x_axis" : [ //MET
+            //             [120, 140, 160, 200, 300, 600],
+            //             [120, 140, 160, 200, 300, 600],
+            //             [120, 140, 160, 200, 300, 600],
+            //             [120, 140, 160, 200, 300, 600],
+            //             [120, 140, 160, 200, 300, 600],
+            //             [120, 140, 160, 200, 300, 600]
+            //         ]
+            //     },
+            //     true, null],
+            // "2D_MET_MTSUM" : [
+            //     {
+            //         "y_axis" : [0.0, 100, 200, 300, 600], //MTSUM
+            //         "x_axis" : [ //MET
+            //             [120, 140, 160, 200, 300, 600],
+            //             [120, 140, 160, 200, 300, 600],
+            //             [120, 140, 160, 200, 300, 600],
+            //             [120, 140, 160, 200, 300, 600],
+            //             [120, 140, 160, 200, 300, 600],
+            //             [120, 140, 160, 200, 300, 600]
+            //         ]
+            //     },
+            //     true, null],
+            "2D_MT2_MTSUM" : [
+                {
+                    "y_axis" : [0.0, 100, 200, 300, 600], //MTSUM
+                    "x_axis" : [ //MT2
+                    [0.0, 60, 120, 180, 300],
+                    [0.0, 60, 120, 180, 300],
+                    [0.0, 60, 120, 180, 300],
+                    [0.0, 60, 120, 180, 300],
+                    [0.0, 60, 120, 180, 300],
+                    [0.0, 60, 120, 180, 300]
+                    ]
+                },
+                true, null]
         }
     }
 }
