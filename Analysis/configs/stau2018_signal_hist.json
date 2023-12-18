@@ -598,7 +598,7 @@
             "label": "Jet dxy",
             "n_or_arr": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
             "unit": "cm"
-        },
+        }
     ],
     "cats" : [
         {
@@ -685,6 +685,37 @@
     }
 },
 
+"n_jet_pass_finebin" : {
+    "bins": [
+        {
+            "name": "jet_score_bin",
+            "label": "Jet score bin",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 100,
+            "unit": "-",
+            "type": "int"
+        },
+        {
+            "name": "jet_pass",
+            "label": "number of jet passing",
+            "n_or_arr": 4,
+            "lo": -1,
+            "hi": 3,
+            "unit": "-",
+            "type": "int"
+        }
+    ],
+    "fill": {
+        "jet_score_bin": [
+            "n_pass_score_bin_finebin"
+        ],
+        "jet_pass": [
+            "n_pass_finebin"
+        ]
+    }
+},
+
 "yield_bin0to1" : {
     "bins": [
         {
@@ -741,553 +772,6 @@
     },
     "weight" : ["yield_bin0to2"]
 },
-
-// tests to understand how much jets in the events with two tightly tagged jets
-
-// "n_jet_tagged_wp1" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.0, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp2" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.05, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp3" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.10, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp4" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.15, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp5" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.2, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp6" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.25, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp7" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.3, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp8" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.35, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp9" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.4, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp10" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.5, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp11" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.6, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp12" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.7, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp13" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.8, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp14" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.9, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp15" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.95, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-
-// "n_jet_tagged_wp16" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.99, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
-
-// "n_jet_tagged_wp17" : {
-//     "bins": [
-//         {
-//             "name": "tagged_jets",
-//             "label": "Jet pass tight",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         },
-//         {
-//             "name": "n_jet",
-//             "label": "Number of jet in event",
-//             "n_or_arr": 21,
-//             "lo": -1,
-//             "hi": 20,
-//             "unit": "-"
-//         }
-//     ],
-//     "fill": {
-//         "tagged_jets": [
-//             "Jet_select",
-//             {"function" : "pass_score", "kwargs" : {"thr" : 0.997, "return_obj" : true}},
-//             {"function": "num"}
-//         ],
-//         "n_jet": [
-//             "Jet_select",
-//             {"function": "num"}
-//         ]
-//     }
-// },
 
 // prediction histograms:
 
@@ -3162,7 +2646,7 @@
         ],
         "mt2_j1_j2_MET": [
             "mt2_j1_j2_MET"
-        ],
+        ]
     },
     "weight" : ["tight_yield_bin0to2"]
 },
@@ -3254,7 +2738,7 @@
         ],
         "mt2_j1_j2_MET": [
             "mt2_j1_j2_MET"
-        ],
+        ]
     },
     "weight" : ["tight_yield_bin0to1"]
 },
@@ -3346,7 +2830,7 @@
         ],
         "mt2_j1_j2_MET": [
             "mt2_j1_j2_MET"
-        ],
+        ]
     },
     "weight" : ["tight_yield_bin1to2"]
 },
@@ -3410,7 +2894,7 @@
         ]
     },
     "weight" : ["tight_yield_bin1to2"]
-},
+}
 
 
 }

@@ -101,7 +101,7 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                             _hist = file_n_pass_sig.Get(_histogram_data)
                             _hist = _hist.ProjectionX(_histogram_data+"_proj", data_bin, data_bin)
                         _hist.SetDirectory(0)
-                        N = cutflow[_histogram_data]["all"]["Before cuts"]
+                        N = cutflow[_histogram_data]["all"]["BeforeCuts"]
                         scale =  xsec[_histogram_data] * config["luminosity"] / N
                         # _hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
                         for bin_i in range(0, _hist.GetNbinsX()+2):
@@ -136,7 +136,7 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 l_hist = hists_main,
                 l_hist_overlay = signal_hists,
                 # l_hist_overlay = [hist_data] if config["prediction_hist"]["plot_unblind"] else [],
-                outfile = output_path + "/" + hist + "_" + prediction_bin + ".pdf",
+                outfile = output_path + "/" + hist + "_" + prediction_bin + ".png",
                 xrange = [x_min, x_max],
                 yrange = (0.01,  1000*hist_prediction.GetMaximum()),
                 logx = False, logy = True,
@@ -369,7 +369,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                             hist.Scale(config["luminosity"])
                         else:
                             # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
-                            N = cutflow[_histogram_data]["all"]["Before cuts"]
+                            N = cutflow[_histogram_data]["all"]["BeforeCuts"]
                             hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
 
                     if _histname in config["SetupBins"]:
@@ -514,6 +514,172 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     yrange_ratio = (1E-04, 1),
                     draw_errors = True
                 )
+
+def plotBrMC(hist_path, config, xsec, cutflow, output_path):
+    
+    '''
+    This code is used to plot the MC branching ratio reading 2D histogram
+    and projecting it to the x-axis for bin 1 bin2 and bin 3 which coorespond to
+    0-tight, 1--tight and 2-tight region
+    '''
+    print(hist_path)
+    file = ROOT.TFile.Open(hist_path, 'read')
+    _histograms = {"background":[], "signal":[]}
+    for _group_idx, _group_name in enumerate(config["Labels"].keys()):
+
+        isSignal = "signal" if _group_name in config["Signal_samples"] else "background"
+        print("isSignal:", isSignal)
+
+        has_group_entry = False
+        # Accumulate the dataset for the particular data group as specified in config “Labels”.
+        for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
+
+            print("Reading hist:", _histogram_data)
+            hist = file.Get(_histogram_data+"/hist")
+            
+            if not hist:
+                print("Warning: Histogram not found! ", end='')
+                print("Histogram->", file, _histogram_data)
+                continue
+            
+            if isSignal != "data": # Scaling of the MC to the lumi and xsection
+                if config["DY_stitching_applied"] and (
+                        "DYJetsToLL_M-50" in _histogram_data or
+                        "DY1JetsToLL_M-50" in _histogram_data or
+                        "DY2JetsToLL_M-50" in _histogram_data or
+                        "DY3JetsToLL_M-50" in _histogram_data or
+                        "DY4JetsToLL_M-50" in _histogram_data ):
+                    # print("Stitching:", _histogram_data)
+                    hist.Scale(config["luminosity"])
+                elif config["W_stitching_applied"] and (
+                        ("WJetsToLNu" in _histogram_data and (not "TTWJets" in _histogram_data)) or
+                        "W1JetsToLNu" in _histogram_data or
+                        "W2JetsToLNu" in _histogram_data or
+                        "W3JetsToLNu" in _histogram_data or
+                        "W4JetsToLNu" in _histogram_data ):
+                    # print("Stitching:", _histogram_data)
+                    hist.Scale(config["luminosity"])
+                else:
+                    # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
+                    N = cutflow[_histogram_data]["all"]["BeforeCuts"]
+                    hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
+
+            if not has_group_entry:
+                print("Append:", _histogram_data)
+                _histograms[isSignal].append(hist)
+                has_group_entry = True
+            else:
+                print("Add:", _histogram_data)
+                _histograms[isSignal][-1].Add(hist)
+                
+            if has_group_entry: # if there is at least one histogram in input
+            
+                if isSignal == "signal":
+                    color_setup = config["Signal_samples"][_group_name]  
+                    line_color = color_setup[1]
+                    fill_color = color_setup[0]
+                    line_style = color_setup[2]
+                    _histograms[isSignal][-1].SetLineStyle(line_style)
+                    _histograms[isSignal][-1].SetMarkerSize(0)
+                    _histograms[isSignal][-1].SetLineWidth(4)
+                elif isSignal == "data":
+                    color_setup = config["Data"][_group_name]  
+                    line_color = color_setup[1]
+                    fill_color = color_setup[0] 
+                    _histograms[isSignal][-1].SetMarkerStyle(8)
+                    _histograms[isSignal][-1].SetMarkerSize(1)
+                    _histograms[isSignal][-1].SetLineWidth(1)
+                else:
+                    color_setup = config["MC_bkgd"][_group_name]  
+                    line_color = color_setup[1]
+                    fill_color = color_setup[0]
+                    _histograms[isSignal][-1].SetMarkerSize(0)
+                    _histograms[isSignal][-1].SetLineWidth(4)
+                
+                _histograms[isSignal][-1].SetLineColor(line_color)
+                _histograms[isSignal][-1].SetFillColor(fill_color)
+                _histograms[isSignal][-1].SetTitle(_group_name)
+                print("Set title:", _group_name)
+        
+        # _histograms[isSignal][-1].SetLineColor(line_color)
+        # _histograms[isSignal][-1].SetFillColor(fill_color)
+        # _histograms[isSignal][-1].SetLineWidth(2)
+        # _histograms[isSignal][-1].SetMarkerSize(0)
+        # _histograms[isSignal][-1].SetTitle(_group_name)
+    
+    
+    # get maximum for the y-scale
+    y_max = _histograms["background"][0].GetMaximum()
+    for _h in _histograms["background"]:
+        y_max = max(y_max,_h.GetMaximum())
+
+    # sort histogram from min to max
+    _histograms_background_entries = []
+    _histograms_background_sorted = []
+    for _h in _histograms["background"]:
+        _histograms_background_entries.append(_h.Integral())
+    _sorted_hist = np.argsort(_histograms_background_entries)
+    for _idx in _sorted_hist:
+        _histograms_background_sorted.append(_histograms["background"][_idx])
+
+    
+    # read the binning if available:
+    # if _histname in config["SetupBins"]:
+    #     xrange_min = config["SetupBins"][_histname][0]
+    #     xrange_max = config["SetupBins"][_histname][1]
+    #     overflow =  bool(config["SetupBins"][_histname][3])
+    # else:
+    xrange_min = _histograms["background"][0].GetXaxis().GetXmin()
+    # xrange_max = _histograms["background"][0].GetXaxis().GetXmax()
+    xrange_max = 53
+    overflow =  True
+
+    score_pass_finebin = [
+        0.05,0.07,0.09,0.11,0.13, 0.15,0.16,0.18,0.2 ,0.22,0.24, 0.26,0.27,0.29, 0.31,0.33,0.35,0.37,0.38,0.4 ,0.42,0.44,0.46, 0.48,0.49,0.51,0.53,0.55,0.57, 0.59,0.6 ,0.62,0.64,0.66,0.68, 0.7 ,0.71,0.73,0.75,0.77,0.79 ,0.81,0.82,0.84,0.86,0.88,0.9,0.92,0.93,0.95,0.97,"0.99(wp)",".9999"]
+    
+    for bin_filled in [0, 1, 2]:
+        # two loose region
+        two_loose_hists = []
+        for _h in _histograms_background_sorted:
+            for bin_i, label in enumerate(score_pass_finebin):
+                _h.GetXaxis().SetBinLabel(bin_i+1, ">"+str(label))
+                _h.GetXaxis().SetTitle("")
+            two_loose_hists.append(_h.ProjectionX(_h.GetTitle()+"_proj", 2+bin_filled, 2+bin_filled))
+            print(two_loose_hists[-1].GetTitle(), two_loose_hists[-1].Integral())
+        
+        root_plot1D(
+                l_hist = two_loose_hists,
+                l_hist_overlay = two_loose_hists,
+                outfile = output_path + "/" +  f"mixMC_plot_bin{bin_filled}.png",
+                xrange = [xrange_min, xrange_max],
+                yrange = (0.001,  1000*y_max),
+                # yrange = (0.0,  1.5*y_max),
+                logx = False, logy = True,
+                include_overflow = overflow,
+                xtitle = _histograms["background"][0].GetXaxis().GetTitle(),
+                ytitle = "events",
+                xtitle_ratio = _histograms["background"][0].GetXaxis().GetTitle(),
+                ytitle_ratio = "%",
+                centertitlex = True, centertitley = True,
+                centerlabelx = False, centerlabely = False,
+                gridx = True, gridy = True,
+                ndivisionsx = None,
+                stackdrawopt = "",
+                # normilize = True,
+                normilize_overlay = False,
+                legendpos = "UR",
+                legendtitle = f"",
+                legendncol = 3,
+                legendtextsize = 0.025,
+                legendwidthscale = 1.9,
+                legendheightscale = 0.26,
+                lumiText = "2018 (13 TeV)",
+                signal_to_background_ratio = True,
+                ratio_mode = "percentage",
+                logx_ratio = False, logy_ratio = False,
+                yrange_ratio = (0, 1),
+                draw_errors = True
+            )
 
 def plot2D(histfiles, histnames, config, xsec, cutflow, output_path):
 

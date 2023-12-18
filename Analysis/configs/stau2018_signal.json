@@ -4,7 +4,7 @@
     "file_mode": "local",
     "xrootddomain": "xrootd-cms.infn.it",
     "bad_file_paths": "$CONFDIR/nano_v11_bad-pnfs-files.json",
-    "datadir": "configs/data/ul2018",
+    "datadir": "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/configs/data/ul2018",
     "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD",
     "rng_seed_file": "$CONFDIR/seed.txt",
     "compute_systematics": false,
@@ -188,7 +188,7 @@
         "fake_rate_jet_dxy_pt",
         ["jet_pt", "jet_dxy"]
     ],
-    "predict_yield" : true,    
+    "predict_yield" : false,    
 
     "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/jets_skims",
 
@@ -229,6 +229,62 @@
     // "score_pass" : [0.0, 0.1716, 0.4612, 0.6631, 0.786, 0.846, 0.9529, 0.9889, 0.9972, 0.9996],
 
     "score_pass" : [0.05, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.40, 0.45, 0.5, 0.95, 0.9900, 0.9972, 0.9996],
+    "score_pass_finebin" : [
+        0.05,
+        0.07,
+        0.09,
+        0.11,
+        0.13, 
+        0.15,
+        0.16,
+        0.18,
+        0.2 ,
+        0.22,
+        0.24, 
+        0.26,
+        0.27,
+        0.29, 
+        0.31,
+        0.33,
+        0.35,
+        0.37,
+        0.38,
+        0.4 ,
+        0.42,
+        0.44,
+        0.46, 
+        0.48,
+        0.49,
+        0.51,
+        0.53,
+        0.55,
+        0.57, 
+        0.59,
+        0.6 ,
+        0.62,
+        0.64,
+        0.66,
+        0.68, 
+        0.7 ,
+        0.71,
+        0.73,
+        0.75,
+        0.77,
+        0.79 ,
+        0.81,
+        0.82,
+        0.84,
+        0.86,
+        0.88,
+        0.9 , 
+        0.92,
+        0.93,
+        0.95,
+        0.97,
+        0.99,
+        1.0
+  
+    ],
     "loose_thr" : 0.05,
     "tight_thr" : 0.9900,
 
@@ -237,7 +293,8 @@
     // There are many histograms in output data, for prediction we need only one 
     // the load on histograms transfer one of the biggest bottleneck in the code
     "cuts_to_histogram" : [
+            // "dphi_min_cut",
             "two_loose_jets_final",
-            "two_loose_jets_final3"
+            // "two_loose_jets_final3"
         ]
 }
