@@ -139,11 +139,12 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Scale factors should be calculated -
         # before cuts on the number of the jets
         selector.set_multiple_columns(self.set_njets_pass)
+        selector.set_multiple_columns(self.set_njets_pass_finebin)
         if self.config["predict_yield"]:
             selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
         
         # Jets that match to tau
-        selector.set_column("Jet_tau", partial(self.jet_tau, is_mc=is_mc))
+        # selector.set_column("Jet_tau", partial(self.jet_tau, is_mc=is_mc))
         
         # Selection of the jet is performed only for two leading jets:
         selector.add_cut("two_loose_jets_final", self.has_two_jets)
@@ -222,7 +223,6 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def do_w_jet_reweighting(self, data):
         njet = data["LHE"]["Njets"]
-        
         weights = self.config["W_jet_reweight"][njet]
         return weights
 
@@ -544,6 +544,21 @@ class Processor(pepper.ProcessorBasicPhysics):
             "tight_bin0" : tight_bin0,
             "tight_bin1" : tight_bin1,
             "tight_bin2" : tight_bin2
+        }
+    
+    @zero_handler
+    def set_njets_pass_finebin(self, data):
+        jets_score = data["Jet_select"].disTauTag_score1
+        n_pass = []
+        for score in self.config["score_pass_finebin"]:
+            jets_pass = jets_score[(jets_score>=score)]
+            passed = ak.num(jets_pass, axis=1)
+            n_pass.append( passed )
+        n_pass = ak.from_regular(
+            np.stack(n_pass, axis=1), axis=-1)
+        return {
+            "n_pass_finebin" : n_pass,
+            "n_pass_score_bin_finebin" : ak.local_index(n_pass, axis=1),
         }
 
     @zero_handler

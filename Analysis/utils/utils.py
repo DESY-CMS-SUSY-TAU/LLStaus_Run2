@@ -114,9 +114,10 @@ def root_plot1D(
     Note that the desired plotting styles and colors (like FillStyle/Color, LineSize/Style/Color, MarkerSize/Style/Color, SetOption) need to be set for the stack and overlay histograms before calling this function.
     """
     
+    print("ratio_mode", ratio_mode)
     # canvas = get_canvas(ratio = len(ratio_num_den_pairs))
     canvas = get_canvas(ratio = signal_to_background_ratio)
-    canvas.SaveAs("empty_canvas.pdf")
+    # canvas.SaveAs("empty_canvas.pdf")
     canvas.cd(1)
     
     
@@ -223,8 +224,10 @@ def root_plot1D(
             hist.SetOption("HISTPE")
         else:
             hist.SetOption("HIST")
-        hist.Draw(f"same {hist.GetOption()}")
-        legend.AddEntry(hist, hist.GetTitle(), "LPFE")
+        
+        if ratio_mode != "percentage":
+            hist.Draw(f"same {hist.GetOption()}")
+            legend.AddEntry(hist, hist.GetTitle(), "LPFE")
     
     legend.Draw()
     
@@ -271,10 +274,12 @@ def root_plot1D(
         #h1_xRange_ratio = h1_xRange.Clone()
         #stack_ratio.Add(h1_xRange_ratio)
         for hist in l_hist_overlay :
+
             hist.SetDirectory(0)
             h1_ratio = hist.Clone()
             h1_ratio.SetDirectory(0)
             h1_ratio.GetXaxis().SetRangeUser(xrange[0], xrange[1])
+
             if ratio_mode=="B":
                 h1_ratio = h1_ratio.Divide(accume_hist)
                 stack_ratio.Add(h1_ratio, "HIST")
@@ -312,7 +317,20 @@ def root_plot1D(
                 h1_ratioErr.SetLineWidth(2)
                 stack_ratio.Add(h1_ratioErr, "E2")
                 stack_ratio.Add(h1_ratio, "E1same")
-                
+            elif ratio_mode=="percentage":
+                print("title", hist.GetTitle())
+                h1_ratio.Divide(accume_hist)
+                h1_ratio.SetFillStyle(0)
+                h1_ratio.SetFillColor(0)
+                h1_ratio.SetMarkerStyle(0)
+                h1_ratio.SetMarkerSize(0)
+                h1_ratio.SetLineWidth(2)
+                h1_ratio.SetLineColor(hist.GetLineColor())
+                stack_ratio.Add(h1_ratio, "HISTE")
+            else:
+                raise Exception("ratio_mode not supported")
+
+        print("stack_ratio.GetMaximum()", stack_ratio.GetMaximum())
         stack_ratio.Draw("nostack")
         stack_ratio.GetXaxis().SetRangeUser(xrange[0], xrange[1])
         stack_ratio.SetMinimum(yrange_ratio[0])

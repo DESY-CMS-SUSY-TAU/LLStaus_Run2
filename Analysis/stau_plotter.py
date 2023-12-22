@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 import re
 
 from pepper import Config
-from utils.plotter import plot1D, plot2D, plot_predict, plot_predict2D
+from utils.plotter import plot1D, plot2D, plot_predict, plot_predict2D, plotBrMC
 
 
 parser = ArgumentParser(
@@ -94,6 +94,13 @@ if "2D" in args.mode:
             raise ValueError('Json should be provided')
 
     plot2D(histfiles, histnames, config, crosssections, cutflow, args.outdir)
+    
+if "br_mc" in args.mode:
+    if not args.histfile[0].endswith(".json"):
+        raise ValueError('Json should be provided')
+    hist = "/Cut_014_two_loose_jets_final_n_jet_pass_finebin.root"
+    path_hist = os.path.dirname(args.histfile[0]) + hist
+    plotBrMC(path_hist, config, crosssections, cutflow, args.outdir)
     
 if "prediction" in args.mode:
     if not args.histfile[0].endswith(".json"):
