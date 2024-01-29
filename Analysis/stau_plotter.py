@@ -98,10 +98,17 @@ if "2D" in args.mode:
 if "br_mc" in args.mode:
     if not args.histfile[0].endswith(".json"):
         raise ValueError('Json should be provided')
-    hist = "/Cut_014_two_loose_jets_final_n_jet_pass_finebin.root"
+    hist = "/Cut_014_two_loose_jets_final_n_jet_pass_finebin"
     path_hist = os.path.dirname(args.histfile[0]) + hist
     plotBrMC(path_hist, config, crosssections, cutflow, args.outdir)
-    
+
+if "br_mc_flavour" in args.mode:
+    if not args.histfile[0].endswith(".json"):
+        raise ValueError('Json should be provided')
+    hist = f"/{config['mixing_hists']['hist']}"
+    path_hist = os.path.dirname(args.histfile[0]) + hist
+    plotBrMC(path_hist, config, crosssections, cutflow, args.outdir, is_per_flavour=True)
+
 if "prediction" in args.mode:
     if not args.histfile[0].endswith(".json"):
         raise ValueError('Json should be provided')

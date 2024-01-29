@@ -19,6 +19,7 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 config["prediction_hist"]["hists"][hist]
             cut = config["prediction_hist"]["cut"]
             
+            # ---- Part to assign prediction histogram
             path_predict = dirname+"/"+cut+"_"+hist+"_yield_"+prediction_bin+".root"
             print(path_predict)
             file_predict = ROOT.TFile.Open(path_predict, 'read')
@@ -369,7 +370,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                             hist.Scale(config["luminosity"])
                         else:
                             # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
-                            N = cutflow[_histogram_data]["all"]["BeforeCuts"]
+                            N = cutflow[_histogram_data]["all"]["Before cuts"]
                             hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
 
                     if _histname in config["SetupBins"]:
@@ -509,13 +510,13 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     legendwidthscale = 1.9,
                     legendheightscale = 0.26,
                     lumiText = "2018 (13 TeV)",
-                    signal_to_background_ratio = False,
+                    signal_to_background_ratio = True,
                     ratio_mode = "SB",
-                    yrange_ratio = (1E-04, 1),
+                    yrange_ratio = (0.0, 2.0),
                     draw_errors = True
                 )
 
-def plotBrMC(hist_path, config, xsec, cutflow, output_path):
+def plotBrMC(hist_path, config, xsec, cutflow, output_path, is_per_flavour=False):
     
     '''
     This code is used to plot the MC branching ratio reading 2D histogram
@@ -523,26 +524,47 @@ def plotBrMC(hist_path, config, xsec, cutflow, output_path):
     0-tight, 1--tight and 2-tight region
     '''
     print(hist_path)
-    file = ROOT.TFile.Open(hist_path, 'read')
-    _histograms = {"background":[], "signal":[]}
-    for _group_idx, _group_name in enumerate(config["Labels"].keys()):
+    
+    _histograms = {}
+    if is_per_flavour:
+        flavours = config["mixing_hists"]["flavours"]
+        file = ROOT.TFile.Open(hist_path+"_0.root", 'read') 
+        file2 = ROOT.TFile.Open(hist_path+"_1.root", 'read')
+        # print(file.ls())
+        # print(file2.ls())
+    else:
+        file = ROOT.TFile.Open(hist_path+".root", 'read') 
+        flavours = [None]
 
-        isSignal = "signal" if _group_name in config["Signal_samples"] else "background"
-        print("isSignal:", isSignal)
+    for flav in flavours:
+        for _group_idx, _group_name in enumerate(config["Labels"].keys()):
 
-        has_group_entry = False
-        # Accumulate the dataset for the particular data group as specified in config “Labels”.
-        for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
+            if _group_name in config["Signal_samples"]:
+                raise ValueError("Signal samples are not allowed in this plotter")
+            elif _group_name in config["Data"]:
+                raise ValueError("Data samples are not allowed in this plotter")
 
-            print("Reading hist:", _histogram_data)
-            hist = file.Get(_histogram_data+"/hist")
-            
-            if not hist:
-                print("Warning: Histogram not found! ", end='')
-                print("Histogram->", file, _histogram_data)
-                continue
-            
-            if isSignal != "data": # Scaling of the MC to the lumi and xsection
+            # has_group_entry = False
+            # Accumulate the dataset for the particular data group as specified in config “Labels”.
+            for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
+                
+                if is_per_flavour:
+                    print("Reading hist:", f"{_histogram_data}/{flav}/hist")
+                    hist = file.Get(f"{_histogram_data}/{flav}/hist")
+                    hist2 = file2.Get(f"{_histogram_data}/{flav}/hist")
+                else:
+                    print("Reading hist:", _histogram_data)
+                    hist = file.Get(_histogram_data+"/hist")
+                
+                if not hist:
+                    print("Warning: Histogram not found! ", end='')
+                    print("Histogram->", file, _histogram_data)
+                    continue
+                
+                if is_per_flavour:
+                    hist.Add(hist2)
+                    
+                
                 if config["DY_stitching_applied"] and (
                         "DYJetsToLL_M-50" in _histogram_data or
                         "DY1JetsToLL_M-50" in _histogram_data or
@@ -564,63 +586,51 @@ def plotBrMC(hist_path, config, xsec, cutflow, output_path):
                     N = cutflow[_histogram_data]["all"]["BeforeCuts"]
                     hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
 
-            if not has_group_entry:
-                print("Append:", _histogram_data)
-                _histograms[isSignal].append(hist)
-                has_group_entry = True
-            else:
-                print("Add:", _histogram_data)
-                _histograms[isSignal][-1].Add(hist)
-                
-            if has_group_entry: # if there is at least one histogram in input
-            
-                if isSignal == "signal":
-                    color_setup = config["Signal_samples"][_group_name]  
-                    line_color = color_setup[1]
-                    fill_color = color_setup[0]
-                    line_style = color_setup[2]
-                    _histograms[isSignal][-1].SetLineStyle(line_style)
-                    _histograms[isSignal][-1].SetMarkerSize(0)
-                    _histograms[isSignal][-1].SetLineWidth(4)
-                elif isSignal == "data":
-                    color_setup = config["Data"][_group_name]  
-                    line_color = color_setup[1]
-                    fill_color = color_setup[0] 
-                    _histograms[isSignal][-1].SetMarkerStyle(8)
-                    _histograms[isSignal][-1].SetMarkerSize(1)
-                    _histograms[isSignal][-1].SetLineWidth(1)
+                if is_per_flavour:
+                    _group_name = flav
+
+                if not _group_name in _histograms.keys():
+                    print("Append:", _histogram_data)
+                    _histograms[_group_name] = hist
                 else:
+                    print("Add:", _histogram_data)
+                    _histograms[_group_name].Add(hist)
+                    
+                if _group_name in _histograms.keys(): # if there is at least one histogram in input
+                
                     color_setup = config["MC_bkgd"][_group_name]  
                     line_color = color_setup[1]
                     fill_color = color_setup[0]
-                    _histograms[isSignal][-1].SetMarkerSize(0)
-                    _histograms[isSignal][-1].SetLineWidth(4)
-                
-                _histograms[isSignal][-1].SetLineColor(line_color)
-                _histograms[isSignal][-1].SetFillColor(fill_color)
-                _histograms[isSignal][-1].SetTitle(_group_name)
-                print("Set title:", _group_name)
-        
-        # _histograms[isSignal][-1].SetLineColor(line_color)
-        # _histograms[isSignal][-1].SetFillColor(fill_color)
-        # _histograms[isSignal][-1].SetLineWidth(2)
-        # _histograms[isSignal][-1].SetMarkerSize(0)
-        # _histograms[isSignal][-1].SetTitle(_group_name)
+                    _histograms[_group_name].SetMarkerSize(0)
+                    _histograms[_group_name].SetLineWidth(4)
+                    
+                    _histograms[_group_name].SetLineColor(line_color)
+                    _histograms[_group_name].SetFillColor(fill_color)
+                    _histograms[_group_name].SetTitle(_group_name)
+                    print("Set title:", _group_name)
+            
+            # _histograms[isSignal][-1].SetLineColor(line_color)
+            # _histograms[isSignal][-1].SetFillColor(fill_color)
+            # _histograms[isSignal][-1].SetLineWidth(2)
+            # _histograms[isSignal][-1].SetMarkerSize(0)
+            # _histograms[isSignal][-1].SetTitle(_group_name)
     
     
     # get maximum for the y-scale
-    y_max = _histograms["background"][0].GetMaximum()
-    for _h in _histograms["background"]:
+    _histograms_values = list(_histograms.values())
+    print(_histograms_values)
+    y_max =_histograms_values[0].GetMaximum()
+    for _h in _histograms_values:
         y_max = max(y_max,_h.GetMaximum())
 
     # sort histogram from min to max
     _histograms_background_entries = []
     _histograms_background_sorted = []
-    for _h in _histograms["background"]:
+    for _h in _histograms_values:
         _histograms_background_entries.append(_h.Integral())
     _sorted_hist = np.argsort(_histograms_background_entries)
     for _idx in _sorted_hist:
-        _histograms_background_sorted.append(_histograms["background"][_idx])
+        _histograms_background_sorted.append(_histograms_values[_idx])
 
     
     # read the binning if available:
@@ -629,13 +639,12 @@ def plotBrMC(hist_path, config, xsec, cutflow, output_path):
     #     xrange_max = config["SetupBins"][_histname][1]
     #     overflow =  bool(config["SetupBins"][_histname][3])
     # else:
-    xrange_min = _histograms["background"][0].GetXaxis().GetXmin()
+    xrange_min =_histograms_values[0].GetXaxis().GetXmin()
     # xrange_max = _histograms["background"][0].GetXaxis().GetXmax()
     xrange_max = 53
     overflow =  True
 
-    score_pass_finebin = [
-        0.05,0.07,0.09,0.11,0.13, 0.15,0.16,0.18,0.2 ,0.22,0.24, 0.26,0.27,0.29, 0.31,0.33,0.35,0.37,0.38,0.4 ,0.42,0.44,0.46, 0.48,0.49,0.51,0.53,0.55,0.57, 0.59,0.6 ,0.62,0.64,0.66,0.68, 0.7 ,0.71,0.73,0.75,0.77,0.79 ,0.81,0.82,0.84,0.86,0.88,0.9,0.92,0.93,0.95,0.97,"0.99(wp)",".9999"]
+    score_pass_finebin = config["mixing_hists"]["labels"]
     
     for bin_filled in [0, 1, 2]:
         # two loose region
@@ -656,13 +665,13 @@ def plotBrMC(hist_path, config, xsec, cutflow, output_path):
                 # yrange = (0.0,  1.5*y_max),
                 logx = False, logy = True,
                 include_overflow = overflow,
-                xtitle = _histograms["background"][0].GetXaxis().GetTitle(),
+                xtitle = _histograms_values[0].GetXaxis().GetTitle(),
                 ytitle = "events",
-                xtitle_ratio = _histograms["background"][0].GetXaxis().GetTitle(),
+                xtitle_ratio = _histograms_values[0].GetXaxis().GetTitle(),
                 ytitle_ratio = "%",
                 centertitlex = True, centertitley = True,
                 centerlabelx = False, centerlabely = False,
-                gridx = True, gridy = True,
+                gridx = False, gridy = False,
                 ndivisionsx = None,
                 stackdrawopt = "",
                 # normilize = True,

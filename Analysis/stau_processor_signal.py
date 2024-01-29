@@ -139,19 +139,23 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Scale factors should be calculated -
         # before cuts on the number of the jets
         selector.set_multiple_columns(self.set_njets_pass)
-        selector.set_multiple_columns(self.set_njets_pass_finebin)
+        # selector.set_multiple_columns(self.set_njets_pass_finebin)
         if self.config["predict_yield"]:
             selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
         
         # Jets that match to tau
         # selector.set_column("Jet_tau", partial(self.jet_tau, is_mc=is_mc))
+        # Falvour study of the jets
+        # selector.set_multiple_columns(self.gen_lep)
+        # selector.set_column("Jet_select_flav", self.jet_updated_flavour)
         
         # Selection of the jet is performed only for two leading jets:
         selector.add_cut("two_loose_jets_final", self.has_two_jets)
         
         # Prediction should be done in following state <->
         
-        # Dummy basemark to have cut where regions were not categories yet
+        ## Dummy basemark to have cut where regions were not categories yet
+        ## The following is categorisation is done for MC stusy
         # selector.add_cut("two_loose_jets_final2", self.has_two_jets)
         # selector.set_cat("control_region", {"RT0", "RT1", "RT2"})
         # selector.set_multiple_columns(partial(self.categories_bins))
@@ -556,6 +560,8 @@ class Processor(pepper.ProcessorBasicPhysics):
             n_pass.append( passed )
         n_pass = ak.from_regular(
             np.stack(n_pass, axis=1), axis=-1)
+        # print(n_pass)
+        # print(ak.local_index(n_pass, axis=1))
         return {
             "n_pass_finebin" : n_pass,
             "n_pass_score_bin_finebin" : ak.local_index(n_pass, axis=1),
@@ -563,6 +569,7 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     @zero_handler
     def predict_yield(self, data, weight=None):
+        print("predict")
         jets = data["Jet_select"]
         
         # from bin 0 to bin 1
@@ -664,3 +671,42 @@ class Processor(pepper.ProcessorBasicPhysics):
                 "tight_yield_bin0to2" : weight*yield_bin0to2[:,tight_wp],
                 "score_bin"     : score_bin}
         
+    # Adding gen-jet flavor to every jet:
+    def gen_lep(self, data):
+        if len(data) == 0:
+            return {"gen_mu":ak.Array([]),
+                    "gen_ele":ak.Array([])}
+        gen_mu = data.GenPart[
+            (abs(data.GenPart.pdgId) == 13)
+            & data.GenPart.hasFlags(["isHardProcess"])
+            & data.GenPart.hasFlags(["isFirstCopy"])
+        ]
+        gen_ele = data.GenPart[
+            (abs(data.GenPart.pdgId) == 11)
+            & data.GenPart.hasFlags(["isHardProcess"])
+            & data.GenPart.hasFlags(["isFirstCopy"])
+        ]
+        return {
+            "gen_mu"  : gen_mu,
+            "gen_ele" : gen_ele
+        }
+        
+    @zero_handler
+    def jet_updated_flavour(self, data):
+        
+        jets = data["Jet_select"]
+        
+        # add hadronic tau flavour:
+        tau_vis = data.GenVisTau[ ((data.GenVisTau.pt > 30) & (abs(data.GenVisTau.eta) < 2.4) &
+                                  (data.GenVisTau.parent.hasFlags(["fromHardProcess"])))
+                                ]
+        matches_tauhad, _ = jets.nearest(tau_vis, return_metric=True, threshold=0.4)
+        matches_mu, _  = jets.nearest(data["gen_mu"], return_metric=True, threshold=0.4)
+        matches_ele, _ = jets.nearest(data["gen_ele"], return_metric=True, threshold=0.4)
+        
+        
+        updFlavour = ak.where(~ak.is_none(matches_tauhad, axis=1), 15, jets.partonFlavour)
+        updFlavour = ak.where(~ak.is_none(matches_mu, axis=1), 13, updFlavour)
+        updFlavour = ak.where(~ak.is_none(matches_ele, axis=1), 11, updFlavour)
+        
+        return np.abs(updFlavour)

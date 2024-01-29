@@ -154,7 +154,7 @@ if config["fake_rate"]["mode"] == "ratio":
                         hist.Scale(config["luminosity"])
                     else:
                         # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
-                        N = cutflow[_histogram_data]["all"]["Before cuts"]
+                        N = cutflow[_histogram_data]["all"]["BeforeCuts"]
                         hist.Scale( (crosssections[_histogram_data] * config["luminosity"]) / N)
 
                         
