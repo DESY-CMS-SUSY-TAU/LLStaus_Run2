@@ -16,35 +16,40 @@
         "mode" : "ratio",
 
         // "nominator" : ["file name w/o extention", "category prefix"]
-        "nominator"   : ["Cut-011_two_loose_jets_final_fake_rate_hist", "_p9900"],
-        "denominator" : ["Cut-011_two_loose_jets_final_fake_rate_hist", "_p05"],
+        "nominator"   : ["Cut_014_two_loose_jets_final_fake_rate_hist", "/p70"],
+        "denominator" : ["Cut_014_two_loose_jets_final_fake_rate_hist", "/p05"],
         
         "NOF" : false, // no overflow bins in projection
         "NUF" : false, // no underflow bins in projection
         "rate_bins" : {
+            // "jet_flav" : [0, 1, 4, 5, 6, 15, 16, 21, 22, 25],
+            // "jet_flav" : [1, 4, 6, 15, 16, 21, 22],
             "jet_eta": [-2.3, -1.5, -0.5,  0.5,  1.5,  2.3],
             "jet_pt" :  [30, 40, 50, 70, 120, 1000],
-            "jet_dxy" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 50.0],
+            "jet_dxy" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 30.0],
         },
+
         "sf_project" : {
-            // name : "axis", score should be first argument
-            "jet_eta" : ["x", false],
-            "jet_pt"   : ["y", false],
-            "jet_dxy"   : ["z", false],
-            // "jet_pt_dxy" : "yz",
-            "jet_dxy_pt" : ["zy", {
-                "y_axis" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 50.0],
+               // name : "axis", score should be first argument
+               "jet_eta" : ["x", false],
+               "jet_pt"   : ["y", false],
+               "jet_dxy"   : ["z", false],
+               // "jet_pt_dxy" : "yz",
+               "jet_dxy_pt" : ["zy", {
+                "y_axis" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 30.0],
                 "x_axis" : [
+                    [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0], // underflow
                     [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
                     [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
                     [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
-                    [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                    [30.0, 40.0, 50.0, 70.0, 1000.0],
                     [30.0, 1000.0],
                     [30.0, 1000.0],
-                ]
-            }],
-            "jet_eta_pt" : ["xy", false],
-            "jet_eta_dxy" : ["xz", false]
+                    [30.0, 1000.0], // overflow
+                    ]
+                }],
+               "jet_eta_pt" : ["xy", false],
+               "jet_eta_dxy" : ["xz", false]
         },
     },
     "Labels": {
@@ -116,14 +121,13 @@
             "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8",
             "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8"
         ],
-        "$\\mathrm{W}+\\mathrm{jets}$": [
+        "$\\mathrm{W}(l\\nu/q\\bar{q})+\\mathrm{jets}$": [
             "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
 
             "W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
             "W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
             "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
             "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
-
             "WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
             "WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
             "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
@@ -146,33 +150,39 @@
         // "$\\mathrm{stau250GeV100cm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
         // "$\\mathrm{stau250GeV0p01mm}$" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"],
 
-        "m(#tilde{#tau})=100 GeV, c#tau_{0}=10 cm" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
-        "m(#tilde{#tau})=100 GeV, c#tau_{0}=100 cm" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
-        "m(#tilde{#tau})=400 GeV, c#tau_{0}=10 cm" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
-        "m(#tilde{#tau})=400 GeV, c#tau_{0}=100 cm" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
-        "m(#tilde{#tau})=250 GeV, c#tau_{0}=10 cm" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
-        "m(#tilde{#tau})=250 GeV, c#tau_{0}=100 cm" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
-        "m(#tilde{#tau})=250 GeV, c#tau_{0}=0.01 mm" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"],
+        // "m(#tilde{#tau})=100 GeV, c#tau_{0}=10 cm" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6"],
+        // "m(#tilde{#tau})=100 GeV, c#tau_{0}=100 cm" : ["SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4"],
+        // "m(#tilde{#tau})=400 GeV, c#tau_{0}=10 cm" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6"],
+        // "m(#tilde{#tau})=400 GeV, c#tau_{0}=100 cm" : ["SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4"],
+        // "m(#tilde{#tau})=250 GeV, c#tau_{0}=10 cm" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6"],
+        // "m(#tilde{#tau})=250 GeV, c#tau_{0}=100 cm" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4"],
+        // "m(#tilde{#tau})=250 GeV, c#tau_{0}=0.01 mm" : ["SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6"],
 
-        "$\\mathrm{Data}$" : ["DATA_MET"]
+        // "$\\mathrm{Data}$" : ["DATA_MET"]
     },
     "Data": {
         "$\\mathrm{Data}$" : [0, 1]
     },
     "MC_bkgd": {
         // "name" : [filling_color, line_color, line_style]
-        "$\\mathrm{QCD}$":                         [423, 423],
+        "$\\mathrm{QCD}$":                         [430, 430],
         "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$":          [394, 394],
-        // "$\\mathrm{t}\\bar{\\mathrm{t}}$ dilep":   [591, 591],
-        // "$\\mathrm{t}\\bar{\\mathrm{t}}$ semilep": [607, 607],
-        // "$\\mathrm{t}\\bar{\\mathrm{t}}$ hadron.": [394, 394],
         "$\\mathrm{Single\\ top}$":        [623, 623],
         "$\\mathrm{DY+jets}$":                      [403, 403],
         "$\\mathrm{DY-low}$":                      [406, 406],
-        "$\\mathrm{W}+\\mathrm{jets}$":            [410, 410],
+        // "$\\mathrm{W}+\\mathrm{jets}$":            [410, 410],
+        "$\\mathrm{W}(l\\nu/q\\bar{q})+\\mathrm{jets}$" : [410, 410],
+        // "$\\mathrm{W}(q\\bar(q))+\\mathrm{jets}$" : [402, 402],
         "$\\mathrm{Z}(\\nu\\bar{\\nu})+\\mathrm{jets}$":   [616, 616],
         "$\\mathrm{Other\\ SM}$":            [795, 795],
-        // "$\\mathrm{ggZZ}$":                         [597, 597]
+
+        "undef" : [406, 406],
+        "light" : [403, 403],
+        "heavy" : [795, 795],
+        "ele" : [430, 430],
+        "mu" : [623, 623],
+        "tau" : [616, 616],
+        "g" : [394, 394]
     },
     "Signal_samples":{
         // "name" : [filling_color, line_color, line_style]
@@ -272,7 +282,9 @@
         "2D_MT2_MTSUM_bin0to1",
         "2D_MET_MT2_bin1to2",
         "2D_MET_MTSUM_bin1to2",
-        "2D_MT2_MTSUM_bin1to2"
+        "2D_MT2_MTSUM_bin1to2",
+        "n_jet_pass_finebin",
+        "n_jet_pass"
     ],
     "SetupBins" : {
         // "Histogram name" : [x_min, x_max, rebin_bins, overflow_includ, axis labels]
@@ -336,16 +348,28 @@
         "jettau_dxysig_weight" : [0.0, 1000.0, 3, true, null], 
         "jettau_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
                                     0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
-                                    0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0], true, null],
-            
-        
+                                    0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0], true, null],    
+    },
 
+    "mixing_hists" : {
+        // "hist" : "Cut_014_two_loose_jets_final_n_jet_pass_finebin_flav",
+        "hist" : "Cut_014_two_loose_jets_final_n_jet_pass_finebin_flav",
+        "labels" : [
+            0.05,0.07,0.09,0.11,0.13,0.15,0.16,0.18,0.2,0.22,
+            0.24,0.26,0.27,0.29,0.31,0.33,0.35,0.37,0.38,0.4,
+            0.42,0.44,0.46,0.48,0.49,0.51,0.53,0.55,0.57,0.59,
+            0.6,0.62,0.64,0.66,0.68,0.7,0.71,0.73,0.75,0.77,
+            0.79,0.81,0.82,0.84,0.86,0.88,0.9,0.92,0.93,0.95,
+            0.97,"0.99(wp)",".9999"],
+        // "flavours" : ["undef", "light", "heavy", "ele", "mu", "tau", "g"]
+        // "flavours" : ["mu"]
+        "flavours" : ["undef", "light", "heavy", "ele", "tau", "g"]
     },
 
     "prediction_hist" : {
         "plot_unblind" : true,
-        "plot_signal" : true,
-        "cut"   : "Cut-013_two_loose_jets_final",
+        "plot_signal" : false,
+        "cut"   : "Cut_014_two_loose_jets_final",
         "predictions" : ["bin0to2", "bin1to2", "bin0to1"], // Also can be a bin projection
         "bin_data" : ["bin2", "bin2", "bin1"],
         "hists" : {

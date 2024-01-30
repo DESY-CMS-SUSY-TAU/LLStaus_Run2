@@ -25,14 +25,57 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
             file_predict = ROOT.TFile.Open(path_predict, 'read')
             # print(file_predict.ls())
             hist_prediction = None
-            for data_group in config["Data"].keys():
-                for data_name in config["Labels"][data_group]:
+            isDATA = False
+            # for data_group in config["Data"].keys():
+            #     for data_name in config["Labels"][data_group]:
+
+            for _group_idx, _group_name in enumerate(config["Labels"].keys()):
+                # if (not _group_name in config["MC_bkgd"]) and (not _group_name in config["Signal_samples"]):
+                #     continue
+                # if not( _group_name in config["Data"]): continue
+                # Accumulate the dataset for the particular data group as specified in config "Labels".
+                for _idx, data_name in enumerate(config["Labels"][_group_name]):
+
                     print("Extract prediction:", data_name)
                     open_tag = data_name+"/hist"
-                    if hist_prediction == None:
-                        hist_prediction = file_predict.Get(open_tag)
+                    _hist_predict = file_predict.Get(open_tag)
+                    if not _hist_predict:
+                        print("Warning: Histogram not found! ", end='')
+                        print("Histogram->", file_predict, open_tag)
+                        continue
+                    _hist_predict.SetDirectory(0)
+
+                    if _group_name in config["Data"]:
+                        isDATA = True
+                        pass
                     else:
-                        hist_prediction.Add(file_predict.Get(open_tag))
+                        if isDATA: raise("Can not combine data and MC")
+
+                        if config["DY_stitching_applied"] and (
+                                "DYJetsToLL_M-50" in data_name or
+                                "DY1JetsToLL_M-50" in data_name or
+                                "DY2JetsToLL_M-50" in data_name or
+                                "DY3JetsToLL_M-50" in data_name or
+                                "DY4JetsToLL_M-50" in data_name ):
+                            # print("Stitching:", data_name)
+                            _hist_predict.Scale(config["luminosity"])
+                        elif config["W_stitching_applied"] and (
+                                ("WJetsToLNu" in data_name and (not "TTWJets" in data_name)) or
+                                "W1JetsToLNu" in data_name or
+                                "W2JetsToLNu" in data_name or
+                                "W3JetsToLNu" in data_name or
+                                "W4JetsToLNu" in data_name ):
+                            # print("Stitching:", data_name)
+                            _hist_predict.Scale(config["luminosity"])
+                        else:
+                            # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
+                            N = cutflow[data_name]["all"]["BeforeCuts"]
+                            _hist_predict.Scale( (xsec[data_name] * config["luminosity"]) / N)
+
+                    if hist_prediction == None:
+                        hist_prediction = _hist_predict
+                    else:
+                        hist_prediction.Add(_hist_predict)
                         
             if type(rebin_setup) == list:
                 hist_prediction = hist_prediction.Rebin(len(rebin_setup)-1, hist_prediction.GetName()+"_rebin", np.array(rebin_setup, dtype=np.double))
@@ -60,8 +103,17 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
             # print(file_n_pass.ls())
             if config["prediction_hist"]["plot_unblind"]:
                 hist_data = None
-                for data_group in config["Data"].keys():
-                    for data_name in config["Labels"][data_group]:
+                isDATA = False
+                # for data_group in config["Data"].keys():
+                #     for data_name in config["Labels"][data_group]:
+
+                for _group_idx, _group_name in enumerate(config["Labels"].keys()):
+                    # if (not _group_name in config["MC_bkgd"]) and (not _group_name in config["Signal_samples"]):
+                    #     continue
+                    # if not( _group_name in config["Data"]): continue
+                    # Accumulate the dataset for the particular data group as specified in config "Labels".
+                    for _idx, data_name in enumerate(config["Labels"][_group_name]):
+
                         # print(file_n_pass.ls())
                         # print(data_name+"_"+data_bin)
                         if isinstance(data_bin, str):
@@ -70,6 +122,39 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                         elif isinstance(data_bin, int):
                             _hist_data = file_n_pass.Get(data_name)
                             _hist_data = _hist_data.ProjectionX(data_name+"_proj", data_bin, data_bin)
+                        if not _hist_data:
+                            print("Warning: Histogram not found! ", end='')
+                            print("Histogram->", file_n_pass, open_tag)
+                            continue
+                        _hist_data.SetDirectory(0)
+
+                        if _group_name in config["Data"]:
+                            isDATA = True
+                            pass
+                        else:
+                            if isDATA: raise("Can not combine data and MC")
+
+                            if config["DY_stitching_applied"] and (
+                                    "DYJetsToLL_M-50" in data_name or
+                                    "DY1JetsToLL_M-50" in data_name or
+                                    "DY2JetsToLL_M-50" in data_name or
+                                    "DY3JetsToLL_M-50" in data_name or
+                                    "DY4JetsToLL_M-50" in data_name ):
+                                # print("Stitching:", data_name)
+                                _hist_data.Scale(config["luminosity"])
+                            elif config["W_stitching_applied"] and (
+                                    ("WJetsToLNu" in data_name and (not "TTWJets" in data_name)) or
+                                    "W1JetsToLNu" in data_name or
+                                    "W2JetsToLNu" in data_name or
+                                    "W3JetsToLNu" in data_name or
+                                    "W4JetsToLNu" in data_name ):
+                                # print("Stitching:", data_name)
+                                _hist_data.Scale(config["luminosity"])
+                            else:
+                                # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
+                                N = cutflow[data_name]["all"]["BeforeCuts"]
+                                _hist_data.Scale( (xsec[data_name] * config["luminosity"]) / N)
+
                        
                         if hist_data == None:
                             hist_data = _hist_data
@@ -92,7 +177,7 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
             # ---- Part to assign signal histogram
             if config["prediction_hist"]["plot_signal"]:
                 for _group_idx, _group_name in enumerate(config["Signal_samples"]):
-                    # Accumulate the dataset for the particular data group as specified in config “Labels”.
+                    # Accumulate the dataset for the particular data group as specified in config "Labels".
                     for _dataset_idx, _histogram_data in enumerate(config["Labels"][_group_name]):
                         print("Adding signal dataset:", _histogram_data)
                         if isinstance(data_bin, str):
@@ -137,7 +222,7 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 l_hist = hists_main,
                 l_hist_overlay = signal_hists,
                 # l_hist_overlay = [hist_data] if config["prediction_hist"]["plot_unblind"] else [],
-                outfile = output_path + "/" + hist + "_" + prediction_bin + ".png",
+                outfile = output_path + "/" + hist + "_" + prediction_bin + ".pdf",
                 xrange = [x_min, x_max],
                 yrange = (0.01,  1000*hist_prediction.GetMaximum()),
                 logx = False, logy = True,
@@ -563,8 +648,8 @@ def plotBrMC(hist_path, config, xsec, cutflow, output_path, is_per_flavour=False
                 
                 if is_per_flavour:
                     hist.Add(hist2)
-                    
-                
+                # hist = hist2
+
                 if config["DY_stitching_applied"] and (
                         "DYJetsToLL_M-50" in _histogram_data or
                         "DY1JetsToLL_M-50" in _histogram_data or

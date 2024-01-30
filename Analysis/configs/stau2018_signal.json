@@ -114,25 +114,6 @@
 
     },
     "pileup_reweighting": "$DATADIR/pileup.root",
-    // "muon_sf": [
-    //     [
-    //         "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root",
-    //         "NUM_TightID_DEN_TrackerMuons_abseta_pt",
-    //         ["abseta", "pt"]
-    //     ],
-    //     [
-    //         "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2018_UL_ISO.root",
-    //         "NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt",
-    //         ["abseta", "pt"]
-    //     ]
-    // ],
-    // "single_mu_trigger_sfs": [
-    //     [
-    //         "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2018_UL_SingleMuonTriggers.root",
-    //         "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight_abseta_pt",
-    //         ["abseta", "pt"]
-    //     ]
-    // ],
     "DY_lo_sfs": [
         "$DATADIR/hist_zptmass_weight_nom_2018.root",
         "hist_zptmass_weight_nom",
@@ -177,18 +158,14 @@
     },
 
     // data-driven n-pass yield prediction:
-    // "jet_fake_rate" : [
-    //     "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v10_onlydata/fake_rate_minxy_eta-binned/fake_rate_jet_pt.root",
-    //     "fake_rate_jet_pt",
-    //     ["jet_pt"]
-    // ],
     "jet_fake_rate" : [
         // "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v11/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
         "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_3/output_wjet/wjet_v13_mb/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
+        // "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_3/output_signal/signal_v16/fake_rate_mc/fake_rate_jet_dxy_pt.root",
         "fake_rate_jet_dxy_pt",
         ["jet_pt", "jet_dxy"]
     ],
-    "predict_yield" : false,    
+    "predict_yield" : true,    
 
     "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/jets_skims",
 
@@ -228,65 +205,18 @@
     // Tagger part
     // "score_pass" : [0.0, 0.1716, 0.4612, 0.6631, 0.786, 0.846, 0.9529, 0.9889, 0.9972, 0.9996],
 
-    "score_pass" : [0.05, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.40, 0.45, 0.5, 0.95, 0.9900, 0.9972, 0.9996],
-    "score_pass_finebin" : [
-        0.05,
-        0.07,
-        0.09,
-        0.11,
-        0.13, 
-        0.15,
-        0.16,
-        0.18,
-        0.2 ,
-        0.22,
-        0.24, 
-        0.26,
-        0.27,
-        0.29, 
-        0.31,
-        0.33,
-        0.35,
-        0.37,
-        0.38,
-        0.4 ,
-        0.42,
-        0.44,
-        0.46, 
-        0.48,
-        0.49,
-        0.51,
-        0.53,
-        0.55,
-        0.57, 
-        0.59,
-        0.6 ,
-        0.62,
-        0.64,
-        0.66,
-        0.68, 
-        0.7 ,
-        0.71,
-        0.73,
-        0.75,
-        0.77,
-        0.79 ,
-        0.81,
-        0.82,
-        0.84,
-        0.86,
-        0.88,
-        0.9 , 
-        0.92,
-        0.93,
-        0.95,
-        0.97,
-        0.99,
-        1.0
-  
+    // "score_pass" : [0.05, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.40, 0.45, 0.5, 0.7, 0.95, 0.9900, 0.9972, 0.9996],
+    "score_pass" : [0.05, 0.9900],
+    "score_pass_finebin" : [ 
+        0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.16, 0.18, 0.20, 
+        0.22, 0.24, 0.26, 0.27, 0.29, 0.31, 0.33, 0.35, 0.37, 0.38, 0.40,
+        0.42, 0.44, 0.46, 0.48, 0.49, 0.51, 0.53, 0.55, 0.57, 0.59, 0.60,
+        0.62, 0.64, 0.66, 0.68, 0.70, 0.71, 0.73, 0.75, 0.77, 0.79, 0.81,
+        0.82, 0.84, 0.86, 0.88, 0.90, 0.92, 0.93, 0.95, 0.97, 0.99, 1.00
     ],
     "loose_thr" : 0.05,
     "tight_thr" : 0.9900,
+    // "tight_thr" : 0.7,
 
     "hists": "$CONFDIR/stau2018_signal_hist.json",
     

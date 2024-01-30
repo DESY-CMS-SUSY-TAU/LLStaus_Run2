@@ -12,7 +12,7 @@ input_disID: null
 # input_disID:
 #     test1: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/soft/CMSSW_12_4_0/src/output_id/
 
-n_files: -1 #per dataset
+n_files: 20 #per dataset
 
 mode:
 
@@ -37,7 +37,7 @@ collections:
         cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
     Tau:
         name: Tau
-        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4) & ({name}.idDeepTau2017v2p1VSe > 16) & ({name}.idDeepTau2017v2p1VSjet > 16) & ({name}.idDeepTau2017v2p1VSmu > 4)"
+        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
     GenVisTaus:
         name: GenVisTau
         cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4) & (abs({name}.vertexZ) < 100)"
