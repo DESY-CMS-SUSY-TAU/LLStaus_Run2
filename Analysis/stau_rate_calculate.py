@@ -156,6 +156,7 @@ if config["fake_rate"]["mode"] == "ratio":
                         # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
                         N = cutflow[_histogram_data]["all"]["BeforeCuts"]
                         hist.Scale( (crosssections[_histogram_data] * config["luminosity"]) / N)
+                        print(_group_name, "integral:", hist.Integral())
 
                         
                 if hist_fake[name] is None:
@@ -168,6 +169,8 @@ if config["fake_rate"]["mode"] == "ratio":
     nominator = config["fake_rate"]["nominator"][0]
     denominator = config["fake_rate"]["denominator"][0]
 
+    print(hist_fake)
+
     print("Integral pre-rebin nom:", OverflowIntegralTHN(hist_fake["nom"]))
     print("Integral pre-rebin den:", OverflowIntegralTHN(hist_fake["denom"]))
     print("Divide histogram:")
@@ -177,6 +180,7 @@ if config["fake_rate"]["mode"] == "ratio":
     denominator_th3_hist = denominator_th3.get_rebinned_histogram()
     print("Integral post-rebin nom:", OverflowIntegralTHN(nominator_th3_hist))
     print("Integral post-rebin den:", OverflowIntegralTHN(denominator_th3_hist))
+    print("Inclusice fake rate:", nominator_th3_hist.Integral()/denominator_th3_hist.Integral())
     fake_sf = nominator_th3_hist.Clone()
     fake_sf.SetDirectory(0)
     fake_sf.Divide(denominator_th3_hist)
@@ -204,6 +208,9 @@ if config["fake_rate"]["mode"] == "ratio":
         # if hist_projection_nom[-1].GetDimension() == 1:
         #     hist_projection_nom[-1].Print("all")
         #     hist_projection_den[-1].Print("all")
+        # print(hist_projection_nom.Print("all"))
+        # print(hist_projection_den.Print("all"))
+
         if rebin_non_unifor:
             assert(isinstance(rebin_non_unifor, dict))
             assert("y_axis" in rebin_non_unifor)
@@ -218,7 +225,7 @@ if config["fake_rate"]["mode"] == "ratio":
             for i in range(len(x_axis)):
                 nom_nonunif.add_x_binning_by_index(i, np.array(x_axis[i], dtype=np.double))
                 den_nonunif.add_x_binning_by_index(i, np.array(x_axis[i], dtype=np.double))
-            
+                
             try:
                 nom_nonunif.th2d_add(hist_projection_nom)
                 den_nonunif.th2d_add(hist_projection_den)
@@ -229,10 +236,18 @@ if config["fake_rate"]["mode"] == "ratio":
                 del den_nonunif
                 exit()
                 
-            nom_nonunif.divide(den_nonunif)
+            nom_nonunif.divide(den_nonunif, "B")
             weight_hist = nom_nonunif.get_weights_th2d_simpl("hist_weight","hist_weight")
-            
             duplicate_uf_of_bins(weight_hist, NUF=bool(config["fake_rate"]["NOF"]), NOF=bool(config["fake_rate"]["NOF"]))
+            
+            # print("~~~~~~~~~~~~~~ Nominator:")
+            # nom_nonunif.print("")
+            # print("~~~~~~~~~~~~~~ Denominator:")
+            # den_nonunif.print("")
+            # print("~~~~~~~~~~~~~~ Ratio:")
+            # nom_nonunif.print("")
+            print("~~~~~~~~~~~~~~ Ratio with filled overflow/underflow bins:")
+            weight_hist.Print("all")
             
             output = ROOT.TFile(args.outdir+f"/fake_rate_{name}.root", "RECREATE")
             weight_hist.SetName(f"fake_rate_{name}")
@@ -244,7 +259,9 @@ if config["fake_rate"]["mode"] == "ratio":
             del weight_hist
 
         else:
-            hist_projection_nom.Divide(hist_projection_den)
+            hist_projection_nom.Divide(hist_projection_nom, hist_projection_den, 1, 1, "B")
+            # print("~~~~~~~~~~~~~~ Ratio:")
+            # hist_projection_nom.Print("all")
             output = ROOT.TFile(args.outdir+f"/fake_rate_{name}.root", "RECREATE")
             hist_projection_nom.SetName(f"fake_rate_{name}")
             hist_projection_nom.Write()

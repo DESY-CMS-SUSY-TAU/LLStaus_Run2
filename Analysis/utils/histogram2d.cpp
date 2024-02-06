@@ -15,7 +15,7 @@ class Histogram_2D{
     ~Histogram_2D();
 
     void th2d_add (TH2D*);
-    void divide   (const Histogram_2D& histo);
+    void divide(const Histogram_2D& histo, const std::string& option);
     void reset();
 
     void add_x_binning_by_index(const int index, const std::vector<double> xaxis);
@@ -147,7 +147,7 @@ void Histogram_2D::th2d_add (TH2D* histo){
   }
 }
 
-void Histogram_2D::divide(const Histogram_2D& histo){
+void Histogram_2D::divide(const Histogram_2D& histo, const std::string& option){
   auto check_axis = [] (const std::vector<double>& axis1, const std::vector<double>& axis2){
     return axis1 == axis2;
   };
@@ -171,7 +171,11 @@ void Histogram_2D::divide(const Histogram_2D& histo){
       throw std::logic_error("Invalid x-axis binning found for denominator in y bin n. "+std::to_string(iy)+" for Histogram_2D "+histo.name_);
     }
 
-    (*thisxhisto).Divide(xhisto);
+    if (option == "B"){
+      (*thisxhisto).Divide(thisxhisto, xhisto, 1.0, 1.0, "B");
+    } else {
+      (*thisxhisto).Divide(thisxhisto, xhisto, 1.0, 1.0);
+    }
   }
 }
 

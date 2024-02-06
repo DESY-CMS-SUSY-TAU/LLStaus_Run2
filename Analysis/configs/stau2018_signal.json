@@ -7,7 +7,7 @@
     "datadir": "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/configs/data/ul2018",
     "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD",
     "rng_seed_file": "$CONFDIR/seed.txt",
-    "compute_systematics": false,
+    "compute_systematics": true,
     "lumimask": "$CONFDIR/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt",
     "luminosity": 59.74,
     "crosssections": "$CONFDIR/crosssections.json",
@@ -107,10 +107,22 @@
         "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8" : [ "$STOREDIR/ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_ZZTo2Q2L/230311_154007/*/*.root", ],
         "ZZTo4L_TuneCP5_13TeV_powheg_pythia8" : [ "$STOREDIR/ZZTo4L_TuneCP5_13TeV_powheg_pythia8/crab_ZZTo4L/230311_154018/*/*.root", ],
         
-        "ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8/crab_ZJetsToQQ_HT-200to400/230311_122124/*/*.root", ],
-        "ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/crab_ZJetsToQQ_HT-400to600/230311_122129/*/*.root", ],
-        "ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/crab_ZJetsToQQ_HT-600to800/230311_122135/*/*.root", ],
-        "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/crab_ZJetsToQQ_HT-800toInf/230311_122140/*/*.root", ],
+        "SMS-TStauStau_MStau-100_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_100mm_mLSP_1/231218_144102/*/*.root"],
+        "SMS-TStauStau_MStau-200_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_100mm_mLSP_1/231218_144542/*/*.root"],
+        "SMS-TStauStau_MStau-300_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_100mm_mLSP_1/231218_145008/*/*.root"],
+        "SMS-TStauStau_MStau-400_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_100mm_mLSP_1/231218_153857/*/*.root"],
+        "SMS-TStauStau_MStau-500_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_100mm_mLSP_1/231218_145458/*/*.root"],
+
+        "SMS-TStauStau_MStau-250_ctau-0p01mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_0p01mm_mLSP_1/231218_144706/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-0p05mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_0p05mm_mLSP_1/231218_144719/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-0p1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_0p1mm_mLSP_1/231218_144713/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-0p5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_0p5mm_mLSP_1/231218_144726/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-1000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_1000mm_mLSP_1/231218_144804/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_100mm_mLSP_1/231218_144758/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-10mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_10mm_mLSP_1/231218_144745/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_1mm_mLSP_1/231218_144732/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-50mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_50mm_mLSP_1/231218_144751/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_5mm_mLSP_1/231218_144739/*/*.root"],
 
     },
     "pileup_reweighting": "$DATADIR/pileup.root",
@@ -159,9 +171,7 @@
 
     // data-driven n-pass yield prediction:
     "jet_fake_rate" : [
-        // "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v11/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
-        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_3/output_wjet/wjet_v13_mb/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
-        // "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_3/output_signal/signal_v16/fake_rate_mc/fake_rate_jet_dxy_pt.root",
+        "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_3/output_wjet/wjet_v14_rates/fake_rate_data_binom/fake_rate_jet_dxy_pt.root",
         "fake_rate_jet_dxy_pt",
         ["jet_pt", "jet_dxy"]
     ],
@@ -206,7 +216,7 @@
     // "score_pass" : [0.0, 0.1716, 0.4612, 0.6631, 0.786, 0.846, 0.9529, 0.9889, 0.9972, 0.9996],
 
     // "score_pass" : [0.05, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.40, 0.45, 0.5, 0.7, 0.95, 0.9900, 0.9972, 0.9996],
-    "score_pass" : [0.05, 0.9900],
+    "score_pass" : [0.9900],
     "score_pass_finebin" : [ 
         0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.16, 0.18, 0.20, 
         0.22, 0.24, 0.26, 0.27, 0.29, 0.31, 0.33, 0.35, 0.37, 0.38, 0.40,
@@ -218,7 +228,7 @@
     "tight_thr" : 0.9900,
     // "tight_thr" : 0.7,
 
-    "hists": "$CONFDIR/stau2018_signal_hist.json",
+    "hists": "$CONFDIR/stau2018_signal_hist_unc.json",
     
     // There are many histograms in output data, for prediction we need only one 
     // the load on histograms transfer one of the biggest bottleneck in the code

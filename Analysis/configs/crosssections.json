@@ -84,5 +84,23 @@
     "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6": 0.56,
     "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4": 102.77,
     "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4": 3.85,
-    "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4": 0.56
+    "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4": 0.56,
+
+    "SMS-TStauStau_MStau-100_ctau-100mm_mLSP-1": 102.77,
+    "SMS-TStauStau_MStau-200_ctau-100mm_mLSP-1": 9.0,
+    "SMS-TStauStau_MStau-300_ctau-100mm_mLSP-1": 1.87,
+    "SMS-TStauStau_MStau-400_ctau-100mm_mLSP-1": 0.56,
+    "SMS-TStauStau_MStau-500_ctau-100mm_mLSP-1": 0.2,
+
+    "SMS-TStauStau_MStau-250_ctau-0p01mm_mLSP-1": 3.85,
+    "SMS-TStauStau_MStau-250_ctau-0p05mm_mLSP-1": 3.85,
+    "SMS-TStauStau_MStau-250_ctau-0p1mm_mLSP-1": 3.85,
+    "SMS-TStauStau_MStau-250_ctau-0p5mm_mLSP-1": 3.85,
+    "SMS-TStauStau_MStau-250_ctau-1000mm_mLSP-1": 3.85,
+    "SMS-TStauStau_MStau-250_ctau-100mm_mLSP-1": 3.85,
+    "SMS-TStauStau_MStau-250_ctau-10mm_mLSP-1": 3.85,
+    "SMS-TStauStau_MStau-250_ctau-1mm_mLSP-1": 3.85,
+    "SMS-TStauStau_MStau-250_ctau-50mm_mLSP-1": 3.85,
+    "SMS-TStauStau_MStau-250_ctau-5mm_mLSP-1": 3.85
+
 }

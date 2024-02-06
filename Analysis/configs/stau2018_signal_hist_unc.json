@@ -1,0 +1,3483 @@
+{
+"npvs" : {
+    "bins": [
+        {
+            "name": "npvsGood",
+            "label": "number of good reconstructed primary vertices",
+            "n_or_arr": 200,
+            "lo": 0,
+            "hi": 200,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "npvsGood": [
+            "PV",
+            "npvsGood"
+        ]
+    }
+},
+
+"1st_jet_pt": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "1-st\\ jet p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "Jet_select",
+            "pt",
+            {"leading": 1}
+        ]
+    }
+},
+
+"2nd_jet_pt": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "2-nd\\ jet p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "Jet_select",
+            "pt",
+            {"leading": 2}
+        ]
+    }
+},
+
+"njetselect": {
+    "bins": [
+        {
+            "name": "njet",
+            "label": "Number of jets",
+            "n_or_arr": 20,
+            "lo": 0,
+            "hi": 20
+        }
+    ],
+    "fill": {
+        "njet": [
+            "Jet_select",
+            {"function": "num"}
+        ]
+    }
+},
+
+"jj_mass": {
+    "bins": [
+        {
+            "name": "mjj",
+            "label": "m_{jj}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mjj": [
+            "sum_jj",
+            "mass"
+        ]
+    }
+},
+
+"jj_pt": {
+    "bins": [
+        {
+            "name": "pt_jj",
+            "label": "p_{T}(jj)",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt_jj": [
+            "sum_jj",
+            "pt"
+        ]
+    }
+},
+
+"HT": {
+    "bins": [
+        {
+            "name": "HT",
+            "label": "HT of jets",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "HT": [
+            "HT"
+        ]
+    }
+},
+
+"HT_miss": {
+    "bins": [
+        {
+            "name": "HT_miss",
+            "label": "HT_miss of jets",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "HT_miss": [
+            "HT_miss"
+        ]
+    }
+},
+
+"HT_valid": {
+    "bins": [
+        {
+            "name": "HT_valid",
+            "label": "HT of valid jets",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "HT_valid": [
+            "HT_valid"
+        ]
+    }
+},
+
+"HT_miss_valid": {
+    "bins": [
+        {
+            "name": "HT_miss_valid",
+            "label": "HT_miss of valid jets",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "HT_miss_valid": [
+            "HT_miss_valid"
+        ]
+    }
+},
+
+"METpt": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ]
+    }
+},
+
+"METphi": {
+    "bins": [
+        {
+            "name": "phi",
+            "label": "MET \\phi",
+            "n_or_arr": 100,
+            "lo": -3.14,
+            "hi": 3.14
+        }
+    ],
+    "fill": {
+        "phi": [
+            "MET",
+            "phi"
+        ]
+    }
+},
+
+"mt_jet1": {
+    "bins": [
+        {
+            "name": "mt_jet1",
+            "label": "mt of the jet1",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1500,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_jet1": [
+            "mt_jet1"
+        ]
+    }
+},
+
+"mt_jet2": {
+    "bins": [
+        {
+            "name": "mt_jet2",
+            "label": "mt of the jet1",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1500,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_jet2": [
+            "mt_jet2"
+        ]
+    }
+},
+
+"mt_sum": {
+    "bins": [
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 200,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_sum": [
+            "mt_sum"
+        ]
+    }
+},
+
+"mt2_j1_j2_MET": {
+    "bins": [
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "mt2_j1_j2_MET",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 500,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ]
+    }
+},
+
+"dphi_jet1_jet2": {
+    "bins": [
+        {
+            "name": "dphi_jet1_jet2",
+            "label": "dphi_jet1_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 3.14,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "dphi_jet1_jet2": [
+            "dphi_jet1_jet2",
+            {"function":"abs"}
+        ]
+    }
+},
+
+"jetselect_pt" : {
+    "bins": [
+        {
+            "name": "jet_pt",
+            "label": "Jet p_{T}",
+            "n_or_arr": 200,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "jet_pt": [
+            "Jet_select",
+            "pt"
+        ]
+    }
+},
+
+"jetselect_eta" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet eta",
+            "n_or_arr": 100,
+            "lo": -2.5,
+            "hi": 2.5,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_select",
+            "eta"
+        ]
+    }
+},
+
+"jetselect_dxy" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxy",
+            "n_or_arr": 200,
+            "lo": 0.0,
+            "hi": 50,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy"
+        ]
+    }
+},
+
+"jetselect_dxysig" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxySig",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 2000,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig"
+        ]
+    }
+},
+
+"jetselect_dxy_weight" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxy weighted",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 100,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy_weight"
+        ]
+    }
+},
+
+"jetselect_dxysig_weight" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxySig weighted",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 2000,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig_weight"
+        ]
+    }
+},
+
+"jetselect_score" : {
+    "bins": [
+        {
+            "name": "jet_score",
+            "label": "Jet score",
+            "n_or_arr": 140,
+            "lo": -0.2,
+            "hi": 1.2,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_score": [
+            "Jet_select",
+            "disTauTag_score1"
+        ]
+    }
+},
+
+"jettau_pt" : {
+    "bins": [
+        {
+            "name": "jet_pt",
+            "label": "Jet p_{T}",
+            "n_or_arr": 200,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "jet_pt": [
+            "Jet_tau",
+            "pt"
+        ]
+    }
+},
+
+"jettau_eta" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet eta",
+            "n_or_arr": 100,
+            "lo": -2.5,
+            "hi": 2.5,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_tau",
+            "eta"
+        ]
+    }
+},
+
+"jettau_dxy" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxy",
+            "n_or_arr": 200,
+            "lo": 0.0,
+            "hi": 50,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_tau",
+            "dxy"
+        ]
+    }
+},
+
+"jettau_dxysig" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxySig",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 2000,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_tau",
+            "dxysig"
+        ]
+    }
+},
+
+"jettau_dxy_weight" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxy weighted",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 100,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_tau",
+            "dxy_weight"
+        ]
+    }
+},
+
+"jettau_dxysig_weight" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxySig weighted",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 2000,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_tau",
+            "dxysig_weight"
+        ]
+    }
+},
+
+"jettau_score" : {
+    "bins": [
+        {
+            "name": "jet_score",
+            "label": "Jet score",
+            "n_or_arr": 140,
+            "lo": -0.2,
+            "hi": 1.2,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_score": [
+            "Jet_tau",
+            "disTauTag_score1"
+        ]
+    }
+},
+
+"fake_rate_hist" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet eta",
+            "n_or_arr": [-2.3, -1.5, -0.5, 0.5, 1.5, 2.3]
+        },
+        {
+            "name": "jet_pt",
+            "label": "Jet p_{T}",
+            "n_or_arr": [20, 30, 40, 50, 70, 120, 1000],
+            "unit": "GeV"
+        },
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxy",
+            "n_or_arr": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
+            "unit": "cm"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "score_wp",
+            "label": "score_wp"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_select",
+            "eta"
+        ],
+        "jet_pt": [
+            "Jet_select",
+            "pt"
+        ],
+        "jet_dxy": [
+            "Jet_select",
+            "dxy"
+        ],
+        "score_wp": {
+            "p05": [
+                "Jet_select",
+                {"function" : "pass_score", "kwargs" : {"thr" : 0.05}}
+            ],
+            // "p1": [
+            //     "Jet_select",
+            //     {"function" : "pass_score", "kwargs" : {"thr" : 0.1}}
+            // ],
+            // "p15": [
+            //     "Jet_select",
+            //     {"function" : "pass_score", "kwargs" : {"thr" : 0.15}}
+            // ],
+            // "p1716": [
+            //     "Jet_select",
+            //     {"function" : "pass_score", "kwargs" : {"thr" : 0.1716}}
+            // ],
+            // "p20": [
+            //     "Jet_select",
+            //     {"function" : "pass_score", "kwargs" : {"thr" : 0.20}}
+            // ],
+            "p70": [
+                "Jet_select",
+                {"function" : "pass_score", "kwargs" : {"thr" : 0.70}}
+            ],
+            "p9900": [
+                "Jet_select",
+                {"function" : "pass_score", "kwargs" : {"thr" : 0.9900}}
+            ],
+            // "p9972": [
+            //     "Jet_select",
+            //     {"function" : "pass_score", "kwargs" : {"thr" : 0.9972}}
+            // ],
+            // "p9996": [
+            //     "Jet_select",
+            //     {"function" : "pass_score", "kwargs" : {"thr" : 0.9996}}
+            // ]
+        }
+    }
+},
+
+"n_jet_pass" : {
+    "bins": [
+        {
+            "name": "jet_score_bin",
+            "label": "Jet score bin",
+            "n_or_arr": 21,
+            "lo": -1,
+            "hi": 20,
+            "unit": "-"
+        },
+        {
+            "name": "jet_pass",
+            "label": "number of jet passing",
+            "n_or_arr": 21,
+            "lo": -1,
+            "hi": 20,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_score_bin": [
+            "n_pass_score_bin"
+        ],
+        "jet_pass": [
+            "n_pass"
+        ]
+    }
+},
+
+// "n_jet_pass_finebin" : {
+//     "bins": [
+//         {
+//             "name": "jet_score_bin",
+//             "label": "Jet score bin",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 100,
+//             "unit": "-",
+//             "type": "int"
+//         },
+//         {
+//             "name": "jet_pass",
+//             "label": "number of jet passing",
+//             "n_or_arr": 4,
+//             "lo": -1,
+//             "hi": 3,
+//             "unit": "-",
+//             "type": "int"
+//         }
+//     ],
+//     "fill": {
+//         "jet_score_bin": [
+//             "n_pass_score_bin_finebin"
+//         ],
+//         "jet_pass": [
+//             "n_pass_finebin"
+//         ]
+//     }
+// },
+
+// "n_jet_pass_finebin_flav_0" : {
+// "bins": [
+//     {
+//         "name": "jet_score_bin",
+//         "label": "Jet score bin",
+//         "n_or_arr": 100,
+//         "lo": 0,
+//         "hi": 100,
+//         "unit": "-",
+//         "type": "int"
+//     },
+//     {
+//         "name": "jet_pass",
+//         "label": "number of jet passing",
+//         "n_or_arr": 4,
+//         "lo": -1,
+//         "hi": 3,
+//         "unit": "-",
+//         "type": "int"
+//     }
+// ],
+// "cats" : [
+//     {
+//         "name": "flav",
+//         "label": "flav"
+//     }
+// ],
+// "fill": {
+//     "jet_score_bin": [
+//         "n_pass_score_bin_finebin"
+//     ],
+//     "jet_pass": [
+//         "n_pass_finebin"
+//     ],
+//     "flav": {
+//         "undef": [
+//             "Jet_select_flav",
+//             {"function" : "flav_any", "kwargs" : {"n_jet" : 0 ,"flav" : "undef"}}
+//         ],
+//         "light": [
+//             "Jet_select_flav",
+//             {"function" : "flav_any", "kwargs" : {"n_jet" : 0 ,"flav" : "light"}}
+//         ],
+//         "heavy": [
+//             "Jet_select_flav",
+//             {"function" : "flav_any", "kwargs" : {"n_jet" : 0 ,"flav" : "heavy"}}
+//         ],
+//         "ele": [
+//             "Jet_select_flav",
+//             {"function" : "flav_any", "kwargs" : {"n_jet" : 0 ,"flav" : "ele"}}
+//         ],
+//         "mu": [
+//             "Jet_select_flav",
+//             {"function" : "flav_any", "kwargs" : {"n_jet" : 0 ,"flav" : "mu"}}
+//         ],
+//         "tau": [
+//             "Jet_select_flav",
+//             {"function" : "flav_any", "kwargs" : {"n_jet" : 0 ,"flav" : "tau"}}
+//         ],
+//         "g": [
+//             "Jet_select_flav",
+//             {"function" : "flav_any", "kwargs" : {"n_jet" : 0 ,"flav" : "g"}}
+//         ]
+//     }
+// }
+// },
+
+// "n_jet_pass_finebin_flav_1" : {
+//     "bins": [
+//         {
+//             "name": "jet_score_bin",
+//             "label": "Jet score bin",
+//             "n_or_arr": 100,
+//             "lo": 0,
+//             "hi": 100,
+//             "unit": "-",
+//             "type": "int"
+//         },
+//         {
+//             "name": "jet_pass",
+//             "label": "number of jet passing",
+//             "n_or_arr": 4,
+//             "lo": -1,
+//             "hi": 3,
+//             "unit": "-",
+//             "type": "int"
+//         }
+//     ],
+//     "cats" : [
+//         {
+//             "name": "flav",
+//             "label": "flav"
+//         }
+//     ],
+//     "fill": {
+//         "jet_score_bin": [
+//             "n_pass_score_bin_finebin"
+//         ],
+//         "jet_pass": [
+//             "n_pass_finebin"
+//         ],
+//         "flav": {
+//             "undef": [
+//                 "Jet_select_flav",
+//                 {"function" : "flav_any", "kwargs" : {"n_jet" : 1 ,"flav" : "undef"}}
+//             ],
+//             "light": [
+//                 "Jet_select_flav",
+//                 {"function" : "flav_any", "kwargs" : {"n_jet" : 1 ,"flav" : "light"}}
+//             ],
+//             "heavy": [
+//                 "Jet_select_flav",
+//                 {"function" : "flav_any", "kwargs" : {"n_jet" : 1 ,"flav" : "heavy"}}
+//             ],
+//             "ele": [
+//                 "Jet_select_flav",
+//                 {"function" : "flav_any", "kwargs" : {"n_jet" : 1 ,"flav" : "ele"}}
+//             ],
+//             "mu": [
+//                 "Jet_select_flav",
+//                 {"function" : "flav_any", "kwargs" : {"n_jet" : 1 ,"flav" : "mu"}}
+//             ],
+//             "tau": [
+//                 "Jet_select_flav",
+//                 {"function" : "flav_any", "kwargs" : {"n_jet" : 1 ,"flav" : "tau"}}
+//             ],
+//             "g": [
+//                 "Jet_select_flav",
+//                 {"function" : "flav_any", "kwargs" : {"n_jet" : 1 ,"flav" : "g"}}
+//             ]
+//         }
+//     }
+// },
+
+"yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "jet_score_bin",
+            "label": "Jet score bin",
+            "n_or_arr": 21,
+            "lo": -1,
+            "hi": 20,
+            "unit": "-"
+        },
+    ],
+    "fill": {
+        "jet_score_bin": [
+            "score_bin"
+        ]
+    },
+    "weight" : ["yield_bin0to1"]
+},
+
+"yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "jet_score_bin",
+            "label": "Jet score bin",
+            "n_or_arr": 21,
+            "lo": -1,
+            "hi": 20,
+            "unit": "-"
+        },
+    ],
+    "fill": {
+        "jet_score_bin": [
+            "score_bin"
+        ]
+    },
+    "weight" : ["yield_bin1to2"]
+},
+
+"yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "jet_score_bin",
+            "label": "Jet score bin",
+            "n_or_arr": 21,
+            "lo": -1,
+            "hi": 20,
+            "unit": "-"
+        },
+    ],
+    "fill": {
+        "jet_score_bin": [
+            "score_bin"
+        ]
+    },
+    "weight" : ["yield_bin0to2"]
+},
+
+// prediction histograms:
+
+// Real number of cuts per each mt2 bin
+
+"mt2_j1_j2_MET_pass": {
+    "bins": [
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "mt2_j1_j2_MET",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"mt2_j1_j2_MET_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "MT2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        },
+    ],
+    "fill": {
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"mt2_j1_j2_MET_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "MT2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        },
+    ],
+    "fill": {
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"mt2_j1_j2_MET_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "MT2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        },
+    ],
+    "fill": {
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+
+// jj pass hists
+
+"METpt_pass": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"jj_mass_pass": {
+    "bins": [
+        {
+            "name": "mjj",
+            "label": "m_{jj}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "mjj": [
+            "sum_jj",
+            "mass"
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"jj_pt_pass": {
+    "bins": [
+        {
+            "name": "pt_jj",
+            "label": "p_{T}(jj)",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "pt_jj": [
+            "sum_jj",
+            "pt"
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"mt_jet1_pass": {
+    "bins": [
+        {
+            "name": "mt_jet1",
+            "label": "mt of the jet1",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1500,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "mt_jet1": [
+            "mt_jet1"
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"mt_jet2_pass": {
+    "bins": [
+        {
+            "name": "mt_jet2",
+            "label": "mt of the jet1",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1500,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "mt_jet2": [
+            "mt_jet2"
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"mt_sum_pass": {
+    "bins": [
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "mt_sum": [
+            "mt_sum"
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"dphi_jet1_jet2_pass": {
+    "bins": [
+        {
+            "name": "dphi_jet1_jet2",
+            "label": "dphi_jet1_jet2",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 3.14,
+            "unit": "-"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "dphi_jet1_jet2": [
+            "dphi_jet1_jet2",
+            {"function":"abs"}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+
+// jj yield hists
+
+"METpt_yield_bin0to2": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"jj_mass_yield_bin0to2": {
+    "bins": [
+        {
+            "name": "mjj",
+            "label": "m_{jj}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mjj": [
+            "sum_jj",
+            "mass"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"jj_pt_yield_bin0to2": {
+    "bins": [
+        {
+            "name": "pt_jj",
+            "label": "p_{T}(jj)",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt_jj": [
+            "sum_jj",
+            "pt"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"mt_jet1_yield_bin0to2": {
+    "bins": [
+        {
+            "name": "mt_jet1",
+            "label": "mt of the jet1",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1500,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_jet1": [
+            "mt_jet1"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"mt_jet2_yield_bin0to2": {
+    "bins": [
+        {
+            "name": "mt_jet2",
+            "label": "mt of the jet1",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1500,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_jet2": [
+            "mt_jet2"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"mt_sum_yield_bin0to2": {
+    "bins": [
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_sum": [
+            "mt_sum"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"dphi_jet1_jet2_yield_bin0to2": {
+    "bins": [
+        {
+            "name": "dphi_jet1_jet2",
+            "label": "dphi_jet1_jet2",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 3.14,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "dphi_jet1_jet2": [
+            "dphi_jet1_jet2",
+            {"function":"abs"}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+
+"METpt_yield_bin1to2": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"jj_mass_yield_bin1to2": {
+    "bins": [
+        {
+            "name": "mjj",
+            "label": "m_{jj}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mjj": [
+            "sum_jj",
+            "mass"
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"jj_pt_yield_bin1to2": {
+    "bins": [
+        {
+            "name": "pt_jj",
+            "label": "p_{T}(jj)",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt_jj": [
+            "sum_jj",
+            "pt"
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"mt_jet1_yield_bin1to2": {
+    "bins": [
+        {
+            "name": "mt_jet1",
+            "label": "mt of the jet1",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1500,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_jet1": [
+            "mt_jet1"
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"mt_jet2_yield_bin1to2": {
+    "bins": [
+        {
+            "name": "mt_jet2",
+            "label": "mt of the jet1",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1500,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_jet2": [
+            "mt_jet2"
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"mt_sum_yield_bin1to2": {
+    "bins": [
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_sum": [
+            "mt_sum"
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"dphi_jet1_jet2_yield_bin1to2": {
+    "bins": [
+        {
+            "name": "dphi_jet1_jet2",
+            "label": "dphi_jet1_jet2",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 3.14,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "dphi_jet1_jet2": [
+            "dphi_jet1_jet2",
+            {"function":"abs"}
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+
+"METpt_yield_bin0to1": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"jj_mass_yield_bin0to1": {
+    "bins": [
+        {
+            "name": "mjj",
+            "label": "m_{jj}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mjj": [
+            "sum_jj",
+            "mass"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"jj_pt_yield_bin0to1": {
+    "bins": [
+        {
+            "name": "pt_jj",
+            "label": "p_{T}(jj)",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt_jj": [
+            "sum_jj",
+            "pt"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"mt_jet1_yield_bin0to1": {
+    "bins": [
+        {
+            "name": "mt_jet1",
+            "label": "mt of the jet1",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1500,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_jet1": [
+            "mt_jet1"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"mt_jet2_yield_bin0to1": {
+    "bins": [
+        {
+            "name": "mt_jet2",
+            "label": "mt of the jet1",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1500,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_jet2": [
+            "mt_jet2"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"mt_sum_yield_bin0to1": {
+    "bins": [
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt_sum": [
+            "mt_sum"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"dphi_jet1_jet2_yield_bin0to1": {
+    "bins": [
+        {
+            "name": "dphi_jet1_jet2",
+            "label": "dphi_jet1_jet2",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 3.14,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "dphi_jet1_jet2": [
+            "dphi_jet1_jet2",
+            {"function":"abs"}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+
+// jet pass hists
+
+"jet1_pt_pass" : {
+    "bins": [
+        {
+            "name": "jet_pt",
+            "label": "Jet1 p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_pt": [
+            "Jet_select",
+            "pt",
+            {"leading": 1}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"jet1_eta_pass" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet1 eta",
+            "n_or_arr": 100,
+            "lo": -2.5,
+            "hi": 2.5,
+            "unit": "-"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_select",
+            "eta",
+            {"leading": 1}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"jet1_dxy_pass" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet1 dxy",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy",
+            {"leading": 1}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"jet1_dxysig_pass" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet1 dxySig",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 500,
+            "unit": "cm"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig",
+            {"leading": 1}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"jet1_IP3D_pass" : {
+    "bins": [
+        {
+            "name": "jet_Lrel",
+            "label": "Jet1 ip3d",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_Lrel": [
+            "Jet_select",
+            "ip3d",
+            {"leading": 1}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+
+"jet2_pt_pass" : {
+    "bins": [
+        {
+            "name": "jet_pt",
+            "label": "Jet2 p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_pt": [
+            "Jet_select",
+            "pt",
+            {"leading": 2}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"jet2_eta_pass" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet2 eta",
+            "n_or_arr": 100,
+            "lo": -2.5,
+            "hi": 2.5,
+            "unit": "-"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_select",
+            "eta",
+            {"leading": 2}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"jet2_dxy_pass" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet2 dxy",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy",
+            {"leading": 2}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"jet2_dxysig_pass" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet2 dxySig",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 500,
+            "unit": "cm"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig",
+            {"leading": 2}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"jet2_IP3D_pass" : {
+    "bins": [
+        {
+            "name": "jet_Lrel",
+            "label": "Jet2 ip3d",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_Lrel": [
+            "Jet_select",
+            "ip3d",
+            {"leading": 2}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+
+// jet yield hists
+
+"jet1_pt_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "jet_pt",
+            "label": "Jet1 p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "jet_pt": [
+            "Jet_select",
+            "pt",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"jet1_eta_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet1 eta",
+            "n_or_arr": 100,
+            "lo": -2.5,
+            "hi": 2.5,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_select",
+            "eta",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"jet1_dxy_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet1 dxy",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"jet1_dxysig_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet1 dxySig",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 500,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"jet1_IP3D_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "jet_Lrel",
+            "label": "Jet1 ip3d",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_Lrel": [
+            "Jet_select",
+            "ip3d",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+
+"jet2_pt_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "jet_pt",
+            "label": "Jet2 p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "jet_pt": [
+            "Jet_select",
+            "pt",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"jet2_eta_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet2 eta",
+            "n_or_arr": 100,
+            "lo": -2.5,
+            "hi": 2.5,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_select",
+            "eta",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"jet2_dxy_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet2 dxy",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"jet2_dxysig_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet2 dxySig",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 500,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+"jet2_IP3D_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "jet_Lrel",
+            "label": "Jet2 ip3d",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_Lrel": [
+            "Jet_select",
+            "ip3d",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+
+"jet1_pt_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "jet_pt",
+            "label": "Jet1 p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "jet_pt": [
+            "Jet_select",
+            "pt",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"jet1_eta_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet1 eta",
+            "n_or_arr": 100,
+            "lo": -2.5,
+            "hi": 2.5,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_select",
+            "eta",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"jet1_dxy_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet1 dxy",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"jet1_dxysig_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet1 dxySig",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 500,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"jet1_IP3D_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "jet_Lrel",
+            "label": "Jet1 ip3d",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_Lrel": [
+            "Jet_select",
+            "ip3d",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+
+"jet2_pt_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "jet_pt",
+            "label": "Jet2 p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "jet_pt": [
+            "Jet_select",
+            "pt",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"jet2_eta_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet2 eta",
+            "n_or_arr": 100,
+            "lo": -2.5,
+            "hi": 2.5,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_select",
+            "eta",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"jet2_dxy_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet2 dxy",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"jet2_dxysig_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet2 dxySig",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 500,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"jet2_IP3D_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "jet_Lrel",
+            "label": "Jet2 ip3d",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_Lrel": [
+            "Jet_select",
+            "ip3d",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+
+"jet1_pt_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "jet_pt",
+            "label": "Jet1 p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "jet_pt": [
+            "Jet_select",
+            "pt",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"jet1_eta_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet1 eta",
+            "n_or_arr": 100,
+            "lo": -2.5,
+            "hi": 2.5,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_select",
+            "eta",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"jet1_dxy_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet1 dxy",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"jet1_dxysig_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet1 dxySig",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 500,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"jet1_IP3D_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "jet_Lrel",
+            "label": "Jet1 ip3d",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_Lrel": [
+            "Jet_select",
+            "ip3d",
+            {"leading": 1}
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+
+"jet2_pt_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "jet_pt",
+            "label": "Jet2 p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "jet_pt": [
+            "Jet_select",
+            "pt",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"jet2_eta_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet2 eta",
+            "n_or_arr": 100,
+            "lo": -2.5,
+            "hi": 2.5,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_select",
+            "eta",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"jet2_dxy_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet2 dxy",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"jet2_dxysig_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet2 dxySig",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 500,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"jet2_IP3D_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "jet_Lrel",
+            "label": "Jet2 ip3d",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_Lrel": [
+            "Jet_select",
+            "ip3d",
+            {"leading": 2}
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+
+// 2D histograms for signal region binning
+
+"2D_MET_MT2_pass": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "MT2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ],
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+
+"2D_MET_MTSUM_pass": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ],
+        "mt_sum": [
+            "mt_sum"
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+
+"2D_MT2_MTSUM_pass": {
+    "bins": [
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "MT2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ],
+        "mt_sum": [
+            "mt_sum"
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+
+"2D_MET_MT2_bin0to2": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "MT2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ],
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+
+"2D_MET_MTSUM_bin0to2": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ],
+        "mt_sum": [
+            "mt_sum"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+
+"2D_MT2_MTSUM_bin0to2": {
+    "bins": [
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "MT2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ],
+        "mt_sum": [
+            "mt_sum"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+
+"2D_MET_MT2_bin0to1": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "MT2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ],
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+
+"2D_MET_MTSUM_bin0to1": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ],
+        "mt_sum": [
+            "mt_sum"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+
+"2D_MT2_MTSUM_bin0to1": {
+    "bins": [
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "MT2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ],
+        "mt_sum": [
+            "mt_sum"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"]
+},
+
+"2D_MET_MT2_bin1to2": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "MT2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ],
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+
+"2D_MET_MTSUM_bin1to2": {
+    "bins": [
+        {
+            "name": "pt",
+            "label": "MET p_{T}",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "pt": [
+            "MET",
+            "pt"
+        ],
+        "mt_sum": [
+            "mt_sum"
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+
+"2D_MT2_MTSUM_bin1to2": {
+    "bins": [
+        {
+            "name": "mt2_j1_j2_MET",
+            "label": "MT2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 600,
+            "unit": "GeV"
+        },
+        {
+            "name": "mt_sum",
+            "label": "mt_jet1 + mt_jet2",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 2000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "mt2_j1_j2_MET": [
+            "mt2_j1_j2_MET"
+        ],
+        "mt_sum": [
+            "mt_sum"
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+
+"jet1_npf" : {
+    "bins": [
+        {
+            "name": "jet_n_pf",
+            "label": "Jet_nConstituents",
+            "n_or_arr": 200,
+            "lo": 0,
+            "hi": 200,
+            "unit": "GeV"
+        },
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_n_pf": [
+            "Jet_select",
+            "nConstituents",
+            {"leading": 1}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+
+"jet2_npf" : {
+    "bins": [
+        {
+            "name": "jet_n_pf",
+            "label": "Jet_nConstituents",
+            "n_or_arr": 200,
+            "lo": 0,
+            "hi": 200,
+            "unit": "GeV"
+        },
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "jet_n_pf": [
+            "Jet_select",
+            "nConstituents",
+            {"leading": 2}
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+
+}
