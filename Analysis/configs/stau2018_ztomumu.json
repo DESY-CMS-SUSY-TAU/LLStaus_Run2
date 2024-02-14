@@ -23,7 +23,9 @@
     },
     "mc_datasets": {
 
-        "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8": [ "$STOREDIR/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-10to50/230511_172527/*/*.root", ],
+        "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8" : [ "$STOREDIR/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_DYJetsToLL_M-50_amcatnloFXFX/240207_191039/*/*.root", ],
+
+        // "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8": [ "$STOREDIR/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-10to50/230511_172527/*/*.root", ],
         "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50/230311_122118/*/*.root", ],
         "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DY1JetsToLL_M-50_MatchEWPDG20/230616_100834/*/*.root" ],
         "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DY2JetsToLL_M-50_MatchEWPDG20/230616_100840/*/*.root" ],
@@ -63,13 +65,13 @@
         "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [ "$STOREDIR/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/crab_ST_t-channel_antitop_4f_InclusiveDecays_incl/230311_153838/*/*.root", ],
         "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [ "$STOREDIR/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/crab_ST_t-channel_top_4f_InclusiveDecays_incl/230311_153845/*/*.root", ],
         
-        "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6/crab_stau100_lsp1_ctau100mm/230311_014322/*/*.root", ],
-        "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4/crab_stau100_lsp1_ctau1000mm/230311_014328/*/*.root", ],
-        "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6/crab_stau250_lsp1_ctau0p01mm/230311_014333/*/*.root", ],
-        "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6/crab_stau250_lsp1_ctau100mm/230311_014339/*/*.root", ],
-        "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4/crab_stau250_lsp1_ctau1000mm/230311_014344/*/*.root", ],
-        "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6/crab_stau400_lsp1_ctau100mm/230311_014924/*/*.root", ],
-        "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4/crab_stau400_lsp1_ctau1000mm/230311_083252/*/*.root", ],
+        // "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau100mm_v6/crab_stau100_lsp1_ctau100mm/230311_014322/*/*.root", ],
+        // "SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau100_lsp1_ctau1000mm_v4/crab_stau100_lsp1_ctau1000mm/230311_014328/*/*.root", ],
+        // "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau0p01mm_v6/crab_stau250_lsp1_ctau0p01mm/230311_014333/*/*.root", ],
+        // "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau100mm_v6/crab_stau250_lsp1_ctau100mm/230311_014339/*/*.root", ],
+        // "SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau250_lsp1_ctau1000mm_v4/crab_stau250_lsp1_ctau1000mm/230311_014344/*/*.root", ],
+        // "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau100mm_v6/crab_stau400_lsp1_ctau100mm/230311_014924/*/*.root", ],
+        // "SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4" : [ "$STOREDIR/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4/crab_stau400_lsp1_ctau1000mm/230311_083252/*/*.root", ],
         
         "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/crab_TTTo2L2Nu/230311_084405/*/*.root", ],
         "TTToHadronic_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/crab_TTToHadronic/230311_084410/*/*.root", ],
@@ -160,9 +162,9 @@
         ["jet_pt", "jet_dxy"]
     ],
 
-    "predict_yield" : true,
+    "predict_yield" : false,
     
-    "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/",
+    // "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/",
 
     // tag muon:
     "muon_pt_min"   :  28,
@@ -192,6 +194,8 @@
     "jet_pt_min"   :  30,
     "jet_eta_min"  : -2.1,
     "jet_eta_max"  :  2.1,
+    // "jet_eta_min"  : -1.1,
+    // "jet_eta_max"  :  1.1,
     "jet_jetId"    :  6, // tight lepton veto
     "dphi_j1j2"    :  0.5,
     "jet_dxy_min"  :  0.5, // to test MC/Data modeling
@@ -200,6 +204,8 @@
     "pfcand_pt"         : 1.0,
     "pfcand_eta_min"    : -2.4,
     "pfcand_eta_max"    : 2.4,
+    // "pfcand_eta_min"    : -1.5,
+    // "pfcand_eta_max"    : 1.5,
     "track"             : "hasTrackDetails",
 
     // MET cut
@@ -210,7 +216,8 @@
     "mass_ll_upper" : 120,
 
     // Tagger part
-    "score_pass" : [0.05, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.40, 0.45, 0.5, 0.95, 0.9900, 0.9972, 0.9996],
+    // "score_pass" : [0.05, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.40, 0.45, 0.5, 0.95, 0.9900, 0.9972, 0.9996],
+    "score_pass" : [0.05, 0.9900],
     "loose_thr" : 0.05,
     "tight_thr" : 0.9900,
 

@@ -71,11 +71,11 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("Trigger", partial(
             self.passing_trigger, pos_triggers, neg_triggers))
         
-        if is_mc and ( dsname.startswith("DYJetsToLL_M-50") or \
-                       dsname.startswith("DY1JetsToLL_M-50") or \
-                       dsname.startswith("DY2JetsToLL_M-50") or \
-                       dsname.startswith("DY3JetsToLL_M-50") or \
-                       dsname.startswith("DY4JetsToLL_M-50") ):
+        if is_mc and ( dsname.startswith("DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                       dsname.startswith("DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                       dsname.startswith("DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                       dsname.startswith("DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                       dsname.startswith("DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") ):
             selector.add_cut("DY jet reweighting",
                 partial(self.do_dy_jet_reweighting))
 
@@ -84,8 +84,8 @@ class Processor(pepper.ProcessorBasicPhysics):
                 self.do_pileup_reweighting, dsname))
         
         # HEM 15/16 failure (2018)
-        # if self.config["year"] == "2018ul":
-        selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+        if self.config["year"] == "ul2018":
+            selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
         
         # Select veto objects before modifying Muon collection
         selector.set_column("muon_veto", self.muons_veto)
@@ -107,7 +107,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         # veto all loose electrons
         selector.add_cut("loose_electron_veto", self.loose_electron_veto_cut)
         
-        selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
+        # selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
         selector.add_cut("muon_sfs", partial(self.get_muon_sfs, is_mc=is_mc))
 
         selector.add_cut("mass_window", self.mass_window)
@@ -162,7 +162,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         if is_mc:
             weight[in_hem] = (1-0.66)
         else:
-            weight[in_hem] = 0.0
+            issue_period = (data.run >= 319077)
+            weight[in_hem & issue_period] = 0.0
         return weight   
     
     @zero_handler
@@ -374,7 +375,8 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def get_dy_gen_sfs(self, data, is_mc, dsname):
         weight = np.ones(len(data))
-        if is_mc and dsname.startswith("DY"):
+        # We reweight only inclusive since other are already *_EWPDG20
+        if is_mc and dsname.startswith("DYJetsToLL_M-50"):
             z_boson = data["sum_ll_gen"]
             dy_gen_sfs = self.config["DY_lo_sfs"](mass=z_boson.mass, pt=z_boson.pt)
             weight *= ak.to_numpy(dy_gen_sfs)
