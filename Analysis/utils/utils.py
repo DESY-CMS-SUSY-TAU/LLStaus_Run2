@@ -78,6 +78,7 @@ def root_plot1D(
     outfile,
     xrange, yrange,
     l_hist_overlay = [],
+    asym_error = None,
     logx = False, logy = False,
     include_overflow = False,
     title = "",
@@ -192,16 +193,26 @@ def root_plot1D(
 
     stack.Draw(stackdrawopt)
     
-    accume_hist.SetFillStyle(3004)
-    accume_hist.SetFillColor(1)
-    # accume_hist.SetLineColor(15)
-    # accume_hist.SetLineWidth(0)
-    accume_hist.SetMarkerStyle(21)
-    accume_hist.SetMarkerSize(0)
- 
-    if draw_errors:
-        # accume_hist.Print("all")
-        accume_hist.Draw("e2same")
+    if asym_error is not None:
+        print("asym_error are added")
+        asym_error.SetFillStyle(3004)
+        asym_error.SetFillColorAlpha(603, 0.7)
+        asym_error.SetFillColor(603)
+        asym_error.SetMarkerSize(0)
+        # prediction_gr.SetLineWidth(0)
+        asym_error.Draw("e2same")
+    else:
+        accume_hist.SetFillStyle(3004)
+        accume_hist.SetFillColor(1)
+        # accume_hist.SetLineColor(15)
+        # accume_hist.SetLineWidth(0)
+        accume_hist.SetMarkerStyle(21)
+        accume_hist.SetMarkerSize(0)
+    
+        if draw_errors:
+            # accume_hist.Print("all")
+            accume_hist.Draw("e2same")
+    
     
     stack.GetXaxis().SetRangeUser(xrange[0], xrange[1])
     stack.SetMinimum(yrange[0])
@@ -273,6 +284,7 @@ def root_plot1D(
         stack_ratio = ROOT.THStack()
         #h1_xRange_ratio = h1_xRange.Clone()
         #stack_ratio.Add(h1_xRange_ratio)
+        asym_error_ratio_draw = None
         for hist in l_hist_overlay :
 
             hist.SetDirectory(0)
@@ -293,30 +305,58 @@ def root_plot1D(
                         h1_ratio.SetBinContent(bin_i, h1_ratio.GetBinContent(bin_i) / ROOT.TMath.Sqrt(SandB.GetBinContent(bin_i)))
                 stack_ratio.Add(h1_ratio, "HIST")
             elif ratio_mode=="DATA":
-                h1_ratioErr = accume_hist.Clone()
-                h1_ratioErr.SetDirectory(0)
-                for bin_i in range(hist.GetNcells()):
-                    num_data = h1_ratio.GetBinContent(bin_i)
-                    num_data_err = h1_ratio.GetBinError(bin_i)
-                    den_bkgr = accume_hist.GetBinContent(bin_i)
-                    den_bkgr_err = accume_hist.GetBinError(bin_i)
-                    h1_ratioErr.SetBinContent(bin_i, 1.0)
-                    h1_ratioErr.SetBinError(bin_i, 0.0)
-                    if den_bkgr > 0:
-                        relErr = den_bkgr_err / den_bkgr
-                        h1_ratioErr.SetBinError(bin_i, relErr)
-                    if num_data > 0 and den_bkgr > 0:
-                        ratio = num_data / den_bkgr
-                        ratio_err = num_data_err / den_bkgr
-                        h1_ratio.SetBinContent(bin_i, ratio)
-                        h1_ratio.SetBinError(bin_i, ratio_err)
-                h1_ratioErr.SetFillStyle(3004)
-                h1_ratioErr.SetFillColor(1)
-                h1_ratioErr.SetMarkerStyle(21)
-                h1_ratioErr.SetMarkerSize(0)
-                h1_ratioErr.SetLineWidth(2)
-                stack_ratio.Add(h1_ratioErr, "E2")
-                stack_ratio.Add(h1_ratio, "E1same")
+                if asym_error is not None:
+                    print("asym_error in ratio are added")
+                    asym_error_ratio = asym_error.Clone()
+                    for bin_i in range(0, h1_ratio.GetNbinsX()+2):
+                        y_pred = asym_error_ratio.GetPointY(bin_i)
+                        x_pred = asym_error_ratio.GetPointX(bin_i)
+                        y_pred_err_up = asym_error_ratio.GetErrorYhigh(bin_i)
+                        y_pred_err_down = asym_error_ratio.GetErrorYlow(bin_i)
+                        asym_error_ratio.SetPoint(bin_i, x_pred, 1.0)
+                        asym_error_ratio.SetPointEYhigh(bin_i, 0.0)
+                        asym_error_ratio.SetPointEYlow(bin_i, 0.0)
+                        if y_pred > 0:
+                            asym_error_ratio.SetPointEYhigh(bin_i, y_pred_err_up/y_pred)
+                            asym_error_ratio.SetPointEYlow(bin_i, y_pred_err_down/y_pred)
+                        num_data = h1_ratio.GetBinContent(bin_i)
+                        num_data_err = h1_ratio.GetBinError(bin_i)       
+                        h1_ratio.SetBinContent(bin_i, 0.0)
+                        h1_ratio.SetBinError(bin_i, 0.0)
+                        if num_data > 0 and y_pred > 0:
+                            ratio = num_data / y_pred
+                            ratio_err = num_data_err / y_pred
+                            h1_ratio.SetBinContent(bin_i, ratio)
+                            h1_ratio.SetBinError(bin_i, ratio_err)
+                    if asym_error_ratio_draw is None:
+                        asym_error_ratio_draw = asym_error_ratio
+                    print("Adding h1_ratio:,", h1_ratio.GetTitle())
+                    stack_ratio.Add(h1_ratio, "E1")
+                else:    
+                    h1_ratioErr = accume_hist.Clone()
+                    h1_ratioErr.SetDirectory(0)
+                    for bin_i in range(hist.GetNcells()):
+                        num_data = h1_ratio.GetBinContent(bin_i)
+                        num_data_err = h1_ratio.GetBinError(bin_i)
+                        den_bkgr = accume_hist.GetBinContent(bin_i)
+                        den_bkgr_err = accume_hist.GetBinError(bin_i)
+                        h1_ratioErr.SetBinContent(bin_i, 1.0)
+                        h1_ratioErr.SetBinError(bin_i, 0.0)
+                        if den_bkgr > 0:
+                            relErr = den_bkgr_err / den_bkgr
+                            h1_ratioErr.SetBinError(bin_i, relErr)
+                        if num_data > 0 and den_bkgr > 0:
+                            ratio = num_data / den_bkgr
+                            ratio_err = num_data_err / den_bkgr
+                            h1_ratio.SetBinContent(bin_i, ratio)
+                            h1_ratio.SetBinError(bin_i, ratio_err)
+                    h1_ratioErr.SetFillStyle(3004)
+                    h1_ratioErr.SetFillColor(1)
+                    h1_ratioErr.SetMarkerStyle(21)
+                    h1_ratioErr.SetMarkerSize(0)
+                    h1_ratioErr.SetLineWidth(2)
+                    stack_ratio.Add(h1_ratioErr, "E2")
+                    stack_ratio.Add(h1_ratio, "E1same")
             elif ratio_mode=="percentage":
                 print("title", hist.GetTitle())
                 h1_ratio.Divide(accume_hist)
@@ -335,6 +375,8 @@ def root_plot1D(
         stack_ratio.GetXaxis().SetRangeUser(xrange[0], xrange[1])
         stack_ratio.SetMinimum(yrange_ratio[0])
         stack_ratio.SetMaximum(yrange_ratio[1])
+        if asym_error_ratio_draw is not None:
+            asym_error_ratio_draw.Draw("E2same")
         line = ROOT.TLine(xrange[0],1,xrange[1],1)
         line.SetLineColor(1)
         line.SetLineWidth(2)
@@ -413,7 +455,7 @@ def root_plots2D_simple(
     ROOT.gStyle.SetPaintTextFormat("1.3f")
      
     
-    canvas.SetLeftMargin(0.10)
+    canvas.SetLeftMargin(0.13)
     canvas.SetRightMargin(0.1)
     # canvas.SetTopMargin(0.1)
     canvas.SetBottomMargin(0.1)

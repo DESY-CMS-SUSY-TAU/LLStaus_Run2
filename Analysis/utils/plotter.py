@@ -5,7 +5,216 @@ import numpy as np
 import os
 
 from .utils import ColorIterator, root_plot1D, root_plot2D, root_plots2D_simple
-ROOT.gInterpreter.Declare('#include "utils/histogram2d.cpp"')
+
+def plot_predict_sys(dirname, config, xsec, cutflow, output_path):
+    
+    def read_hist(file, data_name, sys):
+        hist = file.Get(data_name+"/"+sys+"/hist")
+        if not hist:
+            raise ValueError(f"Histogram not found! {file} {data_name}/{sys}/hist")
+        hist.SetDirectory(0)
+        return hist
+    
+    def rebin_hist(hist, rebin_setup, overflow = False):
+        if type(rebin_setup) == list:
+            hist = hist.Rebin(len(rebin_setup)-1, hist.GetName()+"_rebin", np.array(rebin_setup, dtype=np.double))
+        else: 
+            hist.Rebin(rebin_setup)
+        # copy underflow and overflow to the last and first bins
+        if overflow:
+            hist.SetBinContent(1, hist.GetBinContent(0)+hist.GetBinContent(1))
+            hist.SetBinContent(hist.GetNbinsX(), hist.GetBinContent(hist.GetNbinsX())+hist.GetBinContent(hist.GetNbinsX()+1))
+            # add errors in quadrature
+            hist.SetBinError(1, np.sqrt(hist.GetBinError(0)**2+hist.GetBinError(1)**2))
+            hist.SetBinError(hist.GetNbinsX(), np.sqrt(hist.GetBinError(hist.GetNbinsX())**2+hist.GetBinError(hist.GetNbinsX()+1)**2))
+        return hist
+    
+    systematics = ["stat_up","stat_down", "sys_up", "sys_down"]
+    include_sys = True
+    
+    for prediction_bin, data_bin in zip(config["prediction_hist"]["predictions"], config["prediction_hist"]["bin_data"]):
+        for hist in config["prediction_hist"]["hists"]:
+
+            print("Prediction bin:", prediction_bin, "Histogram:", hist)
+            
+            # Extracting histogram information
+            x_min, x_max, rebin_setup, overflow, bin_labels = \
+                config["prediction_hist"]["hists"][hist]
+            cut = config["prediction_hist"]["cut"]
+            
+            # ----------------------------------------------
+            # ---- Part to assign prediction histogram -----
+            # ----------------------------------------------
+            path_predict = dirname+"/"+cut+"_"+hist+"_yield_"+prediction_bin+".root"
+            print(path_predict)
+            file_predict = ROOT.TFile.Open(path_predict, 'read')
+            hist_prediction = None
+            hist_prediction_sys = {sys:None for sys in systematics}
+            for data_group in config["Data"].keys():
+                for data_name in config["Labels"][data_group]:
+
+                    _hist_predict = read_hist(file_predict, data_name, "nominal")
+                    if hist_prediction == None:
+                        hist_prediction = _hist_predict
+                    else:
+                        hist_prediction.Add(_hist_predict)
+                        
+                    if include_sys:
+                        for sys in systematics:
+                            _hist_predict_sys = read_hist(file_predict, data_name, sys)
+                            if hist_prediction_sys[sys] == None:
+                                hist_prediction_sys[sys] = _hist_predict_sys
+                            else:
+                                hist_prediction_sys[sys].Add(_hist_predict_sys)
+                                
+            hist_prediction = rebin_hist(hist_prediction, rebin_setup, overflow)
+            if include_sys:
+                for sys in systematics:
+                    hist_prediction_sys[sys] = rebin_hist(hist_prediction_sys[sys], rebin_setup, overflow)
+                
+            # calculate sum of the difference between the nominal and the systematic histograms
+            if include_sys:
+                for sys in systematics:
+                    hist_prediction_sys[sys].Add(hist_prediction, -1)
+                up_error = np.zeros(hist_prediction.GetNbinsX()+2) # create also for the underflow and overflow 
+                down_error = np.zeros(hist_prediction.GetNbinsX()+2) # create also for the underflow and overflow
+                for bin_i in range(0, hist_prediction.GetNbinsX()+2):
+                    down_error[bin_i] = up_error[bin_i] = hist_prediction.GetBinError(bin_i)**2
+                    # for upper error
+                    up_error[bin_i] += sum([hist_prediction_sys[sys].GetBinContent(bin_i)**2 for sys in systematics if hist_prediction_sys[sys].GetBinContent(bin_i) > 0])
+                    down_error[bin_i] += sum([hist_prediction_sys[sys].GetBinContent(bin_i)**2 for sys in systematics if hist_prediction_sys[sys].GetBinContent(bin_i) < 0])
+                    up_error[bin_i] = np.sqrt(up_error[bin_i])
+                    down_error[bin_i] = np.sqrt(down_error[bin_i])
+                
+                # Create TGraphAsymmErrors
+                prediction_gr = ROOT.TGraphAsymmErrors(hist_prediction.GetNbinsX())
+                for bin_i in range(0, hist_prediction.GetNbinsX()+2):
+                    prediction_gr.SetPoint(bin_i, hist_prediction.GetBinCenter(bin_i), hist_prediction.GetBinContent(bin_i))
+                    prediction_gr.SetPointEYhigh(bin_i, up_error[bin_i])
+                    prediction_gr.SetPointEYlow(bin_i, down_error[bin_i])
+                    prediction_gr.SetPointEXhigh(bin_i, hist_prediction.GetBinWidth(bin_i)/2)
+                    prediction_gr.SetPointEXlow(bin_i, hist_prediction.GetBinWidth(bin_i)/2)
+            else:
+                prediction_gr = None
+                
+            hist_prediction.SetMarkerStyle(21)
+            hist_prediction.SetMarkerColor(423)
+            hist_prediction.SetLineColor(423)
+            hist_prediction.SetFillColor(423)
+            hist_prediction.SetLineWidth(0)
+            hist_prediction.SetTitle(f"Fake bkgr. ({str(prediction_bin)})")
+            
+            print("Prediction:")
+            print(hist_prediction.Print("all"))
+            print("Prediction sys:")
+            print(up_error)
+            print(down_error)
+            # exit()
+            hists_main = [hist_prediction]
+            
+            signal_hists = []
+            # -----------------------------------------------
+            # ---- Part to assign true (data) histogram -----
+            # -----------------------------------------------
+            path_data = dirname+"/"+cut+"_"+hist+"_pass.root"
+            print(path_data)
+            file_n_pass_sig = ROOT.TFile.Open(path_data, 'read')
+            file_n_pass = ROOT.TFile.Open(path_data, 'read')
+
+            if config["prediction_hist"]["plot_unblind"]:
+                hist_data = None
+                for data_group in config["Data"].keys():
+                    for data_name in config["Labels"][data_group]:
+                        _hist_data = read_hist(file_n_pass, data_name, "nominal/"+data_bin)
+                        if hist_data == None:
+                            hist_data = _hist_data
+                        else:
+                            hist_data.Add(_hist_data)
+
+                hist_data = rebin_hist(hist_data, rebin_setup, overflow)
+                hist_data.SetDirectory(0)
+                hist_data.SetMarkerStyle(8)
+                hist_data.SetMarkerSize(1)
+                hist_data.SetMarkerColor(1)
+                hist_data.SetLineWidth(3)
+                hist_data.SetTitle(f"Data ({(str(data_bin))})")
+                signal_hists.append(hist_data)
+                # print("Data:")
+                # print(hist_data.Print("all"))            
+
+            # -----------------------------------------------
+            # ---- Part to assign signal histogram ----------
+            # -----------------------------------------------
+            if config["prediction_hist"]["plot_signal"]:
+                for _group_idx, _group_name in enumerate(config["Signal_samples"]):
+                    # Accumulate the dataset for the particular data group as specified in config "Labels".
+                    for _dataset_idx, _histogram_data in enumerate(config["Labels"][_group_name]):
+                        print("Adding signal dataset:", _histogram_data)
+                        _hist = read_hist(file_n_pass_sig, _histogram_data, "nominal/"+data_bin)
+                        N = cutflow[_histogram_data]["all"]["BeforeCuts"]
+                        scale =  xsec[_histogram_data] * config["luminosity"] / N
+                        for bin_i in range(0, _hist.GetNbinsX()+2):
+                            _hist.SetBinContent(bin_i, _hist.GetBinContent(bin_i)*scale)
+                            _hist.SetBinError(bin_i, _hist.GetBinError(bin_i)*scale)
+                            # add 20% uncertainty to the signal:
+                            error = np.sqrt(_hist.GetBinError(bin_i)**2 + (_hist.GetBinContent(bin_i)*0.2)**2)
+                            _hist.SetBinError(bin_i, error)
+                        if _dataset_idx == 0:
+                            signal_hists.append(_hist)
+                        else:
+                            signal_hists[-1].Add(_hist)
+                    signal_hists[-1] = rebin_hist(signal_hists[-1], rebin_setup, overflow)
+                    color_setup = config["Signal_samples"][_group_name]  
+                    line_color = color_setup[1]
+                    fill_color = color_setup[0]
+                    line_style = color_setup[2]
+                    signal_hists[-1].SetLineStyle(line_style)
+                    signal_hists[-1].SetMarkerSize(0)
+                    signal_hists[-1].SetLineWidth(2)
+                    signal_hists[-1].SetLineColor(line_color)
+                    signal_hists[-1].SetFillColor(fill_color)
+                    signal_hists[-1].SetTitle(_group_name)
+
+            assert(signal_hists.__len__() > 0)
+
+            x_axis_title = hist_prediction.GetXaxis().GetTitle()
+            x_axis_title = x_axis_title.replace("$", "")
+            
+            root_plot1D(
+                l_hist = hists_main,
+                l_hist_overlay = signal_hists,
+                asym_error = prediction_gr,
+                # l_hist_overlay = [hist_data] if config["prediction_hist"]["plot_unblind"] else [],
+                outfile = output_path + "/" + hist + "_" + prediction_bin + ".png",
+                xrange = [x_min, x_max],
+                yrange = (0.01,  1000*hist_prediction.GetMaximum()),
+                logx = False, logy = True,
+                logx_ratio = False, logy_ratio = False,
+                include_overflow = False,
+                xtitle = x_axis_title,
+                ytitle = "Events",
+                xtitle_ratio = x_axis_title,
+                ytitle_ratio = "Data/Pred.",
+                centertitlex = True, centertitley = True,
+                centerlabelx = False, centerlabely = False,
+                gridx = True, gridy = True,
+                ndivisionsx = None,
+                stackdrawopt = "",
+                ratio_mode = "DATA",
+                normilize = False,
+                normilize_overlay = False,
+                legendpos = "UL",
+                legendtitle = f"",
+                legendncol = 2,
+                legendtextsize = 0.040,
+                legendwidthscale = 2.0,
+                legendheightscale = 4.0,
+                lumiText = "2018 (13 TeV)",
+                yrange_ratio = (0.0, 3.0),
+                ndivisionsy_ratio = (5, 5, 0),
+                signal_to_background_ratio = True,
+                draw_errors = True
+            )
 
 def plot_predict(dirname, config, xsec, cutflow, output_path):
     
@@ -18,8 +227,9 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
             x_min, x_max, rebin_setup, overflow, bin_labels = \
                 config["prediction_hist"]["hists"][hist]
             cut = config["prediction_hist"]["cut"]
-            
-            # ---- Part to assign prediction histogram
+            # ----------------------------------------------
+            # ---- Part to assign prediction histogram -----
+            # ----------------------------------------------
             path_predict = dirname+"/"+cut+"_"+hist+"_yield_"+prediction_bin+".root"
             print(path_predict)
             file_predict = ROOT.TFile.Open(path_predict, 'read')
@@ -30,14 +240,15 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
             #     for data_name in config["Labels"][data_group]:
 
             for _group_idx, _group_name in enumerate(config["Labels"].keys()):
-                # if (not _group_name in config["MC_bkgd"]) and (not _group_name in config["Signal_samples"]):
+                # Do not include signal samples in the prediction
+                # if _group_name in config["Signal_samples"]:
                 #     continue
-                # if not( _group_name in config["Data"]): continue
+                if not( _group_name in config["Data"]): continue
                 # Accumulate the dataset for the particular data group as specified in config "Labels".
                 for _idx, data_name in enumerate(config["Labels"][_group_name]):
 
                     print("Extract prediction:", data_name)
-                    open_tag = data_name+"/hist"
+                    open_tag = data_name+"/nominal/hist"
                     _hist_predict = file_predict.Get(open_tag)
                     if not _hist_predict:
                         print("Warning: Histogram not found! ", end='')
@@ -83,18 +294,20 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 hist_prediction.Rebin(rebin_setup)
                 
             hist_prediction.SetMarkerStyle(21)
-            hist_prediction.SetMarkerColor(618)
-            hist_prediction.SetLineColor(618)
-            hist_prediction.SetFillColor(0)
-            hist_prediction.SetLineWidth(3)
-            hist_prediction.SetTitle(f"Pred. ({str(prediction_bin)})")
+            hist_prediction.SetMarkerColor(423)
+            hist_prediction.SetLineColor(423)
+            hist_prediction.SetFillColor(423)
+            hist_prediction.SetLineWidth(0)
+            hist_prediction.SetTitle(f"Fake bkgr. ({str(prediction_bin)})")
             
             # print("Prediction:")
             # print(hist_prediction.Print("all"))
             hists_main = [hist_prediction]
             
             signal_hists = []
-            # ---- Part to assign true histogram
+            # -----------------------------------------------
+            # ---- Part to assign true (data) histogram -----
+            # -----------------------------------------------
             path_data = dirname+"/"+cut+"_"+hist+"_pass.root"
             print(path_data)
             file_n_pass_sig = ROOT.TFile.Open(path_data, 'read')
@@ -110,14 +323,14 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 for _group_idx, _group_name in enumerate(config["Labels"].keys()):
                     # if (not _group_name in config["MC_bkgd"]) and (not _group_name in config["Signal_samples"]):
                     #     continue
-                    # if not( _group_name in config["Data"]): continue
+                    if not( _group_name in config["Data"]): continue
                     # Accumulate the dataset for the particular data group as specified in config "Labels".
                     for _idx, data_name in enumerate(config["Labels"][_group_name]):
 
                         # print(file_n_pass.ls())
                         # print(data_name+"_"+data_bin)
                         if isinstance(data_bin, str):
-                            open_tag = data_name+"/"+data_bin+"/hist"
+                            open_tag = data_name+"/nominal/"+data_bin+"/hist"
                             _hist_data = file_n_pass.Get(open_tag)
                         elif isinstance(data_bin, int):
                             _hist_data = file_n_pass.Get(data_name)
@@ -174,14 +387,16 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 # print("Data:")
                 # print(hist_data.Print("all"))            
 
-            # ---- Part to assign signal histogram
+            # -----------------------------------------------
+            # ---- Part to assign signal histogram ----------
+            # -----------------------------------------------
             if config["prediction_hist"]["plot_signal"]:
                 for _group_idx, _group_name in enumerate(config["Signal_samples"]):
                     # Accumulate the dataset for the particular data group as specified in config "Labels".
                     for _dataset_idx, _histogram_data in enumerate(config["Labels"][_group_name]):
                         print("Adding signal dataset:", _histogram_data)
                         if isinstance(data_bin, str):
-                            open_tag = _histogram_data+"/"+data_bin+"/hist"
+                            open_tag = _histogram_data+"/nominal/"+data_bin+"/hist"
                             _hist = file_n_pass_sig.Get(open_tag)
                         elif isinstance(data_bin, int):
                             _hist = file_n_pass_sig.Get(_histogram_data)
@@ -222,7 +437,7 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 l_hist = hists_main,
                 l_hist_overlay = signal_hists,
                 # l_hist_overlay = [hist_data] if config["prediction_hist"]["plot_unblind"] else [],
-                outfile = output_path + "/" + hist + "_" + prediction_bin + ".pdf",
+                outfile = output_path + "/" + hist + "_" + prediction_bin + ".png",
                 xrange = [x_min, x_max],
                 yrange = (0.01,  1000*hist_prediction.GetMaximum()),
                 logx = False, logy = True,
@@ -255,6 +470,8 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
 
 def plot_predict2D(dirname, config, xsec, cutflow, output_path):
     
+    ROOT.gInterpreter.Declare('#include "utils/histogram2d.cpp"')
+    
     for prediction_bin, data_bin in zip(config["prediction_hist2D"]["predictions"], config["prediction_hist2D"]["bin_data"]):
         for hist in config["prediction_hist2D"]["hists"]:
 
@@ -272,10 +489,10 @@ def plot_predict2D(dirname, config, xsec, cutflow, output_path):
                 for data_name in config["Labels"][data_group]:
                     print("Extract prediction:", data_name)
                     if hist_prediction == None:
-                        hist_prediction = file_predict.Get(data_name)
+                        hist_prediction = file_predict.Get(data_name+"/hist")
                     else:
-                        hist_prediction.Add(file_predict.Get(data_name))
-            
+                        hist_prediction.Add(file_predict.Get(data_name+"/hist"))
+            print(hist_prediction)
             x_axis = axis_rebin["x_axis"]
             y_axis =  np.array(axis_rebin["y_axis"], dtype=np.double)
             xmin, xmax = float(x_axis[0][0]), float(x_axis[0][-1])
@@ -304,13 +521,10 @@ def plot_predict2D(dirname, config, xsec, cutflow, output_path):
             signal_hists = None
             for _dataset_idx, _histogram_data in enumerate(config["Labels"][_signal_name]):
                 print("Adding signal dataset:", _histogram_data)
-                if isinstance(data_bin, str):
-                    _hist = file_n_pass_sig.Get(_histogram_data+"_"+data_bin)
-                elif isinstance(data_bin, int):
-                    _hist = file_n_pass_sig.Get(_histogram_data)
-                    _hist = _hist.ProjectionX(_histogram_data+"_proj", data_bin, data_bin)
+                print("reading:", _histogram_data+"/nominal/"+data_bin+"/hist")
+                _hist = file_n_pass_sig.Get(_histogram_data+"/nominal/"+data_bin+"/hist")
                 _hist.SetDirectory(0)
-                N = cutflow[_histogram_data]["all"]["Before cuts"]
+                N = cutflow[_histogram_data]["all"]["BeforeCuts"]
                 scale =  xsec[_histogram_data] * config["luminosity"] / N
                 _hist.Scale(scale)
                 if signal_hists == None:
@@ -334,59 +548,58 @@ def plot_predict2D(dirname, config, xsec, cutflow, output_path):
                                                                            "hist_sig_nonunif_th2")
             del hist_sig_nonunif
             
-        root_plots2D_simple(
-                hist_prediction_nonunif_th2,
-                outfile = output_path + "/" + hist + "_" + prediction_bin +"_predict"+ ".pdf",
-                yrange=(y_axis[0], y_axis[-1]),
-                xrange=(x_axis[0][0], x_axis[0][-1]),
-                logx = False, logy = False, logz = False,
-                title = "",
-                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "m_{T2} [GeV]",
-                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
-                xtitle = "m_{T2} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
-                centertitlex = True, centertitley = True,
-                centerlabelx = False, centerlabely = False,
-                gridx = False, gridy = False,
-                CMSextraText = "Private work (Prediction)",
-                lumiText = "(13 TeV)",
-            )
-        
-        root_plots2D_simple(
-                hist_sig_nonunif_th2,
-                outfile = output_path + "/" + hist + "_" + prediction_bin +"_signal"+ ".pdf",
-                yrange=(y_axis[0], y_axis[-1]),
-                xrange=(x_axis[0][0], x_axis[0][-1]),
-                logx = False, logy = False, logz = False,
-                title = "",
-                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "m_{T2} [GeV]",
-                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
-                xtitle = "m_{T2} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
-                centertitlex = True, centertitley = True,
-                centerlabelx = False, centerlabely = False,
-                gridx = False, gridy = False,
-                CMSextraText = f"Private work (Signal 250 GeV,10 cm)",
-                lumiText = "(13 TeV)",
-            )
-        
-        hist_prediction_nonunif_th2.Add(hist_sig_nonunif_th2)
-        hist_sig_nonunif_th2.Divide(hist_prediction_nonunif_th2)
-        root_plots2D_simple(
-                hist_sig_nonunif_th2,
-                outfile = output_path + "/" + hist + "_" + prediction_bin +"_RATIO"+ ".pdf",
-                yrange=(y_axis[0], y_axis[-1]),
-                xrange=(x_axis[0][0], x_axis[0][-1]),
-                logx = False, logy = False, logz = False,
-                title = "",
-                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "m_{T2} [GeV]",
-                # xtitle = "p^{miss}_{T} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
-                xtitle = "m_{T2} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
-                centertitlex = True, centertitley = True,
-                centerlabelx = False, centerlabely = False,
-                gridx = False, gridy = False,
-                CMSextraText = f"Private work ( S/(S+B) )",
-                lumiText = "(13 TeV)",
-            )
-
+            root_plots2D_simple(
+                    hist_prediction_nonunif_th2,
+                    outfile = output_path + "/" + hist + "_" + prediction_bin +"_predict"+ ".pdf",
+                    yrange=(y_axis[0], y_axis[-1]),
+                    xrange=(x_axis[0][0], x_axis[0][-1]),
+                    logx = False, logy = False, logz = False,
+                    title = "",
+                    # xtitle = "p^{miss}_{T} [GeV]", ytitle = "m_{T2} [GeV]",
+                    # xtitle = "p^{miss}_{T} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
+                    xtitle = bin_labels[0], ytitle = bin_labels[1],
+                    centertitlex = True, centertitley = True,
+                    centerlabelx = False, centerlabely = False,
+                    gridx = False, gridy = False,
+                    CMSextraText = "Private work (Prediction)",
+                    lumiText = "(13 TeV)",
+                )
+            
+            root_plots2D_simple(
+                    hist_sig_nonunif_th2,
+                    outfile = output_path + "/" + hist + "_" + prediction_bin +"_signal"+ ".pdf",
+                    yrange=(y_axis[0], y_axis[-1]),
+                    xrange=(x_axis[0][0], x_axis[0][-1]),
+                    logx = False, logy = False, logz = False,
+                    title = "",
+                    # xtitle = "p^{miss}_{T} [GeV]", ytitle = "m_{T2} [GeV]",
+                    # xtitle = "p^{miss}_{T} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
+                    xtitle = bin_labels[0], ytitle = bin_labels[1],
+                    centertitlex = True, centertitley = True,
+                    centerlabelx = False, centerlabely = False,
+                    gridx = False, gridy = False,
+                    CMSextraText = f"Private work ({_signal_name})",
+                    lumiText = "(13 TeV)",
+                )
+            
+            hist_prediction_nonunif_th2.Add(hist_sig_nonunif_th2)
+            hist_sig_nonunif_th2.Divide(hist_prediction_nonunif_th2)
+            root_plots2D_simple(
+                    hist_sig_nonunif_th2,
+                    outfile = output_path + "/" + hist + "_" + prediction_bin +"_RATIO"+ ".pdf",
+                    yrange=(y_axis[0], y_axis[-1]),
+                    xrange=(x_axis[0][0], x_axis[0][-1]),
+                    logx = False, logy = False, logz = False,
+                    title = "",
+                    # xtitle = "p^{miss}_{T} [GeV]", ytitle = "m_{T2} [GeV]",
+                    # xtitle = "p^{miss}_{T} [GeV]", ytitle = "#Sigma m_{T} [GeV]",
+                    xtitle = bin_labels[0], ytitle = bin_labels[1],
+                    centertitlex = True, centertitley = True,
+                    centerlabelx = False, centerlabely = False,
+                    gridx = False, gridy = False,
+                    CMSextraText = f"Private work ( S/(S+B) )",
+                    lumiText = "(13 TeV)",
+                )
 
 def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
 
@@ -419,7 +632,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     isSignal = "background"
                 
                 has_group_entry = False
-                # Accumulate the dataset for the particular data group as specified in config “Labels”.
+                # Accumulate the dataset for the particular data group as specified in config "Labels".
                 for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
                     
                     # Rescaling according to cross-section and luminosity
@@ -427,9 +640,9 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     # hist = file.Get(_histogram_data + "_" + _categ)
                     # hist = file.Get(_histogram_data)
                     if not _categ=="":
-                        hist = file.Get(_histogram_data + "_" + _categ)
+                        hist = file.Get(f"{_histogram_data}/{_categ}/hist")
                     else:
-                        hist = file.Get(_histogram_data)
+                        hist = file.Get(f"{_histogram_data}/hist")
 
                     if not hist:
                         print("Warning: Histogram not found! ", end='')
@@ -438,12 +651,12 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     
                     if isSignal != "data": # Scaling of the MC to the lumi and xsection
                         if config["DY_stitching_applied"] and (
-                                "DYJetsToLL_M-50" in _histogram_data or
-                                "DY1JetsToLL_M-50" in _histogram_data or
-                                "DY2JetsToLL_M-50" in _histogram_data or
-                                "DY3JetsToLL_M-50" in _histogram_data or
-                                "DY4JetsToLL_M-50" in _histogram_data ):
-                            # print("Stitching:", _histogram_data)
+                                "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8" in _histogram_data or
+                                "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" in _histogram_data or
+                                "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" in _histogram_data or
+                                "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" in _histogram_data or
+                                "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" in _histogram_data ):
+                            print("Stitching:", _histogram_data)
                             hist.Scale(config["luminosity"])
                         elif config["W_stitching_applied"] and (
                                 ("WJetsToLNu" in _histogram_data and (not "TTWJets" in _histogram_data)) or
@@ -455,7 +668,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                             hist.Scale(config["luminosity"])
                         else:
                             # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
-                            N = cutflow[_histogram_data]["all"]["Before cuts"]
+                            N = cutflow[_histogram_data]["all"]["BeforeCuts"]
                             hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
 
                     if _histname in config["SetupBins"]:
@@ -531,6 +744,8 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                 xrange_max = _histograms["background"][0].GetXaxis().GetXmax()
                 overflow =  True
 
+            print(_histograms_background_sorted)
+            print(_histograms["data"])
             if isData:
                 root_plot1D(
                     l_hist = _histograms_background_sorted,
@@ -563,6 +778,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     lumiText = "2018 (13 TeV)",
                     signal_to_background_ratio = True,
                     ratio_mode = "DATA",
+                    # ndivisionsy_ratio = (5, 5, 0),
                     yrange_ratio = (0.0, 2.0),
                     draw_errors = True
                 )

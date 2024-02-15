@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 import re
 
 from pepper import Config
-from utils.plotter import plot1D, plot2D, plot_predict, plot_predict2D, plotBrMC
+from utils.plotter import plot1D, plot2D, plot_predict, plot_predict_sys, plot_predict2D, plotBrMC
 
 
 parser = ArgumentParser(
@@ -56,7 +56,7 @@ if "1D" in args.mode:
         if histfile.endswith(".json"):
             dirname = os.path.dirname(histfile)
             with open(histfile) as f:
-                f = json.load(f)
+                f = json.load(f)["content"]
                 for keys, histfile in zip(*f):
                     if len(keys) != 2:
                         continue
@@ -114,6 +114,12 @@ if "prediction" in args.mode:
         raise ValueError('Json should be provided')
     dirname = os.path.dirname(args.histfile[0])
     plot_predict(dirname, config, crosssections, cutflow, args.outdir)
+
+if "prediction_sys" in args.mode:
+    if not args.histfile[0].endswith(".json"):
+        raise ValueError('Json should be provided')
+    dirname = os.path.dirname(args.histfile[0])
+    plot_predict_sys(dirname, config, crosssections, cutflow, args.outdir)
 
 if "prediction2D" in args.mode:
     if not args.histfile[0].endswith(".json"):
