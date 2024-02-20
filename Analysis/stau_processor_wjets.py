@@ -81,8 +81,8 @@ class Processor(pepper.ProcessorBasicPhysics):
                 partial(self.do_w_jet_reweighting))
 
         # HEM 15/16 failure (2018)
-        # if self.config["year"] == "2018ul":
-        selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+        if self.config["year"] == "ul2018":
+            selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
 
         # MET cut
         selector.add_cut("MET", self.MET_cut)
@@ -148,8 +148,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         if is_mc:
             weight[in_hem] = (1-0.66)
         else:
-            weight[in_hem] = 0.0
-        return weight   
+            issue_period = (data.run >= 319077)
+            weight[in_hem & issue_period] = 0.0
+        return weight
     
     @zero_handler
     def get_muon_sfs(self, data, is_mc):
