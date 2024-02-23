@@ -109,6 +109,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         # add cuts and selections on the jets
         selector.set_column("Jet_select", self.jet_selection)
+        selector.add_cut("has_more_two_jets", self.has_more_two_jets)
         selector.set_column("Jet_select", self.getloose_jets)
 
         selector.set_column("PfCands", self.pfcand_valid)
@@ -136,6 +137,11 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         # selector.set_column("Jet_select", self.gettight_jets)
         # selector.add_cut("two_tight_jets", self.has_two_jets)        
+    
+    @zero_handler
+    def has_more_two_jets(self, data):
+        jets = data["Jet_select"]
+        return ak.num(jets) >= 2
     
     @zero_handler
     def HEM_veto(self, data, is_mc):
@@ -273,8 +279,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         ele = data["Electron"]
         is_good = (
             (ele.pt > self.config["elec_veto_pt"])
-            & (ele.eta < self.config["elec_veto_eta_min"])
-            & (ele.eta > self.config["elec_veto_eta_max"])
+            & (ele.eta < self.config["elec_veto_eta_max"])
+            & (ele.eta > self.config["elec_veto_eta_min"])
             & (ele[self.config["elec_veto"]] == 1)
             & (ele[self.config["elec_ID"]] == 1)
             )
