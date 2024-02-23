@@ -12,6 +12,7 @@
     "luminosity": 59.74,
     "crosssections": "$CONFDIR/crosssections.json",
     "apply_met_filters": true,
+    "dxy_cut_study": false,
     "exp_datasets": {
         "DATA_MET": [
             "$STOREDIR/MET/crab_MET_2018A_UL/230415_105803/*/*.root",
@@ -171,7 +172,7 @@
 
     // data-driven n-pass yield prediction:
     "jet_fake_rate" : [
-        "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_3/output_wjet/wjet_v14_rates/fake_rate_data_binom/fake_rate_jet_dxy_pt.root",
+        "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_3/output_wjet/wjet_v17_rate_dxy0p1/fake_rate/fake_rate_jet_dxy_pt.root",
         "fake_rate_jet_dxy_pt",
         ["jet_pt", "jet_dxy"]
     ],
@@ -198,7 +199,7 @@
     "jet_eta_min"  : -2.1,
     "jet_eta_max"  :  2.1,
     "jet_jetId"    :  6, // tight lepton veto
-    "jet_dxy_min"  :  0.5, // cm
+    "jet_dxy_min"  :  0.1, // cm
     
     // pfCand selection:
     "pfcand_pt"         : 1.0,
@@ -216,7 +217,7 @@
     // "score_pass" : [0.0, 0.1716, 0.4612, 0.6631, 0.786, 0.846, 0.9529, 0.9889, 0.9972, 0.9996],
 
     // "score_pass" : [0.05, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.40, 0.45, 0.5, 0.7, 0.95, 0.9900, 0.9972, 0.9996],
-    "score_pass" : [0.9900],
+    "score_pass" : [0.05, 0.9900],
     "score_pass_finebin" : [ 
         0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.16, 0.18, 0.20, 
         0.22, 0.24, 0.26, 0.27, 0.29, 0.31, 0.33, 0.35, 0.37, 0.38, 0.40,

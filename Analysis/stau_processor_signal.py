@@ -96,8 +96,8 @@ class Processor(pepper.ProcessorBasicPhysics):
             selector.add_cut("MET_trigger_sfs", self.MET_trigger_sfs)
         
         # HEM 15/16 failure (2018)
-        # if self.config["year"] == "2018ul":
-        selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+        if self.config["year"] == "ul2018":
+            selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
 
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
 
@@ -109,16 +109,21 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("Electron", self.select_electrons)
         selector.add_cut("muon_veto", self.muon_veto)
         selector.add_cut("elec_veto", self.elec_veto)
-        
     
         selector.set_column("Jet_select", self.jet_selection)
-        selector.set_column("Jet_select", self.getloose_jets)
+        if self.config["dxy_cut_study"]:
+            self.dxy_cut_study(selector, dsname, is_mc)
+            return
 
+        selector.set_column("Jet_select", self.getloose_jets)
+        # selector.set_column("Jet_tau", partial(self.jet_tau, is_mc=is_mc))
+        # selector.add_cut("loose_jets_defined", lambda data: np.ones(len(data)))
+        # selector.add_cut("loose_jets_defined2", lambda data: np.ones(len(data)))
         selector.set_column("PfCands", self.pfcand_valid)
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
-        
-        
+
+        selector.add_cut("after_define_dxy", lambda data: np.ones(len(data)))
         selector.add_cut("two_loose_jets", self.has_two_jets)
         # selector.add_cut("b_tagged_jet_cut", self.b_tagged_jet_cut)
         
@@ -130,6 +135,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_multiple_columns(self.missing_energy)
         selector.set_multiple_columns(self.mt_jets)
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
+        selector.set_column("dr_jet1_jet2", self.dr_jet1_jet2)
         selector.add_cut("dphi_min_cut", self.dphi_min_cut)
         selector.set_column("mt2_j1_j2_MET", self.get_mt2)
         
@@ -150,7 +156,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         # selector.set_column("Jet_select_flav", self.jet_updated_flavour)
         
         # Selection of the jet is performed only for two leading jets:
-        selector.add_cut("two_loose_jets_final", self.has_two_jets)
+        selector.add_cut("two_loose_jets_final", lambda data: np.ones(len(data)))
         
         # Prediction should be done in following state <->
         
@@ -179,6 +185,25 @@ class Processor(pepper.ProcessorBasicPhysics):
         # if self.config["predict_yield"]:
         #     selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
         # selector.add_cut("redefine_jets_lead2prob", self.b_tagged_jet_cut)
+
+    def dxy_cut_study(self, selector, dsname, is_mc):
+        
+        selector.set_column("Jet_select", self.gettight_jets)
+        selector.set_column("Jet_tau", partial(self.jet_tau, is_mc=is_mc))
+        
+        selector.add_cut("cut_separator1", lambda data: np.ones(len(data)))
+        
+        selector.add_cut("one_tight", lambda data: ak.num(data["Jet_select"]) >= 1)
+        # Jet_select was not redefined yet
+        selector.add_cut("cut_separato2", lambda data: np.ones(len(data)))
+
+        selector.set_column("PfCands", self.pfcand_valid)
+        selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
+        selector.set_column("Jet_select", self.set_jet_dxy)
+        selector.set_column("Jet_tau", partial(self.jet_tau, is_mc=is_mc))
+
+        selector.add_cut("after_define_dxy", lambda data: np.ones(len(data)))
+        selector.add_cut("two_tight", lambda data: ak.num(data["Jet_select"]) >= 2)
 
     def categories_bins(self, data):
         if len(data) == 0:
@@ -262,7 +287,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         if is_mc:
             weight[in_hem] = (1-0.66)
         else:
-            weight[in_hem] = 0.0
+            issue_period = (data.run >= 319077)
+            weight[in_hem & issue_period] = 0.0
         return weight   
     
     @zero_handler
@@ -386,6 +412,9 @@ class Processor(pepper.ProcessorBasicPhysics):
     def dphi_jet1_jet2(self, data):
         return self.delta_phi(data["Jet_select"][:,0].phi,
                               data["Jet_select"][:,1].phi)
+    @zero_handler
+    def dr_jet1_jet2(self, data):
+        return data["Jet_select"][:,0].delta_r(data["Jet_select"][:,1])
     
     @zero_handler
     def MET_cut(self, data):
@@ -408,8 +437,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         ele = data["Electron"]
         is_good = (
             (ele.pt > self.config["elec_veto_pt"])
-            & (ele.eta < self.config["elec_veto_eta_min"])
-            & (ele.eta > self.config["elec_veto_eta_max"])
+            & (ele.eta < self.config["elec_veto_eta_max"])
+            & (ele.eta > self.config["elec_veto_eta_min"])
             & (ele[self.config["elec_veto"]] == 1)
             & (ele[self.config["elec_ID"]] == 1)
             )
