@@ -104,7 +104,10 @@ class Processor(pepper.ProcessorBasicPhysics):
         # MET cut
         selector.add_cut("MET", self.MET_cut)
         
-        # 2 muons
+        # PV cut
+        selector.add_cut("PV", lambda data: data["PV"].npvsGood > 0)
+        
+        # lepton selection
         selector.set_column("Muon", self.select_muons)
         selector.set_column("Electron", self.select_electrons)
         selector.add_cut("muon_veto", self.muon_veto)
@@ -125,6 +128,7 @@ class Processor(pepper.ProcessorBasicPhysics):
 
         selector.add_cut("after_define_dxy", lambda data: np.ones(len(data)))
         selector.add_cut("two_loose_jets", self.has_two_jets)
+        # selector.add_cut("has_small_dxy", self.has_small_dxy)
         # selector.add_cut("b_tagged_jet_cut", self.b_tagged_jet_cut)
         
         if is_mc and dsname.startswith("DY"):
@@ -165,10 +169,10 @@ class Processor(pepper.ProcessorBasicPhysics):
         # selector.add_cut("two_loose_jets_final2", self.has_two_jets)
         # selector.set_cat("control_region", {"RT0", "RT1", "RT2"})
         # selector.set_multiple_columns(partial(self.categories_bins))
-        # selector.add_cut("two_loose_jets_final3", self.has_two_jets)
+        selector.add_cut("two_loose_jets_final3", self.has_two_jets)
         
-        # selector.set_column("Jet_select", self.gettight_jets)
-        # selector.add_cut("two_tight_jets", self.has_two_jets)       
+        selector.set_column("Jet_select", self.gettight_jets)
+        selector.add_cut("two_tight_jets", self.has_two_jets)       
         
         # # 1. Leading jet is selected by pt
         # selector.add_cut("point", self.b_tagged_jet_cut) # dummy cut to make sure correct Jet_select is used
@@ -471,6 +475,13 @@ class Processor(pepper.ProcessorBasicPhysics):
     def has_two_jets(self, data):
         jets = data["Jet_select"]
         return ak.num(jets) == 2
+    
+    @zero_handler
+    def has_small_dxy(self, data):
+        jets = data["Jet_select"]
+        dxy1 = (jets.dxy[:,0] < 0.4)
+        dxy2 = (jets.dxy[:,1] < 0.4)
+        return (dxy1 | dxy2)
 
     @zero_handler
     def getloose_jets(self, data):
@@ -527,12 +538,21 @@ class Processor(pepper.ProcessorBasicPhysics):
         # Mask jets with dxy nan (no selected pfcands matching)
         bad_jets = ak.is_none(data["Jet_lead_pfcand"].dxy, axis=-1)
         jets = ak.mask(jets, ~bad_jets) # mask bad jets to keep coorect shape
-        jets["dz"] = np.abs(data["Jet_lead_pfcand"].dz)
-        jets["dxy"] = np.abs(data["Jet_lead_pfcand"].dxy)
-        jets["dxy_weight"] = np.abs(data["Jet_lead_pfcand"].dxy_weight)
-        jets["dxysig"] = np.abs(data["Jet_lead_pfcand"].dxysig)
-        jets["dxysig_weight"] = np.abs(data["Jet_lead_pfcand"].dxysig_weight)
-        jets["ip3d"] = data["Jet_lead_pfcand"].ip3d
+        lead_pf = data["Jet_lead_pfcand"]
+        jets["dz"] = np.abs(lead_pf.dz)
+        jets["dxy"] = np.abs(lead_pf.dxy)
+        jets["dxy_weight"] = np.abs(lead_pf.dxy_weight)
+        jets["dxysig"] = np.abs(lead_pf.dxysig)
+        jets["dxysig_weight"] = np.abs(lead_pf.dxysig_weight)
+        jets["ip3d"] = lead_pf.ip3d
+        #### Extra variables for the jet dxy cut study #### begin
+        jets["dz_err"] = np.abs(lead_pf.dzError)
+        jets["dxy_err"] = np.abs(lead_pf.dxyError)
+        jets["vxy"] = np.sqrt(lead_pf.vx**2 + lead_pf.vy**2)
+        jets["vz"] = np.abs(lead_pf.vz)
+        jets["fromPV"] = lead_pf.fromPV
+        jets["lostInnerHits"] = lead_pf.lostInnerHits
+        #### end
         jets = jets[~bad_jets] # remove bad jets
         jets = jets[jets.dxy >= self.config["jet_dxy_min"]]
         return jets
