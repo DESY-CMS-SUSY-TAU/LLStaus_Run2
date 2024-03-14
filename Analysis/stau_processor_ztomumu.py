@@ -91,6 +91,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("muon_veto", self.muons_veto)
         selector.set_column("electron_veto", self.electron_veto)
         
+        # PV cut
+        selector.add_cut("PV", lambda data: data["PV"].npvsGood > 0)
+        
         # MET cut
         # selector.add_cut("MET", self.MET_cut_max)
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))

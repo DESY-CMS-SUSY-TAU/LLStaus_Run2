@@ -86,6 +86,9 @@ class Processor(pepper.ProcessorBasicPhysics):
 
         # MET cut
         selector.add_cut("MET", self.MET_cut)
+        
+        # PV cut
+        selector.add_cut("PV", lambda data: data["PV"].npvsGood > 0)
 
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
         
