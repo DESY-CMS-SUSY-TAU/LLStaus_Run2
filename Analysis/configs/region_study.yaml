@@ -14,8 +14,8 @@ input:
     "m(#tilde{#tau})=300 GeV c#tau_{0}=1000 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_1000mm_mLSP_1
     "m(#tilde{#tau})=300 GeV c#tau_{0}=100 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_100mm_mLSP_1
     "m(#tilde{#tau})=300 GeV c#tau_{0}=10 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_10mm_mLSP_1
-    # "m(#tilde{#tau})=300 GeV c#tau_{0}=1 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_1mm_mLSP_1
-    # # "m(#tilde{#tau})=300 GeV c#tau_{0}=50 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_50mm_mLSP_1
+    "m(#tilde{#tau})=300 GeV c#tau_{0}=1 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_1mm_mLSP_1
+    # "m(#tilde{#tau})=300 GeV c#tau_{0}=50 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_50mm_mLSP_1
     # "m(#tilde{#tau})=300 GeV c#tau_{0}=5 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_5mm_mLSP_1
     # # "m(#tilde{#tau})=300 GeV c#tau_{0}=0.5 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_0p5mm_mLSP_1
     # "m(#tilde{#tau})=300 GeV c#tau_{0}=0.1 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_0p1mm_mLSP_1
@@ -54,11 +54,11 @@ collections:
         cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
     Tau:
         name: Tau
-        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
+        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4) & ({name}.idDeepTau2018v2p5VSe	>= 1) & ({name}.idDeepTau2018v2p5VSmu >= 1) & ({name}.idDeepTau2018v2p5VSjet >= 1)"
     GenVisTaus:
         name: GenVisTau
-        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4) & (abs({name}.vertexZ) < 100)"
-        # cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
+        # cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4) & (abs({name}.vertexZ) < 10)"
+        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.4)"
     STau:
         vertexZ: 10 #cm cut 
 
@@ -70,13 +70,13 @@ bin_setups:
 
 eff_setups:
     gen_jet_pt  : [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300, 1000] # n_bins, pt_min, pt_max
-    # Lxy_bins : [0.0, 0.05, 0.1, 1.0, 3.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 50.0, 70.0, 80.0, 100.0, 200.0] # in cm
-    # Lxy_slice : [ [0, 0.1], [0.1, 1], [1.0, 3.0], [3.0, 5.0], [1.0, 10.0], [10.0, 30.0], [30.0, 50.0], [50.0, 100.0], [100.0, 200.0]] # also in cm (bin edjes)
-    Lxy_bins : [0.0, 0.05, 0.1, 1.0, 3.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 50.0,] # in cm
-    Lxy_slice : [ [0, 0.1], [0.1, 1], [1.0, 3.0], [3.0, 5.0], [1.0, 10.0], [10.0, 30.0], [30.0, 50.0] ] # also in cm (bin edjes)
+    Lxy_bins : [0.0, 0.05, 0.1, 0.5, 1.0, 3.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 50.0, 70.0, 80.0, 100.0, 200.0] # in cm
+    Lxy_slice : [ [0, 0.1], [0.1, 0.5], [0.5, 1.0], [1.0, 3.0], [3.0, 5.0], [1.0, 10.0], [10.0, 30.0], [30.0, 50.0], [50.0, 100.0], [100.0, 200.0]] # also in cm (bin edjes)
+    # Lxy_bins : [0.0, 0.05, 0.1, 1.0, 3.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 50.0,] # in cm
+    # Lxy_slice : [ [0, 0.1], [0.1, 1], [1.0, 3.0], [3.0, 5.0], [1.0, 10.0], [10.0, 30.0], [30.0, 50.0] ] # also in cm (bin edjes)
     energy_ratio: [100, 0.9, 2.0]
     energy_ratio_children: [100, 0.9, 1.1]
     pt_ratio : [100, 0.0, 2.0, 100, 0, 1000]
     pt_resolution : [100, -1, 5, 100, 0, 1000]
 
-output: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/plots_AN/efficiency_VZup1m_VXYup50cm
+output: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/plots_AN/efficiency_dz10cm

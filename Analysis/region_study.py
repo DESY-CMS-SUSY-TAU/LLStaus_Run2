@@ -796,31 +796,31 @@ def regionStudy(cfg: DictConfig) -> None:
             hist_gen_jet_pt_id_ratio.Divide(hist_gen_jet_pt_id_ratio, hist_gen_jet_pt_reco, 1.0, 1.0, "B")
 
             hist_gen_jet_pt_ratio.SetLineColor(9)
-            hist_gen_jet_pt_ratio.SetLineWidth(2)
-            hist_gen_jet_pt_ratio.SetMarkerColor(2)
+            hist_gen_jet_pt_ratio.SetLineWidth(3)
+            hist_gen_jet_pt_ratio.SetMarkerColor(3)
             hist_gen_jet_pt_ratio.SetMarkerSize(0)
             hist_gen_jet_pt_ratio.SetTitle("gen-jet / gen-tau")
 
             hist_gen_jet_pt_reco_ratio.SetLineColor(8)
-            hist_gen_jet_pt_reco_ratio.SetLineWidth(2)
+            hist_gen_jet_pt_reco_ratio.SetLineWidth(3)
             hist_gen_jet_pt_reco_ratio.SetMarkerColor(3)
             hist_gen_jet_pt_reco_ratio.SetMarkerSize(0)
             hist_gen_jet_pt_reco_ratio.SetTitle("reco-jet / gen-tau")
             
             hist_gen_tau_pt_reco_ratio.SetLineColor(46)
-            hist_gen_tau_pt_reco_ratio.SetLineWidth(2)
+            hist_gen_tau_pt_reco_ratio.SetLineWidth(3)
             hist_gen_tau_pt_reco_ratio.SetMarkerColor(3)
             hist_gen_tau_pt_reco_ratio.SetMarkerSize(0)
             hist_gen_tau_pt_reco_ratio.SetTitle("reco-tau / gen-tau")
             
             hist_gen_jet_pt_id_ratio.SetLineColor(9)
-            hist_gen_jet_pt_id_ratio.SetLineWidth(2)
-            hist_gen_jet_pt_id_ratio.SetMarkerColor(2)
+            hist_gen_jet_pt_id_ratio.SetLineWidth(3)
+            hist_gen_jet_pt_id_ratio.SetMarkerColor(3)
             hist_gen_jet_pt_id_ratio.SetMarkerSize(0)
             hist_gen_jet_pt_id_ratio.SetTitle("id-jet / reco-jet")
             
             outfile = path_jet+f'/ratio_pt_{dataset}_allLxy.pdf'
-            
+            # plot withih jet reco and ID
             utils.utils.root_plot1D(
                 # l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
                 l_hist = [hist_gen_jet_pt_id_ratio, hist_gen_jet_pt_reco_ratio ],
@@ -838,7 +838,7 @@ def regionStudy(cfg: DictConfig) -> None:
                 legendpos = "UL",
                 # legendtitle = f"Lxy: {Lxy_slice[0]}-{Lxy_slice[1]} cm",
                 legendncol = 1,
-                legendtextsize = 0.035,
+                legendtextsize = 0.04,
                 #legendtextsize = 0.04,
                 legendwidthscale = 1.0,
                 legendheightscale = 1.0,
@@ -879,25 +879,25 @@ def regionStudy(cfg: DictConfig) -> None:
             hist_gen_jet_pt_id_ratio.Divide(hist_gen_jet_pt_id_ratio, hist_gen_jet_pt_reco, 1.0, 1.0, "B")
 
             hist_gen_jet_pt_ratio.SetLineColor(9)
-            hist_gen_jet_pt_ratio.SetLineWidth(2)
+            hist_gen_jet_pt_ratio.SetLineWidth(3)
             hist_gen_jet_pt_ratio.SetMarkerColor(2)
             hist_gen_jet_pt_ratio.SetMarkerSize(0)
             hist_gen_jet_pt_ratio.SetTitle("gen-jet / gen-tau")
 
             hist_gen_jet_pt_reco_ratio.SetLineColor(8)
-            hist_gen_jet_pt_reco_ratio.SetLineWidth(2)
+            hist_gen_jet_pt_reco_ratio.SetLineWidth(3)
             hist_gen_jet_pt_reco_ratio.SetMarkerColor(3)
             hist_gen_jet_pt_reco_ratio.SetMarkerSize(0)
             hist_gen_jet_pt_reco_ratio.SetTitle("reco-jet / gen-tau")
             
             hist_gen_tau_pt_reco_ratio.SetLineColor(46)
-            hist_gen_tau_pt_reco_ratio.SetLineWidth(2)
+            hist_gen_tau_pt_reco_ratio.SetLineWidth(3)
             hist_gen_tau_pt_reco_ratio.SetMarkerColor(3)
             hist_gen_tau_pt_reco_ratio.SetMarkerSize(0)
             hist_gen_tau_pt_reco_ratio.SetTitle("reco-tau / gen-tau")
             
             hist_gen_jet_pt_id_ratio.SetLineColor(9)
-            hist_gen_jet_pt_id_ratio.SetLineWidth(2)
+            hist_gen_jet_pt_id_ratio.SetLineWidth(3)
             hist_gen_jet_pt_id_ratio.SetMarkerColor(2)
             hist_gen_jet_pt_id_ratio.SetMarkerSize(0)
             hist_gen_jet_pt_id_ratio.SetTitle("id-jet / reco-jet")
@@ -921,7 +921,33 @@ def regionStudy(cfg: DictConfig) -> None:
                 legendpos = "UL",
                 legendtitle = f"",
                 legendncol = 1,
-                legendtextsize = 0.035,
+                legendtextsize = 0.04,
+                legendwidthscale = 1.0,
+                legendheightscale = 1.0,
+                CMSextraText = "Simulation",
+                lumiText = dataset
+            )
+            
+            outfile = path_jet+f'/ratio_withTau_Lxy_{dataset}.pdf'
+            
+            utils.utils.root_plot1D(
+                # l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
+                l_hist = [hist_gen_tau_pt_reco_ratio, hist_gen_jet_pt_reco_ratio],
+                outfile = outfile,
+                xrange = [0.0001, 110],
+                yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.5*hist_gen_jet_pt_ratio.GetMaximum()),
+                logx = True, logy = False,
+                ytitle = "Efficiency",
+                xtitle = "L_{xy} of #tau_{vtx} cm",
+                centertitlex = True, centertitley = True,
+                centerlabelx = False, centerlabely = False,
+                gridx = True, gridy = True,
+                ndivisionsx = None,
+                stackdrawopt = "Enostack",
+                legendpos = "UL",
+                legendtitle = f"",
+                legendncol = 1,
+                legendtextsize = 0.04,
                 legendwidthscale = 1.0,
                 legendheightscale = 1.0,
                 CMSextraText = "Simulation",
