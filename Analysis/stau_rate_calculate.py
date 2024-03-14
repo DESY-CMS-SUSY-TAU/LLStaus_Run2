@@ -116,7 +116,10 @@ if config["fake_rate"]["mode"] == "ratio":
             # Accumulate the dataset for the particular data group as specified in config "Labels".
             for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
                 print("File:",file_path)
-                open_tag = _histogram_data+region[1]+"/hist"
+                if config["include_systematics"]:
+                    open_tag = _histogram_data+"/nominal"+region[1]+"/hist"
+                else:
+                    open_tag = _histogram_data+region[1]+"/hist"
                 # open_tag = _histogram_data+region[1]
                 print("Open:",open_tag)
                 hist = file.Get(open_tag)

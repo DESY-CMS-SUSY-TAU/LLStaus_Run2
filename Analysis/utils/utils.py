@@ -30,7 +30,7 @@ def get_canvas(ratio = False) :
     ROOT.gROOT.SetStyle("tdrStyle")
     ROOT.gROOT.ForceStyle(True)
     
-    canvas = ROOT.TCanvas("canvas", "canvas", 1000, 1000)
+    canvas = ROOT.TCanvas("canvas", "canvas", 1100, 1100)
     canvas.UseCurrentStyle()
     
     #canvas.SetLeftMargin(0.16)
@@ -94,6 +94,7 @@ def root_plot1D(
     stackdrawopt = "nostack",
     normilize = False,
     normilize_overlay = True,
+    draw_legend = True,
     legendpos = "UR",
     legendncol = 1,
     legendtextsize = 0.065,
@@ -222,14 +223,15 @@ def root_plot1D(
         if include_overflow:
             hist.SetBinContent(1, hist.GetBinContent(1) +  hist.GetBinContent(0))
             hist.SetBinContent(hist.GetNbinsX() , hist.GetBinContent(hist.GetNbinsX() ) +  hist.GetBinContent(hist.GetNbinsX() + 1))
-            
+        # Define overlay normalizing scale:
+        scale = 1.0 if accume_hist==None else accume_hist.Integral()
         if stackdrawopt == 'nostack':
             # if hist.Integral()!=0: hist.Scale(1.0/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
             pass
-        elif normilize_overlay and include_overflow:
-            if hist.Integral()!=0: hist.Scale(1.0/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
-        elif normilize_overlay:
-            if hist.Integral()!=0: hist.Scale(1.0/(hist.Integral()))
+        elif normilize_overlay and include_overflow and hist.Integral()!=0: # integral is not changed after you SetBinContent previously so this brutfix is needed
+            hist.Scale(scale/(hist.Integral()+hist.GetBinContent(hist.GetNbinsX()+1)+hist.GetBinContent(0)))
+        elif normilize_overlay and hist.Integral()!=0:
+            hist.Scale(scale/(hist.Integral()))
         
         if ratio_mode=="DATA":
             hist.SetOption("HISTPE")
@@ -240,7 +242,8 @@ def root_plot1D(
             hist.Draw(f"same {hist.GetOption()}")
             legend.AddEntry(hist, hist.GetTitle(), "LPFE")
     
-    legend.Draw()
+    if draw_legend:
+        legend.Draw()
     
     if (ndivisionsx is not None) :
         
@@ -423,7 +426,10 @@ def root_plot1D(
     
     # ROOT.gStyle.SetImageScaling(2.)
     canvas.SaveAs(outfile)
-    
+    # if accume_hist!=None:
+    #     accamulated_bkgr_file = ROOT.TFile(outfile+".root", "RECREATE")
+    #     accume_hist.Write()
+    #     accamulated_bkgr_file.Close()
     return 0
 
 

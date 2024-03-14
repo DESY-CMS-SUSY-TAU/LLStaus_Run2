@@ -117,6 +117,7 @@ def plot_predict_sys(dirname, config, xsec, cutflow, output_path):
             # ---- Part to assign true (data) histogram -----
             # -----------------------------------------------
             path_data = dirname+"/"+cut+"_"+hist+"_pass.root"
+            # path_data = dirname+"/"+cut+"_"+hist+".root"
             print(path_data)
             file_n_pass_sig = ROOT.TFile.Open(path_data, 'read')
             file_n_pass = ROOT.TFile.Open(path_data, 'read')
@@ -248,7 +249,12 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 for _idx, data_name in enumerate(config["Labels"][_group_name]):
 
                     print("Extract prediction:", data_name)
-                    open_tag = data_name+"/nominal/hist"
+                    # open_tag = data_name+"/nominal/hist"
+                    # open_tag = data_name+"/hist"
+                    if config["include_systematics"]:
+                        open_tag = data_name+"/nominal/hist"
+                    else:
+                        open_tag = data_name+"/hist"
                     _hist_predict = file_predict.Get(open_tag)
                     if not _hist_predict:
                         print("Warning: Histogram not found! ", end='')
@@ -330,7 +336,11 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                         # print(file_n_pass.ls())
                         # print(data_name+"_"+data_bin)
                         if isinstance(data_bin, str):
-                            open_tag = data_name+"/nominal/"+data_bin+"/hist"
+                            # open_tag = data_name+"/nominal/"+data_bin+"/hist"
+                            if config["include_systematics"]:
+                                open_tag = data_name+"/nominal/"+data_bin+"/hist"
+                            else:
+                                open_tag = data_name+"/"+data_bin+"/hist"
                             _hist_data = file_n_pass.Get(open_tag)
                         elif isinstance(data_bin, int):
                             _hist_data = file_n_pass.Get(data_name)
@@ -396,7 +406,11 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                     for _dataset_idx, _histogram_data in enumerate(config["Labels"][_group_name]):
                         print("Adding signal dataset:", _histogram_data)
                         if isinstance(data_bin, str):
-                            open_tag = _histogram_data+"/nominal/"+data_bin+"/hist"
+                            # open_tag = _histogram_data+"/nominal/"+data_bin+"/hist"
+                            if config["include_systematics"]:
+                                open_tag = _histogram_data+"/nominal/"+data_bin+"/hist"
+                            else:
+                                open_tag = _histogram_data+"/"+data_bin+"/hist"
                             _hist = file_n_pass_sig.Get(open_tag)
                         elif isinstance(data_bin, int):
                             _hist = file_n_pass_sig.Get(_histogram_data)
@@ -638,10 +652,10 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     # Rescaling according to cross-section and luminosity
                     # print("Reading data:", _histogram_data + "_" + _categ)
                     # hist = file.Get(_histogram_data + "_" + _categ)
-                    # hist = file.Get(_histogram_data)
                     if not _categ=="":
-                        hist = file.Get(f"{_histogram_data}/{_categ}/hist")
+                        hist = file.Get(f"{_histogram_data}/{_categ}/nominal/hist")
                     else:
+                        # hist = file.Get(f"{_histogram_data}/nominal/hist")
                         hist = file.Get(f"{_histogram_data}/hist")
 
                     if not hist:
@@ -724,6 +738,9 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
             y_max = _histograms["background"][0].GetMaximum()
             for _h in _histograms["background"]:
                 y_max = max(y_max,_h.GetMaximum())
+            # define y_max from data
+            if isData:
+                y_max = _histograms["data"][0].GetMaximum()
 
             # sort histogram from min to max
             _histograms_background_entries = []
@@ -754,7 +771,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     xrange = [xrange_min, xrange_max],
                     # yrange = (0.0,  1.5*y_max), 
                     # logx = False, logy = False,
-                    yrange = (0.001,  1000*y_max),
+                    yrange = (10,  100*y_max),
                     logx = False, logy = True,
                     logx_ratio = False, logy_ratio = False,
                     include_overflow = overflow,
@@ -774,7 +791,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     legendncol = 3,
                     legendtextsize = 0.035,
                     legendwidthscale = 1.9,
-                    legendheightscale = 0.36,
+                    legendheightscale = 0.46,
                     lumiText = "2018 (13 TeV)",
                     signal_to_background_ratio = True,
                     ratio_mode = "DATA",
@@ -792,6 +809,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     yrange = (0.001,  1000*y_max),
                     # yrange = (0.0,  1.5*y_max),
                     logx = False, logy = True,
+                    logx_ratio = False, logy_ratio = True,
                     include_overflow = overflow,
                     xtitle = _histograms["background"][0].GetXaxis().GetTitle(),
                     ytitle = "events",
@@ -803,18 +821,18 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     ndivisionsx = None,
                     stackdrawopt = "",
                     # normilize = True,
-                    normilize_overlay = False,
+                    normilize_overlay = True,
                     legendpos = "UR",
                     legendtitle = f"",
                     legendncol = 3,
                     legendtextsize = 0.025,
-                    legendwidthscale = 1.9,
-                    legendheightscale = 0.26,
+                    legendwidthscale = 2.1,
+                    legendheightscale = 0.46,
                     lumiText = "2018 (13 TeV)",
                     signal_to_background_ratio = True,
                     ratio_mode = "SB",
-                    yrange_ratio = (0.0, 2.0),
-                    draw_errors = True
+                    yrange_ratio = (0.1, 1E5),
+                    draw_errors = False
                 )
 
 def plotBrMC(hist_path, config, xsec, cutflow, output_path, is_per_flavour=False):
