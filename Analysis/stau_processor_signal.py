@@ -142,6 +142,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("dr_jet1_jet2", self.dr_jet1_jet2)
         selector.add_cut("dphi_min_cut", self.dphi_min_cut)
         selector.set_column("mt2_j1_j2_MET", self.get_mt2)
+        selector.set_column("binning_schema", self.binning_schema)
         
         # selector.add_cut("skim_jets", self.skim_jets)
         
@@ -772,3 +773,25 @@ class Processor(pepper.ProcessorBasicPhysics):
         updFlavour = ak.where(~ak.is_none(matches_ele, axis=1), 11, updFlavour)
         
         return np.abs(updFlavour)
+
+    @zero_handler
+    def binning_schema(self, data):
+        jets = data["Jet_select"]
+        # declear variables for binning
+        met = data["MET"].pt
+        jet2_pt = jets[:,1].pt
+        mt2 = data["mt2_j1_j2_MET"]
+        # create empty binning
+        bins = np.full((len(met)), np.nan)
+        B1 = (jet2_pt < 50) & (met >= 250)
+        B2 = (jet2_pt < 50) & (met < 250) & (mt2 < 100)
+        B3 = (jet2_pt < 50) & (met < 250) & (mt2 >= 100)
+        B4 = (jet2_pt >= 50) & (jet2_pt < 100)
+        B5 = (jet2_pt >= 100)
+        bins[B1] = 1
+        bins[B2] = 2
+        bins[B3] = 3
+        bins[B4] = 4
+        bins[B5] = 5
+
+        return bins

@@ -913,6 +913,115 @@
 
 // prediction histograms:
 
+// binning schema
+
+"binning_schema_pass": {
+    "bins": [
+        {
+            "name": "binning_schema",
+            "label": "bins",
+            "n_or_arr": 11,
+            "lo": -1,
+            "hi": 10,
+            "unit": ""
+        }
+    ],
+    "cats" : [
+        {
+            "name": "tagged_jets",
+            "label": "tagged_jets"
+        }
+    ],
+    "fill": {
+        "binning_schema": [
+            "binning_schema"
+        ],
+        "tagged_jets": {
+            "bin0": [
+                "tight_bin0"
+            ],
+            "bin1": [
+                "tight_bin1"
+            ],
+            "bin2": [
+                "tight_bin2"
+            ]
+        }
+    }
+},
+"binning_schema_yield_bin0to2" : {
+    "bins": [
+        {
+            "name": "binning_schema",
+            "label": "bins",
+            "n_or_arr": 11,
+            "lo": -1,
+            "hi": 10,
+            "unit": ""
+        },
+    ],
+    "fill": {
+        "binning_schema": [
+            "binning_schema"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to2_stat_up"],
+        "stat_down": ["tight_yield_bin0to2_stat_down"],
+        "sys_up": ["tight_yield_bin0to2_sys_up"],
+        "sys_down": ["tight_yield_bin0to2_sys_down"]
+    }
+},
+"binning_schema_yield_bin1to2" : {
+    "bins": [
+        {
+            "name": "binning_schema",
+            "label": "bins",
+            "n_or_arr": 11,
+            "lo": -1,
+            "hi": 10,
+            "unit": ""
+        },
+    ],
+    "fill": {
+        "binning_schema": [
+            "binning_schema"
+        ]
+    },
+    "weight" : ["tight_yield_bin1to2"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin1to2_stat_up"],
+        "stat_down": ["tight_yield_bin1to2_stat_down"],
+        "sys_up": ["tight_yield_bin1to2_sys_up"],
+        "sys_down": ["tight_yield_bin1to2_sys_down"]
+    }
+},
+"binning_schema_yield_bin0to1" : {
+    "bins": [
+        {
+            "name": "binning_schema",
+            "label": "bins",
+            "n_or_arr": 11,
+            "lo": -1,
+            "hi": 10,
+            "unit": "-"
+        },
+    ],
+    "fill": {
+        "binning_schema": [
+            "binning_schema"
+        ]
+    },
+    "weight" : ["tight_yield_bin0to1"],
+    "systematics": {
+        "stat_up": ["tight_yield_bin0to1_stat_up"],
+        "stat_down": ["tight_yield_bin0to1_stat_down"],
+        "sys_up": ["tight_yield_bin0to1_sys_up"],
+        "sys_down": ["tight_yield_bin0to1_sys_down"]
+    }
+},
+
 // Real number of cuts per each mt2 bin
 
 "mt2_j1_j2_MET_pass": {

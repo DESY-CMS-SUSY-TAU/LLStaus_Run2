@@ -771,14 +771,14 @@
             "dxy"
         ],
         "score_wp": {
+            "p1": [
+                "Jet_select",
+                {"function" : "pass_score", "kwargs" : {"thr" : 0.01}}
+            ],
             "p05": [
                 "Jet_select",
                 {"function" : "pass_score", "kwargs" : {"thr" : 0.05}}
             ],
-            // "p1": [
-            //     "Jet_select",
-            //     {"function" : "pass_score", "kwargs" : {"thr" : 0.1}}
-            // ],
             // "p15": [
             //     "Jet_select",
             //     {"function" : "pass_score", "kwargs" : {"thr" : 0.15}}
@@ -794,6 +794,10 @@
             "p70": [
                 "Jet_select",
                 {"function" : "pass_score", "kwargs" : {"thr" : 0.70}}
+            ],
+            "p80": [
+                "Jet_select",
+                {"function" : "pass_score", "kwargs" : {"thr" : 0.80}}
             ],
             "p9900": [
                 "Jet_select",
