@@ -1,4 +1,5 @@
-{   "npvs" : {
+{   
+    "npvs" : {
         "bins": [
             {
                 "name": "npvsGood",
@@ -23,14 +24,32 @@
                 "label": "muon $p_{\\mathrm{T}}$",
                 "n_or_arr": 100,
                 "lo": 0,
-                "hi": 400,
+                "hi": 200,
                 "unit": "GeV"
             }
         ],
         "fill": {
             "pt": [
-                "Muon",
+                "Muon_tag",
                 "pt"
+            ]
+        }
+    },
+    "mu_eta": {
+        "bins": [
+            {
+                "name": "eta",
+                "label": "muon eta",
+                "n_or_arr": 20,
+                "lo": -2.5,
+                "hi": 2.5,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "eta": [
+                "Muon_tag",
+                "eta"
             ]
         }
     },
@@ -41,7 +60,7 @@
                 "label": "Tau $p_{\\mathrm{T}}$",
                 "n_or_arr": 100,
                 "lo": 0,
-                "hi": 400,
+                "hi": 200,
                 "unit": "GeV"
             }
         ],
@@ -52,23 +71,78 @@
             ]
         }
     },
-//    "njetselect": {
-//        "bins": [
-//            {
-//                "name": "njet",
-//                "label": "Number of jets",
-//                "n_or_arr": 20,
-//                "lo": 0,
-//                "hi": 20
-//            }
-//        ],
-//        "fill": {
-//            "njet": [
-//                "Jet_select",
-//                {"function": "num"}
-//            ]
-//        }
-//    },
+    "tau_eta": {
+        "bins": [
+            {
+                "name": "eta",
+                "label": "Tau eta",
+                "n_or_arr": 100,
+                "lo": -2.5,
+                "hi": 2.5,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "eta": [
+                "Tau",
+                "eta"
+            ]
+        }
+    },
+    "tau_mass": {
+        "bins": [
+            {
+                "name": "mass",
+                "label": "Tau mass",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 10,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "mass": [
+                "Tau",
+                "mass"
+            ]
+        }
+    },
+    "tau_dxy": {
+        "bins": [
+            {
+                "name": "dxy",
+                "label": "Tau dxy",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 10,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "dxy": [
+                "Tau",
+                "dxy"
+            ]
+        }
+    },
+    "tau_dz": {
+        "bins": [
+            {
+                "name": "dz",
+                "label": "Tau dz",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 10,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "dz": [
+                "Tau",
+                "dz"
+            ]
+        }
+    },
     "mumu_mass": {
         "bins": [
             {
@@ -92,9 +166,9 @@
             {
                 "name": "pt_ll",
                 "label": "$p_{\\mathrm{T}}(\\mu\\tau)$",
-                "n_or_arr": 200,
+                "n_or_arr": 100,
                 "lo": 0,
-                "hi": 1000,
+                "hi": 500,
                 "unit": "GeV"
             }
         ],
@@ -140,25 +214,6 @@
             ]
         }
     },
-    // "deltaphi": {
-    //     "bins": [
-    //         {
-    //             "name": "deltaphi",
-    //             "label": "Leading\\ leptons $|\\Delta \\varphi|$",
-    //             "n_or_arr": 100,
-    //             "lo": 0,
-    //             "hi": 3.3
-    //         }
-    //     ],
-    //     "fill": {
-    //         "deltaphi": [
-    //             "Muon",
-    //             "phi",
-    //             {"function": "leaddiff"},
-    //             {"function": "abs"}
-    //         ]
-    //     }
-    // },
     "jetselect_pt" : {
         "bins": [
             {
@@ -202,7 +257,7 @@
                 "label": "Jet dxy",
                 "n_or_arr": 100,
                 "lo": 0.0,
-                "hi": 100,
+                "hi": 10,
                 "unit": "cm"
             }
         ],
@@ -220,7 +275,7 @@
                 "label": "Jet dxySig",
                 "n_or_arr": 100,
                 "lo": 0.0,
-                "hi": 2000,
+                "hi": 200,
                 "unit": "cm"
             }
         ],
@@ -238,7 +293,7 @@
                 "label": "Jet dxy weighted",
                 "n_or_arr": 100,
                 "lo": 0.0,
-                "hi": 100,
+                "hi": 10,
                 "unit": "cm"
             }
         ],
@@ -256,7 +311,7 @@
                 "label": "Jet dxySig weighted",
                 "n_or_arr": 100,
                 "lo": 0.0,
-                "hi": 2000,
+                "hi": 200,
                 "unit": "cm"
             }
         ],
@@ -285,149 +340,16 @@
             ]
         }
     },
-    // "jet_pt" : {
-    //     "bins": [
-    //         {
-    //             "name": "jet_pt",
-    //             "label": "Jet $p_{\\mathrm{T}}$",
-    //             "n_or_arr": 200,
-    //             "lo": 0,
-    //             "hi": 1000,
-    //             "unit": "GeV"
-    //         }
-    //     ],
-    //     "fill": {
-    //         "jet_pt": [
-    //             "Jet_obj",
-    //             "pt"
-    //         ]
-    //     }
-    // },
-    // "jet_eta" : {
-    //     "bins": [
-    //         {
-    //             "name": "jet_eta",
-    //             "label": "Jet eta",
-    //             "n_or_arr": 100,
-    //             "lo": -2.5,
-    //             "hi": 2.5,
-    //             "unit": "-"
-    //         }
-    //     ],
-    //     "fill": {
-    //         "jet_eta": [
-    //             "Jet_obj",
-    //             "eta"
-    //         ]
-    //     }
-    // },
-    // "jet_dxy" : {
-    //     "bins": [
-    //         {
-    //             "name": "jet_dxy",
-    //             "label": "Jet dxy",
-    //             "n_or_arr": 100,
-    //             "lo": 0.0,
-    //             "hi": 100,
-    //             "unit": "cm"
-    //         }
-    //     ],
-    //     "fill": {
-    //         "jet_dxy": [
-    //             "Jet_obj",
-    //             "dxy"
-    //         ]
-    //     }
-    // },
-    // "jet_dxysig" : {
-    //     "bins": [
-    //         {
-    //             "name": "jet_dxy",
-    //             "label": "Jet dxySig",
-    //             "n_or_arr": 100,
-    //             "lo": 0.0,
-    //             "hi": 2000,
-    //             "unit": "cm"
-    //         }
-    //     ],
-    //     "fill": {
-    //         "jet_dxy": [
-    //             "Jet_obj",
-    //             "dxysig"
-    //         ]
-    //     }
-    // },
-    // "jet_dxy_weight" : {
-    //     "bins": [
-    //         {
-    //             "name": "jet_dxy",
-    //             "label": "Jet dxy weighted",
-    //             "n_or_arr": 100,
-    //             "lo": 0.0,
-    //             "hi": 100,
-    //             "unit": "cm"
-    //         }
-    //     ],
-    //     "fill": {
-    //         "jet_dxy": [
-    //             "Jet_obj",
-    //             "dxy_weight"
-    //         ]
-    //     }
-    // },
-    // "jet_dxysig_weight" : {
-    //     "bins": [
-    //         {
-    //             "name": "jet_dxy",
-    //             "label": "Jet dxySig weighted",
-    //             "n_or_arr": 100,
-    //             "lo": 0.0,
-    //             "hi": 1000,
-    //             "unit": "cm"
-    //         }
-    //     ],
-    //     "fill": {
-    //         "jet_dxy": [
-    //             "Jet_obj",
-    //             "dxysig_weight"
-    //         ]
-    //     }
-    // },
-    // "jet_score" : {
-    //     "bins": [
-    //         {
-    //             "name": "jet_score",
-    //             "label": "Jet score",
-    //             "n_or_arr": 140,
-    //             "lo": -0.2,
-    //             "hi": 1.2,
-    //             "unit": "-"
-    //         }
-    //     ],
-    //     "fill": {
-    //         "jet_score": [
-    //             "Jet_obj",
-    //             "disTauTag_score1"
-    //         ]
-    //     }
-    // },
     "fake_rate_hist" : {
         "bins": [
             {
-                "name": "jet_score",
-                "label": "Jet score",
-                "n_or_arr": [0.0, 0.1716, 0.4612, 0.6631, 0.786, 0.846, 0.9529, 0.9889, 0.9972, 0.9996, 1.1],
-                "unit": "-"
+                "name": "jet_eta",
+                "label": "Jet eta",
+                "n_or_arr": [-2.3, -1.5, -0.5, 0.5, 1.5, 2.3]
             },
-            // {
-            //     "name": "jet_eta",
-            //     "label": "Jet eta",
-            //     "n_or_arr": [-2.5, -2.0, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.5],
-            //     "unit": "-"
-            // },
             {
                 "name": "jet_pt",
-                "label": "Jet $p_{\\mathrm{T}}$",
+                "label": "Jet p_{T}",
                 "n_or_arr": [20, 30, 40, 50, 70, 120, 1000],
                 "unit": "GeV"
             },
@@ -436,17 +358,19 @@
                 "label": "Jet dxy",
                 "n_or_arr": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
                 "unit": "cm"
+            },
+        ],
+        "cats" : [
+            {
+                "name": "score_wp",
+                "label": "score_wp"
             }
         ],
         "fill": {
-            "jet_score": [
+            "jet_eta": [
                 "Jet_select",
-                "disTauTag_score1"
+                "eta"
             ],
-            // "jet_eta": [
-            //     "Jet_select",
-            //     "eta"
-            // ],
             "jet_pt": [
                 "Jet_select",
                 "pt"
@@ -454,93 +378,70 @@
             "jet_dxy": [
                 "Jet_select",
                 "dxy"
-            ]
-        }
-    },
-    "n_jet_pass" : {
-        "bins": [
-            {
-                "name": "jet_score_bin",
-                "label": "Jet score bin",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            },
-            {
-                "name": "jet_pass",
-                "label": "number of jet passing",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            }
-        ],
-        "fill": {
-            "jet_score_bin": [
-                "n_pass_score_bin"
             ],
-            "jet_pass": [
-                "n_pass"
-            ]
+            "score_wp": {
+                "all":[
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.0}}
+                ],
+                "p05": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.05}}
+                ],
+                "p1": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.10}}
+                ],
+                "p15": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.15}}
+                ],
+                "p2": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.20}}
+                ],
+                "p9900": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.99}}
+                ],
+                "p9972": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.9972}}
+                ],
+                "p9996": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.9996}}
+                ]
+            }
         }
     },
-
-    "yield_bin0to1" : {
-        "bins": [
-            {
-                "name": "jet_score_bin",
-                "label": "Jet score bin",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            },
-        ],
-        "fill": {
-            "jet_score_bin": [
-                "score_bin"
-            ]
-        },
-        "weight" : ["yield_bin0to1"]
-    },
-
-    "yield_bin1to2" : {
-        "bins": [
-            {
-                "name": "jet_score_bin",
-                "label": "Jet score bin",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            },
-        ],
-        "fill": {
-            "jet_score_bin": [
-                "score_bin"
-            ]
-        },
-        "weight" : ["yield_bin1to2"]
-    },
-
-    "yield_bin0to2" : {
-        "bins": [
-            {
-                "name": "jet_score_bin",
-                "label": "Jet score bin",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            },
-        ],
-        "fill": {
-            "jet_score_bin": [
-                "score_bin"
-            ]
-        },
-        "weight" : ["yield_bin0to2"]
-    },
-
+   
+    // "n_jet_pass" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score_bin",
+    //             "label": "Jet score bin",
+    //             "n_or_arr": 21,
+    //             "lo": -1,
+    //             "hi": 20,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_pass",
+    //             "label": "number of jet passing",
+    //             "n_or_arr": 21,
+    //             "lo": -1,
+    //             "hi": 20,
+    //             "unit": "-"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score_bin": [
+    //             "n_pass_score_bin"
+    //         ],
+    //         "jet_pass": [
+    //             "n_pass"
+    //         ]
+    //     }
+    // },
 }
