@@ -127,6 +127,13 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("dphi_mutau", self.dphi)
         selector.add_cut("dphi_min_cut", self.dphi_min_cut)
 
+        # calculate dzeta from muon and tau
+        selector.set_column("dzeta", self.dzeta)
+        selector.set_column("muon_mt", self.muon_mt)
+        
+        selector.add_cut("dzeta_cut", self.dzeta_cut)
+        selector.add_cut("muon_mt_cut", self.muon_mt_cut)
+
         selector.set_cat("control_region", {"SS", "OS"})
         selector.set_multiple_columns(self.op_charge)
         
@@ -134,7 +141,15 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("PfCands", self.pfcand_valid)
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
-                
+        selector.add_cut("has_jet", self.has_jet)
+        selector.set_column("Jet_select_lead", self.jet_selection_lead)
+        
+        # seperate regions by the gen-level tau matching
+        selector.set_cat("gen_match", {"gen-tau", "gen-other", "gen-all"})
+        selector.set_multiple_columns(self.gen_matching)
+        
+        selector.set_column("tauID_SFs", partial(self.apply_tauID_SFs, is_mc=is_mc))
+        
         # Tagger part for calculating scale factors
         # Scale factors should be calculated -
         # before cuts on the number of the jets
@@ -144,17 +159,86 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         selector.add_cut("final_state", self.mass_window)
 
-        # selector.add_cut("req_1st_jet", partial(self.jets_available, n_available=1))
-        # selector.set_column("Jet_obj", partial(self.leading_jet, order=0))
-        # selector.add_cut("req_2st_jet", partial(self.jets_available, n_available=2))
-        # selector.set_column("Jet_obj", partial(self.leading_jet, order=1))
-        # selector.add_cut("req_3st_jet", partial(self.jets_available, n_available=3))
-        # selector.set_column("Jet_obj", partial(self.leading_jet, order=2))
+    @zero_handler
+    def has_jet(self, data):
+        return ak.num(data["Jet_select"]) > 0
     
+    @zero_handler
+    def dzeta(self, data):
+        muon = ak.firsts(data["Muon_tag"])
+        tau = ak.firsts(data["Tau"])
+        met = data["MET"]
+        leg1, leg2 = ak.zip({"x": muon.px, "y": muon.py}), ak.zip({"x": tau.px, "y": tau.py})
+        zetaAxis = ak.zip({
+            "x": (leg1.x/np.sqrt(leg1.x**2 + leg1.y**2) + leg2.x/np.sqrt(leg2.x**2 + leg2.y**2)),
+            "y": (leg1.y/np.sqrt(leg1.x**2 + leg1.y**2) + leg2.y/np.sqrt(leg2.x**2 + leg2.y**2))
+        })
+        norm = np.sqrt(zetaAxis.x**2 + zetaAxis.y**2)
+        zetaAxis = ak.zip({
+            "x": zetaAxis.x / norm,
+            "y": zetaAxis.y / norm
+        })
+        # Calculate pzetavis as the dot product of (leg1 + leg2) with zetaAxis
+        pzetavis = (leg1.x + leg2.x) * zetaAxis.x + (leg1.y + leg2.y) * zetaAxis.y
+        # Assuming met is structured as ak.Array with fields .px and .py
+        met_vect = ak.zip({"x": met.px, "y": met.py})
+        # Calculate pzetamiss as the dot product of met with zetaAxis
+        pzetamiss = met_vect.x * zetaAxis.x + met_vect.y * zetaAxis.y
+        # Calculate dzeta
+        dzeta = pzetamiss - 0.85 * pzetavis
+        return dzeta
+
+    @zero_handler
+    def muon_mt(self, data):
+        muon = ak.firsts(data["Muon_tag"])
+        met = data["MET"]
+        mt = np.sqrt(2 * muon.pt * met.pt * (1 - np.cos(muon.delta_phi(met))))
+        return mt
+
+    @zero_handler
+    def dzeta_cut(self, data):
+        return data["dzeta"] > self.config["dzeta_cut"]
+    
+    @zero_handler
+    def muon_mt_cut(self, data):
+        return data["muon_mt"] < self.config["muon_mt_cut"]
+
+    def gen_matching(self, data):
+        if len(data) == 0:
+            return {
+                "gen-tau" : ak.Array([]),
+                "gen-other" : ak.Array([]),
+                "gen-all" : ak.Array([])
+            }
+        tau = ak.firsts(data["Tau"])
+        is_muon = (abs(tau.genPartFlav) == 2) | (abs(tau.genPartFlav) == 4)
+        is_elec = (abs(tau.genPartFlav) == 1) | (abs(tau.genPartFlav) == 3)
+        is_tau = (abs(tau.genPartFlav) == 5)
+        is_other = (abs(tau.genPartFlav) == 0)
+        return {
+            "gen-tau" : is_tau,
+            "gen-other" : (is_muon | is_elec | is_other),
+            "gen-all" : ak.Array([True]*len(data))
+        }
+    
+    @zero_handler
+    def apply_tauID_SFs(self, data, is_mc):
+        weight = np.ones(len(data))
+        if is_mc:
+            tau = ak.firsts(data["Tau"])
+            gen_tau_events = data["gen-tau"]
+            tau_id_sf = self.config["tauid_sfs"](tau_pt = tau[gen_tau_events].pt, 
+                                                 tau_dm = -999, 
+                                                 genmatch = 5,
+                                                 syst = "nom"
+                                                 )
+            weight[gen_tau_events] = tau_id_sf
+        return weight
     
     # @zero_handler
     # def MET_cut_max(self, data):
     #     return data["MET"].pt < self.config["MET_cut_max"]
+    
     def isolation_sideband(self, data):
         if len(data) == 0:
             return {
@@ -449,6 +533,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         pfcands_matched = _pfcands_unzipped[(dr < dR)]
         return pfcands_matched
     
+    
     @zero_handler
     def get_matched_pfCands(self, data, match_object, dR=0.4):
         pfCands = self.match_jet_to_pfcand(data, jet_name=match_object, pf_name="PfCands", dR=dR)
@@ -472,19 +557,12 @@ class Processor(pepper.ProcessorBasicPhysics):
         jets["dxysig_weight"] = np.abs(data["Jet_lead_pfcand"].dxysig_weight)
         jets = jets[~bad_jets] # remove bad jets
         return jets
-    
-    # @zero_handler
-    # def leading_jet(self, data, order=0):
-    #     jets = data["Jet_select"]
-    #     idx_leading = \
-    #         ak.argsort(jets.pt, ascending=False)[:,order:order+1]
-    #     jets = jets[idx_leading]
-    #     return jets
-    
-    # @zero_handler
-    # def jets_available(self, data, n_available=1):
-    #     jets = data["Jet_select"][~ak.is_none(data["Jet_select"].pt, axis=-1)]
-    #     return ak.num(jets) >= n_available
+
+    @zero_handler
+    def jet_selection_lead(self, data):
+        jets = ak.firsts(data["Jet_select"])
+        # print(jets)
+        return jets
     
     @zero_handler
     def set_njets_pass(self, data):
