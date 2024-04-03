@@ -3,8 +3,18 @@ ROOT.gROOT.SetBatch(True)
 import itertools
 import numpy as np
 import os
+import shutil
 
 from .utils import ColorIterator, root_plot1D, root_plot2D, root_plots2D_simple
+
+def read_hist_path(file, data_name, sys=None, category=None):
+    if sys: name = data_name+"/"+sys
+    if category: name = data_name+"/"+category
+    hist = file.Get(name+"/hist")
+    if not hist:
+        raise ValueError(f"Histogram not found! {file} {data_name}/{sys}/hist")
+    hist.SetDirectory(0)
+    return hist
 
 def plot_predict_sys(dirname, config, xsec, cutflow, output_path):
     
@@ -178,15 +188,18 @@ def plot_predict_sys(dirname, config, xsec, cutflow, output_path):
 
             assert(signal_hists.__len__() > 0)
 
-            x_axis_title = hist_prediction.GetXaxis().GetTitle()
-            x_axis_title = x_axis_title.replace("$", "")
+            if bin_labels == None:
+                x_axis_title = hist_prediction.GetXaxis().GetTitle()
+                x_axis_title = x_axis_title.replace("$", "")
+            else:
+                x_axis_title = bin_labels
             
             root_plot1D(
                 l_hist = hists_main,
                 l_hist_overlay = signal_hists,
                 asym_error = prediction_gr,
                 # l_hist_overlay = [hist_data] if config["prediction_hist"]["plot_unblind"] else [],
-                outfile = output_path + "/" + hist + "_" + prediction_bin + ".png",
+                outfile = output_path + "/" + hist + "_" + prediction_bin + ".pdf",
                 xrange = [x_min, x_max],
                 yrange = (0.01,  1000*hist_prediction.GetMaximum()),
                 logx = False, logy = True,
@@ -619,7 +632,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
 
     categories_list = list(itertools.product(*config["Categories"]))
     # categories_list = [f"{cat1}_{cat2}_{cat3}" for cat1,cat2,cat3 in categories_list]
-    categories_list = ["_".join(cat) for cat in categories_list]
+    categories_list = ["/".join(cat) for cat in categories_list]
     # categories_list = [""]
     
     for _ci, _categ in enumerate(categories_list):
@@ -650,15 +663,27 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                 for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
                     
                     # Rescaling according to cross-section and luminosity
-                    # print("Reading data:", _histogram_data + "_" + _categ)
+                    print("Reading data:", _histogram_data + "_" + _categ)
                     # hist = file.Get(_histogram_data + "_" + _categ)
-                    if not _categ=="":
-                        hist = file.Get(f"{_histogram_data}/{_categ}/nominal/hist")
-                    else:
-                        # hist = file.Get(f"{_histogram_data}/nominal/hist")
-                        hist = file.Get(f"{_histogram_data}/hist")
-
-                    if not hist:
+                    # if not _categ=="":
+                    #     # hist = file.Get(f"{_histogram_data}/{_categ}/nominal/hist")
+                    #     hist = file.Get(f"{_histogram_data}/{_categ}/hist")
+                    # else:
+                    #     # hist = file.Get(f"{_histogram_data}/nominal/hist")
+                    #     hist = file.Get(f"{_histogram_data}/hist")
+                    # if not hist:
+                    #     print("Warning: Histogram not found! ", end='')
+                    #     print("Histogram->", file, _histname, _histogram_data)
+                    #     continue
+                    
+                    try:
+                        hist = read_hist_path(
+                            file,
+                            _histogram_data,
+                            _categ if not _categ=="" else None,
+                            "nominal" if config["include_systematics"] else None
+                        )
+                    except:
                         print("Warning: Histogram not found! ", end='')
                         print("Histogram->", file, _histname, _histogram_data)
                         continue
@@ -680,22 +705,28 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                                 "W4JetsToLNu" in _histogram_data ):
                             # print("Stitching:", _histogram_data)
                             hist.Scale(config["luminosity"])
+                        elif _histogram_data == "QCD-pred":
+                            pass
                         else:
                             # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
                             N = cutflow[_histogram_data]["all"]["BeforeCuts"]
                             hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
 
-                    if _histname in config["SetupBins"]:
-                        rebin_setup = config["SetupBins"][_histname][2]
-                        if type(rebin_setup) == list:
-                            hist = hist.Rebin(len(rebin_setup)-1, hist.GetName()+"_rebin", np.array(rebin_setup, dtype=np.double))
-                        else: 
-                            hist.Rebin(rebin_setup)
-                            
-                        if config["SetupBins"][_histname][4]:
-                            for bin_i, label in enumerate(config["SetupBins"][_histname][4]):
-                                hist.GetXaxis().SetBinLabel(bin_i, label)
-                                hist.GetXaxis().SetTitle("")
+                    if not _histogram_data == "QCD-pred": # because QCD-pred is already scaled
+                        if _histname in config["SetupBins"]:
+                            rebin_setup = config["SetupBins"][_histname][2]
+                            if type(rebin_setup) == list:
+                                hist = hist.Rebin(len(rebin_setup)-1, hist.GetName()+"_rebin", np.array(rebin_setup, dtype=np.double))
+                            else: 
+                                hist.Rebin(rebin_setup)
+                                
+                            if config["SetupBins"][_histname][4]:
+                                if type(config["SetupBins"][_histname][4]) == list:
+                                    for bin_i, label in enumerate(config["SetupBins"][_histname][4]):
+                                        hist.GetXaxis().SetBinLabel(bin_i, label)
+                                        hist.GetXaxis().SetTitle("")
+                                elif type(config["SetupBins"][_histname][4]) == str:
+                                    hist.GetXaxis().SetTitle(config["SetupBins"][_histname][4])
           
                     if not has_group_entry:
                         # print("Append:", _histogram_data)
@@ -821,7 +852,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     ndivisionsx = None,
                     stackdrawopt = "",
                     # normilize = True,
-                    normilize_overlay = True,
+                    normilize_overlay = False,
                     legendpos = "UR",
                     legendtitle = f"",
                     legendncol = 3,
@@ -835,6 +866,157 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     draw_errors = False
                 )
 
+def doQCDprediction(histfiles, histnames, config, xsec, cutflow, output_path, isData,  histfile_json):
+
+    # categories_list = list(itertools.product(*config["Categories"]))
+    # categories_list = [f"{cat1}_{cat2}_{cat3}" for cat1,cat2,cat3 in categories_list]
+    # categories_list = ["_".join(cat) for cat in categories_list]
+    # categories_list = [""]
+    
+    # Take the categories from prediction
+    sign_region = config["QCD-prediction"]["categories"]["prediction"][1]
+    iso_region = config["QCD-prediction"]["categories"]["measuring"][0]
+    
+    _categ = f"{iso_region}/{sign_region}"
+    # _categ = f"{sign_region}"
+
+    output = output_path + "/" + _categ
+    for _histfile, _histname in zip(histfiles,histnames):
+        
+        # print([cut in str(_histfile) for cut in config["cuts"]])
+        if not any([cut in str(_histfile) for cut in config["cuts"]]):
+            continue
+
+        # print("OPEN:", _histfile)
+        file = ROOT.TFile.Open(str(_histfile), 'read')
+
+        _histograms = {"background":[], "data":[]}
+        for _group_idx, _group_name in enumerate(config["Labels"].keys()):
+            
+            if _group_name == config["QCD-prediction"]["data_name"]:
+                isSignal = "data" 
+            elif _group_name in config["QCD-prediction"]["substructed_mc"]:
+                isSignal = "background"
+            else:
+                raise ValueError(f"Bad samples ({_group_name}) in QCD prediction function")
+            
+            has_group_entry = False
+            # Accumulate the dataset for the particular data group as specified in config "Labels".
+            for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
+                
+                # Rescaling according to cross-section and luminosity
+                print("Reading data:", _histogram_data + "/" + _categ)
+                try:
+                    hist = read_hist_path(
+                        file,
+                        _histogram_data,
+                        _categ if not _categ=="" else None,
+                        "nominal" if config["include_systematics"] else None
+                    )
+                except:
+                    print("Warning: Histogram not found! ", end='')
+                    print("Histogram->", file, _histname, _histogram_data)
+                    continue
+                
+                if isSignal != "data": # Scaling of the MC to the lumi and xsection
+                    if config["DY_stitching_applied"] and (
+                            "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8" in _histogram_data or
+                            "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" in _histogram_data or
+                            "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" in _histogram_data or
+                            "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" in _histogram_data or
+                            "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" in _histogram_data ):
+                        print("Stitching:", _histogram_data)
+                        hist.Scale(config["luminosity"])
+                    elif config["W_stitching_applied"] and (
+                            ("WJetsToLNu" in _histogram_data and (not "TTWJets" in _histogram_data)) or
+                            "W1JetsToLNu" in _histogram_data or
+                            "W2JetsToLNu" in _histogram_data or
+                            "W3JetsToLNu" in _histogram_data or
+                            "W4JetsToLNu" in _histogram_data ):
+                        # print("Stitching:", _histogram_data)
+                        hist.Scale(config["luminosity"])
+                    else:
+                        # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
+                        N = cutflow[_histogram_data]["all"]["BeforeCuts"]
+                        hist.Scale( (xsec[_histogram_data] * config["luminosity"]) / N)
+
+                if _histname in config["SetupBins"]:
+                    rebin_setup = config["SetupBins"][_histname][2]
+                    if type(rebin_setup) == list:
+                        hist = hist.Rebin(len(rebin_setup)-1, hist.GetName()+"_rebin", np.array(rebin_setup, dtype=np.double))
+                    else: 
+                        hist.Rebin(rebin_setup)
+                        
+        
+                if not has_group_entry:
+                    # print("Append:", _histogram_data)
+                    _histograms[isSignal].append(hist)
+                    has_group_entry = True
+                else:
+                    # print("Add:", _histogram_data)
+                    _histograms[isSignal][-1].Add(hist)
+
+        histQCD = _histograms["data"][0].Clone()
+        for _h in _histograms["background"]:
+            histQCD.Add(_h, -1)
+        # check or negative values:
+        for i in range(histQCD.GetNbinsX()):
+            # multiply content and error on factor
+            factor = config["QCD-prediction"]["factor"]
+            histQCD.SetBinContent(i, histQCD.GetBinContent(i)*factor)
+            histQCD.SetBinError(i, histQCD.GetBinError(i)*factor)
+            if histQCD.GetBinContent(i) < 0:
+                print(f"Negative values in bin {i}({histQCD.GetBinContent(i)}) the QCD prediction - will set to 0")
+                histQCD.SetBinContent(i, 0)
+                # raise ValueError("Negative values in the QCD prediction - will set to 0")
+        histQCD.Print("all")
+        
+        # create apsolute copy of the file with all histograms but with the QCD prediction
+        new_file_path = output_path + "/" + os.path.basename(_histfile)
+        
+        def copy_directory_contents(original_dir, new_dir):
+            """
+            Recursively copy contents of a TDirectoryFile from original to new directory.
+            """
+            original_dir.cd()
+            for key in ROOT.gDirectory.GetListOfKeys():
+                obj = key.ReadObj()
+                if obj.InheritsFrom("TH1"):
+                    # It's a histogram, clone and save it
+                    new_dir.cd()
+                    obj_clone = obj.Clone()
+                    obj_clone.Write()
+                elif obj.InheritsFrom("TDirectoryFile"):
+                    # It's a subdirectory, navigate and copy its contents too
+                    new_subdir = new_dir.mkdir(obj.GetName())
+                    copy_directory_contents(obj, new_subdir)
+            new_dir.cd()
+             
+
+        # Create a new ROOT file
+        new_file = ROOT.TFile.Open(new_file_path, "RECREATE")
+
+        # Copy all contents, including TDirectoryFiles
+        copy_directory_contents(file, new_file)
+
+        current_dir = new_file
+        for name in config["QCD-prediction"]["output_dataset_name"].split("/"):
+            print("Creating directory:", name)
+            current_dir = current_dir.mkdir(name, name)  # Create and move into the new directory
+            if not current_dir:  # Check if mkdir failed
+                raise Exception(f"Failed to create directory {name}")
+            current_dir.cd()  # Now cd into the new directory
+        histQCD.SetDirectory(current_dir)
+        histQCD.SetName("hist")
+        histQCD.Write()
+        
+        # Close the files
+        file.Close()
+        new_file.Close()
+        
+    # copy histogram file /hists.json to the output directory
+    shutil.copy(histfile_json, output_path + "/hists.json")
+            
 def plotBrMC(hist_path, config, xsec, cutflow, output_path, is_per_flavour=False):
     
     '''

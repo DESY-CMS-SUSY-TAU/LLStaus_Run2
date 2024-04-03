@@ -6,6 +6,12 @@ import ROOT
 
 import utils.cms_lumi as CMS_lumi
 
+ROOT.gROOT.LoadMacro(os.path.split(os.path.realpath(__file__))[0]+"/tdrstyle.C")
+ROOT.gROOT.ProcessLine("setTDRStyle()")
+
+ROOT.gROOT.SetStyle("tdrStyle")
+ROOT.gROOT.ForceStyle(True)
+
 def ColorIterator(index : int, scale : int) -> int:
     # kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
     # kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
@@ -24,11 +30,11 @@ def ColorIterator(index : int, scale : int) -> int:
 
 def get_canvas(ratio = False) :
 
-    ROOT.gROOT.LoadMacro(os.path.split(os.path.realpath(__file__))[0]+"/tdrstyle.C")
-    ROOT.gROOT.ProcessLine("setTDRStyle()")
+    # ROOT.gROOT.LoadMacro(os.path.split(os.path.realpath(__file__))[0]+"/tdrstyle.C")
+    # ROOT.gROOT.ProcessLine("setTDRStyle()")
     
-    ROOT.gROOT.SetStyle("tdrStyle")
-    ROOT.gROOT.ForceStyle(True)
+    # ROOT.gROOT.SetStyle("tdrStyle")
+    # ROOT.gROOT.ForceStyle(True)
     
     canvas = ROOT.TCanvas("canvas", "canvas", 1100, 1100)
     canvas.UseCurrentStyle()
