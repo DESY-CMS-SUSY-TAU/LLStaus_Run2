@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 import re
 
 from pepper import Config
-from utils.plotter import plot1D, plot2D, plot_predict, plot_predict_sys, plot_predict2D, plotBrMC
+from utils.plotter import plot1D, plot2D, plot_predict, plot_predict_sys, plot_predict2D, plotBrMC, doQCDprediction
 
 
 parser = ArgumentParser(
@@ -71,6 +71,29 @@ if "1D" in args.mode:
             raise ValueError('Json should be provided')
 
     plot1D(histfiles, histnames, config, crosssections, cutflow, args.outdir, args.data)
+    
+if "1D-QCD-prediction" in args.mode:
+    histfiles = []
+    histnames = []
+    for histfile in args.histfile:
+        if histfile.endswith(".json"):
+            dirname = os.path.dirname(histfile)
+            with open(histfile) as f:
+                f = json.load(f)["content"]
+                for keys, histfile in zip(*f):
+                    if len(keys) != 2:
+                        continue
+                    # 2D histogram will be filtered out (labeled by TH2)
+                    if re.search(".*_TH2", keys[1]):
+                        continue
+                    if keys[1] in config["mask_hists"]:
+                        continue
+                    histfiles.append(os.path.join(dirname, histfile))
+                    histnames.append(keys[1])
+        else:
+            raise ValueError('Json should be provided')
+
+    doQCDprediction(histfiles, histnames, config, crosssections, cutflow, args.outdir, args.data, args.histfile[0])
 
 if "2D" in args.mode:
     histfiles = []
