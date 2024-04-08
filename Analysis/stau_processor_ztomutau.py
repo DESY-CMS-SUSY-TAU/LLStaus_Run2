@@ -146,9 +146,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         # seperate regions by the gen-level tau matching
         selector.set_cat("gen_match", {"gen-tau", "gen-other", "gen-all"})
-        selector.set_multiple_columns(self.gen_matching)
+        selector.set_multiple_columns(partial(self.gen_matching, is_mc=is_mc))
         
-        selector.set_column("tauID_SFs", partial(self.apply_tauID_SFs, is_mc=is_mc))
+        selector.add_cut("tauID_SFs", partial(self.apply_tauID_SFs, is_mc=is_mc))
         
         # Tagger part for calculating scale factors
         # Scale factors should be calculated -
@@ -203,23 +203,30 @@ class Processor(pepper.ProcessorBasicPhysics):
     def muon_mt_cut(self, data):
         return data["muon_mt"] < self.config["muon_mt_cut"]
 
-    def gen_matching(self, data):
+    def gen_matching(self, data, is_mc):
         if len(data) == 0:
             return {
                 "gen-tau" : ak.Array([]),
                 "gen-other" : ak.Array([]),
                 "gen-all" : ak.Array([])
             }
-        tau = ak.firsts(data["Tau"])
-        is_muon = (abs(tau.genPartFlav) == 2) | (abs(tau.genPartFlav) == 4)
-        is_elec = (abs(tau.genPartFlav) == 1) | (abs(tau.genPartFlav) == 3)
-        is_tau = (abs(tau.genPartFlav) == 5)
-        is_other = (abs(tau.genPartFlav) == 0)
-        return {
-            "gen-tau" : is_tau,
-            "gen-other" : (is_muon | is_elec | is_other),
-            "gen-all" : ak.Array([True]*len(data))
-        }
+        if is_mc:
+            tau = ak.firsts(data["Tau"])
+            is_muon = (abs(tau.genPartFlav) == 2) | (abs(tau.genPartFlav) == 4)
+            is_elec = (abs(tau.genPartFlav) == 1) | (abs(tau.genPartFlav) == 3)
+            is_tau = (abs(tau.genPartFlav) == 5)
+            is_other = (abs(tau.genPartFlav) == 0)
+            return {
+                "gen-tau" : is_tau,
+                "gen-other" : (is_muon | is_elec | is_other),
+                "gen-all" : ak.Array([True]*len(data))
+            }
+        else:
+            return {
+                "gen-tau" : ak.Array([True]*len(data)),
+                "gen-other" : ak.Array([True]*len(data)),
+                "gen-all" : ak.Array([True]*len(data))
+            }
     
     @zero_handler
     def apply_tauID_SFs(self, data, is_mc):

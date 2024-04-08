@@ -15,10 +15,14 @@
         // "req_2st_jet_",
         // "req_3st_jet_"
         "final_state"
+        // "dzeta_", "muon_mt_"
     ],
     "Categories" : [
+                    // ["all"],
+                    ["p9900"],
                     ["iso"]
                     ["OS"],
+                    ["gen-all"]
                    ],
     "DY_stitching_applied" : true,
     "W_stitching_applied" : false,
@@ -53,6 +57,7 @@
     "QCD-prediction" : {
         // mode : prediction - do the prediction from SS region, factor - caclculate the factor betwee OS and SS in sideband region
         "mode" : "prediction",
+        // "mode" : "factor",
 
         // following MC will be substrected from the data
         "substructed_mc" : [
@@ -65,11 +70,38 @@
             "$\\mathrm{Other\\ SM}$"
         ],
         "data_name" : "$\\mathrm{Data}$", // data name
-        "output_dataset_name": "QCD-pred/iso/OS",
-        "factor": 1.10, // factor is taken from CMS AN-19-275 
+        "hists": [
+            // "mu_eta",
+            // "mu_pt",
+            // "tau_pt",
+            // "tau_eta",
+            // "tau_dz",
+            // "tau_mass",
+            // "tau_dxy",
+            // "dzeta",
+            // "mumu_mass",
+            // "mumu_pt",
+            "fake_rate_mass_hist",
+            // "jetselect_pt",
+            // "jetselect_eta",
+            // "jetselect_dxy",
+            // "jetselect_dxysig",
+            // "jetselect_score",
+            // "jetselect_dxy_weight",
+            // "jetselect_dxysig_weight",
+            // "METpt",
+            // "METphi",
+            // "npvs",
+        ],
+        // "output_dataset_name": "QCD-pred/all/iso/OS/gen-all",
+        "output_dataset_name": "QCD-pred/p9900/iso/OS/gen-all",
+        // "factor": 1.10, // factor is taken from CMS AN-19-275 
+        "factor": 1.23, // for category "all"
         "categories" : {
-            "prediction": [ "OS", "SS" ], // <to which region>, <from which region>
-            "measuring": [ "iso", "antiiso" ] // <appliying region>, <measurment region>
+            "prediction_cat": [ "p9900", "iso", "SS", "gen-all" ], // <to which region>, <from which region>
+            // "prediction_cat": [ "all", "iso", "SS", "gen-all" ], // <to which region>, <from which region>
+            "nominator": [ "p9900", "antiiso", "OS", "gen-all" ], // <appliying region>, <measurment region>
+            "denominator": [ "p9900", "antiiso", "SS", "gen-all" ]
         }
     },
     "Labels": {
@@ -91,9 +123,9 @@
         //     "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8",
         //     "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8"
         // ],
-        "$\\mathrm{QCD}$": [
-            "QCD-pred"
-        ],
+        // "$\\mathrm{QCD}$": [
+        //     "QCD-pred"
+        // ],
         "$\\mathrm{DY+jets}$": [
             "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
 			"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
@@ -135,7 +167,6 @@
             "WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             
             "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8", 
             "ZZTo4L_TuneCP5_13TeV_powheg_pythia8",
@@ -166,9 +197,9 @@
             "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
         ],
 
-        "m(#tilde{#tau})=100 GeV, c#tau_{0}=0.01 mm" : [ "SMS-TStauStau_MStau-100_ctau-0p01mm_mLSP-1", ],
+        // "m(#tilde{#tau})=100 GeV, c#tau_{0}=0.01 mm" : [ "SMS-TStauStau_MStau-100_ctau-0p01mm_mLSP-1", ],
 
-        // "$\\mathrm{Data}$" : ["SingleMuon"]
+        "$\\mathrm{Data}$" : ["SingleMuon"]
     },
     "Data": {
         "$\\mathrm{Data}$" : [0, 1]
@@ -198,31 +229,34 @@
     },
     "mask_hists": [
         "fake_rate_hist",
+        // "fake_rate_mass_hist",
         "n_jet_pass"
     ],
     "SetupBins" : {
         // "Histogram name" : [x_min, x_max, rebin_bins, overflow_includ, axis labels]
         
-        "mu_eta" : [-2.4, 2.4, 2, true, "$\\eta_{\\mu}$"],
-        "npvs" : [0, 100, 1, true, "npvs"],
-        "mu_pt" : [0.0, 1000.0, 2, true, "$p_{T}^{\\mu}$"],
-        "tau_dz" : [0.0, 30.0, 2, true, "$d_{z}^{\\tau}$"],
-        "tau_eta" : [-2.4, 2.4, 2, true, "$\\eta_{\\tau}$"],
-        "tau_pt" : [0.0, 1000.0, 2, true, "$p_{T}^{\\tau}$"],
-        "tau_dxy" : [0.0, 30.0, 2, true, "$d_{xy}^{\\tau}$"],
-        "tau_mass" : [0.0, 1000.0, 2, true, "$m_{\\tau}$"],
-        "METpt" : [0.0, 110.0, 2, true, "$p_{T}^{\\mathrm{miss}}$"],
-        "METphi" : [-3.15, 3.15, 2, true, "$\\phi_{\\mathrm{miss}}$"],
-        "jetselect_dxysig" : [0.0, 1000.0, 2, true, "$\\sigma_{d_{xy}}^{\\mathrm{jet}}$"],
-        "jetselect_pt" : [0.0, 300.0, 2, true, "$p_{T}^{\\mathrm{jet}}$"],
-        "mumu_pt" : [0.0, 1000.0, 4, true, "$p_{T}^{\\mu\\tau}$"],
-        "mumu_mass" : [60, 80, 2, true, "$m_{\\mu\\tau}$"],
-        "jetselect_dxy_weight" : [0.0, 30.0, 2, true, "$d_{xy}^{\\mathrm{jet}}$"],
-        "jetselect_dxysig_weight" : [0.0, 1000.0, 2, true, "$\\sigma_{d_{xy}}^{\\mathrm{jet}}$"],
-        "jetselect_dxy" : [0.0, 30.0, 2, true, "$d_{xy}^{\\mathrm{jet}}$"],
-        "jetselect_eta" : [-2.1, 2.1, 2, true, "$\\eta_{\\mathrm{jet}}$"],
-        "jetselect_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
-                                        0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
-                                        0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
+        // "mu_eta" : [-2.4, 2.4, 2, true, "$\\eta_{\\mu}$"],
+        // "npvs" : [0, 100, 1, true, "npvs"],
+        // "mu_pt" : [0.0, 1000.0, 2, true, "$p_{T}^{\\mu}$"],
+        // "tau_dz" : [0.0, 30.0, 2, true, "$d_{z}^{\\tau}$"],
+        // "tau_eta" : [-2.4, 2.4, 2, true, "$\\eta_{\\tau}$"],
+        // "tau_pt" : [0.0, 1000.0, 2, true, "$p_{T}^{\\tau}$"],
+        // "tau_dxy" : [0.0, 30.0, 2, true, "$d_{xy}^{\\tau}$"],
+        // "tau_mass" : [0.0, 1000.0, 2, true, "$m_{\\tau}$"],
+        // "METpt" : [0.0, 110.0, 2, true, "$p_{T}^{\\mathrm{miss}}$"],
+        // "METphi" : [-3.15, 3.15, 2, true, "$\\phi_{\\mathrm{miss}}$"],
+        // "jetselect_dxysig" : [0.0, 1000.0, 2, true, "$\\sigma_{d_{xy}}^{\\mathrm{jet}}$"],
+        // "jetselect_pt" : [0.0, 300.0, 2, true, "$p_{T}^{\\mathrm{jet}}$"],
+        // "mumu_pt" : [0.0, 1000.0, 4, true, "$p_{T}^{\\mu\\tau}$"],
+        // "mumu_mass" : [60, 80, 2, true, "$m_{\\mu\\tau}$"],
+        "fake_rate_mass_hist" : [60, 80, 2, true, "$m_{\\mu\\tau}$"],
+        // "fake_rate_mass_hist" : [60, 80, [60,80], true, "$m_{\\mu\\tau}$"],
+        // "jetselect_dxy_weight" : [0.0, 30.0, 2, true, "$d_{xy}^{\\mathrm{jet}}$"],
+        // "jetselect_dxysig_weight" : [0.0, 1000.0, 2, true, "$\\sigma_{d_{xy}}^{\\mathrm{jet}}$"],
+        // "jetselect_dxy" : [0.0, 30.0, 2, true, "$d_{xy}^{\\mathrm{jet}}$"],
+        // "jetselect_eta" : [-2.1, 2.1, 2, true, "$\\eta_{\\mathrm{jet}}$"],
+        // "jetselect_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
+                                        // 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
+                                        // 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
     }
 }

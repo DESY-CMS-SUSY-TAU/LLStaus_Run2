@@ -83,8 +83,7 @@
         ],
         "fill": {
             "mt": [
-                "Muon_tag",
-                "mt"
+                "muon_mt"
             ]
         }
     },
