@@ -61,6 +61,11 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     def process_selection(self, selector, dsname, is_mc, filler):
 
+        if self.config["stau_properties_study"]:
+            assert dsname.startswith("SMS-TStauStau")
+            self.signal_process_study(selector, dsname, is_mc)
+            return
+
         # Triggers
         pos_triggers, neg_triggers = pepper.misc.get_trigger_paths_for(
             dsname,
@@ -209,6 +214,46 @@ class Processor(pepper.ProcessorBasicPhysics):
 
         selector.add_cut("after_define_dxy", lambda data: np.ones(len(data)))
         selector.add_cut("two_tight", lambda data: ak.num(data["Jet_select"]) >= 2)
+
+    ### Signal process study ---->
+
+    def signal_process_study(self, selector, dsname, is_mc):
+        # Define lifetime of GenVisTau:
+        selector.set_column("GenVisTau", self.gen_vis_tau)
+        selector.set_column("Jet_select", self.jet_selection)
+        # match GenVisTau to Jet_select
+        selector.set_column("Jet_select", partial(self.jet_tauvis_match, is_mc=is_mc))
+        selector.set_column("PfCands", self.pfcand_valid)
+        selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
+        selector.set_column("Jet_select", self.set_jet_dxy)
+        selector.add_cut("checkpoint", lambda data: np.ones(len(data)))
+
+    def gen_vis_tau(self, data):
+        tau = data.GenVisTau
+        # define trevel distance and transverse travel distance of GenVisTau
+        genpart = tau.parent
+        assert ak.all(abs(genpart.pdgId) == 15)
+        # calculate travel distance and transverse travel distance wrt. to the mother vertex
+        tau["travel"] = np.sqrt(genpart.vertexX**2 + genpart.vertexY**2 + genpart.vertexZ**2)
+        tau["tr_travel"] = np.sqrt(genpart.vertexX**2 + genpart.vertexY**2)
+        return tau
+
+    @zero_handler
+    def jet_tauvis_match(self, data, is_mc):
+        jets = data["Jet_select"]
+        if not is_mc: return jets
+        tau_vis = data.GenVisTau[ ((data.GenVisTau.pt > 30) & (abs(data.GenVisTau.eta) < 2.4) &
+                                  (data.GenVisTau.parent.hasFlags(["fromHardProcess"])))
+                                ]
+        matches_h, dRlist = jets.nearest(tau_vis, return_metric=True, threshold=0.3)
+        # add travel distance
+        jets["travel"] = matches_h.travel
+        jets["tr_travel"] = matches_h.tr_travel
+        tau_jet = jets[~ak.is_none(matches_h, axis=1)]
+
+        return tau_jet
+    
+    ### Signal process study end <---
 
     def categories_bins(self, data):
         if len(data) == 0:
