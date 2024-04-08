@@ -191,8 +191,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         ele = data["Electron"]
         is_good = (
             (ele.pt > self.config["elec_veto_pt"])
-            & (ele.eta < self.config["elec_veto_eta_min"])
-            & (ele.eta > self.config["elec_veto_eta_max"])
+            & (ele.eta > self.config["elec_veto_eta_min"])
+            & (ele.eta < self.config["elec_veto_eta_max"])
             & (ele[self.config["elec_veto"]] == 1)
             & (ele[self.config["elec_ID"]] == 1)
             )
