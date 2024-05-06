@@ -14,10 +14,14 @@ import numpy as np
 import mt2
 import numba as nb
 import coffea
+
 import uproot
+import logging
 import os
 
 from coffea.nanoevents import NanoAODSchema
+
+logger = logging.getLogger(__name__)
 
 class Processor(pepper.ProcessorBasicPhysics):
     # We use the ConfigTTbarLL instead of its base Config, to use some of its
@@ -41,8 +45,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         if "pileup_reweighting" not in config:
             logger.warning("No pileup reweigthing specified")
 
-        if "DY_lo_sfs" not in config:
-            logger.warning("No DY k-factor specified")
+        if "DY_ZptLO_weights" not in config:
+            logger.warning("No DY Zpt/mass reweighting specified")
 
         if "DY_jet_reweight" not in config or len(config["DY_jet_reweight"]) == 0:
             logger.warning("No DY jet-binned sample stitching is specified")
@@ -87,10 +91,6 @@ class Processor(pepper.ProcessorBasicPhysics):
         if self.config["year"] == "ul2018":
             selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
         
-        # Select veto objects before modifying Muon collection
-        selector.set_column("muon_veto", self.muons_veto)
-        selector.set_column("electron_veto", self.electron_veto)
-        
         # PV cut
         selector.add_cut("PV", lambda data: data["PV"].npvsGood > 0)
         
@@ -99,22 +99,27 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
         
         # 2 tag muons
-        selector.set_column("Muon", self.select_muons) 
-        selector.add_cut("two_muons", self.two_muons_cut)
+        selector.set_column("Muon_tag", self.select_muons) 
+        selector.add_cut("two_muons_one_trig", self.two_muons_cut_one_trig)
+        
         selector.set_column("sum_mumu", self.sum_mumu)
+        selector.add_cut("mass_window", self.mass_window)
+        
         if is_mc:
             selector.set_column("sum_ll_gen", self.sum_ll_gen)
-
+        
+        # Select veto objects before modifying Muon collection
+        selector.set_column("muon_veto", self.muons_veto)
+        selector.set_column("electron_veto", self.electron_veto)
         # veto all loose muons
         selector.add_cut("loose_muon_veto", self.loose_muon_veto_cut)
         # veto all loose electrons
         selector.add_cut("loose_electron_veto", self.loose_electron_veto_cut)
         
-        # selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
         selector.add_cut("muon_sfs", partial(self.get_muon_sfs, is_mc=is_mc))
-
-        selector.add_cut("mass_window", self.mass_window)
         selector.add_cut("charge", self.charge)
+        selector.add_cut("mumu_dr", self.mumu_dr)
+        selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
         
         selector.set_column("Jet_select", self.jet_selection)
         selector.add_cut("has_more_two_jets", self.has_more_two_jets)
@@ -181,7 +186,7 @@ class Processor(pepper.ProcessorBasicPhysics):
             )
         muons = muons[is_good]
         # Remove trigger matched muons
-        tag_muons = self.select_muons(data)
+        tag_muons = data["Muon_tag"]
         matches_h, dRlist = muons.nearest(tag_muons, return_metric=True, threshold=0.4)
         muons = muons[ak.is_none(matches_h, axis=-1)]
         return muons
@@ -205,7 +210,6 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def loose_electron_veto_cut(self, data):
         return ak.num(data["electron_veto"])==0
-    
     
     @zero_handler
     def sum_jj(self, data):
@@ -267,7 +271,6 @@ class Processor(pepper.ProcessorBasicPhysics):
     def dphi_jet1_jet2(self, data):
         return self.delta_phi(data["Jet_select"][:,0].phi,
                               data["Jet_select"][:,1].phi)
-    
     
     @zero_handler    
     def get_mt2(self, data):
@@ -339,25 +342,27 @@ class Processor(pepper.ProcessorBasicPhysics):
             )
         muons = muons[is_good]
         
-        trig_muons = data["TrigObj"]
-        trig_muons = trig_muons[
-              (abs(trig_muons.id) == 13)
-            & (trig_muons.filterBits >= 8)
-            ]
-        
-        matches, dRlist = muons.nearest(trig_muons, return_metric=True, threshold=0.4)
-        idx_matches_muon = ~ak.is_none(matches, axis=1)
-        results = muons[idx_matches_muon]
-        
-        return results
+        return muons
     
     @zero_handler
-    def two_muons_cut(self, data):
-        return ak.num(data["Muon"]) == 2
+    def two_muons_cut_one_trig(self, data):
+        # return ak.num(data["Muon"]) == 2
+        # Make sure that at least one of muon are passing the trigger
+        muons = data["Muon_tag"]
+        trig_muons = data["TrigObj"]
+        trig_muons = trig_muons[
+            (abs(trig_muons.id) == 13)
+            & (trig_muons.filterBits >= 8)
+        ]
+        matches, dRlist = muons.nearest(trig_muons, return_metric=True, threshold=0.4)
+        idx_matches_muon = ~ak.is_none(matches, axis=1)
+        has_one_triggered_muon = ak.any(idx_matches_muon, axis=1)
+        return (has_one_triggered_muon & (ak.num(muons) == 2 ))
+         
     
     @zero_handler
     def sum_mumu(self, data):
-        return data['Muon'][:,0].add(data['Muon'][:,1])
+        return data['Muon_tag'][:,0].add(data['Muon_tag'][:,1])
     
     @zero_handler
     def sum_ll_gen(self, data):
@@ -378,10 +383,18 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def get_dy_gen_sfs(self, data, is_mc, dsname):
         weight = np.ones(len(data))
-        # We reweight only inclusive since other are already *_EWPDG20
-        if is_mc and dsname.startswith("DYJetsToLL_M-50"):
+        # The weights are taken from the following repository:
+        # https://github.com/cms-tau-pog/TauFW/tree/master/PicoProducer/data/zpt
+        if is_mc and (
+            dsname.startswith("DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("Inclusive_DYLO_M-50_rep_v2") or \
+            dsname.startswith("DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8")):
             z_boson = data["sum_ll_gen"]
-            dy_gen_sfs = self.config["DY_lo_sfs"](mass=z_boson.mass, pt=z_boson.pt)
+            dy_gen_sfs = self.config["DY_ZptLO_weights"](mass=z_boson.mass, pt=z_boson.pt)
             weight *= ak.to_numpy(dy_gen_sfs)
             return weight
         else:
@@ -400,6 +413,10 @@ class Processor(pepper.ProcessorBasicPhysics):
         return data["sum_mumu"].charge == 0
     
     @zero_handler
+    def mumu_dr(self, data):
+        return data['Muon_tag'][:,0].delta_r(data['Muon_tag'][:,1]) > self.config["mumu_dr_min"]
+    
+    @zero_handler
     def get_muon_sfs(self, data, is_mc):
         weight = np.ones(len(data))
         if is_mc:
@@ -414,14 +431,14 @@ class Processor(pepper.ProcessorBasicPhysics):
     def apply_mu_trigger_sfs(self, data):
         weight = np.ones(len(data))
         # Single muon trigger efficiency applied for leading muon
-        muon = ak.firsts(data["Muon"])
-        sfs = self.config["single_mu_trigger_sfs"][0](pt=muon.pt, abseta=abs(muon.eta))
+        muon = ak.firsts(data["Muon_tag"])
+        sfs = self.config["single_mu_trigger_sfs"][0](pt=muon.pt, eta=abs(muon.eta))
         return weight * sfs
 
     def muon_id_iso_sfs(self, data):
         """Compute identification and isolation scale factors for
            leptons (electrons and muons)."""
-        muons = data["Muon"]
+        muons = data["Muon_tag"]
         weight = np.ones(len(data))
         systematics = {}
         # Muon identification and isolation efficiency
@@ -459,7 +476,7 @@ class Processor(pepper.ProcessorBasicPhysics):
             & (self.config["jet_pt_min"] < jets.pt)
             & (jets.jetId >= self.config["jet_jetId"] )
             )]
-        matches_h, dRlist = jets.nearest(data["Muon"], return_metric=True, threshold=0.4)
+        matches_h, dRlist = jets.nearest(data["Muon_tag"], return_metric=True, threshold=0.4)
         isoJets = jets[ak.is_none(matches_h, axis=-1)]
         return isoJets
     

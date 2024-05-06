@@ -30,7 +30,7 @@
         ],
         "fill": {
             "pt": [
-                "Muon",
+                "Muon_tag",
                 "pt",
                 {"leading": 1}
             ]
@@ -49,7 +49,7 @@
         ],
         "fill": {
             "pt": [
-                "Muon",
+                "Muon_tag",
                 "pt",
                 {"leading": 2}
             ]
@@ -59,7 +59,7 @@
        "bins": [
            {
                "name": "njet",
-               "label": "Number of jets",
+               "label": "Number of jets (selected)",
                "n_or_arr": 20,
                "lo": 0,
                "hi": 20
@@ -72,6 +72,23 @@
            ]
        }
     },
+    "njets": {
+        "bins": [
+            {
+                "name": "njet",
+                "label": "Number of jets (all)",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20
+            }
+        ],
+        "fill": {
+            "njet": [
+                "Jet",
+                {"function": "num"}
+            ]
+        }
+     },
     "mumu_mass": {
         "bins": [
             {
@@ -155,7 +172,7 @@
         ],
         "fill": {
             "deltaphi": [
-                "Muon",
+                "Muon_tag",
                 "phi",
                 {"function": "leaddiff"},
                 {"function": "abs"}
@@ -796,34 +813,34 @@
         }
     },
 
-    "n_jet_pass" : {
-        "bins": [
-            {
-                "name": "jet_score_bin",
-                "label": "Jet score bin",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            },
-            {
-                "name": "jet_pass",
-                "label": "number of jet passing",
-                "n_or_arr": 21,
-                "lo": -1,
-                "hi": 20,
-                "unit": "-"
-            }
-        ],
-        "fill": {
-            "jet_score_bin": [
-                "n_pass_score_bin"
-            ],
-            "jet_pass": [
-                "n_pass"
-            ]
-        }
-    },
+    // "n_jet_pass" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score_bin",
+    //             "label": "Jet score bin",
+    //             "n_or_arr": 21,
+    //             "lo": -1,
+    //             "hi": 20,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_pass",
+    //             "label": "number of jet passing",
+    //             "n_or_arr": 21,
+    //             "lo": -1,
+    //             "hi": 20,
+    //             "unit": "-"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score_bin": [
+    //             "n_pass_score_bin"
+    //         ],
+    //         "jet_pass": [
+    //             "n_pass"
+    //         ]
+    //     }
+    // },
     
     // prediction histograms:
 
