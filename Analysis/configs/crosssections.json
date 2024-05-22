@@ -1,6 +1,7 @@
 {
     "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8" : 6424000,
     "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8": 6077220,
+    "Inclusive_DYLO_M-50": 6424000,
     "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8": 18610000,
     
     "ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8": 1244760,
@@ -38,18 +39,21 @@
     "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8": 243.2,
     "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8": 215.1,
 
-    "WW_TuneCP5_13TeV-pythia8": 75800.0,
+    "WW_TuneCP5_13TeV-pythia8": 76250.0,
     "WZ_TuneCP5_13TeV-pythia8": 27600.0,
     "ZZ_TuneCP5_13TeV-pythia8": 12140.0,
     
     "VVTo2L2Nu_MLL-1toInf_TuneCP5_13TeV-amcatnloFXFX-pythia8": 11950,
     "WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8": 49997,
+    
     "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8": 208.6,
     "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8": 165.1,
+
     "WZTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8": 10710,
     "WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8": 3050,
     "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8": 5595,
-    "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8": 4102,
+    "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8": 5257,
+
     "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8": 3220,
     "ZZTo4L_TuneCP5_13TeV_powheg_pythia8": 1256,
     
@@ -107,6 +111,8 @@
     "SMS-TStauStau_MStau-250_ctau-10mm_mLSP-1": 3.85,
     "SMS-TStauStau_MStau-250_ctau-1mm_mLSP-1": 3.85,
     "SMS-TStauStau_MStau-250_ctau-50mm_mLSP-1": 3.85,
-    "SMS-TStauStau_MStau-250_ctau-5mm_mLSP-1": 3.85
+    "SMS-TStauStau_MStau-250_ctau-5mm_mLSP-1": 3.85,
+
+    "SMS-TStauStau_MStau-100_ctau-0p01mm_mLSP-1": 102.77
 
 }
