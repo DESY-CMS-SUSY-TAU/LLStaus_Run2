@@ -4,31 +4,33 @@
     "crosssections": "$CONFDIR/crosssections.json",
     // "cuts" : ["Cut-007","Cut-008","Cut-009","Cut-010"],
     "cuts" : [
-        "BeforeCuts",
+        // "BeforeCuts",
         // "Trigger",
         // "Pileup reweighting",
-        "HEM_veto",
-        "PV",
-        "MET filters",
-        "two_muons",
-        "mass_window",
-        "mumu_dr",
-        "dy_gen_sfs",
-        "loose_muon_veto",
-        "loose_electron_veto",
-        "muon_sfs",
-        "charge",
+        // "HEM_veto",
+        // "PV",
+        // "MET filters",
+        // "two_muons",
+        // "mass_window",
+        // "mumu_dr",
+        // "loose_muon_veto",
+        // "loose_electron_veto",
+        // "muon_sfs",
+        // "dy_gen_sfs",
+        "after_categories",
         "has_more_two_jets",
-        "charge2",
-        "two_loose_jets",
+        "after_jet_def",
         "dphi_min_cut",
-        "two_loose_jets_final",
-        "two_tight_jets"
+        "has_two_jets",
+        "pt_mumu_cut"
     ],
     "Categories" : [
-                    // ["M1", "M2", "ALL"],
+                    // ["barrel","endcap"],
+                    // ["iso", "antiiso"],
+                    // ["OS", "SS"]
+                    ["iso"], ["OS"]
                    ],
-    "DY_stitching_applied" : false,
+    "DY_stitching_applied" : true,
     "W_stitching_applied" : false,
     "include_systematics" : false,
     "fake_rate" : {
@@ -36,8 +38,8 @@
         // "ratio" - calculate by the ration of two hist
         // "score-dim" - assumes one of the dimention of score
         "mode" : "ratio",
-        "nominator"   : ["Cut-017_two_loose_jets_final_fake_rate_hist", "_p9900"],
-        "denominator" : ["Cut-017_two_loose_jets_final_fake_rate_hist", "_p05"],
+        "nominator"   : ["Cut_018_has_two_jets_fake_rate_hist", "/p9996/iso/OS"],
+        "denominator" : ["Cut_018_has_two_jets_fake_rate_hist", "/all/iso/OS"],
         // "nominator"   : ["Cut-011_charge2_fake_rate_hist", "_p9900"],
         // "denominator" : ["Cut-011_charge2_fake_rate_hist", "_p05"],
 
@@ -47,8 +49,8 @@
             // "jet_flav" : [1, 4, 5, 6, 15, 16, 21, 22],
             "jet_eta": [-2.3, -1.5, -0.5,  0.5,  1.5,  2.3],
             // "jet_pt" :  [30, 40, 50, 70, 120, 1000],
-            "jet_pt" :  [30, 40, 50, 70],
-            "jet_dxy" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 30.0],
+            "jet_pt" :  [30, 40, 50, 70, 120, 1000],
+            "jet_dxy" : [0.0, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0, 4.0, 10.0, 20.0, 50.0],
             // "jet_dxy" : [1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
         },
         "sf_project" : {
@@ -70,93 +72,100 @@
             // "jet_flav" : "x",
             "jet_pt"   : ["y", false],
             "jet_dxy"  : ["z", false],
-            "jet_eta_pt" : ["xy", false]
+            "jet_eta_pt" : ["xy", false],
+            "jet_dxy_pt" : ["zy", false]
         },
+    },
+    "QCD-prediction" : {
+        // mode : prediction - do the prediction from SS region, factor - caclculate the factor betwee OS and SS in sideband region
+        // "mode" : "prediction",
+        "mode" : "factor",
+
+        // following MC will be substrected from the data
+        "substructed_mc" : [
+            "$\\mathrm{DY+jets}$",
+            "$\\mathrm{Single\\ top}$",
+            "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$",
+            "$\\mathrm{Other\\ SM}$",
+            "$\\mathrm{W+jets}$"
+        ],
+        "data_name" : "$\\mathrm{Data}$", // data name
+        "hists": [
+            // "mumu_mass",
+            "mumu_pt"
+
+        ],
+
+        "output_dataset_name": ["QCD-pred","iso","OS"],
+        // "factor": 1.10, // factor is taken from CMS AN-19-275 
+        "factor": 1.21, // for category "all"
+        "categories" : {
+            "prediction_cat": ["antiiso", "OS" ], // list can be used for multiple categories
+            "numerator": [ "iso", "SS" ],
+            "denominator": [ "antiiso", "SS" ]
+            // "numerator": [ "iso", "OS" ],
+            // "denominator": [ "antiiso", "OS" ]
+        }
     },
     "Labels": {
 
-        "$\\mathrm{QCD}$": [
-            "QCD_Pt_15to30_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_30to50_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_50to80_Tu neCP5_13TeV_pythia8",
-            "QCD_Pt_80to120_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_120to170_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_170to300_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_300to470_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_470to600_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_600to800_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_800to1000_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8",
-            "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8",
-        ],
-        "$\\mathrm{DY+jets}$": [
-            "Inclusive_DYLO_M-50_rep_v2",
-            "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
-			// "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
-            // "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-            // "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-            // "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-            // "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+        // "$\\mathrm{QCD}$": [
 
-            "ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8",
-		],
-        "$\\mathrm{Single\\ top}$": [
-            "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
-            "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
-            "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
-            "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"       
-		],
-        "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$": [
-            "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",
-            "TTToHadronic_TuneCP5_13TeV-powheg-pythia8",
-            "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",
-            "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
-            "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
-            "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8",
-            "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8",
-            "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8",
-        ],
-        "$\\mathrm{Other\\ SM}$": [
-            "VHToNonbb_M125_TuneCP5_13TeV-amcatnloFXFX_madspin_pythia8",
-            "VVTo2L2Nu_MLL-1toInf_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",
-            "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",
-            "WZTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        // ],
+        // "$\\mathrm{DY+jets}$": [
+        //     // "Inclusive_DYLO_M-50",
+        //     "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
+		// 	"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+		// ],
+        // "$\\mathrm{Single\\ top}$": [
+        //     "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
+        //     "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
+        //     "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
+        //     "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"       
+		// ],
+        // "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$": [
+        //     "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",
+        //     "TTToHadronic_TuneCP5_13TeV-powheg-pythia8",
+        //     "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",
+        //     "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
+        //     "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
+        //     "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8",
+        //     "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8",
+        //     "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8",
+        // ],
+        // "$\\mathrm{Other\\ SM}$": [
+        //     // "WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             
-            "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8", 
-            "ZZTo4L_TuneCP5_13TeV_powheg_pythia8",
+        //     // "WZTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        //     // "WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        //     // "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        //     // "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
 
-            "GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8",
-            "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8",
-            "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8"
-        ],
-        "$\\mathrm{W+jets}$": [
-            "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8"
-        ],
-        "$\\mathrm{Z}(\\nu\\bar{\\nu})+\\mathrm{jets}$": [
-            "ZJetsToNuNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8",
-            "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
-        ],
+        //     // "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8", 
+        //     // "ZZTo4L_TuneCP5_13TeV_powheg_pythia8",
+
+        //     // "VVTo2L2Nu_MLL-1toInf_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+
+        //     "WW_TuneCP5_13TeV-pythia8",
+        //     "WZ_TuneCP5_13TeV-pythia8",
+        //     "ZZ_TuneCP5_13TeV-pythia8",
+
+        //     "VHToNonbb_M125_TuneCP5_13TeV-amcatnloFXFX_madspin_pythia8",
+        //     "WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8",
+        //     "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",
+        //     "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",
+            
+        //     // "GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8",
+        //     // "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8",
+        //     // "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8"
+        // ],
+        // "$\\mathrm{W+jets}$": [
+        //     "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+        // ],
 
         "$\\mathrm{Data}$" : ["SingleMuon"]
     },
@@ -319,15 +328,33 @@
         "jet_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
                                   0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
                                   0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 1.0], true, null],
-        // "jet_score" : [0.0, 1.01, [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.01], true, null]
-        // "jet_lead_eta" : [-2.1, 2.1, [-2.1, 2.1], true, null],
-        // "jet_sublead_eta" : [-2.1, 2.1, [-2.1, 2.1], true, null],
-        "jet_lead_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
-                                        0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
-                                        0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
-        "jet_sublead_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
-                                        0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
-                                        0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
+        // "jet_lead_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
+        //                                 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
+        //                                 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
+        // "jet_sublead_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
+        //                                 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
+        //                                 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
+        "jet_lead_eta" : [-2.1, 2.1, 1, true, null],
+        "jet_lead_pt" : [0, 500, 2, true, null],
+        "jet_lead_dxy" : [0.0, 30.0, 5, true, null],
+        "jet_lead_dxysig" : [0.0, 500.0, 3, true, null],
+        "jet_lead_maxdxy" : [0.0, 30.0, 5, true, null],
+        "jet_lead_maxdxysig" : [0.0, 500.0, 3, true, null],
+        "jet_lead_dxy_weight" : [0.0, 30.0, 5, true, null],
+        "jet_lead_dxysig_weight" : [0.0, 500.0, 3, true, null],
+        "jet_lead_score" : [0.0, 1.00, 3, true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
+        "jet_sublead_eta" : [-2.1, 2.1, 1, true, null],
+        "jet_sublead_pt" : [0, 500, 2, true, null],
+        "jet_sublead_dxy" : [0.0, 30.0, 5, true, null],
+        "jet_sublead_dxysig" : [0.0, 500.0, 3, true, null],
+        "jet_sublead_dxy_weight" : [0.0, 30.0, 5, true, null],
+        "jet_sublead_maxdxy" : [0.0, 30.0, 5, true, null],
+        "jet_sublead_maxdxysig" : [0.0, 500.0, 3, true, null],
+        "jet_sublead_dxysig_weight" : [0.0, 500.0, 3, true, null],
+        "jet_sublead_score" : [0.0, 1.00, 3, true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
+        "dphi_jet1_jet2" : [-3.15, 3.15, 2, true, null],
+        "max_score" : [0.0, 1.00, 3, true, "$\\mathrm{max prob.}(\\mathrm{jet})$"],
+        "max_score_two_jets" : [0.0, 1.00, 3, true, "$\\mathrm{max prob.}(\\mathrm{jet1,jet2})$"],
     },
     "prediction_hist" : {
         "plot_unblind" : true,

@@ -401,18 +401,135 @@
                     "Jet_select_lead",
                     {"function" : "pass_score", "kwargs" : {"thr" : 0.0}}
                 ],
-                "p05": [
-                    "Jet_select_lead",
-                    {"function" : "pass_score", "kwargs" : {"thr" : 0.05}}
-                ],
                 "p9900": [
                     "Jet_select_lead",
                     {"function" : "pass_score", "kwargs" : {"thr" : 0.99}}
+                ],
+                "notp9900": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.99, "passfail": true}}
+                ],
+                "p9800": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.98}}
+                ],
+                "notp9800": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.98, "passfail": true}}
+                ],
+                "p9700": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.97}}
+                ],
+                "notp9700": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.97, "passfail": true}}
+                ],
+                "p9500": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.95}}
+                ],
+                "notp9500": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.95, "passfail": true}}
+                ],
+                "p9000": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.90}}
+                ],
+                "notp9000": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.90, "passfail": true}}
+                ],
+                "p8000": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.80}}
+                ],
+                "notp8000": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.80, "passfail": true}}
                 ]
             }
         }
     },
-
+    "fake_rate_dxy_hist" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxy",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 2.0,
+                "unit": "cm"
+            },
+        ],
+        "cats" : [
+            {
+                "name": "score_wp",
+                "label": "score_wp"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_select_lead",
+                "dxy"
+            ],
+            "score_wp": {
+                "all":[
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.0}}
+                ],
+                "p9900": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.99}}
+                ],
+                "notp9900": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.99, "passfail": true}}
+                ],
+                "p9800": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.98}}
+                ],
+                "notp9800": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.98, "passfail": true}}
+                ],
+                "p9700": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.97}}
+                ],
+                "notp9700": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.97, "passfail": true}}
+                ],
+                "p9500": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.95}}
+                ],
+                "notp9500": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.95, "passfail": true}}
+                ],
+                "p9000": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.90}}
+                ],
+                "notp9000": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.90, "passfail": true}}
+                ],
+                "p8000": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.80}}
+                ],
+                "notp8000": [
+                    "Jet_select_lead",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.80, "passfail": true}}
+                ]
+            }
+        }
+    },
     // "fake_rate_hist" : {
     //     "bins": [
     //         {

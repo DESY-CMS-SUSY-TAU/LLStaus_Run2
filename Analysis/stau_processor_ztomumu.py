@@ -117,21 +117,47 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("loose_electron_veto", self.loose_electron_veto_cut)
         
         selector.add_cut("muon_sfs", partial(self.get_muon_sfs, is_mc=is_mc))
-        selector.add_cut("charge", self.charge)
+        # selector.add_cut("charge", self.charge)
         selector.add_cut("mumu_dr", self.mumu_dr)
         selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
         
+        selector.set_cat("iso_region", {"iso", "antiiso"})
+        selector.set_multiple_columns(partial(self.isolation_region))
+        
+        selector.set_cat("sign_region", {"SS", "OS"})
+        selector.set_multiple_columns(partial(self.sign_region))
+        
+        selectron.add_cut("pass_iso_os", lambda data: (data["iso_region"] == "iso") & (data["sign_region"] == "OS"))
+        
+        selector.add_cut("after_categories", lambda data: ak.Array(np.ones(len(data))))
+        
         selector.set_column("Jet_select", self.jet_selection)
-        selector.add_cut("has_more_two_jets", self.has_more_two_jets)
-        selector.set_column("Jet_obj1", partial(self.leading_jet, order=0))
-        selector.set_column("Jet_obj2", partial(self.leading_jet, order=1))
-        selector.set_column("Jet_select", self.getloose_jets)
+        # selector.set_column("Jet_select", self.getloose_jets)
  
         selector.set_column("PfCands", self.pfcand_valid)
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
-        selector.add_cut("charge2", self.charge)
         
+        selector.add_cut("has_more_two_jets", self.has_more_two_jets)
+        selector.set_column("Jet_obj1", partial(self.leading_jet, order=0))
+        selector.set_column("Jet_obj2", partial(self.leading_jet, order=1))
+
+        selector.add_cut("after_jet_def", lambda data: ak.Array(np.ones(len(data))))
+
+        selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
+        # selector.set_column("max_score", lambda data: ak.max(data["Jet_select"].disTauTag_score1,axis=-1) if len(data) > 0 else ak.Array([]))
+        # selector.set_column("max_score_two_jets",
+        #     lambda data:
+        #         ak.max([data["Jet_obj1"].disTauTag_score1[:,0],
+        #                 data["Jet_obj2"].disTauTag_score1[:,0]],axis=0)
+        #         if len(data) > 0 else ak.Array([]))
+        
+        selector.add_cut("dphi_min_cut", lambda data: np.abs(data["dphi_jet1_jet2"]) > 0.5 if len(data) > 0 else ak.Array([]))
+        selector.add_cut("has_two_jets", self.has_two_jets)
+        # selector.add_cut("pt_mumu_cut", lambda data: data["sum_mumu"].pt > 30 if len(data) > 0 else ak.Array([]))
+        
+        return
+        '''
         selector.add_cut("two_loose_jets", self.has_two_jets)
 
         # Variables related to the two jets:
@@ -158,6 +184,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         selector.set_column("Jet_select", self.gettight_jets)
         selector.add_cut("two_tight_jets", self.has_two_jets)
+        '''
     
     @zero_handler
     def HEM_veto(self, data, is_mc):
@@ -269,8 +296,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         
     @zero_handler
     def dphi_jet1_jet2(self, data):
-        return self.delta_phi(data["Jet_select"][:,0].phi,
-                              data["Jet_select"][:,1].phi)
+        return self.delta_phi(data["Jet_obj1"][:,0].phi,
+                              data["Jet_obj2"][:,0].phi)
+    
     
     @zero_handler    
     def get_mt2(self, data):
@@ -336,7 +364,8 @@ class Processor(pepper.ProcessorBasicPhysics):
             & (muons.eta < self.config["muon_eta_max"])
             & (muons.eta > self.config["muon_eta_min"])
             & (muons[self.config["muon_ID"]] == 1)
-            & (muons.pfIsoId >= self.config["muon_pfIsoId"])
+            # & (muons.pfIsoId >= self.config["muon_pfIsoId"])
+            & (muons.pfRelIso04_all <= self.config["muon_pfIso_anti"])
             & (abs(muons.dxy) <= self.config["muon_absdxy"])
             & (abs(muons.dz) <= self.config["muon_absdz"])
             )
@@ -388,7 +417,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         if is_mc and (
             dsname.startswith("DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
             dsname.startswith("DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
-            dsname.startswith("Inclusive_DYLO_M-50_rep_v2") or \
+            dsname.startswith("Inclusive_DYLO_M-50") or \
             dsname.startswith("DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
             dsname.startswith("DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
             dsname.startswith("DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
@@ -411,6 +440,35 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def charge(self, data):
         return data["sum_mumu"].charge == 0
+    
+    def isolation_region(self, data):
+        if len(data)==0:
+            return {"iso": ak.Array([]),
+                    "antiiso": ak.Array([])}
+        muons = data["Muon_tag"]
+        # iso1 = (muons[:,0].pfRelIso04_all < self.config["muon_pfIso"]) 
+        # iso2 = (muons[:,1].pfRelIso04_all < self.config["muon_pfIso"])
+        # antiiso1 = (muons[:,0].pfRelIso04_all < self.config["muon_pfIso_anti"]) & ~iso1
+        # antiiso2 = (muons[:,1].pfRelIso04_all < self.config["muon_pfIso_anti"]) & ~iso2
+        # iso = iso1 & iso2
+        # antiiso = (iso1 & antiiso2) | (antiiso1 & iso2)
+        # Base isolation only on leading muon
+        iso = (muons[:,0].pfRelIso04_all < self.config["muon_pfIso"]) \
+            & (muons[:,1].pfRelIso04_all < self.config["muon_pfIso"])
+        antiiso = (muons[:,0].pfRelIso04_all > self.config["muon_pfIso"]) \
+            & (muons[:,0].pfRelIso04_all < self.config["muon_pfIso_anti"]) \
+            & (muons[:,1].pfRelIso04_all < self.config["muon_pfIso"])
+        return {"iso": iso, "antiiso": antiiso}
+            
+        
+    def sign_region(self, data):
+        if len(data)==0:
+            return {"SS": ak.Array([]),
+                    "OS": ak.Array([])}
+        muons = data["Muon_tag"]
+        SS = (muons[:,0].charge == muons[:,1].charge)
+        OS = ~SS
+        return {"SS": SS, "OS": OS}
     
     @zero_handler
     def mumu_dr(self, data):
@@ -515,6 +573,12 @@ class Processor(pepper.ProcessorBasicPhysics):
         pfCands_lead["Lrel"] = np.sqrt(pfCands_lead.dxy**2 + pfCands_lead.dz**2)
         pfCands_lead["dxy_weight"] = ak.mean(pfCands.dxy, weight=pfCands.pt, axis=-1)
         pfCands_lead["dxysig_weight"] = ak.mean(pfCands.dxy / pfCands.dxyError, weight=pfCands.pt, axis=-1)
+        # Sorting pfCands by dxy within each jet
+        sort_indices = ak.argsort(np.abs(pfCands.dxy), axis=-1, ascending=False)
+        sorted_pfCands = pfCands[sort_indices]
+        pfCands_leaddxy = ak.firsts(sorted_pfCands, axis=-1)
+        pfCands_lead["maxdxysig"] = pfCands_leaddxy.dxy / pfCands_leaddxy.dxyError
+        pfCands_lead["maxdxy"] = pfCands_leaddxy.dxy
         return pfCands_lead
     
     @zero_handler
@@ -528,6 +592,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         jets["dxy_weight"] = np.abs(data["Jet_lead_pfcand"].dxy_weight)
         jets["dxysig"] = np.abs(data["Jet_lead_pfcand"].dxysig)
         jets["dxysig_weight"] = np.abs(data["Jet_lead_pfcand"].dxysig_weight)
+        jets["ip3d"] = np.sqrt(data["Jet_lead_pfcand"].dxy**2 + data["Jet_lead_pfcand"].dz**2)
+        jets["maxdxy"] = np.abs(data["Jet_lead_pfcand"].maxdxy)
+        jets["maxdxysig"] = np.abs(data["Jet_lead_pfcand"].maxdxysig)
         jets = jets[~bad_jets] # remove bad jets
         jets = jets[jets.dxy >= self.config["jet_dxy_min"]]
         return jets

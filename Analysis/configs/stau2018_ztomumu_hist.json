@@ -1,4 +1,4 @@
-{   
+{
     "npvs" : {
         "bins": [
             {
@@ -88,7 +88,7 @@
                 {"function": "num"}
             ]
         }
-     },
+    },
     "mumu_mass": {
         "bins": [
             {
@@ -179,6 +179,22 @@
             ]
         }
     },
+    "deltaphi_jets": {
+        "bins": [
+            {
+                "name": "deltaphi_jets",
+                "label": "Jets $\\Delta \\varphi$",
+                "n_or_arr": 100,
+                "lo": -3.3,
+                "hi": 3.3
+            }
+        ],
+        "fill": {
+            "deltaphi_jets": [
+                "dphi_jet1_jet2",
+            ]
+        }
+    },
     "jj_mass": {
         "bins": [
             {
@@ -266,6 +282,23 @@
             ]
         }
     },
+    "mt2_j1_j2_MET": {
+        "bins": [
+            {
+                "name": "mt2_j1_j2_MET",
+                "label": "mt2_j1_j2_MET",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 500,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "mt2_j1_j2_MET": [
+                "mt2_j1_j2_MET"
+            ]
+        }
+    },
     "dphi_jet1_jet2": {
         "bins": [
             {
@@ -283,20 +316,93 @@
             ]
         }
     },
-    "mt2_j1_j2_MET": {
+    // "dphi_maxscore": {
+    //     "bins": [
+    //         {
+    //             "name": "dphi_jet1_jet2",
+    //             "label": "dphi_jet1_jet2",
+    //             "n_or_arr": 100,
+    //             "lo": -3.14,
+    //             "hi": 3.14,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": 140,
+    //             "lo": -0.2,
+    //             "hi": 1.2,
+    //             "unit": "-"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "dphi_jet1_jet2": [
+    //             "dphi_jet1_jet2"
+    //         ],
+    //         "jet_score": [
+    //             "max_score"
+    //         ]
+    //     }
+    // },
+    // "dphi_maxscore_two_jets": {
+    //     "bins": [
+    //         {
+    //             "name": "dphi_jet1_jet2",
+    //             "label": "dphi_jet1_jet2",
+    //             "n_or_arr": 50,
+    //             "lo": -3.14,
+    //             "hi": 3.14,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": 140,
+    //             "lo": -0.2,
+    //             "hi": 1.2,
+    //             "unit": "-"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "dphi_jet1_jet2": [
+    //             "dphi_jet1_jet2"
+    //         ],
+    //         "jet_score": [
+    //             "max_score_two_jets"
+    //         ]
+    //     }
+    // },
+    "max_score" : {
         "bins": [
             {
-                "name": "mt2_j1_j2_MET",
-                "label": "mt2_j1_j2_MET",
-                "n_or_arr": 100,
-                "lo": 0,
-                "hi": 500,
-                "unit": "GeV"
+                "name": "jet_score",
+                "label": "Jet score",
+                "n_or_arr": 140,
+                "lo": -0.2,
+                "hi": 1.2,
+                "unit": "-"
             }
         ],
         "fill": {
-            "mt2_j1_j2_MET": [
-                "mt2_j1_j2_MET"
+            "jet_score": [
+                "max_score"
+            ]
+        }
+    },
+    "max_score_two_jets" : {
+        "bins": [
+            {
+                "name": "jet_score",
+                "label": "Jet score",
+                "n_or_arr": 140,
+                "lo": -0.2,
+                "hi": 1.2,
+                "unit": "-"
+            }
+        ],
+        "fill": {
+            "jet_score": [
+                "max_score_two_jets"
             ]
         }
     },
@@ -498,6 +604,60 @@
             ]
         }
     },
+    "jet_lead_maxdxy" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxy",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 20,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_obj1",
+                "maxdxy"
+            ]
+        }
+    },
+    "jet_lead_maxdxysig" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxySig",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 500,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_obj1",
+                "maxdxysig"
+            ]
+        }
+    },
+    "jet_lead_dxysig" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxySig",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 500,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_obj1",
+                "dxysig"
+            ]
+        }
+    },
     "jet_lead_dxy_weight" : {
         "bins": [
             {
@@ -552,6 +712,156 @@
             ]
         }
     },
+    // "jet_lead_score_dxy" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": 140,
+    //             "lo": -0.2,
+    //             "hi": 1.2,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_dxy",
+    //             "label": "Jet dxy",
+    //             "n_or_arr": 200,
+    //             "lo": 0.0,
+    //             "hi": 20,
+    //             "unit": "cm"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_obj1",
+    //             "disTauTag_score1"
+    //         ],
+    //         "jet_dxy": [
+    //             "Jet_obj1",
+    //             "dxy"
+    //         ]
+    //     }
+    // },
+    // "jet_lead_score_dxysig" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": 140,
+    //             "lo": -0.2,
+    //             "hi": 1.2,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_dxy",
+    //             "label": "Jet dxySig",
+    //             "n_or_arr": 200,
+    //             "lo": 0.0,
+    //             "hi": 20,
+    //             "unit": "-"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_obj1",
+    //             "disTauTag_score1"
+    //         ],
+    //         "jet_dxy": [
+    //             "Jet_obj1",
+    //             "dxysig"
+    //         ]
+    //     }
+    // },
+    // "jet_lead_score_maxdxy" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": 140,
+    //             "lo": -0.2,
+    //             "hi": 1.2,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_dxy",
+    //             "label": "Jet dxy",
+    //             "n_or_arr": 200,
+    //             "lo": 0.0,
+    //             "hi": 20,
+    //             "unit": "-"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_obj1",
+    //             "disTauTag_score1"
+    //         ],
+    //         "jet_dxy": [
+    //             "Jet_obj1",
+    //             "maxdxy"
+    //         ]
+    //     }
+    // },
+    // "jet_lead_score_maxdxysig" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": 140,
+    //             "lo": -0.2,
+    //             "hi": 1.2,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_dxy",
+    //             "label": "Jet dxySig",
+    //             "n_or_arr": 200,
+    //             "lo": 0.0,
+    //             "hi": 20,
+    //             "unit": "-"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_obj1",
+    //             "disTauTag_score1"
+    //         ],
+    //         "jet_dxy": [
+    //             "Jet_obj1",
+    //             "maxdxysig"
+    //         ]
+    //     }
+    // },
+    // "jet_lead_score_IP3" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": 140,
+    //             "lo": -0.2,
+    //             "hi": 1.2,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_Lrel",
+    //             "label": "Jet2 ip3d",
+    //             "n_or_arr": 200,
+    //             "lo": 0.0,
+    //             "hi": 20,
+    //             "unit": "cm"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_obj1",
+    //             "disTauTag_score1"
+    //         ],
+    //         "jet_Lrel": [
+    //             "Jet_obj1",
+    //             "ip3d"
+    //         ]
+    //     }
+    // },
     "jet_sublead_pt" : {
         "bins": [
             {
@@ -624,6 +934,42 @@
             ]
         }
     },
+    "jet_sublead_maxdxy" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxy",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 20,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_obj2",
+                "maxdxy"
+            ]
+        }
+    },
+    "jet_sublead_maxdxysig" : {
+        "bins": [
+            {
+                "name": "jet_dxy",
+                "label": "Jet dxySig",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 500,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dxy": [
+                "Jet_obj2",
+                "maxdxysig"
+            ]
+        }
+    },
     "jet_sublead_dxy_weight" : {
         "bins": [
             {
@@ -678,6 +1024,96 @@
             ]
         }
     },
+    // "jet_sublead_score_dxy" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": 140,
+    //             "lo": -0.2,
+    //             "hi": 1.2,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_dxy",
+    //             "label": "Jet dxy",
+    //             "n_or_arr": 200,
+    //             "lo": 0.0,
+    //             "hi": 20,
+    //             "unit": "-"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_obj2",
+    //             "disTauTag_score1"
+    //         ],
+    //         "jet_dxy": [
+    //             "Jet_obj2",
+    //             "dxy"
+    //         ]
+    //     }
+    // },
+    // "jet_sublead_score_dxysig" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": 140,
+    //             "lo": -0.2,
+    //             "hi": 1.2,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_dxy",
+    //             "label": "Jet dxySig",
+    //             "n_or_arr": 200,
+    //             "lo": 0.0,
+    //             "hi": 20,
+    //             "unit": "cm"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_obj2",
+    //             "disTauTag_score1"
+    //         ],
+    //         "jet_dxy": [
+    //             "Jet_obj2",
+    //             "dxysig"
+    //         ]
+    //     }
+    // },
+    // "jet_sublead_score_IP3" : {
+    //     "bins": [
+    //         {
+    //             "name": "jet_score",
+    //             "label": "Jet score",
+    //             "n_or_arr": 140,
+    //             "lo": -0.2,
+    //             "hi": 1.2,
+    //             "unit": "-"
+    //         },
+    //         {
+    //             "name": "jet_Lrel",
+    //             "label": "Jet2 ip3d",
+    //             "n_or_arr": 200,
+    //             "lo": 0.0,
+    //             "hi": 20,
+    //             "unit": "cm"
+    //         }
+    //     ],
+    //     "fill": {
+    //         "jet_score": [
+    //             "Jet_obj2",
+    //             "disTauTag_score1"
+    //         ],
+    //         "jet_Lrel": [
+    //             "Jet_obj2",
+    //             "ip3d"
+    //         ]
+    //     }
+    // },
     // "fake_rate_hist" : {
     //     "bins": [
     //         {
@@ -781,29 +1217,21 @@
                 "dxy"
             ],
             "score_wp": {
+                "all": [
+                    "Jet_select",
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.00}}
+                ],
                 "p05": [
                     "Jet_select",
                     {"function" : "pass_score", "kwargs" : {"thr" : 0.05}}
                 ],
-                "p1": [
+                "p7": [
                     "Jet_select",
-                    {"function" : "pass_score", "kwargs" : {"thr" : 0.10}}
-                ],
-                "p15": [
-                    "Jet_select",
-                    {"function" : "pass_score", "kwargs" : {"thr" : 0.15}}
-                ],
-                "p2": [
-                    "Jet_select",
-                    {"function" : "pass_score", "kwargs" : {"thr" : 0.20}}
+                    {"function" : "pass_score", "kwargs" : {"thr" : 0.70}}
                 ],
                 "p9900": [
                     "Jet_select",
                     {"function" : "pass_score", "kwargs" : {"thr" : 0.99}}
-                ],
-                "p9972": [
-                    "Jet_select",
-                    {"function" : "pass_score", "kwargs" : {"thr" : 0.9972}}
                 ],
                 "p9996": [
                     "Jet_select",
