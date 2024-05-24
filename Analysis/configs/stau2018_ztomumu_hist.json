@@ -89,6 +89,23 @@
             ]
         }
     },
+    "nbjets": {
+        "bins": [
+            {
+                "name": "n-bjet",
+                "label": "Number of jets (b-ttaged)",
+                "n_or_arr": 20,
+                "lo": 0,
+                "hi": 20
+            }
+        ],
+        "fill": {
+            "n-bjet": [
+                "Jet_select_b_jet",
+                {"function": "num"}
+            ]
+        }
+    },
     "mumu_mass": {
         "bins": [
             {

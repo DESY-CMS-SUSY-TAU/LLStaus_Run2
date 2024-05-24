@@ -1,11 +1,3 @@
-# This file illustrates how to implement a processor, realizing the selection
-# steps and outputting histograms and a cutflow with efficiencies.
-# Here we create a very simplified version of the ttbar-to-dilep processor.
-# One can run this processor using
-# 'python3 -m pepper.runproc --debug example_processor.py example_config.json'
-# Above command probably will need a little bit of time before all cuts are
-# applied once. This is because a chunk of events are processed simultaneously.
-# You change adjust the number of events in a chunk and thereby the memory
 from nis import match
 import pepper
 import awkward as ak
@@ -14,6 +6,7 @@ import numpy as np
 import mt2
 import numba as nb
 import coffea
+from copy import copy
 
 import uproot
 import logging
@@ -54,8 +47,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         if "muon_sf" not in config or len(config["muon_sf"]) == 0:
             logger.warning("No muon scale factors specified")
 
-        if "single_mu_trigger_sfs" not in config or\
-            len(config["single_mu_trigger_sfs"]) == 0:
+        if "muon_sf_trigger" not in config or\
+            len(config["muon_sf_trigger"]) == 0:
             logger.warning("No single muon trigger scale factors specified")
         
         if "jet_fake_rate" not in config and len(config["jet_fake_rate"]) == 0:
@@ -65,7 +58,7 @@ class Processor(pepper.ProcessorBasicPhysics):
             self.predict_jet_fakes = config["predict_yield"]
 
     def process_selection(self, selector, dsname, is_mc, filler):
-        
+        era = self.get_era(selector.data, is_mc)
         # Triggers
         pos_triggers, neg_triggers = pepper.misc.get_trigger_paths_for(
             dsname,
@@ -87,9 +80,9 @@ class Processor(pepper.ProcessorBasicPhysics):
             selector.add_cut("Pileup reweighting", partial(
                 self.do_pileup_reweighting, dsname))
         
-        # HEM 15/16 failure (2018)
-        if self.config["year"] == "ul2018":
-            selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+        # # HEM 15/16 failure (2018)
+        # if self.config["year"] == "ul2018":
+        #     selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
         
         # PV cut
         selector.add_cut("PV", lambda data: data["PV"].npvsGood > 0)
@@ -123,17 +116,63 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         selector.set_cat("iso_region", {"iso", "antiiso"})
         selector.set_multiple_columns(partial(self.isolation_region))
-        
         selector.set_cat("sign_region", {"SS", "OS"})
         selector.set_multiple_columns(partial(self.sign_region))
-        
-        selectron.add_cut("pass_iso_os", lambda data: (data["iso_region"] == "iso") & (data["sign_region"] == "OS"))
+        selector.add_cut("pass_iso_os", lambda data: data["iso"] & data["OS"])
         
         selector.add_cut("after_categories", lambda data: ak.Array(np.ones(len(data))))
         
-        selector.set_column("Jet_select", self.jet_selection)
-        # selector.set_column("Jet_select", self.getloose_jets)
- 
+        selector.set_column("Lepton", lambda data: data["Muon_tag"])
+        
+        if (is_mc and self.config["compute_systematics"]
+                and dsname not in self.config["dataset_for_systematics"]):
+            if hasattr(filler, "sys_overwrite"):
+                assert filler.sys_overwrite is None
+            variargs = self.get_jetmet_variation_args()
+            logger.debug(f"Running jetmet variations: {variargs}")
+            for variarg in variargs:
+                selector_copy = copy(selector)
+                filler.sys_overwrite = variarg.name
+                self.process_selection_jet_part(selector_copy, is_mc,
+                                                variarg, dsname, filler, era)
+            filler.sys_overwrite = None
+
+        # Do normal, no-variation run
+        self.process_selection_jet_part(selector, is_mc,
+                                        self.get_jetmet_nominal_arg(),
+                                        dsname, filler, era)
+        logger.debug("Selection done")
+        
+    def process_selection_jet_part(self, selector, is_mc, variation, dsname,
+                                   filler, era):
+        """Part of the selection that needs to be repeated for
+        every systematic variation done for the jet energy correction,
+        resultion and for MET"""
+        logger.debug(f"Running jet_part with variation {variation.name}")
+        reapply_jec = ("reapply_jec" in self.config
+                       and self.config["reapply_jec"])
+        selector.set_multiple_columns(partial(
+            self.compute_jet_factors, is_mc, reapply_jec, variation.junc,
+            variation.jer, selector.rng))
+        selector.set_column("OrigJet", selector.data["Jet"])
+        selector.set_column("Jet", partial(self.build_jet_column, is_mc))
+        if "jet_puid_sf" in self.config and is_mc:
+            selector.add_cut("JetPUIdSFs", self.jet_puid_sfs)
+        selector.set_column("Jet", self.jets_with_puid)
+        
+        # smear_met = "smear_met" in self.config and self.config["smear_met"]
+        # selector.set_column(
+        #     "MET", partial(self.build_met_column, is_mc, variation.junc,
+        #                    variation.jer if smear_met else None, selector.rng,
+        #                    era, variation=variation.met))
+        
+        # HEM 15/16 failure (2018)
+        if self.config["year"] == "ul2018":
+            selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+        
+        # selector.set_column("Jet_select", self.jet_selection)
+        selector.set_column("Jet_select", selector.data["Jet"])
+        selector.set_column("Jet_select_b_jet", self.b_tagged_jet)
         selector.set_column("PfCands", self.pfcand_valid)
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
@@ -157,7 +196,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         # selector.add_cut("pt_mumu_cut", lambda data: data["sum_mumu"].pt > 30 if len(data) > 0 else ak.Array([]))
         
         return
-        '''
+        ''' This part is for definition of signal region
+        # selector.set_column("Jet_select", self.getloose_jets)
         selector.add_cut("two_loose_jets", self.has_two_jets)
 
         # Variables related to the two jets:
@@ -411,7 +451,6 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     @zero_handler
     def get_dy_gen_sfs(self, data, is_mc, dsname):
-        weight = np.ones(len(data))
         # The weights are taken from the following repository:
         # https://github.com/cms-tau-pog/TauFW/tree/master/PicoProducer/data/zpt
         if is_mc and (
@@ -424,10 +463,16 @@ class Processor(pepper.ProcessorBasicPhysics):
             dsname.startswith("DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8")):
             z_boson = data["sum_ll_gen"]
             dy_gen_sfs = self.config["DY_ZptLO_weights"](mass=z_boson.mass, pt=z_boson.pt)
-            weight *= ak.to_numpy(dy_gen_sfs)
-            return weight
+            if self.config["compute_systematics"]:
+                systematics = {}
+                up = dy_gen_sfs + np.abs(dy_gen_sfs-1)
+                down = dy_gen_sfs - np.abs(dy_gen_sfs-1)
+                systematics["dy_zpt_weights"] = \
+                    ( up / dy_gen_sfs, down / dy_gen_sfs )
+                return dy_gen_sfs, systematics
+            return dy_gen_sfs
         else:
-            return weight
+            return np.ones(len(data))
 
     @zero_handler
     def mass_window(self, data):
@@ -478,29 +523,27 @@ class Processor(pepper.ProcessorBasicPhysics):
     def get_muon_sfs(self, data, is_mc):
         weight = np.ones(len(data))
         if is_mc:
-            id_iso_sfs, systematics = self.muon_id_iso_sfs(data)
+            muons = data["Muon_tag"]
+            id_iso_sfs, systematics = \
+                self.muon_sfs(muons, sfs_name_config="muon_sf")
             weight *= ak.to_numpy(id_iso_sfs)
-            mu_trigger_sfs = self.apply_mu_trigger_sfs(data) # systematics are not implemented yet
+            muon_leading = muons[:,:1] # trigger_sfs are applied only to leading muon
+            mu_trigger_sfs, systematics_trig = \
+                self.muon_sfs(muon_leading, sfs_name_config="muon_sf_trigger")
             weight *= ak.to_numpy(mu_trigger_sfs)
+            systematics.update(systematics_trig)
             return weight, systematics
         else:
             return weight
 
-    def apply_mu_trigger_sfs(self, data):
-        weight = np.ones(len(data))
-        # Single muon trigger efficiency applied for leading muon
-        muon = ak.firsts(data["Muon_tag"])
-        sfs = self.config["single_mu_trigger_sfs"][0](pt=muon.pt, eta=abs(muon.eta))
-        return weight * sfs
-
-    def muon_id_iso_sfs(self, data):
+    def muon_sfs(self, muons, sfs_name_config = "muon_sf"):
         """Compute identification and isolation scale factors for
-           leptons (electrons and muons)."""
-        muons = data["Muon_tag"]
-        weight = np.ones(len(data))
+           leptons (electrons and muons). Also possible
+           to use for muon trigger scale factors."""
+        weight = np.ones(len(muons))
         systematics = {}
         # Muon identification and isolation efficiency
-        for i, sffunc in enumerate(self.config["muon_sf"]):
+        for i, sffunc in enumerate(self.config[sfs_name_config]):
             params = {}
             for dimlabel in sffunc.dimlabels:
                 if dimlabel == "abseta":
@@ -508,7 +551,7 @@ class Processor(pepper.ProcessorBasicPhysics):
                 else:
                     params[dimlabel] = getattr(muons, dimlabel)
             central = ak.prod(sffunc(**params), axis=1)
-            key = f"muonsf{i}"
+            key = f"{sfs_name_config}{i}"
             if self.config["compute_systematics"]:
                 if ("split_muon_uncertainty" not in self.config
                         or not self.config["split_muon_uncertainty"]):
@@ -537,6 +580,14 @@ class Processor(pepper.ProcessorBasicPhysics):
         matches_h, dRlist = jets.nearest(data["Muon_tag"], return_metric=True, threshold=0.4)
         isoJets = jets[ak.is_none(matches_h, axis=-1)]
         return isoJets
+    
+    @zero_handler
+    def b_tagged_jet(self, data):
+        jets = data["Jet_select"]
+        # Jet_btagDeepFlavB satisfies the Medium (>0.2783) WP:
+        # https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
+        b_tagged_idx = (jets.btagDeepFlavB > 0.2783)
+        return jets[b_tagged_idx]
     
     @zero_handler
     def pfcand_valid(self, data):

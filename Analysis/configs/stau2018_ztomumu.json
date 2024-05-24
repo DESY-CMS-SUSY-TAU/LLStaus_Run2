@@ -7,7 +7,7 @@
     "datadir": "configs/data/ul2018",
     "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD",
     "rng_seed_file": "$CONFDIR/seed.txt",
-    "compute_systematics": false,
+    "compute_systematics": true,
     // "lumimask": "",
     "luminosity": 59.74,
     "crosssections": "$CONFDIR/crosssections.json",
@@ -19,7 +19,12 @@
             "$STOREDIR/SingleMuon/crab_SingleMuon_2018C_UL/230608_152344/*/*.root",
             "$STOREDIR/SingleMuon/crab_SingleMuon_2018D_UL/230608_152349/*/*.root"
             ]
-
+    },
+    "data_eras": {
+        "2018A": [315252, 316995],
+        "2018B": [316998, 319312],
+        "2018C": [319313, 320393],
+        "2018D": [320394, 325273]
     },
     "mc_datasets": {
         // "Inclusive_DYLO_M-50" : [ "$STOREDIR/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50/230311_122118/*/*.root" ],
@@ -73,20 +78,20 @@
     },
     "pileup_reweighting": "$DATADIR/pileup.root",
     "muon_sf": [
-        [
+        [   // ID sfs
             "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root",
             // "NUM_TightID_DEN_TrackerMuons_abseta_pt",
             "NUM_MediumID_DEN_TrackerMuons_abseta_pt",
             ["abseta", "pt"]
         ],
-        [
+        [   // ISO sfs
             "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2018_UL_ISO.root",
             // "NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt",
             "NUM_TightRelIso_DEN_MediumID_abseta_pt",
             ["abseta", "pt"]
-        ]
+        ],
     ],
-    "single_mu_trigger_sfs": [
+    "muon_sf_trigger": [
         [
             "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2018_UL_SingleMuonTriggers.root",
             // "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight_abseta_pt",
@@ -109,6 +114,19 @@
             0.0055868
         ]
     ],
+    "jet_puid_sf": [
+        "$DATADIR/jmar.json"
+    ],
+    "reapply_jec": false,
+    "jet_correction_mc": [
+        "$DATADIR/Summer19UL18_V5_MC_L1FastJet_AK4PFchs.txt",
+        "$DATADIR/Summer19UL18_V5_MC_L2Relative_AK4PFchs.txt",
+        "$DATADIR/Summer19UL18_V5_MC_L3Absolute_AK4PFchs.txt"
+    ],
+    "jet_uncertainty": "$DATADIR/Summer19UL18_V5_MC_Uncertainty_AK4PFchs.txt",
+    "jet_resolution": "$DATADIR/Summer19UL18_JRV2_MC_PtResolution_AK4PFchs.txt",
+    "jet_ressf": "$DATADIR/Summer19UL18_JRV2_MC_SF_AK4PFchs.txt",
+    "smear_met": false,
     "dataset_for_systematics": {
     },
     "dataset_trigger_order": [
@@ -119,7 +137,6 @@
             "HLT_IsoMu24"
         ]
     },
-
     "jet_fake_rate" : [
         "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v11/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
         "fake_rate_jet_dxy_pt",
@@ -164,12 +181,19 @@
     "jet_pt_min"   :  30,
     "jet_eta_min"  : -2.1,
     "jet_eta_max"  :  2.1,
-    // "jet_eta_min"  : -1.1,
-    // "jet_eta_max"  :  1.1,
-    // jetId>=6 pass lepton veto and tight id, jetId>=2 pass tight id
-    "jet_jetId"    :  2,
+    "jet_jetId"    :  2, // jetId>=6 pass lepton veto and tight id, jetId>=2 pass tight id
     "dphi_j1j2"    :  0.5,
     "jet_dxy_min"  :  0.0, // to test MC/Data modeling
+
+    // Basic jet selection (before selected Jet is called)
+    "good_jet_id": "cut:tight",
+    "good_jet_puId": "cut:tight",
+    "good_jet_lepton_distance": 0.4,
+    "good_jet_eta_min": -2.1,
+    "good_jet_eta_max": 2.1,
+    "good_jet_pt_min": 30,
+    "btag": "deepjet:medium",
+    "num_atleast_btagged": 0,
 
     // pfCand selection:
     "pfcand_pt"         : 1.0,
