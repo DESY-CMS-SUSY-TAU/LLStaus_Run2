@@ -51,7 +51,7 @@ if True:
     names_flav = ["u/d/s", "c/b", 6, "tau", 16, "g", 22]
     #"jet_flav" : [1, 4, 6, 15, 16, 21, 22],
 
-    output_name = "fake_WJets_gen_vs_data_dxy_"
+    output_name = "fake_WJets_gen_vs_data_pt_"
     # tree_name = "fake_rate_jet_prob_dxy"
     # jet_score_bins = [2,3,4,5,6,7,8] 
     # jet_pt_bins = [1,2,3,4,5,6,7]
@@ -60,9 +60,11 @@ if True:
 
     # tree_name = "fake_rate_jet_flav_jet_pt_jet_dxy"
     # tree_name2  = "fake_rate_eta_jet_pt_jet_dxy"
-    tree_name = "fake_rate_jet_flav_dxy"
+    # tree_name = "fake_rate_jet_flav_dxy"
+    tree_name = "fake_rate_jet_flav_pt"
     # tree_name2 = "fake_rate_jet_eta_pt"
-    tree_name2 = "fake_rate_jet_dxy"
+    # tree_name2 = "fake_rate_jet_dxy"
+    tree_name2 = "fake_rate_jet_pt"
 
     # print(list(itertools.product(jet_score_bins, jet_pt_bins)))
 
@@ -136,11 +138,11 @@ if True:
         logx = True, logy = True,
         logx_ratio = True, logy_ratio = False,
         include_overflow = False,
-        # xtitle = "Jet pt (GeV)",
-        xtitle = "Jet dxy (cm)",
+        xtitle = "Jet pt (GeV)",
+        # xtitle = "Jet dxy (cm)",
         ytitle = "Fake rate",
-        # xtitle_ratio = "Jet pt (GeV)",
-        xtitle_ratio = "Jet dxy (cm)",
+        xtitle_ratio = "Jet pt (GeV)",
+        # xtitle_ratio = "Jet dxy (cm)",
         ytitle_ratio = "ratio",
         centertitlex = True, centertitley = True,
         centerlabelx = False, centerlabely = False,
