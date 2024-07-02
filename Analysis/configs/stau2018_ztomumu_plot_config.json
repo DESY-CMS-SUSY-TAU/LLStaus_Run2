@@ -17,12 +17,28 @@
         // "loose_electron_veto",
         // "muon_sfs",
         // "dy_gen_sfs",
+        // "pass_iso_os",
+        // "after_categories",
+        // "JetPUIdSFs",
+
+        // "HEM_veto",
+        // "has_more_two_jets",
+        // "after_jet_def",
+        // "dphi_min_cut",
+        // "has_two_jets",
+
+        // "no_btag"
+
+        // "pass_iso_os",
+        // "JetPUIdSFs",
+        // "HEM_veto",
+        "has_more_one_jets",
         "after_categories",
         "has_more_two_jets",
+        "no_btag_jet",
         "after_jet_def",
         "dphi_min_cut",
         "has_two_jets",
-        "pt_mumu_cut"
     ],
     "Categories" : [
                     // ["barrel","endcap"],
@@ -38,8 +54,8 @@
         // "ratio" - calculate by the ration of two hist
         // "score-dim" - assumes one of the dimention of score
         "mode" : "ratio",
-        "nominator"   : ["Cut_018_has_two_jets_fake_rate_hist", "/p9996/iso/OS"],
-        "denominator" : ["Cut_018_has_two_jets_fake_rate_hist", "/all/iso/OS"],
+        "nominator"   : ["Cut_020_has_two_jets_fake_rate_hist", "/nominal/p9900/iso/OS"],
+        "denominator" : ["Cut_020_has_two_jets_fake_rate_hist", "/nominal/all/iso/OS"],
         // "nominator"   : ["Cut-011_charge2_fake_rate_hist", "_p9900"],
         // "denominator" : ["Cut-011_charge2_fake_rate_hist", "_p05"],
 
@@ -50,7 +66,8 @@
             "jet_eta": [-2.3, -1.5, -0.5,  0.5,  1.5,  2.3],
             // "jet_pt" :  [30, 40, 50, 70, 120, 1000],
             "jet_pt" :  [30, 40, 50, 70, 120, 1000],
-            "jet_dxy" : [0.0, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0, 4.0, 10.0, 20.0, 50.0],
+            // "jet_dxy" : [0.0, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0, 4.0, 10.0, 20.0, 50.0],
+            "jet_dxy" : [0.0, 0.5, 10.0, 50.0],
             // "jet_dxy" : [1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
         },
         "sf_project" : {
@@ -91,16 +108,67 @@
         ],
         "data_name" : "$\\mathrm{Data}$", // data name
         "hists": [
+            // "deltaphi",
+            // "1st_mu_pt",
+            // "2nd_mu_pt",
+            // "npvs",
+            // "njetselect",
+            // "njets",
+            // "nbjets",
+            // "METpt",
+            // "METphi",
             // "mumu_mass",
-            "mumu_pt"
+            // "mumu_pt",
+            // "jetselect_pt",
+            // "jetselect_eta",
+            // "jetselect_dxy",
+            // "jetselect_dxy_weight",
+            // "jetselect_dxysig",
+            // "jetselect_dxysig_weight",
+            // "jetselect_score",
+            // "jet_pt",
+            // "jet_eta",
+            // "jet_dxy",
+            // "jet_dxy_weight",
+            // "jet_dxysig",
+            // "jet_dxysig_weight",
+            // "jet_score",
+            // "jet_lead_eta",
+            // "jet_lead_pt",
+            // "jet_lead_dxy",
+            // "jet_lead_dxysig",
+            // "jet_lead_maxdxy",
+            // "jet_lead_maxdxysig",
+            // "jet_lead_dxy_weight",
+            // "jet_lead_dxysig_weight",
+            // "jet_lead_score",
+            // "jet_sublead_eta",
+            // "jet_sublead_pt",
+            // "jet_sublead_dxy",
+            // "jet_sublead_dxysig",
+            // "jet_sublead_dxy_weight",
+            // "jet_sublead_maxdxy",
+            // "jet_sublead_maxdxysig",
+            // "jet_sublead_dxysig_weight",
+            // "jet_sublead_score",
+            // "dphi_jet1_jet2",
+            // "max_score",
+            // "max_score_two_jets"
+
+            // "mumu_mass",
+            // "mumu_pt",
+            "jetselect_score"
 
         ],
 
         "output_dataset_name": ["QCD-pred","iso","OS"],
         // "factor": 1.10, // factor is taken from CMS AN-19-275 
-        "factor": 1.21, // for category "all"
+        // "factor": 1.21, // for category "all"
+        // "factor":  5.031828655011194,
+        "factor":  10,
         "categories" : {
-            "prediction_cat": ["antiiso", "OS" ], // list can be used for multiple categories
+            // "prediction_cat": ["iso", "SS" ], // list can be used for multiple categories
+            "prediction_cat": ["antiiso", "OS" ],
             "numerator": [ "iso", "SS" ],
             "denominator": [ "antiiso", "SS" ]
             // "numerator": [ "iso", "OS" ],
@@ -110,62 +178,62 @@
     "Labels": {
 
         // "$\\mathrm{QCD}$": [
-
+        //     "QCD-pred"
         // ],
-        // "$\\mathrm{DY+jets}$": [
-        //     // "Inclusive_DYLO_M-50",
-        //     "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
-		// 	"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-		// ],
-        // "$\\mathrm{Single\\ top}$": [
-        //     "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
-        //     "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
-        //     "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
-        //     "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"       
-		// ],
-        // "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$": [
-        //     "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",
-        //     "TTToHadronic_TuneCP5_13TeV-powheg-pythia8",
-        //     "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",
-        //     "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
-        //     "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
-        //     "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8",
-        //     "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8",
-        //     "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8",
-        // ],
-        // "$\\mathrm{Other\\ SM}$": [
-        //     // "WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+        "$\\mathrm{DY+jets}$": [
+            // "Inclusive_DYLO_M-50",
+            "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
+			"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+		],
+        "$\\mathrm{Single\\ top}$": [
+            "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
+            "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
+            "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
+            "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"       
+		],
+        "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$": [
+            "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",
+            "TTToHadronic_TuneCP5_13TeV-powheg-pythia8",
+            "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",
+            "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
+            "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
+            "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8",
+            "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8",
+            "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8",
+        ],
+        "$\\mathrm{Other\\ SM}$": [
+            // "WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
             
-        //     // "WZTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-        //     // "WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-        //     // "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-        //     // "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            // "WZTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            // "WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            // "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            // "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
 
-        //     // "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8", 
-        //     // "ZZTo4L_TuneCP5_13TeV_powheg_pythia8",
+            // "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8", 
+            // "ZZTo4L_TuneCP5_13TeV_powheg_pythia8",
 
-        //     // "VVTo2L2Nu_MLL-1toInf_TuneCP5_13TeV-amcatnloFXFX-pythia8",
+            // "VVTo2L2Nu_MLL-1toInf_TuneCP5_13TeV-amcatnloFXFX-pythia8",
 
-        //     "WW_TuneCP5_13TeV-pythia8",
-        //     "WZ_TuneCP5_13TeV-pythia8",
-        //     "ZZ_TuneCP5_13TeV-pythia8",
+            "WW_TuneCP5_13TeV-pythia8",
+            "WZ_TuneCP5_13TeV-pythia8",
+            "ZZ_TuneCP5_13TeV-pythia8",
 
-        //     "VHToNonbb_M125_TuneCP5_13TeV-amcatnloFXFX_madspin_pythia8",
-        //     "WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",
-        //     "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",
+            "VHToNonbb_M125_TuneCP5_13TeV-amcatnloFXFX_madspin_pythia8",
+            "WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",
+            "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",
             
-        //     // "GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8",
-        //     // "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8",
-        //     // "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8"
-        // ],
-        // "$\\mathrm{W+jets}$": [
-        //     "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
-        // ],
+            // "GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8",
+            // "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8",
+            // "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8"
+        ],
+        "$\\mathrm{W+jets}$": [
+            "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+        ],
 
         "$\\mathrm{Data}$" : ["SingleMuon"]
     },
@@ -173,15 +241,22 @@
         "$\\mathrm{Data}$" : [0, 1]
     },
     "MC_bkgd": {
-        "$\\mathrm{QCD}$":                         [423, 423],
-        "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$":   [394, 394],
-        "$\\mathrm{Single\\ top}$":                [623, 623],
-        "$\\mathrm{DY+jets}$":                     [403, 403],
-        "$\\mathrm{DY-low}$":                      [406, 406],
-        "$\\mathrm{W+jets}$":            [410, 410],
-        "$\\mathrm{Z}(\\nu\\bar{\\nu})+\\mathrm{jets}$":[616, 616],
-        "$\\mathrm{Other\\ SM}$":                  [795, 795],
-        "$\\mathrm{ggZZ}$":                        [597, 597]
+        // "$\\mathrm{QCD}$":                         [423, 423],
+        // "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$":   [394, 394],
+        // "$\\mathrm{Single\\ top}$":                [623, 623],
+        // "$\\mathrm{DY+jets}$":                     [403, 403],
+        // "$\\mathrm{DY-low}$":                      [406, 406],
+        // "$\\mathrm{W+jets}$":            [410, 410],
+        // "$\\mathrm{Z}(\\nu\\bar{\\nu})+\\mathrm{jets}$":[616, 616],
+        // "$\\mathrm{Other\\ SM}$":                  [795, 795],
+        // "$\\mathrm{ggZZ}$":                        [597, 597]
+        
+        "$\\mathrm{QCD}$":                         ["#92dadd", "#92dadd"],
+        "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$":   ["#e76300", "#e76300"],
+        "$\\mathrm{Single\\ top}$":                ["#a96b59", "#a96b59"],
+        "$\\mathrm{DY+jets}$"   :                  ["#3f90da", "#3f90da"],
+        "$\\mathrm{W+jets}$" :  ["#bd1f01", "#bd1f01"],
+        "$\\mathrm{Other\\ SM}$":                          ["#832db6", "#832db6"],
     },
     "Signal_samples":{
         "$\\mathrm{stau100GeV10cm}$" : [0, 2, 7],
@@ -287,74 +362,126 @@
         "2D_MET_MTSUM_bin1to2",
         "2D_MT2_MTSUM_bin1to2"
     ],
+    "systematics" : {
+        "UncMET": {
+            "up": "UncMET_up",
+            "down": "UncMET_down"
+        },
+        "Junc": {
+            "up": "Junc_up",
+            "down": "Junc_down"
+        },
+        "Jer": {
+            "up": "Jer_up",
+            "down": "Jer_down"
+        },
+        "pileup": {
+            "up": "pileup_up",
+            "down": "pileup_down"
+        },
+        "muon_sf0": {
+            "up": "muon_sf0_up",
+            "down": "muon_sf0_down"
+        },
+        "muon_sf1": {
+            "up": "muon_sf1_up",
+            "down": "muon_sf1_down"
+        },
+        "muon_sf_trigger0": {
+            "up": "muon_sf_trigger0_up",
+            "down": "muon_sf_trigger0_down"
+        },
+        "tau_id_sf": {
+            "up": "tau_id_sf_up",
+            "down": "tau_id_sf_down"
+        },
+        "dy_zpt_weights": {
+            "up": "dy_zpt_weights_up",
+            "down": "dy_zpt_weights_down"
+        }
+    },
     "SetupBins" : {
         // "Histogram name" : [x_min, x_max, rebin_bins, overflow_includ, axis labels
-        "deltaphi" : [0.0, 3.15, 2, false, null],
-        "1st_mu_pt" : [0.0, 400.0, 2, true, null],
-        "2nd_mu_pt" : [0.0, 400.0, 2, true, null],
-        "npvs" : [0.0, 100.0, 1, true, null],
-        "njetselect" : [0.0, 10.0, 1, true, null],
-        "njets" : [0.0, 10.0, 1, true, null],
-        "METpt" : [0.0, 200.0, 1, true, null],
-        "METphi" : [-3.15, 3.15, 2, true, null],
+        "deltaphi" : [0.0, 3.15, 2, false, "$\\Delta\\phi(\\mathrm{jet1,jet2})$"],
+        "1st_mu_pt" : [0.0, 300.0, 2, true, "$p_T(\\mu_1)$ [GeV]"],
+        "2nd_mu_pt" : [0.0, 300.0, 2, true, "$p_T(\\mu_2)$ [GeV]"],
+        "npvs" : [0.0, 100.0, 1, true, "$\\mathrm{N}_{\\mathrm{PV}}$"],
+        "njetselect" : [0.0, 10.0, 1, true, "$\\mathrm{N}_{\\mathrm{jets}}$"],
+        "njets" : [0.0, 10.0, 1, true, "$\\mathrm{N}_{\\mathrm{jets}}$"],
+        "nbjets" : [0.0, 10.0, 1, true, "$\\mathrm{N}_{\\mathrm{b-jets}}$"],
+        "METpt" : [0.0, 200.0, 1, true, "$p_T(\\mathrm{MET})$ [GeV]"],
+        "METphi" : [-3.15, 3.15, 2, true, "$\\phi(\\mathrm{MET})$"],
         // "njet" : [], 
-        "mumu_mass" : [50.0, 130, 1, true, null],
-        "mumu_pt" : [0.0, 500, 0, true, null],
-        "jetselect_pt" : [0.0, 300.0, 3, true, null], 
-        "jetselect_eta" : [-2.1, 2.1, 3, true, null], 
+        "mumu_mass" : [60.0, 125, 2, true, "$m(\\mu,\\mu)$ [GeV]"],
+        "mumu_pt" : [0.0, 500, 3, true, "$p_T(\\mu,\\mu)$ [GeV]"],
+        "jetselect_pt" : [0.0, 300.0, 3, true, "$p_T(\\mathrm{jet})$ [GeV]"],
+        "jetselect_eta" : [-2.1, 2.1, 3, true, "$\\eta(\\mathrm{jet})$"],
         // "jetselect_eta" : [-2.1, 2.1, [-2.1, 2.1], true, null],
         // "jetselect_score" : [0.8, 1.05, 1, true, null],
-        "jetselect_dxy" : [0.0, 30.0, 5, true, null],
-        "jetselect_dxy_weight" : [0.0, 30.0, 5, true, null], 
-        "jetselect_dxysig" : [0.0, 500.0, 5, true, null], 
-        "jetselect_dxysig_weight" : [0.0, 500.0, 5, true, null], 
+        "jetselect_dxy" : [0.0, 30.0, 5, true, "$d_{xy}(\\mathrm{jet})$ [cm]"],
+        "jetselect_dxy_weight" : [0.0, 30.0, 5, true, "$d_{xy}(\\mathrm{jet})$ [cm]"],
+        "jetselect_dxysig" : [0.0, 500.0, 5, true, "$d_{xy}/\\sigma_{d_{xy}}(\\mathrm{jet})$"],
+        "jetselect_dxysig_weight" : [0.0, 500.0, 5, true, "$d_{xy}/\\sigma_{d_{xy}}(\\mathrm{jet})$"],
         // "jetselect_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
                                         // 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
                                         // 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0], true, null],
-        "jetselect_score" : [ 0.0, 1.0,
-            [0.0  ,  0.02,  0.04,  0.06,  0.08,  0.1 ,  0.12,  0.14,  0.16,
-            0.18,  0.2 ,  0.22,  0.24,  0.26,  0.28,  0.3 ,  0.32,  0.34,
-            0.36,  0.38,  0.4 ,  0.42,  0.44,  0.46,  0.48,  0.5 ,  0.52,
-            0.54,  0.56,  0.58,  0.6 ,  0.62,  0.64,  0.66,  0.68,  0.7 ,
-            0.72,  0.74,  0.76,  0.78,  0.8 ,  0.82,  0.84,  0.86,  0.88,
-            0.9 ,  0.92,  0.94,  0.96,  0.98, 1.0], true, null],
-        "jet_pt" : [0.0, 300.0, 3, true, null], 
-        "jet_eta" : [-2.1, 2.1, [-2.1, 2.1], true, null],
-        // "jet_score" : [0.8, 1.05, 1, true, null],
-        "jet_dxy" : [0.0, 30.0, 1, true, null], 
-        "jet_dxy_weight" : [0.0, 30.0, 1, true, null], 
-        "jet_dxysig" : [0.0, 1000.0, 1, true, null], 
-        "jet_dxysig_weight" : [0.0, 1000.0, 1, true, null], 
-        "jet_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
-                                  0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
-                                  0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 1.0], true, null],
+        "jetselect_score" : [0.0, 1.00, 6, true, "jet disTau_raw_score"],
         // "jet_lead_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
         //                                 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
         //                                 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
         // "jet_sublead_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
         //                                 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
         //                                 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
-        "jet_lead_eta" : [-2.1, 2.1, 1, true, null],
-        "jet_lead_pt" : [0, 500, 2, true, null],
-        "jet_lead_dxy" : [0.0, 30.0, 5, true, null],
-        "jet_lead_dxysig" : [0.0, 500.0, 3, true, null],
-        "jet_lead_maxdxy" : [0.0, 30.0, 5, true, null],
-        "jet_lead_maxdxysig" : [0.0, 500.0, 3, true, null],
-        "jet_lead_dxy_weight" : [0.0, 30.0, 5, true, null],
-        "jet_lead_dxysig_weight" : [0.0, 500.0, 3, true, null],
-        "jet_lead_score" : [0.0, 1.00, 3, true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
-        "jet_sublead_eta" : [-2.1, 2.1, 1, true, null],
-        "jet_sublead_pt" : [0, 500, 2, true, null],
-        "jet_sublead_dxy" : [0.0, 30.0, 5, true, null],
-        "jet_sublead_dxysig" : [0.0, 500.0, 3, true, null],
-        "jet_sublead_dxy_weight" : [0.0, 30.0, 5, true, null],
-        "jet_sublead_maxdxy" : [0.0, 30.0, 5, true, null],
-        "jet_sublead_maxdxysig" : [0.0, 500.0, 3, true, null],
-        "jet_sublead_dxysig_weight" : [0.0, 500.0, 3, true, null],
-        "jet_sublead_score" : [0.0, 1.00, 3, true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
-        "dphi_jet1_jet2" : [-3.15, 3.15, 2, true, null],
-        "max_score" : [0.0, 1.00, 3, true, "$\\mathrm{max prob.}(\\mathrm{jet})$"],
-        "max_score_two_jets" : [0.0, 1.00, 3, true, "$\\mathrm{max prob.}(\\mathrm{jet1,jet2})$"],
+        "jet_lead_eta" : [-2.1, 2.1, 4, true, "$\\eta$(\\mathrm{leading\\_jet})$"],
+        "jet_lead_pt" : [0, 500, 4, true, "$p_T(\\mathrm{leading\\_jet})$ [GeV]"],
+        "jet_lead_dxy" : [0.0, 20.0, 5, true, "$d_{xy}(\\mathrm{leading-jet})$ [cm]"], // "$d_{xy}(\\mathrm{leading-jet})$ [cm]
+        "jet_lead_dz" : [0.0, 20.0, 5, true, "$d_{z}(\\mathrm{leading-jet})$ [cm]",],
+        "jet_lead_dxysig" : [0.0, 500.0,5, true, "$d_{xy}/\\sigma_{d_{xy}}(\\mathrm{leading-jet})$"],
+        "jet_lead_maxdxy" : [0.0, 20.0, 5, true, "leading-jet max $d_{xy}$ [cm]"],
+        "jet_lead_maxdz" : [0.0, 20.0, 5, true, "leading-jet max $d_{z}$ [cm]"],
+        "jet_lead_maxdxysig": [0.0, 500.0, 5, true, "$\\mathrm{leading\\,jet}\\,\\mathrm{max}\\,\\mathrm{d}_{xy}/\\sigma_{d_{xy}}$"],
+        "jet_lead_dxy_weight": [0.0, 20.0, 5, true, "$\\mathrm{leading\\,jet}\\,\\mathrm{d}_{xy}\\,\\mathrm{weight}$ [cm]"],
+        "jet_lead_dxysig_weight": [0.0, 500.0, 5, true, "$\\mathrm{leading\\,jet}\\,\\mathrm{d}_{xy}/\\sigma_{d_{xy}}\\,\\mathrm{weight}$"],
+        "jet_lead_score": [0.0, 1.00, 3, true, "leading jet disTau_raw_score"],
+        
+        "jet_lead_dz_err": [0.0, 5.0, 2, true, "$\\mathrm{leading\\,jet}\\,\\Delta z\\,\\mathrm{error}$"],
+        "jet_lead_dxy_err": [0.0, 5.0, 2, true, "$\\mathrm{leading\\,jet}\\,d_{xy}\\,\\mathrm{error}$"],
+        "jet_lead_vz": [0, 2.0, 1, true, "$v_z(\\mathrm{leading\\,jet})$"],
+        "jet_lead_vxy": [0, 2.0, 1, true, "$v_{xy}(\\mathrm{leading\\,jet})$"],
+        "jet_lead_frompv": [0, 10.0, 1, true, "$\\mathrm{distance\\,from\\,PV}(\\mathrm{leading\\,jet})$"],
+        "jet_lead_lostInnerHits": [-1, 5.0, 1, true, "$\\mathrm{lost\\,inner\\,hits}(\\mathrm{leading\\,jet})$"],
+        "jet_lead_deta": [-0.5, 0.5, 2, true, "$\\Delta\\eta(\\mathrm{leading\\,jet})$"],
+        "jet_lead_dphi": [-0.5, 0.5, 2, true, "$\\Delta\\phi(\\mathrm{leading\\,jet})$"],
+        "jet_lead_nconst": [0, 100, 1, true, "$\\mathrm{number\\,of\\,constituents}(\\mathrm{leading\\,jet})$"],
+        "jet_lead_nSV": [0, 10, 1, true, "$\\mathrm{number\\,of\\,secondary\\,vertices}(\\mathrm{leading\\,jet})$"],
+
+        "jet_lead_btagCSVV2": [0.0, 1.0, 1, true, "pfCombinedInclusiveSecondaryVertexV2 b-tag discriminator (aka CSVV2)"],
+        "jet_lead_btagDeepB": [0.0, 1.0, 1, true, "DeepCSV b+bb tag discriminator"],
+        "jet_lead_btagDeepCvB": [0.0, 1.0, 1, true, "DeepCSV c vs b+bb discriminator"],
+        "jet_lead_btagDeepCvL": [0.0, 1.0, 1, true, "DeepCSV c vs udsg discriminator"],
+        "jet_lead_btagDeepFlavB": [0.0, 1.0, 1, true, "DeepJet b+bb+lepb tag discriminator"],
+        "jet_lead_btagDeepFlavCvB": [0.0, 1.0, 1, true, "DeepJet c vs b+bb+lepb discriminator"],
+        "jet_lead_btagDeepFlavCvL": [0.0, 1.0, 1, true, "DeepJet c vs uds+g discriminator"],
+        "jet_lead_btagDeepFlavQG": [0.0, 1.0, 1, true, "DeepJet g vs uds discriminator"],
+
+        "jet_sublead_eta": [-2.1, 2.1, 4, true, "$\\eta(\\mathrm{subleading\\_jet})$"],
+        "jet_sublead_pt": [0, 500, 4, true, "$p_T(\\mathrm{subleading\\_jet})$ [GeV]"],
+        "jet_sublead_dxy": [0.0, 20.0, 5, true, "$d_{xy}(\\mathrm{subleading\\,jet})\\,[\\mathrm{cm}]$"],
+        "jet_sublead_dz": [0.0, 20.0, 5, true, "$d_{z}(\\mathrm{subleading\\,jet})\\,[\\mathrm{cm}]$"],
+        "jet_sublead_dxysig": [0.0, 500.0, 5, true, "$d_{xy}/\\sigma_{d_{xy}}(\\mathrm{subleading\\,jet})$"],
+        "jet_sublead_dxy_weight": [0.0, 20.0, 5, true, "$\\mathrm{subleading\\,jet}\\,d_{xy}\\,\\mathrm{weight}\\,[\\mathrm{cm}]$"],
+        "jet_sublead_maxdxy": [0.0, 20.0, 5, true, "$\\mathrm{subleading\\,jet}\\,\\mathrm{max}\\,d_{xy}\\,[\\mathrm{cm}]$"],
+        "jet_sublead_maxdz": [0.0, 20.0, 5, true, "$\\mathrm{subleading\\,jet}\\,\\mathrm{max}\\,d_{z}\\,[\\mathrm{cm}]$"],
+        "jet_sublead_maxdxysig": [0.0, 500.0, 5, true, "$\\mathrm{subleading\\,jet}\\,\\mathrm{max}\\,d_{xy}/\\sigma_{d_{xy}}$"],
+        "jet_sublead_dxysig_weight": [0.0, 500.0, 5, true, "$\\mathrm{subleading\\,jet}\\,d_{xy}/\\sigma_{d_{xy}}\\,\\mathrm{weight}$"],
+        "jet_sublead_score": [0.0, 1.00, 3, true, "subleading jet disTau_raw_score"],
+        "jet_sublead_nSV": [0, 10, 1, true, "$\\mathrm{number\\,of\\,secondary\\,vertices}(\\mathrm{subleading_jet})$"],
+
+        "dphi_jet1_jet2": [-3.15, 3.15, 2, true, "$\\Delta\\phi(\\mathrm{jet1,\\,jet2})$"],
+        "max_score": [0.0, 1.00, 3, true, "$\\mathrm{max\\,prob.}(\\mathrm{jets})$"],
+        "max_score_two_jets": [0.0, 1.00, 3, true, "$\\mathrm{max\\,prob.}(\\mathrm{jet1,\\,jet2})$"],
+        // "jet_lead_score" : [0.0, 1.01, [0.0, 0.02, 0.05, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
+        // "jet_sublead_score" : [0.0, 1.01, [0.0, 0.02, 0.05, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
     },
     "prediction_hist" : {
         "plot_unblind" : true,

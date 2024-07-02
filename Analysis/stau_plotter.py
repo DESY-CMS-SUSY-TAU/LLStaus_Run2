@@ -86,8 +86,8 @@ if "1D-QCD-prediction" in args.mode:
                     # 2D histogram will be filtered out (labeled by TH2)
                     if re.search(".*_TH2", keys[1]):
                         continue
-                    if keys[1] in config["mask_hists"]:
-                        continue
+                    # if keys[1] in config["mask_hists"]:
+                    #     continue
                     histfiles.append(os.path.join(dirname, histfile))
                     histnames.append(keys[1])
         else:

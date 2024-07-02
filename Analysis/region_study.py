@@ -20,7 +20,7 @@ ROOT.gROOT.SetBatch(True)
 import numpy as np
 
 import utils.utils as utils
-# import utils.geometry_utils as geometry_utils_jit
+import utils.geometry_utils as geometry_utils_jit
 import utils.geometry_utils
 
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
@@ -93,15 +93,15 @@ class JetdR2D(object):
         # objects["dRTauSTau"] = objects["genSUSYTaus"].delta_r(objects["genTau"])
         objects["dR_STau_Tau"] = objects["genSUSYTaus"].nearest(objects["genTau"], return_metric=True, threshold=None)[1]
         objects["dR_STau_Jet"] = objects["genSUSYTaus"].nearest(objects["jets"], 
-            #metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2),
+            # return_metric=True, metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2))[1]
             return_metric=True, threshold=None)[1]
         
         objects['dR_STau_lostTrack'] = objects["genSUSYTaus"].nearest(events.LostTrack, return_metric=True, threshold=None)[1]
         objects['dR_STau_pfCand'] = objects["genSUSYTaus"].nearest(events.PFCandidate, return_metric=True, threshold=None)[1]
 
         objects["dR_Tau_STau"] = objects["genTau"].nearest(objects["genSUSYTaus"], return_metric=True, threshold=None)[1]
-        objects["dR_Tau_Jet"]  = objects["genTau"].nearest(objects["jets"], 
-            #metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2),
+        objects["dR_Tau_Jet"]  = objects["genTau"].nearest(objects["jets"],
+            # return_metric=True, metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2))[1]
             return_metric=True, threshold=None)[1]
 
         objects["dR_STau_Tau"] = ak.flatten(objects["dR_STau_Tau"])
@@ -260,16 +260,22 @@ class EfficiencyStudy(object):
         hpsTaus = objects["genTau"].nearest(objects["hpsTaus"], return_metric=False, threshold=0.4)
         objects["match_genTau_to_recoTau"] = objects["genTau"][(~ak.is_none(hpsTaus.energy,-1))]
 
+        # make sure that the genTau is matched to the reco tau within pt resolution
+
         out["gen_tau_pt"].fill(
             dataset = events.metadata["dataset"],
             gen_tau_pt = stand_arr( objects["genTau"].pt ),
             Lxy = stand_arr( objects["genTau"].transverse_length ),
             )
-        
+
+        # hpsTaus_near = hpsTaus[(~ak.is_none(hpsTaus.energy,-1))]
+        # match_genTau_to_recoTau_pt_match = objects["match_genTau_to_recoTau"][ abs(objects["match_genTau_to_recoTau"].pt - hpsTaus_near.pt) < 0.1*objects["match_genTau_to_recoTau"].pt ]
         out["gen_tau_pt_reco"].fill(
             dataset = events.metadata["dataset"],
             gen_tau_pt = stand_arr( objects["match_genTau_to_recoTau"].pt ),
             Lxy = stand_arr( objects["match_genTau_to_recoTau"].transverse_length )
+            # gen_tau_pt = stand_arr( match_genTau_to_recoTau_pt_match.pt ),
+            # Lxy = stand_arr( match_genTau_to_recoTau_pt_match.transverse_length )
             )
         
         genJets = objects["genTau"].nearest(objects["genJets"], return_metric=False, threshold=0.4)
@@ -488,7 +494,7 @@ class JetMatching(coffea.processor.ProcessorABC):
         events[self.collections.GenVisTaus.name, "vertexX"] = events.GenPart.vertexX[events[self.collections.GenVisTaus.name].genPartIdxMother]
         events[self.collections.GenVisTaus.name, "vertexY"] = events.GenPart.vertexY[events[self.collections.GenVisTaus.name].genPartIdxMother]
         events[self.collections.GenVisTaus.name, "vertexZ"] = events.GenPart.vertexZ[events[self.collections.GenVisTaus.name].genPartIdxMother]
-
+        events[self.collections.GenVisTaus.name, "vertexRho"] = events.GenPart.vertexRho[events[self.collections.GenVisTaus.name].genPartIdxMother]
         # First way of finding pairs
         # objects["genTau"] = events.GenVisTau[
         #     abs(events.GenVisTau.parent.parent.parent.pdgId) == 1000015
@@ -698,6 +704,26 @@ def regionStudy(cfg: DictConfig) -> None:
                     legendheightscale = 1.0,
                     lumiText = "2018 (13 TeV)"
                 )
+
+
+            # Do the dR_STau_pfCand vs Lxy 2D plot inclusive for Lxy
+            # hists["dR_STau_pfCand"] = coffea.hist.Hist(
+            #     "Events",
+            #     coffea.hist.Cat("dataset", "Dataset"),
+            #     coffea.hist.Bin("dR_STau_Jet", "dR(STau,Jet)", *setups.dR_bins),
+            #     coffea.hist.Bin("dR_STau_pfCand","dR(STau,pfCand)", *setups.dR_bins),
+            #     coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+            #     # coffea.hist.Bin("Lxy","Lxy", setups["rho_bins"])
+            # )
+            dR_STau_pfCand = result_JetMatching["dR_STau_pfCand"].integrate("dataset",dataset).integrate("dR_STau_Jet")
+            ax = coffea.hist.plot2d(dR_STau_pfCand, xaxis='Lxy', patch_opts={"norm":colors.LogNorm()})
+            ax.set_title(f'dR(Tau, pfCand)')
+            ax.figure.set_dpi(72)
+            ax.figure.tight_layout()
+            ax.figure.savefig(path_pfCand+f'/LxyInclusive_dR_STau_pfCand_dataset_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png')
+            # ax.figure.savefig(path_pfCand+f'/dR_STau_pfCand_dataset_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.pdf')
+            matplotlib.pyplot.close(ax.figure)
+
                 
 
     if 'efficiency_study' in cfg.mode:
@@ -882,76 +908,80 @@ def regionStudy(cfg: DictConfig) -> None:
             hist_gen_jet_pt_ratio.SetLineWidth(3)
             hist_gen_jet_pt_ratio.SetMarkerColor(2)
             hist_gen_jet_pt_ratio.SetMarkerSize(0)
-            hist_gen_jet_pt_ratio.SetTitle("gen-jet / gen-tau")
+            hist_gen_jet_pt_ratio.SetTitle("generator-jet / generator-tau")
 
             hist_gen_jet_pt_reco_ratio.SetLineColor(8)
             hist_gen_jet_pt_reco_ratio.SetLineWidth(3)
             hist_gen_jet_pt_reco_ratio.SetMarkerColor(3)
             hist_gen_jet_pt_reco_ratio.SetMarkerSize(0)
-            hist_gen_jet_pt_reco_ratio.SetTitle("reco-jet / gen-tau")
+            hist_gen_jet_pt_reco_ratio.SetTitle("reconstructed-jet (AK4) / generator-tau")
             
             hist_gen_tau_pt_reco_ratio.SetLineColor(46)
             hist_gen_tau_pt_reco_ratio.SetLineWidth(3)
             hist_gen_tau_pt_reco_ratio.SetMarkerColor(3)
             hist_gen_tau_pt_reco_ratio.SetMarkerSize(0)
-            hist_gen_tau_pt_reco_ratio.SetTitle("reco-tau / gen-tau")
+            hist_gen_tau_pt_reco_ratio.SetTitle("reconstructed-tau (HPS) / generator-tau")
             
             hist_gen_jet_pt_id_ratio.SetLineColor(9)
             hist_gen_jet_pt_id_ratio.SetLineWidth(3)
             hist_gen_jet_pt_id_ratio.SetMarkerColor(2)
             hist_gen_jet_pt_id_ratio.SetMarkerSize(0)
-            hist_gen_jet_pt_id_ratio.SetTitle("id-jet / reco-jet")
+            hist_gen_jet_pt_id_ratio.SetTitle("identified-jet / reconstructed-jet")
             
-            outfile = path_jet+f'/ratio_Lxy_{dataset}.pdf'
-            
+            outfile = path_jet+f'/ratio_Lxy_{dataset}.png'
+            xmin,xmax = cfg.eff_setups.Lxy_bins[1],cfg.eff_setups.Lxy_bins[-1]
+            # print("ranges", xmin, xmax)
             utils.utils.root_plot1D(
                 # l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
                 l_hist = [hist_gen_jet_pt_id_ratio, hist_gen_jet_pt_reco_ratio],
                 outfile = outfile,
-                xrange = [0.0001, 110],
+                xrange = [xmin,xmax],
                 yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.5*hist_gen_jet_pt_ratio.GetMaximum()),
                 logx = True, logy = False,
                 ytitle = "Efficiency",
-                xtitle = "L_{xy} of #tau_{vtx} cm",
+                xtitle = "generator-level L_{xy} of #tau_{h} [cm]",
                 centertitlex = True, centertitley = True,
                 centerlabelx = False, centerlabely = False,
                 gridx = True, gridy = True,
                 ndivisionsx = None,
                 stackdrawopt = "Enostack",
                 legendpos = "UL",
-                legendtitle = f"",
+                # legendtitle = f"",
                 legendncol = 1,
                 legendtextsize = 0.04,
                 legendwidthscale = 1.0,
                 legendheightscale = 1.0,
-                CMSextraText = "Simulation",
-                lumiText = dataset
+                lumiText = "(13 TeV)",
+                legendtitle = dataset,
+                CMSextraText = "Simulation Preliminary",
+                # lumiText = dataset
             )
             
-            outfile = path_jet+f'/ratio_withTau_Lxy_{dataset}.pdf'
-            
+            outfile = path_jet+f'/ratio_withTau_Lxy_{dataset}.png'
             utils.utils.root_plot1D(
                 # l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
                 l_hist = [hist_gen_tau_pt_reco_ratio, hist_gen_jet_pt_reco_ratio],
                 outfile = outfile,
-                xrange = [0.0001, 110],
+                xrange = [xmin,xmax],
                 yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.5*hist_gen_jet_pt_ratio.GetMaximum()),
                 logx = True, logy = False,
                 ytitle = "Efficiency",
-                xtitle = "L_{xy} of #tau_{vtx} cm",
+                xtitle = "generator-level L_{xy} of #tau_{h} [cm]",
                 centertitlex = True, centertitley = True,
                 centerlabelx = False, centerlabely = False,
                 gridx = True, gridy = True,
                 ndivisionsx = None,
                 stackdrawopt = "Enostack",
                 legendpos = "UL",
-                legendtitle = f"",
+                # legendtitle = f"",
                 legendncol = 1,
                 legendtextsize = 0.04,
                 legendwidthscale = 1.0,
                 legendheightscale = 1.0,
-                CMSextraText = "Simulation",
-                lumiText = dataset
+                lumiText = "(13 TeV)",
+                legendtitle = dataset,
+                CMSextraText = "Simulation Preliminary",
+                # lumiText = dataset
             )
 
 

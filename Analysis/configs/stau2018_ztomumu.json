@@ -12,6 +12,71 @@
     "luminosity": 59.74,
     "crosssections": "$CONFDIR/crosssections.json",
     "apply_met_filters": true,
+    "column_output_format" : "root",
+    // "eventdir" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_3/output_zmumu_saved_events_v24/",
+    "columns_to_save": [
+        [
+            "Jet_obj1",
+            [
+                "pt",
+                "eta",
+                "phi",
+                "mass",
+                "dxy",
+                "dz",
+                "maxdz",
+                "dxysig",
+                "maxdxy",
+                "maxdxysig",
+                "dxy_weight",
+                "dxysig_weight",
+                "disTauTag_score1",
+                "dz_err",
+                "dxy_err",
+                "vz",
+                "vxy",
+                "fromPV",
+                "lostInnerHits",
+                "nConstituents",
+                "deta",
+                "dphi",
+                "partonFlavour",
+                "hadronFlavour"
+            ]
+        ],
+        [
+            "Jet_obj2",
+            [
+                "pt",
+                "eta",
+                "phi",
+                "mass",
+                "dxy",
+                "dz",
+                "maxdz",
+                "dxysig",
+                "maxdxy",
+                "maxdxysig",
+                "dxy_weight",
+                "dxysig_weight",
+                "disTauTag_score1",
+                "dz_err",
+                "dxy_err",
+                "vz",
+                "vxy",
+                "fromPV",
+                "lostInnerHits",
+                "nConstituents",
+                "deta",
+                "dphi",
+                "partonFlavour",
+                "hadronFlavour"
+            ],
+        ],
+        [
+            "sum_mumu", ["mass", "pt", "eta", "phi"]
+        ]
+    ],
     "exp_datasets": {
         "SingleMuon": [
             "$STOREDIR/SingleMuon/crab_SingleMuon_2018A_UL/230609_094540/*/*.root",
@@ -32,23 +97,18 @@
         "WZ_TuneCP5_13TeV-pythia8": ["$STOREDIR/WZ_TuneCP5_13TeV-pythia8/crab_WZ/240508_150633/*/*.root",],
         "ZZ_TuneCP5_13TeV-pythia8": ["$STOREDIR/ZZ_TuneCP5_13TeV-pythia8/crab_ZZ/240508_150624/*/*.root",],
 
-
         "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8": [ "$STOREDIR/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-10to50/230511_172527/*/*.root", ],
         "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50/230311_122118/*/*.root", ],
         "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DY1JetsToLL_M-50_MatchEWPDG20/230616_100834/*/*.root" ],
         "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DY2JetsToLL_M-50_MatchEWPDG20/230616_100840/*/*.root" ],
         "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DY3JetsToLL_M-50_MatchEWPDG20/230616_100846/*/*.root" ],
         "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DY4JetsToLL_M-50_MatchEWPDG20/230616_100852/*/*.root" ],
-
-        // "GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8" : [ "$STOREDIR/GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8/crab_GluGluToContinToZZTo2e2tau/230311_174228/*/*.root", ],
-        // "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8" : [ "$STOREDIR/GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8/crab_GluGluToContinToZZTo2mu2tau/230311_174235/*/*.root", ],
-        // "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8" : [ "$STOREDIR/GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8/crab_GluGluToContinToZZTo4tau/230311_174241/*/*.root", ],
         
         "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_ST_tW_antitop_5f_inclusiveDecays/230311_153850/*/*.root", ],
         "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_ST_tW_top_5f_inclusiveDecays/230311_153856/*/*.root", ],
         "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [ "$STOREDIR/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/crab_ST_t-channel_antitop_4f_InclusiveDecays_incl/230311_153838/*/*.root", ],
         "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [ "$STOREDIR/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/crab_ST_t-channel_top_4f_InclusiveDecays_incl/230311_153845/*/*.root", ],
-         
+        
         "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/crab_TTTo2L2Nu/230311_084405/*/*.root", ],
         "TTToHadronic_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/crab_TTToHadronic/230311_084410/*/*.root", ],
         "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/crab_TTToSemiLeptonic/230311_084416/*/*.root", ],
@@ -64,6 +124,12 @@
         "WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/crab_WGToLNuG/230311_174132/*/*.root", ],
         
         "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_WJetsToLNu/230311_122159/*/*.root", ],
+
+        // Old filles, not used anymore (but kept for reference)
+
+        // "GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8" : [ "$STOREDIR/GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8/crab_GluGluToContinToZZTo2e2tau/230311_174228/*/*.root", ],
+        // "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8" : [ "$STOREDIR/GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8/crab_GluGluToContinToZZTo2mu2tau/230311_174235/*/*.root", ],
+        // "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8" : [ "$STOREDIR/GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8/crab_GluGluToContinToZZTo4tau/230311_174241/*/*.root", ],
 
         // "WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8" : [ "$STOREDIR/WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_WWTo1L1Nu2Q/230311_153937/*/*.root", ],
         // "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8" : [ "$STOREDIR/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/crab_WWW/230311_154025/*/*.root", ],
@@ -155,7 +221,7 @@
     // PFIso ID from miniAOD selector (1=PFIsoVeryLoose, 2=PFIsoLoose, 3=PFIsoMedium, 4=PFIsoTight, 5=PFIsoVeryTight, 6=PFIsoVeryVeryTight)
     // "muon_pfIsoId"  : 4, // tight: >= 4
     "muon_pfIso"      : 0.15,
-    "muon_pfIso_anti" : 0.5,
+    "muon_pfIso_anti" : 0.6,
     // "muon_absdxy"   : 0.2,
     // "muon_absdz"    : 0.5,
     "muon_absdxy"   : 0.045,
@@ -184,6 +250,8 @@
     "jet_jetId"    :  2, // jetId>=6 pass lepton veto and tight id, jetId>=2 pass tight id
     "dphi_j1j2"    :  0.5,
     "jet_dxy_min"  :  0.0, // to test MC/Data modeling
+    "jet_maxdz_max" : 20,
+    "jet_maxdxy_max"  :  10,
 
     // Basic jet selection (before selected Jet is called)
     "good_jet_id": "cut:tight",
@@ -217,4 +285,10 @@
     "tight_thr" : 0.9900,
 
     "hists": "$CONFDIR/stau2018_ztomumu_hist.json",
+
+    "cuts_to_histogram" : [
+        "has_more_one_jets",
+        "after_jet_def",
+        "dphi_min_cut"
+    ]
 }

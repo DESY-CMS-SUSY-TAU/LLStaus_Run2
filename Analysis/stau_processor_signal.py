@@ -131,7 +131,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
 
-        selector.add_cut("after_define_dxy", lambda data: np.ones(len(data)))
+        selector.add_cut("after_define_dxy",
+                         lambda data: ak.Array(np.ones(len(data)))
+                         )
         selector.add_cut("two_loose_jets", self.has_two_jets)
         # selector.add_cut("has_small_dxy", self.has_small_dxy)
         # selector.add_cut("b_tagged_jet_cut", self.b_tagged_jet_cut)
@@ -156,7 +158,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         # before cuts on the number of the jets
         selector.set_multiple_columns(self.set_njets_pass)
         # selector.set_multiple_columns(self.set_njets_pass_finebin)
-        if self.config["predict_yield"] and not is_mc:
+        # if self.config["predict_yield"] and not is_mc:
+        if self.config["predict_yield"]:
             selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
         
         # Jets that match to tau
@@ -166,7 +169,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         # selector.set_column("Jet_select_flav", self.jet_updated_flavour)
         
         # Selection of the jet is performed only for two leading jets:
-        selector.add_cut("two_loose_jets_final", lambda data: np.ones(len(data)))
+        selector.add_cut("two_loose_jets_final",
+                         lambda data: ak.Array(np.ones(len(data)))
+                         )
         
         # Prediction should be done in following state <->
         
@@ -175,10 +180,10 @@ class Processor(pepper.ProcessorBasicPhysics):
         # selector.add_cut("two_loose_jets_final2", self.has_two_jets)
         # selector.set_cat("control_region", {"RT0", "RT1", "RT2"})
         # selector.set_multiple_columns(partial(self.categories_bins))
-        selector.add_cut("two_loose_jets_final3", self.has_two_jets)
         
-        selector.set_column("Jet_select", self.gettight_jets)
-        selector.add_cut("two_tight_jets", self.has_two_jets)       
+        # selector.add_cut("two_loose_jets_final3", self.has_two_jets)
+        # selector.set_column("Jet_select", self.gettight_jets)
+        # selector.add_cut("two_tight_jets", self.has_two_jets)       
         
         # # 1. Leading jet is selected by pt
         # selector.add_cut("point", self.b_tagged_jet_cut) # dummy cut to make sure correct Jet_select is used

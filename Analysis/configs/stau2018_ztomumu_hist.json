@@ -603,6 +603,42 @@
             ]
         }
     },
+    "jet_lead_dz" : {
+        "bins": [
+            {
+                "name": "jet_dz",
+                "label": "Jet dz",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 20,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dz": [
+                "Jet_obj1",
+                "dz"
+            ]
+        }
+    },
+    "jet_lead_maxdz" : {
+        "bins": [
+            {
+                "name": "jet_dz",
+                "label": "Jet dz",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 20,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dz": [
+                "Jet_obj1",
+                "maxdz"
+            ]
+        }
+    },
     "jet_lead_dxysig" : {
         "bins": [
             {
@@ -729,6 +765,348 @@
             ]
         }
     },
+    "jet_lead_dz_err" : {
+        "bins": [
+            {
+                "name": "jet_dz_err",
+                "label": "Jet dz error",
+                "n_or_arr": 100,
+                "lo": 0.0,
+                "hi": 10,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dz_err": [
+                "Jet_obj1",
+                "dz_err"
+            ]
+        }
+    },
+    "jet_lead_dxy_err" : {
+        "bins": [
+            {
+                "name": "jet_dz_err",
+                "label": "Jet dz error",
+                "n_or_arr": 100,
+                "lo": 0.0,
+                "hi": 10,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dz_err": [
+                "Jet_obj1",
+                "dxy_err"
+            ]
+        }
+    },
+    "jet_lead_vz" : {
+        "bins": [
+            {
+                "name": "jet_vz",
+                "label": "Jet vz",
+                "n_or_arr": 100,
+                "lo": 0.0,
+                "hi": 5,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_vz": [
+                "Jet_obj1",
+                "vz"
+            ]
+        }
+    },
+    "jet_lead_vxy" : {
+        "bins": [
+            {
+                "name": "jet_vxy",
+                "label": "Jet vxy",
+                "n_or_arr": 100,
+                "lo": 0.0,
+                "hi": 5,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_vxy": [
+                "Jet_obj1",
+                "vxy"
+            ]
+        }
+    },
+    "jet_lead_frompv" : {
+        "bins": [
+            {
+                "name": "frompv",
+                "label": "Jet vxy",
+                "n_or_arr": 20,
+                "lo": 0.0,
+                "hi": 20,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "frompv": [
+                "Jet_obj1",
+                "fromPV"
+            ]
+        }
+    },
+    "jet_lead_lostInnerHits" : {
+        "bins": [
+            {
+                "name": "lostInnerHits",
+                "label": "Jet lostInnerHits",
+                "n_or_arr": 11,
+                "lo": -1,
+                "hi": 10,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "lostInnerHits": [
+                "Jet_obj1",
+                "lostInnerHits"
+            ]
+        }
+    },
+    "jet_lead_nconst" : {
+        "bins": [
+            {
+                "name": "nconst",
+                "label": "Jet n-constituents",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 100,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "nconst": [
+                "Jet_obj1",
+                "nConstituents"
+            ]
+        }
+    },
+    "jet_lead_deta" : {
+        "bins": [
+            {
+                "name": "deta",
+                "label": "Jet deta",
+                "n_or_arr": 100,
+                "lo": -1.0,
+                "hi": 1.0,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "deta": [
+                "Jet_obj1",
+                "deta"
+            ]
+        }
+    },
+    "jet_lead_dphi" : {
+        "bins": [
+            {
+                "name": "dphi",
+                "label": "Jet dphi",
+                "n_or_arr": 100,
+                "lo": -1.0,
+                "hi": 1.0,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "dphi": [
+                "Jet_obj1",
+                "dphi"
+            ]
+        }
+    },
+    "jet_lead_partonFlav" : {
+        "bins": [
+            {
+                "name": "flav",
+                "label": "flavour from parton matching",
+                "n_or_arr": 31,
+                "lo": -1.0,
+                "hi": 30.0,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "flav": [
+                "Jet_obj1",
+                "partonFlavour"
+            ]
+        }
+    },
+    "jet_lead_nSV" : {
+        "bins": [
+            {
+                "name": "nSV",
+                "label": "number of secondary vertices",
+                "n_or_arr": 10,
+                "lo": 0,
+                "hi": 10,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "nSV": [
+                "Jet_obj1",
+                "nSVs"
+            ]
+        }
+    },
+"jet_lead_btagCSVV2": {
+    "bins": [
+        {
+            "name": "btagCSVV2",
+            "label": "pfCombinedInclusiveSecondaryVertexV2 b-tag discriminator (aka CSVV2)",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 1.0,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "btagCSVV2": [
+            "Jet_obj1",
+            "btagCSVV2"
+        ]
+    }
+},
+"jet_lead_btagDeepB": {
+    "bins": [
+        {
+            "name": "btagDeepB",
+            "label": "DeepCSV b+bb tag discriminator",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 1.0,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "btagDeepB": [
+            "Jet_obj1",
+            "btagDeepB"
+        ]
+    }
+},
+"jet_lead_btagDeepCvB": {
+    "bins": [
+        {
+            "name": "btagDeepCvB",
+            "label": "DeepCSV c vs b+bb discriminator",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 1.0,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "btagDeepCvB": [
+            "Jet_obj1",
+            "btagDeepCvB"
+        ]
+    }
+},
+"jet_lead_btagDeepCvL": {
+    "bins": [
+        {
+            "name": "btagDeepCvL",
+            "label": "DeepCSV c vs udsg discriminator",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 1.0,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "btagDeepCvL": [
+            "Jet_obj1",
+            "btagDeepCvL"
+        ]
+    }
+},
+"jet_lead_btagDeepFlavB": {
+    "bins": [
+        {
+            "name": "btagDeepFlavB",
+            "label": "DeepJet b+bb+lepb tag discriminator",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 1.0,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "btagDeepFlavB": [
+            "Jet_obj1",
+            "btagDeepFlavB"
+        ]
+    }
+},
+"jet_lead_btagDeepFlavCvB": {
+    "bins": [
+        {
+            "name": "btagDeepFlavCvB",
+            "label": "DeepJet c vs b+bb+lepb discriminator",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 1.0,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "btagDeepFlavCvB": [
+            "Jet_obj1",
+            "btagDeepFlavCvB"
+        ]
+    }
+},
+"jet_lead_btagDeepFlavCvL": {
+    "bins": [
+        {
+            "name": "btagDeepFlavCvL",
+            "label": "DeepJet c vs uds+g discriminator",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 1.0,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "btagDeepFlavCvL": [
+            "Jet_obj1",
+            "btagDeepFlavCvL"
+        ]
+    }
+},
+"jet_lead_btagDeepFlavQG": {
+    "bins": [
+        {
+            "name": "btagDeepFlavQG",
+            "label": "DeepJet g vs uds discriminator",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 1.0,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "btagDeepFlavQG": [
+            "Jet_obj1",
+            "btagDeepFlavQG"
+        ]
+    }
+},
     // "jet_lead_score_dxy" : {
     //     "bins": [
     //         {
@@ -933,6 +1311,42 @@
             ]
         }
     },
+    "jet_sublead_dz" : {
+        "bins": [
+            {
+                "name": "jet_dz",
+                "label": "Jet dz",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 20,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dz": [
+                "Jet_obj2",
+                "dz"
+            ]
+        }
+    },
+    "jet_sublead_maxdz" : {
+        "bins": [
+            {
+                "name": "jet_dz",
+                "label": "Jet dz",
+                "n_or_arr": 200,
+                "lo": 0.0,
+                "hi": 20,
+                "unit": "cm"
+            }
+        ],
+        "fill": {
+            "jet_dz": [
+                "Jet_obj2",
+                "maxdz"
+            ]
+        }
+    },
     "jet_sublead_dxysig" : {
         "bins": [
             {
@@ -1038,6 +1452,24 @@
             "jet_score": [
                 "Jet_obj2",
                 "disTauTag_score1"
+            ]
+        }
+    },
+    "jet_sublead_nSV" : {
+        "bins": [
+            {
+                "name": "nSV",
+                "label": "number of secondary vertices",
+                "n_or_arr": 10,
+                "lo": 0,
+                "hi": 10,
+                "unit": ""
+            }
+        ],
+        "fill": {
+            "nSV": [
+                "Jet_obj2",
+                "nSVs"
             ]
         }
     },

@@ -47,7 +47,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         if "muon_sf" not in config or len(config["muon_sf"]) == 0:
             logger.warning("No muon scale factors specified")
 
-        if "muon_sf_trigger" not in config or\
+        if "muon_sf_trigger" not in config or \
             len(config["muon_sf_trigger"]) == 0:
             logger.warning("No single muon trigger scale factors specified")
         
@@ -172,15 +172,18 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         # selector.set_column("Jet_select", self.jet_selection)
         selector.set_column("Jet_select", selector.data["Jet"])
-        selector.set_column("Jet_select_b_jet", self.b_tagged_jet)
         selector.set_column("PfCands", self.pfcand_valid)
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
-        
+        selector.set_column("Jet_select_b_jet", self.b_tagged_jet)
+
+        selector.add_cut("no_btag_jet", lambda data: ak.num(data["Jet_select_b_jet"]) == 0 if len(data) > 0 else ak.Array([]))
+        selector.add_cut("has_more_one_jets", self.has_more_one_jets)
+        selector.set_column("Jet_obj1", partial(self.leading_jet, order=0))
+
         selector.add_cut("has_more_two_jets", self.has_more_two_jets)
         selector.set_column("Jet_obj1", partial(self.leading_jet, order=0))
         selector.set_column("Jet_obj2", partial(self.leading_jet, order=1))
-
         selector.add_cut("after_jet_def", lambda data: ak.Array(np.ones(len(data))))
 
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
@@ -192,8 +195,12 @@ class Processor(pepper.ProcessorBasicPhysics):
         #         if len(data) > 0 else ak.Array([]))
         
         selector.add_cut("dphi_min_cut", lambda data: np.abs(data["dphi_jet1_jet2"]) > 0.5 if len(data) > 0 else ak.Array([]))
-        selector.add_cut("has_two_jets", self.has_two_jets)
+        # selector.add_cut("has_two_jets", self.has_two_jets)
+        
         # selector.add_cut("pt_mumu_cut", lambda data: data["sum_mumu"].pt > 30 if len(data) > 0 else ak.Array([]))
+
+        # here we are saving Jet_obj1
+        # self.save_per_event_info(dsname, selector, False)
         
         return
         ''' This part is for definition of signal region
@@ -314,6 +321,14 @@ class Processor(pepper.ProcessorBasicPhysics):
         d[indx_neg] += np.pi*2
         return d
     
+    # def delta_phi_ak(self, phi1, phi2):
+    #     d = phi1 - phi2
+    #     indx_pos = d>np.pi
+    #     d[indx_pos] -= np.pi*2
+    #     indx_neg = d<=-np.pi
+    #     d[indx_neg] += np.pi*2
+    #     return d
+
     @zero_handler
     def mt_jets(self, data):
         jet1 = data["Jet_select"][:,0]
@@ -375,6 +390,11 @@ class Processor(pepper.ProcessorBasicPhysics):
         return ak.num(jets) >= 2
 
     @zero_handler
+    def has_more_one_jets(self, data):
+        jets = data["Jet_select"]
+        return ak.num(jets) >= 1
+
+    @zero_handler
     def getloose_jets(self, data):
         jets = data["Jet_select"]
         jets = jets[(jets.disTauTag_score1 >= self.config["loose_thr"])]
@@ -404,7 +424,6 @@ class Processor(pepper.ProcessorBasicPhysics):
             & (muons.eta < self.config["muon_eta_max"])
             & (muons.eta > self.config["muon_eta_min"])
             & (muons[self.config["muon_ID"]] == 1)
-            # & (muons.pfIsoId >= self.config["muon_pfIsoId"])
             & (muons.pfRelIso04_all <= self.config["muon_pfIso_anti"])
             & (abs(muons.dxy) <= self.config["muon_absdxy"])
             & (abs(muons.dz) <= self.config["muon_absdz"])
@@ -491,18 +510,23 @@ class Processor(pepper.ProcessorBasicPhysics):
             return {"iso": ak.Array([]),
                     "antiiso": ak.Array([])}
         muons = data["Muon_tag"]
-        # iso1 = (muons[:,0].pfRelIso04_all < self.config["muon_pfIso"]) 
-        # iso2 = (muons[:,1].pfRelIso04_all < self.config["muon_pfIso"])
-        # antiiso1 = (muons[:,0].pfRelIso04_all < self.config["muon_pfIso_anti"]) & ~iso1
-        # antiiso2 = (muons[:,1].pfRelIso04_all < self.config["muon_pfIso_anti"]) & ~iso2
-        # iso = iso1 & iso2
-        # antiiso = (iso1 & antiiso2) | (antiiso1 & iso2)
+        
+        iso1 = (muons[:,0].pfRelIso04_all < self.config["muon_pfIso"]) 
+        iso2 = (muons[:,1].pfRelIso04_all < self.config["muon_pfIso"])
+        antiiso1 = (muons[:,0].pfRelIso04_all < self.config["muon_pfIso_anti"]) \
+                & (muons[:,0].pfRelIso04_all > self.config["muon_pfIso"])
+        antiiso2 = (muons[:,1].pfRelIso04_all < self.config["muon_pfIso_anti"]) \
+                & (muons[:,1].pfRelIso04_all > self.config["muon_pfIso"])
+        iso = iso1 & iso2
+        antiiso = antiiso2 | antiiso1 
+        
         # Base isolation only on leading muon
-        iso = (muons[:,0].pfRelIso04_all < self.config["muon_pfIso"]) \
-            & (muons[:,1].pfRelIso04_all < self.config["muon_pfIso"])
-        antiiso = (muons[:,0].pfRelIso04_all > self.config["muon_pfIso"]) \
-            & (muons[:,0].pfRelIso04_all < self.config["muon_pfIso_anti"]) \
-            & (muons[:,1].pfRelIso04_all < self.config["muon_pfIso"])
+        # iso = (muons[:,0].pfRelIso04_all < self.config["muon_pfIso"]) \
+        #     & (muons[:,1].pfRelIso04_all < self.config["muon_pfIso"])
+        # antiiso = (muons[:,0].pfRelIso04_all > self.config["muon_pfIso"]) \
+        #     & (muons[:,0].pfRelIso04_all < self.config["muon_pfIso_anti"]) \
+        #     & (muons[:,1].pfRelIso04_all < self.config["muon_pfIso"])
+            
         return {"iso": iso, "antiiso": antiiso}
             
         
@@ -586,7 +610,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         jets = data["Jet_select"]
         # Jet_btagDeepFlavB satisfies the Medium (>0.2783) WP:
         # https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
-        b_tagged_idx = (jets.btagDeepFlavB > 0.2783)
+        # b_tagged_idx = (jets.btagDeepFlavB > 0.2783)
+        b_tagged_idx = (jets.btagDeepFlavB > 0.0490)
         return jets[b_tagged_idx]
     
     @zero_handler
@@ -619,17 +644,29 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def get_matched_pfCands(self, data, match_object, dR=0.4):
         pfCands = self.match_jet_to_pfcand(data, jet_name=match_object, pf_name="PfCands", dR=dR)
+        
         pfCands_lead = ak.firsts(pfCands, axis=-1)
+    
+        # three leading pf candidate should have fromPV>=2 to be sure jet is from PV(ZtoMuMu)
+        # pfCands_tree_leading = pfCands[:,:,:3]
+        # pfCands_lead["PVpass"] = ak.sum(pfCands_tree_leading.fromPV >= 2, axis=-1) >= 3
+
         pfCands_lead["dxysig"] = pfCands_lead.dxy / pfCands_lead.dxyError
         pfCands_lead["Lrel"] = np.sqrt(pfCands_lead.dxy**2 + pfCands_lead.dz**2)
         pfCands_lead["dxy_weight"] = ak.mean(pfCands.dxy, weight=pfCands.pt, axis=-1)
         pfCands_lead["dxysig_weight"] = ak.mean(pfCands.dxy / pfCands.dxyError, weight=pfCands.pt, axis=-1)
         # Sorting pfCands by dxy within each jet
         sort_indices = ak.argsort(np.abs(pfCands.dxy), axis=-1, ascending=False)
-        sorted_pfCands = pfCands[sort_indices]
-        pfCands_leaddxy = ak.firsts(sorted_pfCands, axis=-1)
+        sorted_dxy_pfCands = pfCands[sort_indices]
+        pfCands_leaddxy = ak.firsts(sorted_dxy_pfCands, axis=-1)
         pfCands_lead["maxdxysig"] = pfCands_leaddxy.dxy / pfCands_leaddxy.dxyError
         pfCands_lead["maxdxy"] = pfCands_leaddxy.dxy
+        # Sorting pfCands by dz within each jet
+        sort_indices = ak.argsort(np.abs(pfCands.dz), axis=-1, ascending=False)
+        sorted_dz_pfCands = pfCands[sort_indices]
+        pfCands_leaddz = ak.firsts(sorted_dz_pfCands, axis=-1)
+        # pfCands_lead["maxdzsig"] = pfCands_leaddz.dz / pfCands_leaddz.dzError
+        pfCands_lead["maxdz"] = pfCands_leaddz.dz
         return pfCands_lead
     
     @zero_handler
@@ -639,6 +676,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         bad_jets = ak.is_none(data["Jet_lead_pfcand"].dxy, axis=-1)
         jets = ak.mask(jets, ~bad_jets) # mask bad jets to keep coorect shape
         jets["dz"] = np.abs(data["Jet_lead_pfcand"].dz)
+        jets["maxdz"] = np.abs(data["Jet_lead_pfcand"].maxdz)
         jets["dxy"] = np.abs(data["Jet_lead_pfcand"].dxy)
         jets["dxy_weight"] = np.abs(data["Jet_lead_pfcand"].dxy_weight)
         jets["dxysig"] = np.abs(data["Jet_lead_pfcand"].dxysig)
@@ -646,8 +684,42 @@ class Processor(pepper.ProcessorBasicPhysics):
         jets["ip3d"] = np.sqrt(data["Jet_lead_pfcand"].dxy**2 + data["Jet_lead_pfcand"].dz**2)
         jets["maxdxy"] = np.abs(data["Jet_lead_pfcand"].maxdxy)
         jets["maxdxysig"] = np.abs(data["Jet_lead_pfcand"].maxdxysig)
-        jets = jets[~bad_jets] # remove bad jets
-        jets = jets[jets.dxy >= self.config["jet_dxy_min"]]
+
+        #### Extra variables for the jet dxy cut study #### begin
+        lead_pf = data["Jet_lead_pfcand"]
+        jets["dz_err"] = np.abs(lead_pf.dzError)
+        jets["dxy_err"] = np.abs(lead_pf.dxyError)
+        jets["vxy"] = np.sqrt(lead_pf.vx**2 + lead_pf.vy**2)
+        jets["vz"] = np.abs(lead_pf.vz)
+        jets["fromPV"] = lead_pf.fromPV
+        # jets["PVpass"] = lead_pf.PVpass
+        jets["lostInnerHits"] = lead_pf.lostInnerHits
+
+        jets["deta"] = jets.eta - lead_pf.eta
+        jets["dphi"] = jets.phi - lead_pf.phi
+
+        # jets = jets[~bad_jets] # remove bad jets
+        # jets = jets[jets.dxy >= self.config["jet_dxy_min"]]
+        # # add restriction on dxy and dz
+        # jets = jets[jets.maxdz <= self.config["jet_maxdz_max"]]
+        # jets = jets[jets.maxdxy <= self.config["jet_maxdxy_max"]]
+        # jets = jets[jets.maxdxy <= self.config["jet_maxdxy_max"]]
+        
+        jets = jets[~bad_jets] 
+        jets = jets[
+                (jets.dxy >= self.config["jet_dxy_min"]) &
+                (jets.maxdz <= self.config["jet_maxdz_max"]) &
+                (jets.maxdxy <= self.config["jet_maxdxy_max"]) &
+                (jets.fromPV >= 3)
+                # (jets.PVpass) &
+                # (jets.nSVs == 0) &
+                # (jets.lostInnerHits <= 0) &
+                # (jets.btagCSVV2 <= 0.2)
+            ]
+        
+        # no secondary vertex in jet
+        # print(jets.nSVs)
+        # jets = jets[jets.nSVs == 0]
         return jets
     
     @zero_handler
