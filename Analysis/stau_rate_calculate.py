@@ -9,60 +9,9 @@ ROOT.gROOT.SetBatch(True)
 
 from pepper import Config
 import utils.utils as utils
+from utils.utils import *
 from utils.hist_rebin import TH3Histogram, th3_to_cumulative
 ROOT.gInterpreter.Declare('#include "utils/histogram2d.cpp"')
-
-def OverflowIntegralTHN(hist_th3):
-    # Calculate integral of all TH3/TH2/TH1 histogram bins including overflow bins
-    Integral = 0
-    if hist_th3.GetDimension() == 1:
-        for i in range(0, hist_th3.GetNbinsX()+2):
-            Integral += hist_th3.GetBinContent(i)
-        return Integral
-    elif hist_th3.GetDimension() == 2:
-        for i in range(0, hist_th3.GetNbinsX()+2):
-            for j in range(0, hist_th3.GetNbinsY()+2):
-                Integral += hist_th3.GetBinContent(i, j)
-        return Integral
-    elif hist_th3.GetDimension() == 3:
-        for i in range(0, hist_th3.GetNbinsX()+2):
-            for j in range(0, hist_th3.GetNbinsY()+2):
-                for k in range(0, hist_th3.GetNbinsZ()+2):
-                    Integral += hist_th3.GetBinContent(i, j, k)
-        return Integral
-    else:
-        raise ValueError("Wrong dimension of histogram")
-
-def duplicate_uf_of_bins(hist_th2, NOF=False, NUF=False):
-    n_bins_x = hist_th2.GetNbinsX()
-    n_bins_y = hist_th2.GetNbinsY()
-    for bin_y in range(1, n_bins_y + 1):
-        # underflow
-        if hist_th2.GetBinContent(0, bin_y) == 0.0 and not NUF:
-            content = hist_th2.GetBinContent(1, bin_y)
-            err = hist_th2.GetBinError(1, bin_y)
-            hist_th2.SetBinContent(0, bin_y, content)
-            hist_th2.SetBinError(0, bin_y, err)
-        # overflow
-        if hist_th2.GetBinContent(n_bins_x+1, bin_y) == 0.0 and not NOF:
-            content = hist_th2.GetBinContent(n_bins_x, bin_y)
-            err = hist_th2.GetBinError(n_bins_x, bin_y)
-            hist_th2.SetBinContent(n_bins_x + 1, bin_y, content)
-            hist_th2.SetBinError(n_bins_x + 1, bin_y, err)
-    for bin_x in range(0, n_bins_x + 2):
-        # underflow
-        if hist_th2.GetBinContent(bin_x, 0) == 0.0 and not NUF:
-            content = hist_th2.GetBinContent(bin_x, 1)
-            err = hist_th2.GetBinError(bin_x, 1)
-            hist_th2.SetBinContent(bin_x, 0, content)
-            hist_th2.SetBinError(bin_x, 0, err)
-        # overflow
-        if hist_th2.GetBinContent(bin_x, n_bins_y + 1) == 0.0 and not NOF:
-            content = hist_th2.GetBinContent(bin_x, n_bins_y)
-            err = hist_th2.GetBinError(bin_x, n_bins_y)
-            hist_th2.SetBinContent(bin_x, n_bins_y + 1, content)
-            hist_th2.SetBinError(bin_x, n_bins_y + 1, err)
-
 
 parser = ArgumentParser(
     description="The following script calculate fake rate for stau analysis.")

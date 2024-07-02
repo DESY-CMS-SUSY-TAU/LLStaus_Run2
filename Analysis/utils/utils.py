@@ -12,6 +12,67 @@ ROOT.gROOT.ProcessLine("setTDRStyle()")
 ROOT.gROOT.SetStyle("tdrStyle")
 ROOT.gROOT.ForceStyle(True)
 
+def OverflowIntegralTHN(hist_th3):
+    # Calculate integral of all TH3/TH2/TH1 histogram bins including overflow bins
+    Integral = 0
+    if hist_th3.GetDimension() == 1:
+        for i in range(0, hist_th3.GetNbinsX()+2):
+            Integral += hist_th3.GetBinContent(i)
+        return Integral
+    elif hist_th3.GetDimension() == 2:
+        for i in range(0, hist_th3.GetNbinsX()+2):
+            for j in range(0, hist_th3.GetNbinsY()+2):
+                Integral += hist_th3.GetBinContent(i, j)
+        return Integral
+    elif hist_th3.GetDimension() == 3:
+        for i in range(0, hist_th3.GetNbinsX()+2):
+            for j in range(0, hist_th3.GetNbinsY()+2):
+                for k in range(0, hist_th3.GetNbinsZ()+2):
+                    Integral += hist_th3.GetBinContent(i, j, k)
+        return Integral
+    else:
+        raise ValueError("Wrong dimension of histogram")
+
+def read_hist_path(file, data_name, sys=None, category=None):
+    name=data_name
+    if sys: name = name+"/"+sys
+    if category: name = name+"/"+category
+    hist = file.Get(name+"/hist")
+    if not hist:
+        raise ValueError(f"Histogram not found! {file} Get({name}/hist)")
+    hist.SetDirectory(0)
+    return hist
+
+def duplicate_uf_of_bins(hist_th2, NOF=False, NUF=False):
+    n_bins_x = hist_th2.GetNbinsX()
+    n_bins_y = hist_th2.GetNbinsY()
+    for bin_y in range(1, n_bins_y + 1):
+        # underflow
+        if hist_th2.GetBinContent(0, bin_y) == 0.0 and not NUF:
+            content = hist_th2.GetBinContent(1, bin_y)
+            err = hist_th2.GetBinError(1, bin_y)
+            hist_th2.SetBinContent(0, bin_y, content)
+            hist_th2.SetBinError(0, bin_y, err)
+        # overflow
+        if hist_th2.GetBinContent(n_bins_x+1, bin_y) == 0.0 and not NOF:
+            content = hist_th2.GetBinContent(n_bins_x, bin_y)
+            err = hist_th2.GetBinError(n_bins_x, bin_y)
+            hist_th2.SetBinContent(n_bins_x + 1, bin_y, content)
+            hist_th2.SetBinError(n_bins_x + 1, bin_y, err)
+    for bin_x in range(0, n_bins_x + 2):
+        # underflow
+        if hist_th2.GetBinContent(bin_x, 0) == 0.0 and not NUF:
+            content = hist_th2.GetBinContent(bin_x, 1)
+            err = hist_th2.GetBinError(bin_x, 1)
+            hist_th2.SetBinContent(bin_x, 0, content)
+            hist_th2.SetBinError(bin_x, 0, err)
+        # overflow
+        if hist_th2.GetBinContent(bin_x, n_bins_y + 1) == 0.0 and not NOF:
+            content = hist_th2.GetBinContent(bin_x, n_bins_y)
+            err = hist_th2.GetBinError(bin_x, n_bins_y)
+            hist_th2.SetBinContent(bin_x, n_bins_y + 1, content)
+            hist_th2.SetBinError(bin_x, n_bins_y + 1, err)
+
 def ColorIterator(index : int, scale : int) -> int:
     # kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
     # kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
@@ -36,13 +97,13 @@ def get_canvas(ratio = False) :
     # ROOT.gROOT.SetStyle("tdrStyle")
     # ROOT.gROOT.ForceStyle(True)
     
-    canvas = ROOT.TCanvas("canvas", "canvas", 1100, 1100)
+    canvas = ROOT.TCanvas("canvas", "canvas", 1100, 1200)
     canvas.UseCurrentStyle()
     
     #canvas.SetLeftMargin(0.16)
     #canvas.SetRightMargin(0.05)
     #canvas.SetTopMargin(0.1)
-    #canvas.SetBottomMargin(0.135)
+    # canvas.SetBottomMargin(0.05)
     
     if (ratio) :
         
@@ -248,6 +309,10 @@ def root_plot1D(
             hist.Draw(f"same {hist.GetOption()}")
             legend.AddEntry(hist, hist.GetTitle(), "LPFE")
     
+    if draw_errors:
+        accume_hist.SetLineColor(0)
+        legend.AddEntry(accume_hist, "$\\mathrm{Unc.}$", "F")
+
     if draw_legend:
         legend.Draw()
     
@@ -261,7 +326,7 @@ def root_plot1D(
     
     stack.GetXaxis().SetTitle(xtitle)
     #stack.GetXaxis().SetTitleSize(ROOT.gStyle.GetTitleSize("X") * xTitleSizeScale)
-    #stack.GetXaxis().SetTitleOffset(ROOT.gStyle.GetTitleOffset("X") * 1.1)
+    stack.GetXaxis().SetTitleOffset(ROOT.gStyle.GetTitleOffset("X") * 1.1)
     
     stack.GetYaxis().SetTitle(ytitle)
     #stack.GetYaxis().SetTitleSize(ROOT.gStyle.GetTitleSize("Y") * yTitleSizeScale)
@@ -437,7 +502,6 @@ def root_plot1D(
     #     accume_hist.Write()
     #     accamulated_bkgr_file.Close()
     return 0
-
 
 def root_plots2D_simple(
     hist,
