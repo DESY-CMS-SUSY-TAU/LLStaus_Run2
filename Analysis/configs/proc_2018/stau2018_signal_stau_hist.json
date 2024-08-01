@@ -1,0 +1,390 @@
+{
+
+"jetselect_pt" : {
+    "bins": [
+        {
+            "name": "jet_pt",
+            "label": "Jet p_{T}",
+            "n_or_arr": 200,
+            "lo": 0,
+            "hi": 1000,
+            "unit": "GeV"
+        }
+    ],
+    "fill": {
+        "jet_pt": [
+            "Jet_select",
+            "pt"
+        ]
+    }
+},
+
+"jetselect_eta" : {
+    "bins": [
+        {
+            "name": "jet_eta",
+            "label": "Jet eta",
+            "n_or_arr": 100,
+            "lo": -2.5,
+            "hi": 2.5,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_eta": [
+            "Jet_select",
+            "eta"
+        ]
+    }
+},
+
+"jetselect_dxy" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxy",
+            "n_or_arr": 400,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy"
+        ]
+    }
+},
+
+"jetselect_dz" : {
+    "bins": [
+        {
+            "name": "jet_dz",
+            "label": "Jet dz",
+            "n_or_arr": 200,
+            "lo": 0.0,
+            "hi": 100,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dz": [
+            "Jet_select",
+            "dz"
+        ]
+    }
+},
+
+"jetselect_dxy_err" : {
+    "bins": [
+        {
+            "name": "jet_dxy_err",
+            "label": "Jet dxy error",
+            "n_or_arr": 110,
+            "lo": -1.0,
+            "hi": 10.0,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy_err": [
+            "Jet_select",
+            "dxy_err"
+        ]
+    }
+},
+
+"jetselect_dz_err" : {
+    "bins": [
+        {
+            "name": "jet_dz",
+            "label": "Jet dz",
+            "n_or_arr": 210,
+            "lo": -1.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dz": [
+            "Jet_select",
+            "dz_err"
+        ]
+    }
+},
+
+"jetselect_vxy" : {
+    "bins": [
+        {
+            "name": "jet_vxy",
+            "label": "Jet vxy",
+            "n_or_arr": 100,
+            "lo": -50.0,
+            "hi": 50.0,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_vxy": [
+            "Jet_select",
+            "vxy"
+        ]
+    }
+},
+
+"jetselect_vz" : {
+    "bins": [
+        {
+            "name": "jet_vz",
+            "label": "Jet vz",
+            "n_or_arr": 100,
+            "lo": -50.0,
+            "hi": 50.0,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_vz": [
+            "Jet_select",
+            "vz"
+        ]
+    }
+},
+
+"jetselect_fromPV" : {
+    "bins": [
+        {
+            "name": "jet_fromPV",
+            "label": "Jet fromPV",
+            "n_or_arr": 5,
+            "lo": 0,
+            "hi": 5,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_fromPV": [
+            "Jet_select",
+            "fromPV"
+        ]
+    }
+},
+
+"jetselect_lostHits" : {
+    "bins": [
+        {
+            "name": "jet_lostHits",
+            "label": "Jet lostHits",
+            "n_or_arr": 7,
+            "lo": -2,
+            "hi": 5,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_lostHits": [
+            "Jet_select",
+            "lostInnerHits"
+        ]
+    }
+},
+
+"jetselect_dxysig" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxySig",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 100,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig"
+        ]
+    }
+},
+
+"jetselect_dxy_weight" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxy weighted",
+            "n_or_arr": 400,
+            "lo": 0.0,
+            "hi": 20,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxy_weight"
+        ]
+    }
+},
+
+"jetselect_dxysig_weight" : {
+    "bins": [
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxySig weighted",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 100,
+            "unit": ""
+        }
+    ],
+    "fill": {
+        "jet_dxy": [
+            "Jet_select",
+            "dxysig_weight"
+        ]
+    }
+},
+
+"jetselect_score" : {
+    "bins": [
+        {
+            "name": "jet_score",
+            "label": "Jet score",
+            "n_or_arr": 140,
+            "lo": -0.2,
+            "hi": 1.2,
+            "unit": "-"
+        }
+    ],
+    "fill": {
+        "jet_score": [
+            "Jet_select",
+            "disTauTag_score1"
+        ]
+    }
+},
+
+"2D_jet_lxy_dxy" : {
+    "bins": [
+        {
+            "name": "jet_lxy",
+            "label": "Jet lxy",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 100,
+            "unit": "cm"
+        },
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxy",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 100,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_lxy": [
+            "Jet_select",
+            "tr_travel"
+        ],
+        "jet_dxy": [
+            "Jet_select",
+            "dxy"
+        ]
+    }
+},
+"2D_jet_lxyz_dxy" : {
+    "bins": [
+        {
+            "name": "jet_lxyz",
+            "label": "Jet lxyz",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 100,
+            "unit": "cm"
+        },
+        {
+            "name": "jet_dxy",
+            "label": "Jet dxy",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 100,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_lxyz": [
+            "Jet_select",
+            "travel"
+        ],
+        "jet_dxy": [
+            "Jet_select",
+            "dxy"
+        ]
+    }
+},
+"2D_jet_lxyz_dz" : {
+    "bins": [
+        {
+            "name": "jet_lxyz",
+            "label": "Jet lxyz",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 100,
+            "unit": "cm"
+        },
+        {
+            "name": "jet_dz",
+            "label": "Jet dz",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 100,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_lxyz": [
+            "Jet_select",
+            "travel"
+        ],
+        "jet_dz": [
+            "Jet_select",
+            "dz"
+        ]
+    }
+},
+"2D_jet_lxyz_IP3D" : {
+    "bins": [
+        {
+            "name": "jet_lxyz",
+            "label": "Jet lxyz",
+            "n_or_arr": 100,
+            "lo": 0.0,
+            "hi": 100,
+            "unit": "cm"
+        },
+        {
+            "name": "jet_IP3D",
+            "label": "Jet IP3D",
+            "n_or_arr": 100,
+            "lo": 0,
+            "hi": 100,
+            "unit": "cm"
+        }
+    ],
+    "fill": {
+        "jet_lxyz": [
+            "Jet_select",
+            "travel"
+        ],
+        "jet_IP3D": [
+            "Jet_select",
+            "ip3d"
+        ]
+    }
+},
+
+}

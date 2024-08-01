@@ -1,0 +1,168 @@
+{
+
+    "year": "ul2018",
+    "file_mode": "local",
+    "xrootddomain": "xrootd-cms.infn.it",
+    "bad_file_paths": "$CONFDIR/nano_v11_bad-pnfs-files.json",
+    "datadir": "configs/data/ul2018",
+    "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD",
+    "rng_seed_file": "$CONFDIR/seed.txt",
+    "compute_systematics": false,
+    // "lumimask": "",
+    "luminosity": 59.74,
+    "crosssections": "$CONFDIR/crosssections.json",
+    "apply_met_filters": true,
+    "column_output_format" : "root",
+
+    "exp_datasets": {
+        "SingleMuon": [
+            "$STOREDIR/SingleMuon/crab_SingleMuon_Run2017B_UL/240710_010749/*/*.root"
+            "$STOREDIR/SingleMuon/crab_SingleMuon_Run2017C_UL/240710_010755/*/*.root"
+            "$STOREDIR/SingleMuon/crab_SingleMuon_Run2017D_UL/240710_010802/*/*.root"
+            "$STOREDIR/SingleMuon/crab_SingleMuon_Run2017E_UL/240710_010808/*/*.root"
+            "$STOREDIR/SingleMuon/crab_SingleMuon_Run2017F_UL/240710_010814/*/*.root"
+            ]
+    },
+    "mc_datasets": {
+
+    },
+    "pileup_reweighting": "$DATADIR/pileup.root",
+    "muon_sf": [
+        [
+            "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root",
+            "NUM_TightID_DEN_TrackerMuons_abseta_pt",
+            ["abseta", "pt"]
+        ],
+        [
+            "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2017_UL_ISO.root",
+            "NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt",
+            ["abseta", "pt"]
+        ]
+    ],
+    "muon_sf_trigger": [
+        [
+            "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2017_UL_SingleMuonTriggers.root",
+            "NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight_abseta_pt",
+            ["abseta", "pt"]
+        ]
+    ],
+    // "DY_ZptLO_weights": [
+    //     "$DATADIR/zptmass_weights_UL2018.root",
+    //     "zptmass_weight",
+    //     ["pt", "mass"]
+    // ],
+    "DY_jet_reweight": [
+        [ 0, 0, 0, 0, 0]
+    ],
+    // "jet_puid_sf": [
+    //     "$DATADIR/jmar.json"
+    // ],
+    // "reapply_jec": false,
+    // "jet_correction_mc": [
+    //     "$DATADIR/Summer19UL18_V5_MC_L1FastJet_AK4PFchs.txt",
+    //     "$DATADIR/Summer19UL18_V5_MC_L2Relative_AK4PFchs.txt",
+    //     "$DATADIR/Summer19UL18_V5_MC_L3Absolute_AK4PFchs.txt"
+    // ],
+    // "jet_uncertainty": "$DATADIR/Summer19UL18_V5_MC_Uncertainty_AK4PFchs.txt",
+    // "jet_resolution": "$DATADIR/Summer19UL18_JRV2_MC_PtResolution_AK4PFchs.txt",
+    // "jet_ressf": "$DATADIR/Summer19UL18_JRV2_MC_SF_AK4PFchs.txt",
+    // "smear_met": false,
+    // "dataset_for_systematics": {
+    // },
+    "dataset_trigger_order": [
+        "SingleMuon",
+    ],
+    "dataset_trigger_map": {
+        "SingleMuon": [
+            "HLT_IsoMu24"
+        ]
+    },
+    "jet_fake_rate" : [
+        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v11/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
+        "fake_rate_jet_dxy_pt",
+        ["jet_pt", "jet_dxy"]
+    ],
+
+    "predict_yield" : false,
+    
+    // "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/",
+
+    // tag muon:
+    "muon_pt_min"   :  25,
+    "muon_eta_min"  : -2.4,
+    "muon_eta_max"  :  2.4,
+    "muon_ID"       :  "mediumId",
+    // PFIso ID from miniAOD selector (1=PFIsoVeryLoose, 2=PFIsoLoose, 3=PFIsoMedium, 4=PFIsoTight, 5=PFIsoVeryTight, 6=PFIsoVeryVeryTight)
+    // "muon_pfIsoId"  : 4, // tight: >= 4
+    "muon_pfIso"      : 0.15,
+    "muon_pfIso_anti" : 0.6,
+    // "muon_absdxy"   : 0.2,
+    // "muon_absdz"    : 0.5,
+    "muon_absdxy"   : 0.045,
+    "muon_absdz"    : 0.2,
+    "mumu_dr_min"   : 0.5,
+
+    // veto electron:
+    "elec_veto_pt"        :  20,
+    "elec_veto_eta_min"   : -2.4,
+    "elec_veto_eta_max"   :  2.4,
+    "elec_veto"           : "convVeto",
+    "elec_ID"             : "mvaIso_WPL",
+
+    // veto muon:
+    "muon_veto_pt_min"   :  20,
+    "muon_veto_eta_min"  : -2.4,
+    "muon_veto_eta_max"  :  2.4,
+    "muon_veto_ID"       :  "looseId",
+    // PFIso ID from miniAOD selector (1=PFIsoVeryLoose, 2=PFIsoLoose, 3=PFIsoMedium, 4=PFIsoTight, 5=PFIsoVeryTight, 6=PFIsoVeryVeryTight)
+    "muon_veto_pfIsoId"  : 2, // loose: >= 2
+
+    // reco Jet:
+    "jet_pt_min"   :  30,
+    "jet_eta_min"  : -2.1,
+    "jet_eta_max"  :  2.1,
+    "jet_jetId"    :  2, // jetId>=6 pass lepton veto and tight id, jetId>=2 pass tight id
+    "dphi_j1j2"    :  0.5,
+    "jet_dxy_min"  :  0.0, // to test MC/Data modeling
+    "jet_maxdz_max" : 20,
+    "jet_maxdxy_max"  :  10,
+
+    // Basic jet selection (before selected Jet is called)
+    "good_jet_id": "cut:tight",
+    "good_jet_puId": "cut:tight",
+    "good_jet_lepton_distance": 0.4,
+    "good_jet_eta_min": -2.1,
+    "good_jet_eta_max": 2.1,
+    "good_jet_pt_min": 30,
+    "btag": "deepjet:medium",
+    "num_atleast_btagged": 0,
+
+    // pfCand selection:
+    "pfcand_pt"         : 1.0,
+    "pfcand_eta_min"    : -2.4,
+    "pfcand_eta_max"    : 2.4,
+    // "pfcand_eta_min"    : -1.5,
+    // "pfcand_eta_max"    : 1.5,
+    "track"             : "hasTrackDetails",
+
+    // MET cut
+    // "MET_cut_max"   : 500,
+
+    // ZtoLL window
+    "mass_ll_lower" : 70,
+    "mass_ll_upper" : 120,
+
+    // Tagger part
+    // "score_pass" : [0.05, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.40, 0.45, 0.5, 0.95, 0.9900, 0.9972, 0.9996],
+    "score_pass" : [0.05, 0.9900],
+    "loose_thr" : 0.05,
+    "tight_thr" : 0.9900,
+
+    "hists": "$CONFDIR/stau2018_ztomumu_hist.json",
+
+    "cuts_to_histogram" : [
+        "has_more_one_jets",
+        "after_jet_def",
+        "dphi_min_cut"
+    ]
+}

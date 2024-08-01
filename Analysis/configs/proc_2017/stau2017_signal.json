@@ -1,0 +1,144 @@
+{
+
+    "year": "ul2017",
+    "file_mode": "local",
+    "xrootddomain": "xrootd-cms.infn.it",
+    // "bad_file_paths": "",
+    "datadir": "configs/data_UL/ul2017",
+    "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/2017/",
+    "rng_seed_file": "$CONFDIR/seed.txt",
+    "compute_systematics": true,
+    // "lumimask": "$CONFDIR/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt",
+    "luminosity": 41.4,
+    "crosssections": "$CONFDIR/crosssections.json",
+    "apply_met_filters": true,
+    "dxy_cut_study": false,
+    "stau_properties_study": false,
+    "exp_datasets": {
+        "DATA_MET": [
+            "$STOREDIR/MET/crab_MET_Run2017B_UL/*/*/*.root",
+            "$STOREDIR/MET/crab_MET_Run2017C_UL/*/*/*.root",
+            "$STOREDIR/MET/crab_MET_Run2017D_UL/*/*/*.root",
+            "$STOREDIR/MET/crab_MET_Run2017E_UL/*/*/*.root",
+            "$STOREDIR/MET/crab_MET_Run2017F_UL/*/*/*.root"
+        ]
+
+    },
+    "mc_datasets": {
+
+    },
+    "pileup_reweighting": "$DATADIR/pileup.root",
+    "DY_lo_sfs": [
+        "$DATADIR/hist_zptmass_weight_nom_2018.root",
+        "hist_zptmass_weight_nom",
+        ["mass", "pt"]
+    ],
+    "MET_trigger_sfs": [
+        "$DATADIR/trigger-eff-sfs_MET.root",
+        "h1_sf",
+        ["pt"]
+    ],
+    "DY_jet_reweight": [
+        // Njets: [0, 1, 2, 3, 4]
+        [  
+            0.0, 0.0, 0.0, 0.0, 0.0
+        ]
+    ],
+    "W_jet_reweight": [
+        // Njets: [0, 1, 2, 3, 4]
+        [  
+            0.0, 0.0, 0.0, 0.0, 0.0
+        ]
+    ],
+    "dataset_for_systematics": {
+    },
+    "dataset_trigger_order": [
+        "DATA_MET"
+    ],
+    "dataset_trigger_map": {
+        "DATA_MET": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ]
+    },
+
+    // data-driven n-pass yield prediction:
+    "jet_fake_rate" : [
+        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/2017/output_wjet/wjet_v1_fake/fake_rate_ext/fake_rate_jet_dxy_pt.root",
+        "fake_rate_jet_dxy_pt",
+        ["jet_pt", "jet_dxy"]
+    ],
+    "predict_yield" : true,
+
+    "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/jets_skims",
+
+    // muon veto
+    "muon_veto_pt_min"   :  20,
+    "muon_veto_eta_min"  : -2.4,
+    "muon_veto_eta_max"  :  2.4,
+    "muon_veto_ID"       :  "looseId",
+    "muon_veto_pfIsoId"  :  2, // loose: >= 2
+
+    // ele veto
+    "elec_veto_pt"        :  20,
+    "elec_veto_eta_min"   : -2.4,
+    "elec_veto_eta_max"   :  2.4,
+    "elec_veto"           : "convVeto",
+    "elec_ID"             : "mvaIso_WPL",
+    
+    // reco Tau Jet:
+    "jet_pt_min"   :  30,
+    "jet_eta_min"  : -2.1,
+    "jet_eta_max"  :  2.1,
+    "jet_jetId"    :  6, // tight lepton veto
+    "jet_dxy_min"  :  0.5, // cm
+    
+    // pfCand selection:
+    "pfcand_pt"         : 1.0,
+    "pfcand_eta_min"    : -2.4,
+    "pfcand_eta_max"    : 2.4,
+    "track"             : "hasTrackDetails",
+
+    // MET cut
+    "MET_cut"   : 120,
+    
+    // deltaphi between jets
+    "dphi_j1j2" : 0.5, // >=0.5
+
+    // Tagger part
+    // "score_pass" : [0.0, 0.1716, 0.4612, 0.6631, 0.786, 0.846, 0.9529, 0.9889, 0.9972, 0.9996],
+
+    // "score_pass" : [0.05, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.40, 0.45, 0.5, 0.7, 0.95, 0.9900, 0.9972, 0.9996],
+    "score_pass" : [0.05, 0.99],
+    // "score_pass_finebin" : [ 
+    //     0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.16, 0.18, 0.20, 
+    //     0.22, 0.24, 0.26, 0.27, 0.29, 0.31, 0.33, 0.35, 0.37, 0.38, 0.40,
+    //     0.42, 0.44, 0.46, 0.48, 0.49, 0.51, 0.53, 0.55, 0.57, 0.59, 0.60,
+    //     0.62, 0.64, 0.66, 0.68, 0.70, 0.71, 0.73, 0.75, 0.77, 0.79, 0.81,
+    //     0.82, 0.84, 0.86, 0.88, 0.90, 0.92, 0.93, 0.95, 0.97, 0.99, 1.00
+    // ],
+    "loose_thr" : 0.05,
+    "tight_thr" : 0.99,
+    // "score_pass" : [0.01, 0.8],
+    // "score_pass_finebin" : [ 
+    //     0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.16, 0.18, 0.20, 
+    //     0.22, 0.24, 0.26, 0.27, 0.29, 0.31, 0.33, 0.35, 0.37, 0.38, 0.40,
+    //     0.42, 0.44, 0.46, 0.48, 0.49, 0.51, 0.53, 0.55, 0.57, 0.59, 0.60,
+    //     0.62, 0.64, 0.66, 0.68, 0.70, 0.71, 0.73, 0.75, 0.77, 0.79, 0.81,
+    //     0.82, 0.84, 0.86, 0.88, 0.90, 0.92, 0.93, 0.95, 0.97, 0.99, 1.00
+    // ],
+    // "loose_thr" : 0.01,
+    // "tight_thr" : 0.8,
+
+    // "hists": "$CONFDIR/stau2018_signal_stau_hist.json",
+    // "hists": "$CONFDIR/stau2018_signal_hist.json",
+    "hists": "$CONFDIR/../hists_configs/stau2018_signal_hist_unc.json",
+    
+    // There are many histograms in output data, for prediction we need only one 
+    // the load on histograms transfer one of the biggest bottleneck in the code
+    "cuts_to_histogram" : [
+            "two_loose_jets_final",
+            "two_tight_jets"
+        ]
+}
