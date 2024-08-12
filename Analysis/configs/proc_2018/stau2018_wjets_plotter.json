@@ -23,8 +23,8 @@
         // "nominator" : ["file name w/o extention", "category prefix"]
         // "nominator"   : ["Cut_017_two_loose_jets_final_fake_rate_hist", "/p9900"],
         // "denominator" : ["Cut_017_two_loose_jets_final_fake_rate_hist", "/p05"],
-        "nominator"   : ["Cut_014_two_loose_jets_final_fake_rate_hist", "/p9900"],
-        "denominator" : ["Cut_014_two_loose_jets_final_fake_rate_hist", "/p05"],
+        "nominator"   : ["Cut_015_two_loose_jets_final_fake_rate_hist", "/p9900"],
+        "denominator" : ["Cut_015_two_loose_jets_final_fake_rate_hist", "/p05"],
         // "nominator"   : ["Cut-011_mt_muon2_fake_rate_hist", "_p9900"],
         // "denominator" : ["Cut-011_mt_muon2_fake_rate_hist", "_p05"],
         // "nominator"   : ["Cut-002_two_loose_jets_final_fake_rate_hist_flav", "_p9900"],

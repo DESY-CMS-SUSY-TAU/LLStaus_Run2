@@ -32,3 +32,14 @@ DIR_PATH=./output_prompt/prompt_rate_v2/; python ./stau_plotter.py ./configs/sta
 python ./stau_rate_calculate.py ./configs/stau2018_fake_rate_plotter.json ./output_fakes/fake_rate_v1/hists/hists.json --outdir ./output_fakes/fake_rate_v1/fake_sf --cutflow ./output_fakes/fake_rate_v1/cutflows.json     
 
 python ./stau_rate_calculate.py ./configs/stau2018_prompt_rate_plotter.json ./output_prompt/prompt_rate_v2/hists/hists.json --outdir ./output_prompt/prompt_rate_v2/fake_sf --cutflow ./output_prompt/prompt_rate_v2/cutflows.json
+
+## Data-driven backgraund prediction:
+
+mumu region
+
+```sh
+python -m pepper.runproc stau_processor_ztomumu_FR.py ./configs/proc_2017/stau2017_ztomumu.json -o ./output_iteration_4/2017/output_zmumu/zmumu_v1/ --statedata ./output_iteration_4/2017/output_zmumu/zmumu_v1.coffea -i ./configs/setup_env_mamba.sh --metadata pepper_metadata_mamba_v2.pepper --condorlogdir pepper_logs_new --condor 400 --retries 20 -m 8 -R
+
+DIR_MC=./output_iteration_4/2017/output_zmumu/zmumu_v1/; python ./stau_plotter.py ./configs/proc_2018/stau2018_ztomumu_plot_config.json ${DIR_MC}/hists/hists.json --outdir ${DIR_MC}/yield_prediction --data --cutflow ${DIR_MC}/cutflows.json -m prediction
+
+```

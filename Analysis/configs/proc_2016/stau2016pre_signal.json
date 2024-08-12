@@ -65,7 +65,7 @@
 
     // data-driven n-pass yield prediction:
     "jet_fake_rate" : [
-        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/output_wjet_2016preVFP/wjet_v2_fake/fake_rate_ext/fake_rate_jet_dxy_pt.root",
+        "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/2016/output_wjet_2016preVFP/wjet_v2_fake/fake_rate_ext/fake_rate_jet_dxy_pt.root",
         "fake_rate_jet_dxy_pt",
         ["jet_pt", "jet_dxy"]
     ],

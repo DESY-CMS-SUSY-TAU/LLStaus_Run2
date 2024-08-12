@@ -104,6 +104,10 @@ class Processor(pepper.ProcessorBasicPhysics):
         if self.config["year"] == "ul2018":
             selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
 
+        if is_mc and self.config["year"] in ("2016", "2017", "ul2016pre",
+                                        "ul2016post", "ul2017"):
+            selector.add_cut("L1Prefiring", self.add_l1_prefiring_weights)
+
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
 
         # MET cut

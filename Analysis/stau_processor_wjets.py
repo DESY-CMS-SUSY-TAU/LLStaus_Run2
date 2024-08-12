@@ -8,10 +8,12 @@ import numba as nb
 import coffea
 import uproot
 import pepper
+import logging
 
 from coffea.nanoevents import NanoAODSchema
 # np.set_printoptions(threshold=np.inf)
 
+logger = logging.getLogger(__name__)
 
 class Processor(pepper.ProcessorBasicPhysics):
     # We use the ConfigTTbarLL instead of its base Config, to use some of its
@@ -38,8 +40,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         if "muon_sf" not in config or len(config["muon_sf"]) == 0:
             logger.warning("No muon scale factors specified")
 
-        if "single_mu_trigger_sfs" not in config or\
-            len(config["single_mu_trigger_sfs"]) == 0:
+        if "muon_sf_trigger" not in config or \
+            len(config["muon_sf_trigger"]) == 0:
             logger.warning("No single muon trigger scale factors specified")
 
         # It is not recommended to put anything as member variable into a
@@ -59,6 +61,18 @@ class Processor(pepper.ProcessorBasicPhysics):
             self.process_flav_study(selector, dsname, is_mc, filler)
             return
         
+        if is_mc and ( dsname.startswith("WJetsToLNu") or \
+                    dsname.startswith("W1JetsToLNu") or \
+                    dsname.startswith("W2JetsToLNu") or \
+                    dsname.startswith("W3JetsToLNu") or \
+                    dsname.startswith("W4JetsToLNu") ):
+            selector.systematics["weight"] = \
+                ak.full_like(selector.systematics["weight"], 1.0)
+            # selector.add_cut("reset_weight", lambda data: ak.Array(np.ones(len(data))))
+            # return # to calculate number of events
+            selector.add_cut("W jet reweighting",
+                partial(self.do_w_jet_reweighting))
+        
         # Triggers
         pos_triggers, neg_triggers = pepper.misc.get_trigger_paths_for(
             dsname, is_mc, self.config["dataset_trigger_map"],
@@ -69,20 +83,14 @@ class Processor(pepper.ProcessorBasicPhysics):
         if is_mc and "pileup_reweighting" in self.config:
             selector.add_cut("Pileup reweighting", partial(
                 self.do_pileup_reweighting, dsname))
-        
-        if is_mc and ( dsname.startswith("WJetsToLNu") or \
-                    dsname.startswith("W1JetsToLNu") or \
-                    dsname.startswith("W2JetsToLNu") or \
-                    dsname.startswith("W3JetsToLNu") or \
-                    dsname.startswith("W4JetsToLNu") ):
-            selector.systematics["weight"] = \
-                ak.full_like(selector.systematics["weight"], 1.0)
-            selector.add_cut("W jet reweighting",
-                partial(self.do_w_jet_reweighting))
 
         # HEM 15/16 failure (2018)
         if self.config["year"] == "ul2018":
             selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+            
+        if is_mc and self.config["year"] in ("2016", "2017", "ul2016pre",
+                                        "ul2016post", "ul2017"):
+            selector.add_cut("L1Prefiring", self.add_l1_prefiring_weights)
 
         # MET cut
         selector.add_cut("MET", self.MET_cut)
@@ -128,6 +136,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
         selector.add_cut("dphi_min_cut", self.dphi_min_cut)
         selector.set_column("mt2_j1_j2_MET", self.get_mt2)
+        selector.set_column("binning_schema", self.binning_schema)
         
         # Tagger part for calculating scale factors
         # Scale factors should be calculated -
@@ -177,7 +186,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         weight = np.ones(len(data))
         # Single muon trigger efficiency applied for leading muon
         muon = ak.firsts(data["Muon"])
-        sfs = self.config["single_mu_trigger_sfs"][0](pt=muon.pt, abseta=abs(muon.eta))
+        sfs = self.config["muon_sf_trigger"][0](pt=muon.pt, abseta=abs(muon.eta))
         return weight * sfs
 
     def muon_id_iso_sfs(self, data):
@@ -482,6 +491,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         # the weight for this will be saved saparetly to have one weight per event
         tight_wp = self.config["score_pass"].index(self.config["tight_thr"])
         
+        # print("yield_bin0to1", yield_bin0to1)
         return {"yield_bin0to1" : weight*yield_bin0to1,
                 "yield_bin1to2" : weight*yield_bin1to2,
                 "yield_bin0to2" : weight*yield_bin0to2,
@@ -591,6 +601,28 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def dphi_min_cut(self, data):
         return abs(data["dphi_jet1_jet2"]) > self.config["dphi_j1j2"]
+
+    @zero_handler
+    def binning_schema(self, data):
+        jets = data["Jet_select"]
+        # declear variables for binning
+        met = data["MET"].pt
+        jet2_pt = jets[:,1].pt
+        mt2 = data["mt2_j1_j2_MET"]
+        # create empty binning
+        bins = np.full((len(met)), np.nan)
+        B1 = (jet2_pt < 50) & (met >= 250)
+        B2 = (jet2_pt < 50) & (met < 250) & (mt2 < 100)
+        B3 = (jet2_pt < 50) & (met < 250) & (mt2 >= 100)
+        B4 = (jet2_pt >= 50) & (jet2_pt < 100)
+        B5 = (jet2_pt >= 100)
+        bins[B1] = 1
+        bins[B2] = 2
+        bins[B3] = 3
+        bins[B4] = 4
+        bins[B5] = 5
+
+        return bins
 
     # Gen Study -------------------------------------------------------------------------
     

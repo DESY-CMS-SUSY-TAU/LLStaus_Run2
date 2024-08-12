@@ -1,19 +1,18 @@
 {
 
-    "year": "ul2018",
+    "year": "ul2017",
     "file_mode": "local",
     "xrootddomain": "xrootd-cms.infn.it",
-    "bad_file_paths": "$CONFDIR/nano_v11_bad-pnfs-files.json",
-    "datadir": "configs/data/ul2018",
-    "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD",
+    "bad_file_paths": "$CONFDIR/../nano_v11_bad-pnfs-files.json",
+    "datadir": "configs/data_UL/ul2017",
+    "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/2017/",
     "rng_seed_file": "$CONFDIR/seed.txt",
     "compute_systematics": false,
     // "lumimask": "",
     "luminosity": 59.74,
     "crosssections": "$CONFDIR/crosssections.json",
     "apply_met_filters": true,
-    "column_output_format" : "root",
-
+    "predict_yield" : true,
     "exp_datasets": {
         "SingleMuon": [
             "$STOREDIR/SingleMuon/crab_SingleMuon_Run2017B_UL/240710_010749/*/*.root"
@@ -67,8 +66,8 @@
     // "jet_resolution": "$DATADIR/Summer19UL18_JRV2_MC_PtResolution_AK4PFchs.txt",
     // "jet_ressf": "$DATADIR/Summer19UL18_JRV2_MC_SF_AK4PFchs.txt",
     // "smear_met": false,
-    // "dataset_for_systematics": {
-    // },
+    "dataset_for_systematics": {
+    },
     "dataset_trigger_order": [
         "SingleMuon",
     ],
@@ -78,14 +77,10 @@
         ]
     },
     "jet_fake_rate" : [
-        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_2/output_wjet/wjet_v11/fake_rate_nonunif/fake_rate_jet_dxy_pt.root",
+        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/2017/output_wjet/wjet_v1_fake/fake_rate_ext/fake_rate_jet_dxy_pt.root",
         "fake_rate_jet_dxy_pt",
         ["jet_pt", "jet_dxy"]
     ],
-
-    "predict_yield" : false,
-    
-    // "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/",
 
     // tag muon:
     "muon_pt_min"   :  25,
@@ -93,9 +88,9 @@
     "muon_eta_max"  :  2.4,
     "muon_ID"       :  "mediumId",
     // PFIso ID from miniAOD selector (1=PFIsoVeryLoose, 2=PFIsoLoose, 3=PFIsoMedium, 4=PFIsoTight, 5=PFIsoVeryTight, 6=PFIsoVeryVeryTight)
-    // "muon_pfIsoId"  : 4, // tight: >= 4
-    "muon_pfIso"      : 0.15,
-    "muon_pfIso_anti" : 0.6,
+    "muon_pfIsoId"  : 4, // tight: >= 4
+    // "muon_pfIso"      : 0.15,
+    // "muon_pfIso_anti" : 0.6,
     // "muon_absdxy"   : 0.2,
     // "muon_absdz"    : 0.5,
     "muon_absdxy"   : 0.045,
@@ -121,21 +116,21 @@
     "jet_pt_min"   :  30,
     "jet_eta_min"  : -2.1,
     "jet_eta_max"  :  2.1,
-    "jet_jetId"    :  2, // jetId>=6 pass lepton veto and tight id, jetId>=2 pass tight id
+    "jet_jetId"    :  6, // jetId>=6 pass lepton veto and tight id, jetId>=2 pass tight id
     "dphi_j1j2"    :  0.5,
-    "jet_dxy_min"  :  0.0, // to test MC/Data modeling
-    "jet_maxdz_max" : 20,
-    "jet_maxdxy_max"  :  10,
+    "jet_dxy_min"  :  0.5, // to test MC/Data modeling
+    // "jet_maxdz_max" : 20,
+    // "jet_maxdxy_max"  :  10,
 
     // Basic jet selection (before selected Jet is called)
-    "good_jet_id": "cut:tight",
-    "good_jet_puId": "cut:tight",
-    "good_jet_lepton_distance": 0.4,
-    "good_jet_eta_min": -2.1,
-    "good_jet_eta_max": 2.1,
-    "good_jet_pt_min": 30,
-    "btag": "deepjet:medium",
-    "num_atleast_btagged": 0,
+    // "good_jet_id": "cut:tight",
+    // "good_jet_puId": "cut:tight",
+    // "good_jet_lepton_distance": 0.4,
+    // "good_jet_eta_min": -2.1,
+    // "good_jet_eta_max": 2.1,
+    // "good_jet_pt_min": 30,
+    // "btag": "deepjet:medium",
+    // "num_atleast_btagged": 0,
 
     // pfCand selection:
     "pfcand_pt"         : 1.0,
@@ -158,11 +153,9 @@
     "loose_thr" : 0.05,
     "tight_thr" : 0.9900,
 
-    "hists": "$CONFDIR/stau2018_ztomumu_hist.json",
+    "hists": "$CONFDIR/../hists_configs/ztomumu_hist.json",
 
     "cuts_to_histogram" : [
-        "has_more_one_jets",
-        "after_jet_def",
-        "dphi_min_cut"
+        "two_loose_jets_final"
     ]
 }
