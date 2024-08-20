@@ -188,7 +188,8 @@ if config["fake_rate"]["mode"] == "ratio":
                 del den_nonunif
                 exit()
                 
-            nom_nonunif.divide(den_nonunif, "B")
+            nom_nonunif.divide(den_nonunif, "B", True)
+            # nom_nonunif.divide(den_nonunif, "B", False)
             weight_hist = nom_nonunif.get_weights_th2d_simpl("hist_weight","hist_weight")
             duplicate_uf_of_bins(weight_hist, NUF=bool(config["fake_rate"]["NOF"]), NOF=bool(config["fake_rate"]["NOF"]))
             

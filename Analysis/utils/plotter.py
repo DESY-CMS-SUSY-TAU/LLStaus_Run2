@@ -190,7 +190,7 @@ def plot_predict_sys(dirname, config, xsec, cutflow, output_path):
                 l_hist_overlay = signal_hists,
                 asym_error = prediction_gr,
                 # l_hist_overlay = [hist_data] if config["prediction_hist"]["plot_unblind"] else [],
-                outfile = output_path + "/" + hist + "_" + prediction_bin + ".pdf",
+                outfile = output_path + "/" + hist + "_" + prediction_bin + ".png",
                 xrange = [x_min, x_max],
                 yrange = (0.01,  1000*hist_prediction.GetMaximum()),
                 logx = False, logy = True,
@@ -214,11 +214,12 @@ def plot_predict_sys(dirname, config, xsec, cutflow, output_path):
                 legendtextsize = 0.040,
                 legendwidthscale = 2.0,
                 legendheightscale = 4.0,
-                lumiText = "2018 (13 TeV)",
-                yrange_ratio = (0.0, 3.0),
+                lumiText = "(13 TeV)",
+                CMSextraText = "Private work",
+                yrange_ratio = (0.0, 2.0),
                 ndivisionsy_ratio = (5, 5, 0),
                 signal_to_background_ratio = True,
-                draw_errors = True
+                draw_errors = False
             )
 
 def plot_predict(dirname, config, xsec, cutflow, output_path):
@@ -456,6 +457,9 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
             else:
                 x_axis_title = bin_labels
 
+            year = config["year"]
+            lumi = config["luminosity"]
+
             root_plot1D(
                 l_hist = hists_main,
                 l_hist_overlay = signal_hists,
@@ -469,7 +473,7 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 xtitle = x_axis_title,
                 ytitle = "Events",
                 xtitle_ratio = x_axis_title,
-                ytitle_ratio = "Data/Pred.",
+                ytitle_ratio = "Data / Pred.",
                 centertitlex = True, centertitley = True,
                 centerlabelx = False, centerlabely = False,
                 gridx = True, gridy = True,
@@ -484,7 +488,9 @@ def plot_predict(dirname, config, xsec, cutflow, output_path):
                 legendtextsize = 0.040,
                 legendwidthscale = 2.0,
                 legendheightscale = 4.0,
-                lumiText = "2018 (13 TeV)",
+                # lumiText = f"{year}, {lumi} fb^{-1} (13 TeV)",
+                CMSextraText = "Private work",
+                lumiText = "(13 TeV)",
                 yrange_ratio = (0.0, 2.0),
                 ndivisionsy_ratio = (5, 5, 0),
                 signal_to_background_ratio = True,
@@ -838,12 +844,18 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                 xrange_min = config["SetupBins"][_histname][0]
                 xrange_max = config["SetupBins"][_histname][1]
                 overflow =  bool(config["SetupBins"][_histname][3])
+                units = config["SetupBins"][_histname][5]
                 print("overflow:", overflow)
             else:
                 xrange_min = _histograms["background"][0].GetXaxis().GetXmin()
                 xrange_max = _histograms["background"][0].GetXaxis().GetXmax()
                 overflow =  True
+            
+            # get bin width
+            bin_width = round(_histograms["background"][0].GetXaxis().GetBinWidth(1), 4)
 
+            year = config["year"]
+            lumi = config["luminosity"]
             print(_histograms_background_sorted)
             print(_histograms["data"])
             if isData:
@@ -859,9 +871,9 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     logx_ratio = False, logy_ratio = False,
                     include_overflow = overflow,
                     xtitle = _histograms["background"][0].GetXaxis().GetTitle(),
-                    ytitle = "Events",
+                    ytitle = f"Events / {bin_width} {units}",
                     xtitle_ratio = _histograms["background"][0].GetXaxis().GetTitle(),
-                    ytitle_ratio = "DATA/MC",
+                    ytitle_ratio = "DATA / MC",
                     centertitlex = True, centertitley = True,
                     centerlabelx = False, centerlabely = False,
                     gridx = True, gridy = True,
@@ -875,7 +887,7 @@ def plot1D(histfiles, histnames, config, xsec, cutflow, output_path, isData):
                     legendtextsize = 0.037,
                     legendwidthscale = 1.9,
                     legendheightscale = 0.46,
-                    lumiText = "2018 (13 TeV)",
+                    lumiText = f"{year}, {lumi} fb^{-1} (13 TeV)",
                     signal_to_background_ratio = True,
                     ratio_mode = "DATA",
                     CMSextraText = "Preliminary",

@@ -111,6 +111,7 @@ def CMS_lumi(pad, iPeriod, iPosX, sampleText = "", CMSextraText = "", lumiText =
     latex.SetTextSize(lumiTextSize*t)    
 
     latex.DrawLatex(1-r,1-t+lumiTextOffset*t, "#bf{%s}" %(lumiText))
+    # latex.DrawLatex(1-r,1-t+lumiTextOffset*t, "%s" %(lumiText))
     
     if( outOfFrame ):
         latex.SetTextFont(cmsTextFont)

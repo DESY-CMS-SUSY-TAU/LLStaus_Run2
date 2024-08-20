@@ -183,6 +183,8 @@ def root_plot1D(
     Note that the desired plotting styles and colors (like FillStyle/Color, LineSize/Style/Color, MarkerSize/Style/Color, SetOption) need to be set for the stack and overlay histograms before calling this function.
     """
     
+   
+    
     print("ratio_mode", ratio_mode)
     # canvas = get_canvas(ratio = len(ratio_num_den_pairs))
     canvas = get_canvas(ratio = signal_to_background_ratio)
@@ -250,6 +252,7 @@ def root_plot1D(
         if stackdrawopt != 'nostack' and normilize:
             hist.Scale(1.0/stack_integral)
         stack.Add(hist, "hist")
+        # stack.Add(hist, "HISTOE")
         legend.AddEntry(hist, hist.GetTitle(), "LPFE")
         if accume_hist==None:
             hist.SetDirectory(0)
@@ -312,6 +315,10 @@ def root_plot1D(
     if draw_errors:
         accume_hist.SetLineColor(0)
         legend.AddEntry(accume_hist, "$\\mathrm{Unc.}$", "F")
+        
+    if asym_error is not None:
+        asym_error.SetLineColor(0)
+        legend.AddEntry(asym_error, "$\\mathrm{Unc.}$", "F")
 
     if draw_legend:
         legend.Draw()
@@ -416,6 +423,8 @@ def root_plot1D(
                         den_bkgr_err = accume_hist.GetBinError(bin_i)
                         h1_ratioErr.SetBinContent(bin_i, 1.0)
                         h1_ratioErr.SetBinError(bin_i, 0.0)
+                        h1_ratio.SetBinContent(bin_i, 0)
+                        h1_ratio.SetBinError(bin_i, 0)
                         if den_bkgr > 0:
                             relErr = den_bkgr_err / den_bkgr
                             h1_ratioErr.SetBinError(bin_i, relErr)
@@ -516,6 +525,7 @@ def root_plots2D_simple(
     centerlabelx = False, centerlabely = False,
     gridx = False, gridy = False,
     CMSextraText = "Private work (CMS simulation)",
+    # CMSextraText = "Private work",
     lumiText = "(13 TeV)",
     mode = "colz text89"
 ):

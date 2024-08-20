@@ -43,3 +43,10 @@ python -m pepper.runproc stau_processor_ztomumu_FR.py ./configs/proc_2017/stau20
 DIR_MC=./output_iteration_4/2017/output_zmumu/zmumu_v1/; python ./stau_plotter.py ./configs/proc_2018/stau2018_ztomumu_plot_config.json ${DIR_MC}/hists/hists.json --outdir ${DIR_MC}/yield_prediction --data --cutflow ${DIR_MC}/cutflows.json -m prediction
 
 ```
+
+## Macros:
+
+Script to compare 1D fake rates in DY+jets and W+jets for 3 years:
+```sh
+python ./Analysis/macros/plot_fake_compare_dxy_dxy_run2.py
+```
