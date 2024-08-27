@@ -50,3 +50,34 @@ Script to compare 1D fake rates in DY+jets and W+jets for 3 years:
 ```sh
 python ./Analysis/macros/plot_fake_compare_dxy_dxy_run2.py
 ```
+
+## Example of 2018UL yield prediction:
+
+### Step 1: measure fake rates and calculate scalefactors
+
+set up configuration in `stau2018_wjets.json`
+
+```sh
+python -m pepper.runproc stau_processor_wjets.py ./configs/stau2018_wjets.json -o ./output_iteration_2/output_wjet/wjet_v12 --statedata ./output_iteration_2/output_wjet/wjet_v12.coffea -i ./configs/setup_env_parsel.sh --condor 1000 --retries 10
+```
+
+setup binning and variables (`fake_rate`) and configuration in `stau2018_wjets_plotter.json`
+```sh
+DIR_MC=./output_iteration_4/2018/output_wjet/wjet_fake_v1/; python ./stau_rate_calculate.py ./configs/proc_2018/stau2018_wjets_plotter.json ${DIR_MC}/hists/hists.json --outdir ${DIR_MC}/fake_rate_ext --cutflow ${DIR_MC}/cutflows.json
+```
+
+### Step 2: run the processor with signal
+
+setup the path to scale factors (`jet_fake_rate`), selections, data (`exp_datasets`) and signal path (`mc_datasets`) in `stau2018_signal.json`
+
+```sh
+python -m pepper.runproc stau_processor_signal.py ./configs/proc_2018_new/stau2018_signal.json -o ./output_iteration_4/2018/output_signal/signal_v1_signal_pass_v3/ --statedata ./output_iteration_4/2018/output_signal/signal_v1_signal_pass_v3.coffea -i ./configs/setup_env_mamba.sh --metadata pepper_metadata_mamba_v2.pepper --condorlogdir pepper_logs_new --condor 400 --retries 20 -m 8 -R
+
+```
+
+### Step 3: plot the prediction histograms
+
+configuration of the prediction histograms can be done checked in the group `prediction_hist` in `stau2018_signal_plot_config.json` file
+```sh
+DIR_MC=./output_iteration_3/output_signal/signal_v23/; python ./stau_plotter.py ./configs/stau2018_signal_plot_config.json ${DIR_MC}/hists/hists.json --outdir ${DIR_MC}/plots_predict_unblind --cutflow ${DIR_MC}/cutflows.json -m prediction_sys
+```
