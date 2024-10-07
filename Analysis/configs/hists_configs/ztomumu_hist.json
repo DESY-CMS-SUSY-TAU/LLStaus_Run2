@@ -177,6 +177,41 @@
             ]
         }
     },
+    "LHE_Vpt": {
+        "bins": [
+            {
+                "name": "pt",
+                "label": "LHE V p_{T}",
+                "n_or_arr": 100,
+                "lo": 0,
+                "hi": 300,
+                "unit": "GeV"
+            }
+        ],
+        "fill": {
+            "pt": [
+                "LHE",
+                "Vpt"
+            ]
+        }
+    },
+    "LHE_Njets": {
+        "bins": [
+            {
+                "name": "njet",
+                "label": "LHE number of jets",
+                "n_or_arr": 10,
+                "lo": 0,
+                "hi": 10
+            }
+        ],
+        "fill": {
+            "njet": [
+                "LHE",
+                "Njets"
+            ]
+        }
+    },
     "deltaphi": {
         "bins": [
             {

@@ -56,9 +56,14 @@ class Processor(pepper.ProcessorBasicPhysics):
             logger.warning("No jet fake rate specified")
         else:
             self.predict_jet_fakes = config["predict_yield"]
+            
+        if "run_jet_selection" not in config:
+           self.run_jet_selection = True
+        else:
+            self.run_jet_selection = config["run_jet_selection"]
 
     def process_selection(self, selector, dsname, is_mc, filler):
-        era = self.get_era(selector.data, is_mc)
+        # era = self.get_era(selector.data, is_mc)
         # Triggers
         pos_triggers, neg_triggers = pepper.misc.get_trigger_paths_for(
             dsname,
@@ -67,6 +72,7 @@ class Processor(pepper.ProcessorBasicPhysics):
             self.config["dataset_trigger_order"])
         selector.add_cut("Trigger", partial(
             self.passing_trigger, pos_triggers, neg_triggers))
+        
         
         if is_mc and ( dsname.startswith("DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
                        dsname.startswith("DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
@@ -80,9 +86,13 @@ class Processor(pepper.ProcessorBasicPhysics):
             selector.add_cut("Pileup reweighting", partial(
                 self.do_pileup_reweighting, dsname))
         
-        # # HEM 15/16 failure (2018)
+        # HEM 15/16 failure (2018)
         # if self.config["year"] == "ul2018":
         #     selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+        
+        if is_mc and self.config["year"] in ("2016", "2017", "ul2016pre",
+                                    "ul2016post", "ul2017"):
+            selector.add_cut("L1Prefiring", self.add_l1_prefiring_weights)
         
         # PV cut
         selector.add_cut("PV", lambda data: data["PV"].npvsGood > 0)
@@ -92,11 +102,14 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
         
         # 2 tag muons
-        selector.set_column("Muon_tag", self.select_muons) 
-        selector.add_cut("two_muons_one_trig", self.two_muons_cut_one_trig)
+        selector.set_column("Muon_tag", self.select_muons)
+        selector.add_cut("Two_muons", self.two_muons)
+        selector.add_cut("Muon_pair", self.muon_pair)
+        selector.add_cut("Lead_pass_trigger", self.lead_pass_trigger)
         
         selector.set_column("sum_mumu", self.sum_mumu)
         selector.add_cut("mass_window", self.mass_window)
+        selector.add_cut("mumu_dr", self.mumu_dr)
         
         if is_mc:
             selector.set_column("sum_ll_gen", self.sum_ll_gen)
@@ -110,8 +123,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("loose_electron_veto", self.loose_electron_veto_cut)
         
         selector.add_cut("muon_sfs", partial(self.get_muon_sfs, is_mc=is_mc))
-        # selector.add_cut("charge", self.charge)
-        selector.add_cut("mumu_dr", self.mumu_dr)
+        
         selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
         
         selector.set_cat("iso_region", {"iso", "antiiso"})
@@ -124,27 +136,29 @@ class Processor(pepper.ProcessorBasicPhysics):
         
         selector.set_column("Lepton", lambda data: data["Muon_tag"])
         
-        if (is_mc and self.config["compute_systematics"]
-                and dsname not in self.config["dataset_for_systematics"]):
-            if hasattr(filler, "sys_overwrite"):
-                assert filler.sys_overwrite is None
-            variargs = self.get_jetmet_variation_args()
-            logger.debug(f"Running jetmet variations: {variargs}")
-            for variarg in variargs:
-                selector_copy = copy(selector)
-                filler.sys_overwrite = variarg.name
-                self.process_selection_jet_part(selector_copy, is_mc,
-                                                variarg, dsname, filler, era)
-            filler.sys_overwrite = None
+        if self.run_jet_selection:
+            # print("Running jet selection")
+            if (is_mc and self.config["compute_systematics"]
+                    and dsname not in self.config["dataset_for_systematics"]):
+                if hasattr(filler, "sys_overwrite"):
+                    assert filler.sys_overwrite is None
+                variargs = self.get_jetmet_variation_args()
+                logger.debug(f"Running jetmet variations: {variargs}")
+                for variarg in variargs:
+                    selector_copy = copy(selector)
+                    filler.sys_overwrite = variarg.name
+                    self.process_selection_jet_part(selector_copy, is_mc,
+                                                    variarg, dsname, filler)
+                filler.sys_overwrite = None
 
-        # Do normal, no-variation run
-        self.process_selection_jet_part(selector, is_mc,
-                                        self.get_jetmet_nominal_arg(),
-                                        dsname, filler, era)
+            # Do normal, no-variation run
+            self.process_selection_jet_part(selector, is_mc,
+                                            self.get_jetmet_nominal_arg(),
+                                            dsname, filler)
         logger.debug("Selection done")
         
     def process_selection_jet_part(self, selector, is_mc, variation, dsname,
-                                   filler, era):
+                                   filler):
         """Part of the selection that needs to be repeated for
         every systematic variation done for the jet energy correction,
         resultion and for MET"""
@@ -176,12 +190,13 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
         selector.set_column("Jet_select_b_jet", self.b_tagged_jet)
-
         selector.add_cut("no_btag_jet", lambda data: ak.num(data["Jet_select_b_jet"]) == 0 if len(data) > 0 else ak.Array([]))
-        selector.add_cut("has_more_one_jets", self.has_more_one_jets)
-        selector.set_column("Jet_obj1", partial(self.leading_jet, order=0))
+        
+        # selector.add_cut("has_more_one_jets", self.has_more_one_jets)
+        # selector.set_column("Jet_obj1", partial(self.leading_jet, order=0))
 
-        selector.add_cut("has_more_two_jets", self.has_more_two_jets)
+        # selector.add_cut("has_more_two_jets", self.has_more_two_jets)
+        selector.add_cut("has_two_jets", self.has_two_jets)
         selector.set_column("Jet_obj1", partial(self.leading_jet, order=0))
         selector.set_column("Jet_obj2", partial(self.leading_jet, order=1))
         selector.add_cut("after_jet_def", lambda data: ak.Array(np.ones(len(data))))
@@ -202,7 +217,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         # here we are saving Jet_obj1
         # self.save_per_event_info(dsname, selector, False)
         
-        return
+        
         ''' This part is for definition of signal region
         # selector.set_column("Jet_select", self.getloose_jets)
         selector.add_cut("two_loose_jets", self.has_two_jets)
@@ -420,7 +435,7 @@ class Processor(pepper.ProcessorBasicPhysics):
     def select_muons(self, data):
         muons = data["Muon"]
         is_good = (
-              (muons.pt > self.config["muon_pt_min"])
+              (muons.pt > self.config["muon_pt_min_sublead"])
             & (muons.eta < self.config["muon_eta_max"])
             & (muons.eta > self.config["muon_eta_min"])
             & (muons[self.config["muon_ID"]] == 1)
@@ -429,23 +444,33 @@ class Processor(pepper.ProcessorBasicPhysics):
             & (abs(muons.dz) <= self.config["muon_absdz"])
             )
         muons = muons[is_good]
-        
         return muons
     
     @zero_handler
-    def two_muons_cut_one_trig(self, data):
-        # return ak.num(data["Muon"]) == 2
-        # Make sure that at least one of muon are passing the trigger
+    def two_muons(self, data):
+        return ak.num(data["Muon_tag"]) == 2
+    
+    @zero_handler
+    def muon_pair(self, data):
         muons = data["Muon_tag"]
+        muon1 = muons[:,0]
+        muon2 = muons[:,1]
+        muon1_pass = muon1.pt > self.config["muon_pt_min_lead"]
+        muon2_pass = muon2.pt > self.config["muon_pt_min_sublead"]
+        return muon1_pass & muon2_pass
+        
+        
+    @zero_handler
+    def lead_pass_trigger(self, data):
+        lead_muons = data["Muon_tag"][:,:1]
         trig_muons = data["TrigObj"]
         trig_muons = trig_muons[
             (abs(trig_muons.id) == 13)
             & (trig_muons.filterBits >= 8)
         ]
-        matches, dRlist = muons.nearest(trig_muons, return_metric=True, threshold=0.4)
-        idx_matches_muon = ~ak.is_none(matches, axis=1)
-        has_one_triggered_muon = ak.any(idx_matches_muon, axis=1)
-        return (has_one_triggered_muon & (ak.num(muons) == 2 ))
+        matches, dRlist = lead_muons.nearest(trig_muons, return_metric=True, threshold=0.2)
+        has_matched = ~ak.is_none(matches, axis=1)
+        return has_matched[:,0] # since lead_muons has form: [ [muon1], [muon2], ....]
          
     
     @zero_handler
@@ -706,20 +731,23 @@ class Processor(pepper.ProcessorBasicPhysics):
         # jets = jets[jets.maxdxy <= self.config["jet_maxdxy_max"]]
         
         jets = jets[~bad_jets] 
-        jets = jets[
-                (jets.dxy >= self.config["jet_dxy_min"]) &
-                (jets.maxdz <= self.config["jet_maxdz_max"]) &
-                (jets.maxdxy <= self.config["jet_maxdxy_max"]) &
-                (jets.fromPV >= 3)
-                # (jets.PVpass) &
-                # (jets.nSVs == 0) &
-                # (jets.lostInnerHits <= 0) &
-                # (jets.btagCSVV2 <= 0.2)
-            ]
+        jets = jets[jets.dxy >= self.config["jet_dxy_min"]]
+        
+        # jets = jets[
+        #         (jets.dxy >= self.config["jet_dxy_min"]) &
+        #         (jets.maxdz <= self.config["jet_maxdz_max"]) &
+        #         (jets.maxdxy <= self.config["jet_maxdxy_max"]) &
+        #         (jets.fromPV >= 3)
+        #         # (jets.PVpass) &
+        #         # (jets.nSVs == 0) &
+        #         # (jets.lostInnerHits <= 0) &
+        #         # (jets.btagCSVV2 <= 0.2)
+        #     ]
         
         # no secondary vertex in jet
         # print(jets.nSVs)
         # jets = jets[jets.nSVs == 0]
+        
         return jets
     
     @zero_handler
