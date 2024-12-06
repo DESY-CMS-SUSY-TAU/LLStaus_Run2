@@ -845,7 +845,7 @@ def regionStudy(cfg: DictConfig) -> None:
             hist_gen_jet_pt_id_ratio.SetMarkerSize(0)
             hist_gen_jet_pt_id_ratio.SetTitle("id-jet / reco-jet")
             
-            outfile = path_jet+f'/ratio_pt_{dataset}_allLxy.pdf'
+            outfile = path_jet+f'/ratio_pt_{dataset}_allLxy.png'
             # plot withih jet reco and ID
             utils.utils.root_plot1D(
                 # l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
@@ -1153,7 +1153,7 @@ def regionStudy(cfg: DictConfig) -> None:
             hist_visTau_resolution.SetMarkerSize(0)
             hist_visTau_resolution.SetTitle("pt_resolution")
 
-            outfile3 = path_res+f'/pt_resolution_visTau_{dataset}.pdf'
+            outfile3 = path_res+f'/pt_resolution_visTau_{dataset}.png'
 
             utils.utils.root_plot1D(
                 l_hist = [hist_visTau_resolution],

@@ -11,14 +11,14 @@ input:
     # stau400_lsp1_ctau1000mm: /pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/SUS-RunIISummer20UL18GEN-stau400_lsp1_ctau1000mm_v4
 
     # "m(#tilde{#tau})=300 GeV c#tau_{0}=10000 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_10000mm_mLSP_1
-    "m(#tilde{#tau})=300 GeV c#tau_{0}=1000 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_1000mm_mLSP_1
+    # "m(#tilde{#tau})=300 GeV c#tau_{0}=1000 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_1000mm_mLSP_1
     # "m(#tilde{#tau})=300 GeV c#tau_{0}=100 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_100mm_mLSP_1
     # "m(#tilde{#tau})=300 GeV c#tau_{0}=10 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_10mm_mLSP_1
-    # "m(#tilde{#tau})=300 GeV c#tau_{0}=1 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_1mm_mLSP_1
+    "m(#tilde{#tau})=300 GeV c#tau_{0}=1 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_1mm_mLSP_1
     # "m(#tilde{#tau})=300 GeV c#tau_{0}=50 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_50mm_mLSP_1
     # "m(#tilde{#tau})=300 GeV c#tau_{0}=5 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_5mm_mLSP_1
     # # "m(#tilde{#tau})=300 GeV c#tau_{0}=0.5 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_0p5mm_mLSP_1
-    # "m(#tilde{#tau})=300 GeV c#tau_{0}=0.1 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_0p1mm_mLSP_1
+    "m(#tilde{#tau})=300 GeV c#tau_{0}=0.1 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_0p1mm_mLSP_1
     # # "m(#tilde{#tau})=300 GeV c#tau_{0}=0.05 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_0p05mm_mLSP_1
     # "m(#tilde{#tau})=300 GeV c#tau_{0}=0.01 mm": ${nano_path}/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_0p01mm_mLSP_1
     # "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8": ${nano_path}/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50
@@ -57,11 +57,11 @@ collections:
         cut: "({name}.pt > 20) & (abs({name}.eta) < 2.3) & ({name}.idDeepTau2018v2p5VSe	>= 1) & ({name}.idDeepTau2018v2p5VSmu >= 1) & ({name}.idDeepTau2018v2p5VSjet >= 1)"
     GenVisTaus:
         name: GenVisTau
-        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.3) & (abs({name}.vertexZ) < 10) & (abs({name}.vertexRho) < 50)"
+        # cut: "({name}.pt > 20) & (abs({name}.eta) < 2.3) & (abs({name}.vertexZ) < 10) & (abs({name}.vertexRho) < 50)"
         # cut: "({name}.pt > 20) & (abs({name}.eta) < 2.3) & (abs({name}.vertexZ) < 50)"
-        # cut: "({name}.pt > 20) & (abs({name}.eta) < 2.3)"
+        cut: "({name}.pt > 20) & (abs({name}.eta) < 2.3)"
     STau:
-        vertexZ: 10 #cm cut 
+        vertexZ: 100 #cm cut 
 
 bin_setups:
     dR_bins  : [100, 0.0, 0.8]  # n_bins, dR_min, dR_max
@@ -83,5 +83,6 @@ eff_setups:
     pt_ratio : [100, 0.0, 2.0, 100, 0, 1000]
     pt_resolution : [100, -1, 5, 100, 0, 1000]
 
-output: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/plots_DP_post-pog/efficiency_coordfix_vz10cm_vrpo50cm/
+# output: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/plots_DP_post-pog/efficiency_coordfix_vz10cm_vrpo50cm/
 # output: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/plots_DP_post-pog/efficiency_coordfix_vz50cm/
+output: /nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/plots_DP_thesis/efficiency_coordfix/
