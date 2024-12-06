@@ -2,19 +2,22 @@
     "year": "2018",
     // "luminosity": 59.7,
     // "luminosity": 19.5, //2016pre
-    "luminosity": 16.8, //2016post
+    //"luminosity": 16.8, //2016post
+    "luminosity": 41.4,
     "crosssections": "$CONFDIR/../crosssections.json",
     "cuts" : [
-        "mt_muon2",
-        "has_more_two_jets",
-        "two_loose_jets",
-        "two_loose_jets_final",
+        "single_muon_tag",
+        "Lead_pass_trigger",
+        "muon_sfs",
+        "loose_muon_veto",
+        "loose_electron_veto",
+        "mt_muon",
+        "has_more_two_jets"
     ],
     "Categories" : [],
     "W_stitching_applied" : true,
-    "DY_stitching_applied" : false,
+    "DY_stitching_applied" : true,
     "include_systematics": false,
-
     "fake_rate" : {
         // "ratio" - calculate by the ration of two hist
         // "score-dim" - assumes one of the dimention of score
@@ -85,70 +88,40 @@
         //     "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8",
         //     "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8",
         // ],
-        // "$\\mathrm{DY+jets}$": [
-		// 	"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
-
-        //     "ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8",
-		// ],
-        // "$\\mathrm{Single\\ top}$": [
-        //     "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
-        //     "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
-        //     "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
-        //     "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"       
-		// ],
-        // "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$": [
-        //     "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",
-        //     "TTToHadronic_TuneCP5_13TeV-powheg-pythia8",
-        //     "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",
-        //     "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
-        //     "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
-        //     "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8",
-        //     "ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8",
-        // ],
-        // "$\\mathrm{Other\\ SM}$": [
-        //     "VHToNonbb_M125_TuneCP5_13TeV-amcatnloFXFX_madspin_pythia8",
-        //     "VVTo2L2Nu_MLL-1toInf_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-        //     "WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-        //     "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8",
-        //     "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8",
-        //     "WZTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-        //     "WZTo1L3Nu_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-        //     "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-        //     "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-        //     "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8",
-            
-        //     "ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8", 
-        //     "ZZTo4L_TuneCP5_13TeV_powheg_pythia8",
-
-        //     "GluGluToContinToZZTo2e2tau_TuneCP5_13TeV-mcfm701-pythia8",
-        //     "GluGluToContinToZZTo2mu2tau_TuneCP5_13TeV-mcfm701-pythia8",
-        //     "GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8",
-        // ],
-        // "$\\mathrm{W+jets}$": [
-        //     "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     // "WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     // "WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     // "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     // "WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8"
-        // ],
-        // "$\\mathrm{Z}(\\nu\\bar{\\nu})+\\mathrm{jets}$": [
-        //     "ZJetsToNuNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8",
-        //     "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"
-        // ],
+        "$\\mathrm{DY+jets}$": [
+			"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+		],
+        "$\\mathrm{Single\\ top}$": [
+            "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
+            "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8",
+            "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8",
+            "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8" ,  
+		],
+        "$t\\bar{t} + t\\bar{t}V + t\\bar{t}H$": [
+            "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8",
+            "TTToHadronic_TuneCP5_13TeV-powheg-pythia8",
+            "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8",
+            "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
+            "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8",
+            "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8",
+            "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8",
+        ],
+        "$\\mathrm{Other\\ SM}$": [
+            "WW_TuneCP5_13TeV-pythia8",
+            "WZ_TuneCP5_13TeV-pythia8",
+            "ZZ_TuneCP5_13TeV-pythia8",
+        ],
+        "$\\mathrm{W+jets}$": [
+            "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+            "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+        ],
 
         "$\\mathrm{Data}$" : ["SingleMuon"]
     },
@@ -275,9 +248,9 @@
     "SetupBins" : {
         // "Histogram name" : [x_min, x_max, rebin_bins, overflow_includ, axis labels]
         
-        "METpt" : [0.0, 100.0, 1, true, "E_{T}^{miss}", "GeV"],
+        "METpt" : [0.0, 500.0, 2, true, "E_{T}^{miss}", "GeV"],
         "METphi" : [-3.15, 3.15, 2, true, "#phi_{MET}", "units"],
-        "mt_muon" : [50.0, 130, 3, true, "m_{T}(#mu, MET)", "GeV"],
+        "mt_muon" : [50.0, 130, 3, true, "m_{T}(#mu, E_{T}^{miss})", "GeV"],
         "muon_pt" : [0.0, 1000, 3, true, "p_{T}(#mu)", "GeV"],
         "muon_eta" : [-2.4, 2.4, 3, true, "#eta_{#mu}", "units"],
         "jj_mass" : [0.0, 600.0, 3, true, "m_{jj}", "GeV"],
@@ -287,6 +260,7 @@
         "mt_sum" : [0.0, 600.0, 3, true, "m_{T}(j1, j2, MET)", "GeV"],
         "dphi_jet1_jet2" : [0.0, 3.15, 2, true, "#Delta#phi(j1, j2)", "units"],
         "mt2_j1_j2_MET" : [0.0, 300.0, 3, true, "m_{T2}(j1, j2, MET)", "GeV"],
+        "njetselect" : [0.0, 10.0, 1, true, "N_{jets}", "units"],
         "jetselect_pt" : [0.0, 300.0, 3, true, null, "GeV"], 
         "jetselect_eta" : [-2.1, 2.1, 3, true, null, "units"], 
         // "jetselect_score" : [0.8, 1.05, 1, true, null],
@@ -311,7 +285,7 @@
     "prediction_hist" : {
         "plot_unblind" : true,
         "plot_signal" : false,
-        "cut"   : "Cut_014_two_loose_jets_final",
+        "cut"   : "Cut_015_two_loose_jets_final",
         "predictions" : ["bin0to2", "bin1to2", "bin0to1"], // Also can be a bin projection
         "bin_data" : ["bin2", "bin2", "bin1"],
         "hists" : {

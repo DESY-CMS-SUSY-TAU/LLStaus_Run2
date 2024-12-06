@@ -1,44 +1,13 @@
 {
-    "year": "2018",
-    "luminosity": 59.7,
+    "year": "2017",
+    "luminosity": 41.5,
     "crosssections": "$CONFDIR/../crosssections.json",
-    // "cuts" : ["Cut-007","Cut-008","Cut-009","Cut-010"],
     "cuts" : [
-        // "BeforeCuts",
-        // "Trigger",
-        // "Pileup reweighting",
-        // "HEM_veto",
-        // "PV",
-        // "MET filters",
-        // "two_muons",
-        // "mass_window",
-        // "mumu_dr",
-        // "loose_muon_veto",
-        // "loose_electron_veto",
-        // "muon_sfs",
         // "dy_gen_sfs",
-        // "pass_iso_os",
-        // "after_categories",
-        // "JetPUIdSFs",
-
-        // "HEM_veto",
-        // "has_more_two_jets",
-        // "after_jet_def",
-        // "dphi_min_cut",
-        // "has_two_jets",
-
-        // "no_btag"
-
-        // "pass_iso_os",
-        // "JetPUIdSFs",
-        // "HEM_veto",
-        // "has_more_one_jets",
-        // "after_categories",
-        // "has_more_two_jets",
-        // "no_btag_jet",
-        // "after_jet_def",
+        // "muon_sfs",
+        // "mumu_dr"
+        "after_categories",
         "dphi_min_cut",
-        // "has_two_jets",
     ],
     "Categories" : [
                     // ["barrel","endcap"],
@@ -54,43 +23,36 @@
         // "ratio" - calculate by the ration of two hist
         // "score-dim" - assumes one of the dimention of score
         "mode" : "ratio",
-        "nominator"   : ["Cut_020_has_two_jets_fake_rate_hist", "/nominal/p9900/iso/OS"],
-        "denominator" : ["Cut_020_has_two_jets_fake_rate_hist", "/nominal/all/iso/OS"],
-        // "nominator"   : ["Cut-011_charge2_fake_rate_hist", "_p9900"],
-        // "denominator" : ["Cut-011_charge2_fake_rate_hist", "_p05"],
+        "nominator"   : ["Cut_017_two_loose_jets_final_fake_rate_hist", "/nominal/p9900"],
+        "denominator" : ["Cut_017_two_loose_jets_final_fake_rate_hist", "/nominal/p05"],
 
         "NOF" : false, // no overflow bins in projection
         "NUF" : false, // no underflow bins in projection
         "rate_bins" : {
-            // "jet_flav" : [1, 4, 5, 6, 15, 16, 21, 22],
-            "jet_eta": [-2.3, -1.5, -0.5,  0.5,  1.5,  2.3],
-            // "jet_pt" :  [30, 40, 50, 70, 120, 1000],
+            "jet_eta": [-2.3, -1.5, -0.5, 0.5, 1.5, 2.3],
             "jet_pt" :  [30, 40, 50, 70, 120, 1000],
-            // "jet_dxy" : [0.0, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0, 4.0, 10.0, 20.0, 50.0],
-            "jet_dxy" : [0.0, 0.5, 10.0, 50.0],
-            // "jet_dxy" : [1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0],
+            "jet_dxy" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 30.0],
         },
         "sf_project" : {
             // name : "axis", score should be first argument
-            // "jet_dxy_pt" : "zy",
-            // "jet_dxy_pt" : ["zy", {
-            //     "y_axis" : [1.0, 2.0, 4.0, 10.0, 16.0, 30.0],
-            //     "x_axis" : [
-            //         [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0], // underflow
-            //         [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
-            //         [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
-            //         [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
-            //         [30.0, 1000.0],
-            //         [30.0, 1000.0],
-            //         [30.0, 1000.0], // overflow
-            //         ]
-            //     }],
-            // "jet_dxy_pt" : ["zy", false],
-            // "jet_flav" : "x",
+            "jet_eta" : ["x", false],
             "jet_pt"   : ["y", false],
-            "jet_dxy"  : ["z", false],
+            "jet_dxy"   : ["z", false],
+            "jet_dxy_pt" : ["zy", {
+             "y_axis" : [0.5, 1.0, 2.0, 4.0, 10.0, 16.0, 30.0],
+             "x_axis" : [
+                 [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0], // underflow
+                 [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                 [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                 [30.0, 40.0, 50.0, 70.0, 120.0, 1000.0],
+                 [30.0, 40.0, 50.0, 70.0, 1000.0],
+                 [30.0, 1000.0],
+                 [30.0, 1000.0],
+                 [30.0, 1000.0], // overflow
+                 ]
+             }],
             "jet_eta_pt" : ["xy", false],
-            "jet_dxy_pt" : ["zy", false]
+            "jet_eta_dxy" : ["xz", false]
         },
     },
     "QCD-prediction" : {
@@ -182,7 +144,6 @@
         // ],
         "$\\mathrm{DY+jets}$": [
             // "Inclusive_DYLO_M-50",
-            "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8",
 			"DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
             "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
             "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
@@ -401,91 +362,10 @@
         }
     },
     "SetupBins" : {
-        // // "Histogram name" : [x_min, x_max, rebin_bins, overflow_includ, axis labels
-        // "deltaphi" : [0.0, 3.15, 2, false, "$\\Delta\\phi(\\mathrm{jet1,jet2})$"],
-        // "1st_mu_pt" : [0.0, 300.0, 2, true, "$p_T(\\mu_1)$ [GeV]"],
-        // "2nd_mu_pt" : [0.0, 300.0, 2, true, "$p_T(\\mu_2)$ [GeV]"],
-        // "npvs" : [0.0, 100.0, 1, true, "$\\mathrm{N}_{\\mathrm{PV}}$"],
-        // "njetselect" : [0.0, 10.0, 1, true, "$\\mathrm{N}_{\\mathrm{jets}}$"],
-        // "njets" : [0.0, 10.0, 1, true, "$\\mathrm{N}_{\\mathrm{jets}}$"],
-        // "nbjets" : [0.0, 10.0, 1, true, "$\\mathrm{N}_{\\mathrm{b-jets}}$"],
-        // "METpt" : [0.0, 200.0, 1, true, "$p_T(\\mathrm{MET})$ [GeV]"],
-        // "METphi" : [-3.15, 3.15, 2, true, "$\\phi(\\mathrm{MET})$"],
-        // // "njet" : [], 
-        // "mumu_mass" : [59.0, 127.0, 2, true, "$m(\\mu,\\mu)$ [GeV]"],
-        // "mumu_pt" : [0.0, 500, 3, true, "$p_T(\\mu,\\mu)$ [GeV]"],
-        // "jetselect_pt" : [0.0, 300.0, 3, true, "$p_T(\\mathrm{jet})$ [GeV]"],
-        // "jetselect_eta" : [-2.1, 2.1, 3, true, "$\\eta(\\mathrm{jet})$"],
-        // // "jetselect_eta" : [-2.1, 2.1, [-2.1, 2.1], true, null],
-        // // "jetselect_score" : [0.8, 1.05, 1, true, null],
-        // "jetselect_dxy" : [0.0, 30.0, 5, true, "$d_{xy}(\\mathrm{jet})$ [cm]"],
-        // "jetselect_dxy_weight" : [0.0, 30.0, 5, true, "$d_{xy}(\\mathrm{jet})$ [cm]"],
-        // "jetselect_dxysig" : [0.0, 500.0, 5, true, "$d_{xy}/\\sigma_{d_{xy}}(\\mathrm{jet})$"],
-        // "jetselect_dxysig_weight" : [0.0, 500.0, 5, true, "$d_{xy}/\\sigma_{d_{xy}}(\\mathrm{jet})$"],
-        // // "jetselect_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
-        //                                 // 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
-        //                                 // 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0], true, null],
-        // "jetselect_score" : [0.0, 1.00, 6, true, "jet disTau_raw_score"],
-        // // "jet_lead_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
-        // //                                 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
-        // //                                 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
-        // // "jet_sublead_score" : [0.7, 1.0, [0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8 ,
-        // //                                 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9 , 0.91,
-        // //                                 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
-        // "jet_lead_eta" : [-2.1, 2.1, 4, true, "$\\eta$(\\mathrm{leading\\_jet})$"],
-        // "jet_lead_pt" : [0, 500, 4, true, "$p_T(\\mathrm{leading\\_jet})$ [GeV]"],
-        // "jet_lead_dxy" : [0.0, 20.0, 5, true, "$d_{xy}(\\mathrm{leading-jet})$ [cm]"], // "$d_{xy}(\\mathrm{leading-jet})$ [cm]
-        // "jet_lead_dz" : [0.0, 20.0, 5, true, "$d_{z}(\\mathrm{leading-jet})$ [cm]",],
-        // "jet_lead_dxysig" : [0.0, 500.0,5, true, "$d_{xy}/\\sigma_{d_{xy}}(\\mathrm{leading-jet})$"],
-        // "jet_lead_maxdxy" : [0.0, 20.0, 5, true, "leading-jet max $d_{xy}$ [cm]"],
-        // "jet_lead_maxdz" : [0.0, 20.0, 5, true, "leading-jet max $d_{z}$ [cm]"],
-        // "jet_lead_maxdxysig": [0.0, 500.0, 5, true, "$\\mathrm{leading\\,jet}\\,\\mathrm{max}\\,\\mathrm{d}_{xy}/\\sigma_{d_{xy}}$"],
-        // "jet_lead_dxy_weight": [0.0, 20.0, 5, true, "$\\mathrm{leading\\,jet}\\,\\mathrm{d}_{xy}\\,\\mathrm{weight}$ [cm]"],
-        // "jet_lead_dxysig_weight": [0.0, 500.0, 5, true, "$\\mathrm{leading\\,jet}\\,\\mathrm{d}_{xy}/\\sigma_{d_{xy}}\\,\\mathrm{weight}$"],
-        // "jet_lead_score": [0.0, 1.00, 3, true, "leading jet disTau_raw_score"],
-        
-        // "jet_lead_dz_err": [0.0, 5.0, 2, true, "$\\mathrm{leading\\,jet}\\,\\Delta z\\,\\mathrm{error}$"],
-        // "jet_lead_dxy_err": [0.0, 5.0, 2, true, "$\\mathrm{leading\\,jet}\\,d_{xy}\\,\\mathrm{error}$"],
-        // "jet_lead_vz": [0, 2.0, 1, true, "$v_z(\\mathrm{leading\\,jet})$"],
-        // "jet_lead_vxy": [0, 2.0, 1, true, "$v_{xy}(\\mathrm{leading\\,jet})$"],
-        // "jet_lead_frompv": [0, 10.0, 1, true, "$\\mathrm{distance\\,from\\,PV}(\\mathrm{leading\\,jet})$"],
-        // "jet_lead_lostInnerHits": [-1, 5.0, 1, true, "$\\mathrm{lost\\,inner\\,hits}(\\mathrm{leading\\,jet})$"],
-        // "jet_lead_deta": [-0.5, 0.5, 2, true, "$\\Delta\\eta(\\mathrm{leading\\,jet})$"],
-        // "jet_lead_dphi": [-0.5, 0.5, 2, true, "$\\Delta\\phi(\\mathrm{leading\\,jet})$"],
-        // "jet_lead_nconst": [0, 100, 1, true, "$\\mathrm{number\\,of\\,constituents}(\\mathrm{leading\\,jet})$"],
-        // "jet_lead_nSV": [0, 10, 1, true, "$\\mathrm{number\\,of\\,secondary\\,vertices}(\\mathrm{leading\\,jet})$"],
-
-        // "jet_lead_btagCSVV2": [0.0, 1.0, 1, true, "pfCombinedInclusiveSecondaryVertexV2 b-tag discriminator (aka CSVV2)"],
-        // "jet_lead_btagDeepB": [0.0, 1.0, 1, true, "DeepCSV b+bb tag discriminator"],
-        // "jet_lead_btagDeepCvB": [0.0, 1.0, 1, true, "DeepCSV c vs b+bb discriminator"],
-        // "jet_lead_btagDeepCvL": [0.0, 1.0, 1, true, "DeepCSV c vs udsg discriminator"],
-        // "jet_lead_btagDeepFlavB": [0.0, 1.0, 1, true, "DeepJet b+bb+lepb tag discriminator"],
-        // "jet_lead_btagDeepFlavCvB": [0.0, 1.0, 1, true, "DeepJet c vs b+bb+lepb discriminator"],
-        // "jet_lead_btagDeepFlavCvL": [0.0, 1.0, 1, true, "DeepJet c vs uds+g discriminator"],
-        // "jet_lead_btagDeepFlavQG": [0.0, 1.0, 1, true, "DeepJet g vs uds discriminator"],
-
-        // "jet_sublead_eta": [-2.1, 2.1, 4, true, "$\\eta(\\mathrm{subleading\\_jet})$"],
-        // "jet_sublead_pt": [0, 500, 4, true, "$p_T(\\mathrm{subleading\\_jet})$ [GeV]"],
-        // "jet_sublead_dxy": [0.0, 20.0, 5, true, "$d_{xy}(\\mathrm{subleading\\,jet})\\,[\\mathrm{cm}]$"],
-        // "jet_sublead_dz": [0.0, 20.0, 5, true, "$d_{z}(\\mathrm{subleading\\,jet})\\,[\\mathrm{cm}]$"],
-        // "jet_sublead_dxysig": [0.0, 500.0, 5, true, "$d_{xy}/\\sigma_{d_{xy}}(\\mathrm{subleading\\,jet})$"],
-        // "jet_sublead_dxy_weight": [0.0, 20.0, 5, true, "$\\mathrm{subleading\\,jet}\\,d_{xy}\\,\\mathrm{weight}\\,[\\mathrm{cm}]$"],
-        // "jet_sublead_maxdxy": [0.0, 20.0, 5, true, "$\\mathrm{subleading\\,jet}\\,\\mathrm{max}\\,d_{xy}\\,[\\mathrm{cm}]$"],
-        // "jet_sublead_maxdz": [0.0, 20.0, 5, true, "$\\mathrm{subleading\\,jet}\\,\\mathrm{max}\\,d_{z}\\,[\\mathrm{cm}]$"],
-        // "jet_sublead_maxdxysig": [0.0, 500.0, 5, true, "$\\mathrm{subleading\\,jet}\\,\\mathrm{max}\\,d_{xy}/\\sigma_{d_{xy}}$"],
-        // "jet_sublead_dxysig_weight": [0.0, 500.0, 5, true, "$\\mathrm{subleading\\,jet}\\,d_{xy}/\\sigma_{d_{xy}}\\,\\mathrm{weight}$"],
-        // "jet_sublead_score": [0.0, 1.00, 3, true, "subleading jet disTau_raw_score"],
-        // "jet_sublead_nSV": [0, 10, 1, true, "$\\mathrm{number\\,of\\,secondary\\,vertices}(\\mathrm{subleading_jet})$"],
-
-        // "dphi_jet1_jet2": [-3.15, 3.15, 2, true, "$\\Delta\\phi(\\mathrm{jet1,\\,jet2})$"],
-        // "max_score": [0.0, 1.00, 3, true, "$\\mathrm{max\\,prob.}(\\mathrm{jets})$"],
-        // "max_score_two_jets": [0.0, 1.00, 3, true, "$\\mathrm{max\\,prob.}(\\mathrm{jet1,\\,jet2})$"],
-        // // "jet_lead_score" : [0.0, 1.01, [0.0, 0.02, 0.05, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
-        // // "jet_sublead_score" : [0.0, 1.01, [0.0, 0.02, 0.05, 1.01], true, "$\\mathrm{prob.}(\\mathrm{jet})$"],
-
+ 
         "deltaphi": [0.0, 3.15, 2, false, "$\\Delta\\phi(\\mathrm{jet1,jet2})$", "radians"],
-        "1st_mu_pt": [0.0, 300.0, 2, true, "$p_T(\\mu_1)$ [GeV]", "GeV"],
-        "2nd_mu_pt": [0.0, 300.0, 2, true, "$p_T(\\mu_2)$ [GeV]", "GeV"],
+        "1st_mu_pt": [0.0, 150.0, 1, true, "$p_T(\\mu_1)$ [GeV]", "GeV"],
+        "2nd_mu_pt": [0.0, 150.0, 1, true, "$p_T(\\mu_2)$ [GeV]", "GeV"],
         "npvs": [0.0, 100.0, 1, true, "$\\mathrm{N}_{\\mathrm{PV}}$", "units"],
         "njetselect": [0.0, 10.0, 1, true, "$\\mathrm{N}_{\\mathrm{jets}}$", "units"],
         "njets": [0.0, 10.0, 1, true, "$\\mathrm{N}_{\\mathrm{jets}}$", "units"],
@@ -549,7 +429,8 @@
     "prediction_hist" : {
         "plot_unblind" : true,
         "plot_signal" : false,
-        "cut"   : "Cut-012_two_loose_jets_final",
+        // "cut"   : "Cut_016_two_loose_jets_final",
+        "cut"   : "Cut_017_two_loose_jets_final",
         "predictions" : ["bin0to2", "bin1to2", "bin0to1"], // Also can be a bin projection
         "bin_data" : ["bin2", "bin2", "bin1"],
         "hists" : {
@@ -574,6 +455,7 @@
             "jet2_dxy"    : [0.0, 10.0, [0.4, 0.6, 1, 1.6,5, 10], true, null],
             "jet2_dxysig" : [0, 200.0, [0, 5, 10, 15, 25, 50, 75, 125, 200], true, null],
             // "jet2_IP3D"   : [0, 20.0, [0.0, 5.0, 10.0, 20.0], true, null],
+            "binning_schema" : [0, 7, 1, true, "search bins"]
         }
     }
 }
