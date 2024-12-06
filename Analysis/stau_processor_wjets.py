@@ -68,10 +68,20 @@ class Processor(pepper.ProcessorBasicPhysics):
                     dsname.startswith("W4JetsToLNu") ):
             selector.systematics["weight"] = \
                 ak.full_like(selector.systematics["weight"], 1.0)
-            # selector.add_cut("reset_weight", lambda data: ak.Array(np.ones(len(data))))
+            selector.add_cut("reset_weight", lambda data: ak.Array(np.ones(len(data))))
             # return # to calculate number of events
             selector.add_cut("W jet reweighting",
                 partial(self.do_w_jet_reweighting))
+        
+        if is_mc and ( dsname.startswith("DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                    dsname.startswith("DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                    dsname.startswith("DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                    dsname.startswith("DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                    dsname.startswith("DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") ):
+            selector.add_cut("DY jet reweighting",
+                partial(self.do_dy_jet_reweighting))
+            
+        # return
         
         # Triggers
         pos_triggers, neg_triggers = pepper.misc.get_trigger_paths_for(
@@ -101,9 +111,9 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
         
         # one tight tag muon
-        selector.set_column("muon_tag", self.muons_tag) 
+        selector.set_column("Muon_tag", self.muons_tag) 
         selector.add_cut("single_muon_tag", self.single_muon_tag_cut)
-        
+        selector.add_cut("Lead_pass_trigger", self.lead_pass_trigger)
         selector.add_cut("muon_sfs", partial(self.get_muon_sfs, is_mc=is_mc))
         
         # veto all loose muons
@@ -115,14 +125,14 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("loose_electron_veto", self.loose_electron_veto_cut)
         
         # mt of muon and pt_miss
-        selector.set_column("mt_muon", partial(self.mt, name="muon_tag"))
+        selector.set_column("mt_muon", partial(self.mt, name="Muon_tag"))
         selector.add_cut("mt_muon", self.mt_muon_cut)
         
         # add cuts and selections on the jets
         selector.set_column("Jet_select", self.jet_selection)
         selector.add_cut("has_more_two_jets", self.has_more_two_jets)
         selector.set_column("Jet_select", self.getloose_jets)
-
+        # return
         selector.set_column("PfCands", self.pfcand_valid)
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
@@ -171,32 +181,42 @@ class Processor(pepper.ProcessorBasicPhysics):
         return weight
     
     @zero_handler
+    def lead_pass_trigger(self, data):
+        lead_muons = data["Muon_tag"][:,:1]
+        trig_muons = data["TrigObj"]
+        trig_muons = trig_muons[
+            (abs(trig_muons.id) == 13)
+            & (trig_muons.filterBits >= 8)
+        ]
+        matches, dRlist = lead_muons.nearest(trig_muons, return_metric=True, threshold=0.2)
+        has_matched = ~ak.is_none(matches, axis=1)
+        return has_matched[:,0] # since lead_muons has form: [ [muon1], [muon2], ....]
+    
+    @zero_handler
     def get_muon_sfs(self, data, is_mc):
         weight = np.ones(len(data))
         if is_mc:
-            id_iso_sfs, systematics = self.muon_id_iso_sfs(data)
+            muons = data["Muon_tag"]
+            id_iso_sfs, systematics = \
+                self.muon_sfs(muons, sfs_name_config="muon_sf")
             weight *= ak.to_numpy(id_iso_sfs)
-            mu_trigger_sfs = self.apply_mu_trigger_sfs(data) # systematics are not implemented yet
+            muon_leading = muons[:,:1] # trigger_sfs are applied only to leading muon
+            mu_trigger_sfs, systematics_trig = \
+                self.muon_sfs(muon_leading, sfs_name_config="muon_sf_trigger")
             weight *= ak.to_numpy(mu_trigger_sfs)
+            systematics.update(systematics_trig)
             return weight, systematics
         else:
             return weight
 
-    def apply_mu_trigger_sfs(self, data):
-        weight = np.ones(len(data))
-        # Single muon trigger efficiency applied for leading muon
-        muon = ak.firsts(data["Muon"])
-        sfs = self.config["muon_sf_trigger"][0](pt=muon.pt, abseta=abs(muon.eta))
-        return weight * sfs
-
-    def muon_id_iso_sfs(self, data):
+    def muon_sfs(self, muons, sfs_name_config = "muon_sf"):
         """Compute identification and isolation scale factors for
-           leptons (electrons and muons)."""
-        muons = data["Muon"]
-        weight = np.ones(len(data))
+           leptons (electrons and muons). Also possible
+           to use for muon trigger scale factors."""
+        weight = np.ones(len(muons))
         systematics = {}
         # Muon identification and isolation efficiency
-        for i, sffunc in enumerate(self.config["muon_sf"]):
+        for i, sffunc in enumerate(self.config[sfs_name_config]):
             params = {}
             for dimlabel in sffunc.dimlabels:
                 if dimlabel == "abseta":
@@ -204,7 +224,7 @@ class Processor(pepper.ProcessorBasicPhysics):
                 else:
                     params[dimlabel] = getattr(muons, dimlabel)
             central = ak.prod(sffunc(**params), axis=1)
-            key = f"muonsf{i}"
+            key = f"{sfs_name_config}{i}"
             if self.config["compute_systematics"]:
                 if ("split_muon_uncertainty" not in self.config
                         or not self.config["split_muon_uncertainty"]):
@@ -228,12 +248,18 @@ class Processor(pepper.ProcessorBasicPhysics):
         return weights
 
     @zero_handler
+    def do_dy_jet_reweighting(self, data):
+        njet = data["LHE"]["Njets"]
+        weights = self.config["DY_jet_reweight"][njet]
+        return weights
+
+    @zero_handler
     def MET_cut(self, data):
         return data["MET"].pt > self.config["MET_pt"]
     
     @zero_handler
     def single_muon_tag_cut(self, data):
-        return ak.num(data["muon_tag"])==1
+        return ak.num(data["Muon_tag"])==1
     
     @zero_handler
     def loose_muon_veto_cut(self, data):
@@ -307,7 +333,7 @@ class Processor(pepper.ProcessorBasicPhysics):
             & (self.config["jet_pt_min"] < jets.pt)
             & (jets.jetId >= self.config["jet_jetId"] )
             )]
-        matches_h, dRlist = jets.nearest(data["muon_tag"], return_metric=True, threshold=self.config["tag_muon_veto_dR"])
+        matches_h, dRlist = jets.nearest(data["Muon_tag"], return_metric=True, threshold=self.config["tag_muon_veto_dR"])
         isoJets = jets[ak.is_none(matches_h, axis=-1)]
         return isoJets
     

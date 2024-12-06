@@ -374,8 +374,9 @@ def root_plot1D(
             h1_ratio.GetXaxis().SetRangeUser(xrange[0], xrange[1])
 
             if ratio_mode=="B":
-                h1_ratio = h1_ratio.Divide(accume_hist)
-                stack_ratio.Add(h1_ratio, "HIST")
+                h1_ratio.Divide(accume_hist)
+                print("Adding h1_ratio:,", h1_ratio.GetTitle())
+                stack_ratio.Add(h1_ratio, "HISTE")
             elif ratio_mode=="SB":
                 SandB = accume_hist.Clone()
                 SandB.SetDirectory(0)
@@ -384,7 +385,7 @@ def root_plot1D(
                 for bin_i in range(hist.GetNcells()):
                     if SandB.GetBinContent(bin_i) != 0:
                         h1_ratio.SetBinContent(bin_i, h1_ratio.GetBinContent(bin_i) / ROOT.TMath.Sqrt(SandB.GetBinContent(bin_i)))
-                stack_ratio.Add(h1_ratio, "HIST")
+                stack_ratio.Add(h1_ratio, "HISTE")
             elif ratio_mode=="DATA":
                 if asym_error is not None:
                     print("asym_error in ratio are added")

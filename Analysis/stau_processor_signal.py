@@ -432,8 +432,10 @@ class Processor(pepper.ProcessorBasicPhysics):
         HT_miss= np.sqrt(px*px + py*py)
         
         return {
-            "HT_valid" : HT_valid, "HT_miss_valid" : HT_miss_valid,
-            "HT" : HT, "HT_miss" : HT_miss
+            "HT_valid" : HT_valid,
+            "HT_miss_valid" : HT_miss_valid,
+            "HT" : HT,
+            "HT_miss" : HT_miss
         }
     
     def delta_phi(self, phi1_ak, phi2_ak):
