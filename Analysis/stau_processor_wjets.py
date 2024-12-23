@@ -44,6 +44,10 @@ class Processor(pepper.ProcessorBasicPhysics):
             len(config["muon_sf_trigger"]) == 0:
             logger.warning("No single muon trigger scale factors specified")
 
+        if "DY_ZptLO_weights" not in config:
+            logger.warning("No DY Zpt/mass reweighting specified")
+
+
         # It is not recommended to put anything as member variable into a
         # a Processor because the Processor instance is sent as raw bytes
         # between nodes when running on HTCondor.
@@ -128,6 +132,10 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("mt_muon", partial(self.mt, name="Muon_tag"))
         selector.add_cut("mt_muon", self.mt_muon_cut)
         
+        if is_mc:
+            selector.set_column("sum_ll_gen", self.sum_ll_gen)
+        selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
+
         # add cuts and selections on the jets
         selector.set_column("Jet_select", self.jet_selection)
         selector.add_cut("has_more_two_jets", self.has_more_two_jets)
@@ -160,6 +168,41 @@ class Processor(pepper.ProcessorBasicPhysics):
         # selector.set_column("Jet_select", self.gettight_jets)
         # selector.add_cut("two_tight_jets", self.has_two_jets)        
     
+    @zero_handler
+    def sum_ll_gen(self, data):
+        part = data["GenPart"]
+        part = part[ part.hasFlags("isLastCopy")
+                & (part.hasFlags("fromHardProcess")
+                & ((abs(part["pdgId"]) == 11) 
+                | (abs(part["pdgId"]) == 13)
+                | (abs(part["pdgId"]) == 12)
+                | (abs(part["pdgId"]) == 14)
+                | (abs(part["pdgId"]) == 15)
+                | (abs(part["pdgId"]) == 16)))
+                | (part.hasFlags("isDirectHardProcessTauDecayProduct"))
+        ]
+        sum_p4 = part.sum(axis=1) # sum over all particles in event
+        return sum_p4
+
+    @zero_handler
+    def get_dy_gen_sfs(self, data, is_mc, dsname):
+        weight = np.ones(len(data))
+        # The weights are taken from the following repository:
+        # https://github.com/cms-tau-pog/TauFW/tree/master/PicoProducer/data/zpt
+        if is_mc and (
+            dsname.startswith("DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8")):
+            z_boson = data["sum_ll_gen"]
+            dy_gen_sfs = self.config["DY_ZptLO_weights"](mass=z_boson.mass, pt=z_boson.pt)
+            weight *= ak.to_numpy(dy_gen_sfs)
+            return weight
+        else:
+            return weight
+
     @zero_handler
     def has_more_two_jets(self, data):
         jets = data["Jet_select"]
