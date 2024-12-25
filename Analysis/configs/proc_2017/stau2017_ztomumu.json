@@ -124,9 +124,9 @@
     "muon_eta_max"  :  2.4,
     "muon_ID"       :  "tightId",
     // PFIso ID from miniAOD selector (1=PFIsoVeryLoose, 2=PFIsoLoose, 3=PFIsoMedium, 4=PFIsoTight, 5=PFIsoVeryTight, 6=PFIsoVeryVeryTight)
-    // "muon_pfIsoId"  : 4, // tight: >= 4
-    "muon_pfIso"      : 0.15,
-    "muon_pfIso_anti" : 0.5,
+    "muon_pfIsoId"  : 4, // tight: >= 4
+    // "muon_pfIso"      : 0.15,
+    // "muon_pfIso_anti" : 0.5,
     // "muon_absdxy"   : 0.2,
     // "muon_absdz"    : 0.5,
     "muon_absdxy"   : 0.045,
@@ -188,11 +188,11 @@
 
     "hists": "$CONFDIR/../hists_configs/ztomumu_hist.json",
 
-    "cuts_to_histogram" : [
-        "after_categories",
-        "dphi_min_cut",
-        "dy_gen_sfs",
-        "muon_sfs",
-        "mumu_dr"
-    ]
+    // "cuts_to_histogram" : [
+    //     "after_categories",
+    //     "dphi_min_cut",
+    //     "dy_gen_sfs",
+    //     "muon_sfs",
+    //     "mumu_dr"
+    // ]
 }

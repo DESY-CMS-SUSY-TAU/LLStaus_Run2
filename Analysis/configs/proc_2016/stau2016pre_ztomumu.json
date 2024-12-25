@@ -45,13 +45,20 @@
             ["abseta", "pt"]
         ]
     ],
-    // "DY_ZptLO_weights": [
-    //     "$DATADIR/zptmass_weights_UL2018.root",
-    //     "zptmass_weight",
-    //     ["pt", "mass"]
-    // ],
+    "DY_ZptLO_weights": [
+        "$DATADIR/zptmass_weights_UL2016_preVFP.root",
+        "zptmass_weight",
+        ["pt", "mass"]
+    ],
     "DY_jet_reweight": [
-        [ 0, 0, 0, 0, 0]
+        // Njets: [0, 1, 2, 3, 4]
+        [
+            0.06549873384,
+            0.02325489478,
+            0.01961277838,
+            0.008909070762,
+            0.009265435096
+        ]
     ],
     // "jet_puid_sf": [
     //     "$DATADIR/jmar.json"

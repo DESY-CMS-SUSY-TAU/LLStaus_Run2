@@ -16,26 +16,26 @@ from utils.utils import ColorIterator, root_plot1D, root_plot2D
 
 ######################################################################################
 
-ext = "pdf"
-output_dir = "./output_stritching/"
-name_file = "DY_stitching_2017"
-limi = 41.4
+# ext = "pdf"
+# output_dir = "./output_stritching/"
+# name_file = "DY_stitching_2017"
+# limi = 41.4
 
-Inclusive_path = "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/2017/output_zmumu/zmumu_v3_stitching_v2_done/hists/Cut_000_BeforeCuts_LHE_Vpt.root"
-Inclusive_hist = "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8"
-Inclusive_scale = 6233550 * limi / 103344974
+# Inclusive_path = "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/2017/output_zmumu/zmumu_v3_stitching_v2_done/hists/Cut_000_BeforeCuts_LHE_Vpt.root"
+# Inclusive_hist = "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8"
+# Inclusive_scale = 6233550 * limi / 103344974
 
-Combined_path = "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/2017/output_zmumu/zmumu_v3_stitching_v2_done/hists/Cut_001_DY jet reweighting_LHE_Vpt.root"
-Combined_hists = [
-    "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
-    "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-    "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-    "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
-    "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8"
-    ]
-Combined_scales = limi
-legend = "Z(#mu#mu)+jets"
-year = "2017"
+# Combined_path = "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/2017/output_zmumu/zmumu_v3_stitching_v2_done/hists/Cut_001_DY jet reweighting_LHE_Vpt.root"
+# Combined_hists = [
+#     "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+#     "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+#     "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+#     "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+#     "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8"
+#     ]
+# Combined_scales = limi
+# legend = "Z(#mu#mu)+jets"
+# year = "2017"
 
 ######################################################################################
 
@@ -105,6 +105,52 @@ year = "2017"
 # Combined_scales = limi
 # legend = "Z(#mu#mu)+jets"
 # year = "2016pre"
+
+######################################################################################
+
+# ext = "png"
+# name_file = "Wjet_stitching_2016post"
+# output_dir = "./output_stritching/"
+# limi = 19.5
+# 
+# Inclusive_path = "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_5/2016post/output_wjet/wjet_v1_stitch/hists/Cut_002_reset_weight_LHE_Vpt.root"
+# Inclusive_hist = "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8"
+# Inclusive_scale = 61526700 * limi / 82572775.0
+# 
+# Combined_path = "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_5/2016post/output_wjet/wjet_v1_stitch/hists/Cut_003_W jet reweighting_LHE_Vpt.root"
+# Combined_hists = [
+#     "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+#     "W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+#     "W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+#     "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8",
+#     "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8"
+#     ]
+# Combined_scales = limi
+# legend = "W(#mu#nu)+jets"
+# year = "2016post"
+
+######################################################################################
+
+ext = "png"
+name_file = "DY_stitching_2016post"
+output_dir = "./output_stritching/"
+limi = 19.5
+
+Inclusive_path = "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_5/2016post/output_wjet/wjet_v1_stitch/hists/Cut_000_BeforeCuts_LHE_Vpt.root"
+Inclusive_hist = "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8"
+Inclusive_scale = 6233550 * limi / 82448537
+
+Combined_path = "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_5/2016post/output_wjet/wjet_v1_stitch/hists/Cut_001_DY jet reweighting_LHE_Vpt.root"
+Combined_hists = [
+    "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8",
+    "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+    "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+    "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8",
+    "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8"
+    ]
+Combined_scales = limi
+legend = "Z(#mu#mu)+jets"
+year = "2016post"
 
 if __name__ == "__main__":
     
