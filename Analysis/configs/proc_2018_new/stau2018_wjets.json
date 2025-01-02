@@ -1,0 +1,135 @@
+{
+    "year": "ul2018",
+    "file_mode": "local",
+    "xrootddomain": "xrootd-cms.infn.it",
+    "bad_file_paths": "$CONFDIR/../nano_v11_bad-pnfs-files.json",
+    "datadir": "configs/data/ul2018",
+    "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD",
+    "rng_seed_file": "$CONFDIR/seed.txt",
+    "compute_systematics": false,
+    // "lumimask": "",
+    "luminosity": 59.74,
+    "crosssections": "$CONFDIR/crosssections.json",
+    "apply_met_filters": true,
+    "exp_datasets": {
+        "SingleMuon": [
+            "$STOREDIR/SingleMuon/crab_SingleMuon_2018A_UL/230609_094540/*/*.root",
+            "$STOREDIR/SingleMuon/crab_SingleMuon_2018B_UL/230608_152338/*/*.root",
+            "$STOREDIR/SingleMuon/crab_SingleMuon_2018C_UL/230608_152344/*/*.root",
+            "$STOREDIR/SingleMuon/crab_SingleMuon_2018D_UL/230608_152349/*/*.root"
+            ]
+    },
+    "mc_datasets": {
+
+    },
+    "dataset_for_systematics": {
+    },
+    "dataset_trigger_order": [
+        "SingleMuon",
+    ],
+    "dataset_trigger_map": {
+        "SingleMuon": [
+            "HLT_IsoMu24",
+            "HLT_IsoMu27"
+        ]
+    },
+
+    "pileup_reweighting": "$DATADIR/pileup.root",
+    "muon_sf": [
+        [
+            "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root",
+            "NUM_TightID_DEN_TrackerMuons_abseta_pt",
+            ["abseta", "pt"]
+        ],
+        [
+            "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2018_UL_ISO.root",
+            "NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt",
+            ["abseta", "pt"]
+        ]
+    ],
+    "single_mu_trigger_sfs": [
+        [
+            "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2018_UL_SingleMuonTriggers.root",
+            "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight_abseta_pt",
+            ["abseta", "pt"]
+        ]
+    ],
+    "W_jet_reweight": [
+        // Njets: [0, 1, 2, 3, 4]
+        [
+            0.747227241113348,
+            0.187506782185615,
+            0.122313368332312,
+            0.0700485945835121,
+            0.0612378446670939
+        ]
+    ],
+
+    "jet_fake_rate" : [
+        "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/2018/output_wjet/wjet_fake_v1/fake_rate_ext/fake_rate_jet_dxy_pt.root",
+        "fake_rate_jet_dxy_pt",
+        ["jet_pt", "jet_dxy"]
+    ],
+    "predict_yield" : true,
+    "flavour_fake_rate_study" : false, // all other analysis tools will be disabled
+    
+    // tag muon:
+    "muon_pt_min"   :  28,
+    "muon_eta_min"  : -2.4,
+    "muon_eta_max"  :  2.4,
+    "muon_ID"       :  "tightId",
+    "muon_pfIsoId"  : 4, // tight: >= 4
+    "muon_absdxy"   : 0.2,
+    "muon_absdz"    : 0.5,
+
+    // veto electron:
+    "elec_veto_pt"        :  20,
+    "elec_veto_eta_min"   : -2.4,
+    "elec_veto_eta_max"   :  2.4,
+    "elec_veto"           : "convVeto",
+    "elec_ID"             : "mvaIso_WPL",
+
+    // veto muon:
+    "muon_veto_pt_min"   :  20,
+    "muon_veto_eta_min"  : -2.4,
+    "muon_veto_eta_max"  :  2.4,
+    "muon_veto_ID"       :  "looseId",
+    "muon_veto_pfIsoId"  : 2, // loose: >= 2
+
+    // MET cut
+    "MET_pt"             : 50,
+
+    // mt muon
+    "mt_muon_min"        : 60,
+    "mt_muon_max"        : 120,
+
+    // jet selection
+    "jet_pt_min"   :  30,
+    "jet_eta_min"  : -2.1,
+    "jet_eta_max"  :  2.1,
+    "jet_jetId"    :  6, // tight lepton veto
+    "tag_muon_veto_dR" :  0.4,
+    "jet_dxy_min"  : 0.5, // cm
+    "dphi_j1j2"    : 0.5,
+
+    // pfCand selection:
+    "pfcand_pt"         : 1.0,
+    "pfcand_eta_min"    : -2.4,
+    "pfcand_eta_max"    : 2.4,
+    "track"             : "hasTrackDetails",
+
+    // Tagger part
+    // "score_pass" : [0.05, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.40, 0.45, 0.5, 0.95, 0.9900, 0.9972, 0.9996],
+    "score_pass" : [0.05, 0.9900],
+    "loose_thr" : 0.05,
+    "tight_thr" : 0.9900,
+
+    "hists": "$CONFDIR/../hists_configs/wjets_hist.json",
+
+    "cuts_to_histogram" : [
+        "mt_muon2",
+        "has_more_two_jets",
+        "two_loose_jets",
+        "two_loose_jets_final"
+    ]
+}

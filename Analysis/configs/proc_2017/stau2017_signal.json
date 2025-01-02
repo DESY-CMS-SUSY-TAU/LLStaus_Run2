@@ -1,0 +1,432 @@
+{
+
+    "year": "ul2017",
+    "file_mode": "local",
+    "xrootddomain": "xrootd-cms.infn.it",
+    // "bad_file_paths": "",
+    "datadir": "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/configs/data_UL/ul2017",
+    "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/2017/",
+    "rng_seed_file": "$CONFDIR/seed.txt",
+    "compute_systematics": true,
+    // "lumimask": "$CONFDIR/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt",
+    "luminosity": 41.4,
+    "crosssections": "$CONFDIR/../crosssections.json",
+    "apply_met_filters": true,
+    "dxy_cut_study": false, // additional gen-level study (should be false)
+    "stau_properties_study": false,// additional gen-level study (should be false)
+    "mc_lumifactors": "$CONFDIR/lumifactors_stau2017.json",
+    "exp_datasets": {
+        "DATA_MET": [
+            "$STOREDIR/MET/crab_MET_Run2017B_UL/*/*/*.root",
+            "$STOREDIR/MET/crab_MET_Run2017C_UL/*/*/*.root",
+            "$STOREDIR/MET/crab_MET_Run2017D_UL/*/*/*.root",
+            "$STOREDIR/MET/crab_MET_Run2017E_UL/*/*/*.root",
+            "$STOREDIR/MET/crab_MET_Run2017F_UL/*/*/*.root"
+        ],
+    },
+    "data_eras": {
+        "2017B": [297047, 299329],
+        "2017C": [299368, 302029],
+        "2017D": [302031, 302663],
+        "2017E": [303824, 304797],
+        "2017F": [305040, 306460]
+    },
+    "pdf_types": {
+        "91400": "Hessian",
+        "306000": "Hessian",
+        "325300": "Hessian",
+        "325500": "Hessian",
+        "320900" : "MC_Gaussian"
+    },
+    "mc_datasets": {
+
+        // "QCD_Pt_15to30_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_30to50_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_50to80_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_80to120_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_120to170_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_170to300_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_300to470_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_470to600_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_600to800_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_800to1000_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+
+        // "ZJetsToNuNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8": [ "$STOREDIR/ZJetsToNuNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "ZJetsToNuNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8": [ "$STOREDIR/ZJetsToNuNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "ZJetsToNuNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8": [ "$STOREDIR/ZJetsToNuNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "ZJetsToNuNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8": [ "$STOREDIR/ZJetsToNuNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "ZJetsToNuNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8": [ "$STOREDIR/ZJetsToNuNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8": [ "$STOREDIR/ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8": [ "$STOREDIR/ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+
+        // "WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+
+        // "ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/ZJetsToQQ_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+        // "ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root", ],
+
+        // "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8"  : [ "$STOREDIR/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root" ],
+        // "W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root" ],
+        // "W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root" ],
+        // "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root" ],
+        // "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root" ],
+
+        // "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8": ["$STOREDIR/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root" ],
+        // "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8": ["$STOREDIR/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root" ],
+        // "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8": ["$STOREDIR/DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root" ],
+        // "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8": ["$STOREDIR/DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root" ],
+        // "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8": ["$STOREDIR/DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root" ],
+        // "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8": ["$STOREDIR/DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root" ],
+
+        // "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root", ],
+        // "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root", ],
+        // "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [ "$STOREDIR/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/*/*/*/*.root", ],
+        // "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [ "$STOREDIR/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/*/*/*/*.root", ],
+  
+        // "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root", ],
+        // "TTToHadronic_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root", ],
+        // "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root", ],
+        
+        // "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8" : [ "$STOREDIR/TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/*/*/*/*.root", ],
+        // "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8" : [ "$STOREDIR/TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/*/*/*/*.root", ],
+        // "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8" : [ "$STOREDIR/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/*/*/*/*.root", ],
+        // "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8" : [ "$STOREDIR/TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8/*/*/*/*.root", ],
+
+        // "WW_TuneCP5_13TeV-pythia8": ["$STOREDIR/WW_TuneCP5_13TeV-pythia8/*/*/*/*.root"],
+        // "WZ_TuneCP5_13TeV-pythia8": ["$STOREDIR/WZ_TuneCP5_13TeV-pythia8/*/*/*/*.root"],
+        // "ZZ_TuneCP5_13TeV-pythia8": ["$STOREDIR/ZZ_TuneCP5_13TeV-pythia8/*/*/*/*.root"],
+
+        // "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8" : ["$STOREDIR/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/*/*/*/*.root",],
+        // "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8" : ["$STOREDIR/WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8/*/*/*/*.root",],
+
+        // signal
+        "SMS-TStauStau_MStau-100_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        "SMS-TStauStau_MStau-100_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        "SMS-TStauStau_MStau-400_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        "SMS-TStauStau_MStau-400_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+
+        // all signal
+        // "SMS-TStauStau_MStau-100_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-10000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-100_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-125_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-125_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-125_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-125_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-125_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-125_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-125_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-125_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-125_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-125_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-125_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-125_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-125_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-125_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-125_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-125_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-125_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-125_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-125_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-125_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-150_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-150_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-150_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-150_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-150_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-150_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-150_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-150_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-150_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-150_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-150_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-150_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-150_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-150_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-150_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-150_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-150_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-150_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-150_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-150_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-175_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-175_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-175_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-175_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-175_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-175_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-175_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-175_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-175_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-175_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-175_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-175_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-175_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-175_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-175_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-175_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-175_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-175_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-175_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-175_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-200_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-200_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-200_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-200_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-10000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-200_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-200_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-200_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-200_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-200_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-200_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-200_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-225_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-225_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-225_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-225_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-225_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-225_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-225_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-225_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-225_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-225_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-225_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-225_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-225_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-225_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-225_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-225_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-225_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-225_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-225_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-225_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-250_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-275_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-275_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-275_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-275_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-275_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-275_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-275_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-275_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-275_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-275_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-275_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-275_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-275_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-275_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-275_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-275_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-275_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-275_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-275_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-275_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-300_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-300_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-300_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-300_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-10000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-300_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-300_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-300_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-300_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-300_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-300_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-300_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-350_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-350_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-350_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-350_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-350_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-350_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-350_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-350_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-350_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-350_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-350_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-350_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-350_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-350_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-350_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-350_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-350_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-350_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-350_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-350_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-10000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-400_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-450_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-450_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-450_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-450_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-450_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-450_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-450_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-450_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-450_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-450_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-450_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-450_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-450_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-450_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-450_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-450_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-450_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-450_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-450_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-450_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-500_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-500_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-500_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-500_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-10000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-500_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-500_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-500_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-500_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-500_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-500_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-500_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-550_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-550_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-550_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-550_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-550_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-550_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-550_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-550_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-550_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-550_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-550_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-550_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-550_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-550_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-550_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-550_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-550_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-550_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-550_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-550_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-600_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-600_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-600_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-600_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-10000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-600_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-600_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-600_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-600_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-600_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-600_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-600_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-90_ctau-0p01mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-90_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-90_ctau-0p05mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-90_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-90_ctau-0p1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-90_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-90_ctau-0p5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-90_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-90_ctau-10000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-90_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-90_ctau-1000mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-90_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-90_ctau-100mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-90_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-90_ctau-10mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-90_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-90_ctau-1mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-90_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-90_ctau-50mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-90_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+        // "SMS-TStauStau_MStau-90_ctau-5mm_mLSP-1": ["$STOREDIR/SMS-TStauStau_MStau-90_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/*/*/*/*.root"],
+
+    },
+    "pileup_reweighting": "$DATADIR/pileup.root",
+    "DY_ZptLO_weights": [
+        "$DATADIR/zptmass_weights_UL2017.root",
+        "zptmass_weight",
+        ["pt", "mass"]
+    ],
+    "MET_trigger_sfs": [
+        "/nfs/dust/cms/user/sobhatta/work/LongLivedStaus/LLStaus_Run2/Analysis/output/trigger_sf_study/2017/trigger-eff-sfs_MET.root",
+        "h1_sf",
+        ["pt"]
+    ],
+    "MET_trgger_plateau" : 250, // for 120-250 GeV - 2x stat. unc. of the MET_trigger_sfs is used, for > 250 - 1x stat. unc.
+    "DY_jet_reweight": [
+        // Njets: [0, 1, 2, 3, 4]
+        [
+            0.06031788251,
+            0.01352124558,
+            0.01075399898,
+            0.004815817089,
+            0.004124837776
+        ]
+    ],
+    "W_jet_reweight": [
+        // Njets: [0, 1, 2, 3, 4]
+        [
+            0.7790039465,
+            0.1742899142,
+            0.1038265274,
+            0.04947810699,
+            0.04428410591
+        ]
+    ],
+    "dataset_for_systematics": {
+    },
+    "dataset_trigger_order": [
+        "DATA_MET"
+    ],
+    "dataset_trigger_map": {
+        "DATA_MET": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ]
+    },
+
+    // data-driven n-pass yield prediction:
+    "jet_fake_rate" : [
+        "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/2017/output_wjet/wjet_v1_fake/fake_rate_ext/fake_rate_jet_dxy_pt.root",
+        "fake_rate_jet_dxy_pt",
+        ["jet_pt", "jet_dxy"]
+    ],
+    "predict_yield" : false,
+    
+    "propagate_eff_factors" : true,
+    "signal_eff_factors": { // signal efficiency factors are set to 15% per tight jet
+        "central": 1.0,
+        "up": 1.15,
+        "down": 0.85
+    },
+
+    "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/jets_skims",
+
+    "jet_veto_map" : [
+        "$DATADIR/hotjets-UL17_v2.root",
+        "h2hot_ul17_plus_hep17_plus_hbpw89",
+        ["eta", "phi"]
+    ],
+
+    "reapply_jec": false,
+    "jet_correction_mc": [
+        "$DATADIR/Summer19UL17_V6_MC_L1FastJet_AK4PFchs.txt",
+        "$DATADIR/Summer19UL17_V6_MC_L2Relative_AK4PFchs.txt",
+        "$DATADIR/Summer19UL17_V6_MC_L3Absolute_AK4PFchs.txt"
+    ],
+    "jet_uncertainty": "$DATADIR/Summer19UL17_V6_MC_Uncertainty_AK4PFchs.txt",
+    "jet_resolution": "$DATADIR/Summer19UL17_JRV3_MC_PtResolution_AK4PFchs.txt",
+    "jet_ressf": "$DATADIR/Summer19UL17_JRV3_MC_SF_AK4PFchs.txt",
+    "smear_met": true,
+
+    // global selection before the analysis selection (used only for MET re-calc)
+
+    "good_jet_id": "cut:tightlepveto",
+    "good_jet_puId": "skip", // not used
+    "good_jet_lepton_distance": 0.4, // not used
+    "good_jet_eta_min": -2.4,
+    "good_jet_eta_max": 2.4,
+    "good_jet_pt_min": 20,
+    "good_jet_veto_lepton": false,
+    "btag": "deepjet:medium",
+
+    // slepton analysis selection
+
+    // muon veto
+    "muon_veto_pt_min"   :  20,
+    "muon_veto_eta_min"  : -2.4,
+    "muon_veto_eta_max"  :  2.4,
+    "muon_veto_ID"       :  "looseId",
+    "muon_veto_pfIsoId"  :  2, // loose: >= 2
+
+    // ele veto
+    "elec_veto_pt"        :  20,
+    "elec_veto_eta_min"   : -2.4,
+    "elec_veto_eta_max"   :  2.4,
+    "elec_veto"           : "convVeto",
+    "elec_ID"             : "mvaIso_WPL",
+    
+    // reco Tau Jet:
+    "jet_pt_min"   :  30,
+    "jet_eta_min"  : -2.1,
+    "jet_eta_max"  :  2.1,
+    "jet_jetId"    :  6, // tight lepton veto
+    "jet_dxy_min"  :  0.5, // cm
+    
+    // pfCand selection:
+    "pfcand_pt"         : 1.0,
+    "pfcand_eta_min"    : -2.4,
+    "pfcand_eta_max"    : 2.4,
+    "track"             : "hasTrackDetails",
+
+    // MET cut
+    "MET_cut"   : 120,
+    
+    // deltaphi between jets
+    "dphi_j1j2" : 0.5, // >=0.5
+
+    // Tagger part
+    "score_pass" : [0.05, 0.99],
+    "loose_thr" : 0.05,
+    "tight_thr" : 0.99,
+
+    // "hists": "$CONFDIR/stau2018_signal_stau_hist.json",
+    // "hists": "$CONFDIR/../hists_configs/stau2018_signal_hist_mc.json",
+    // "hists": "$CONFDIR/../hists_configs/stau2018_signal_hist.json",
+    "hists": "$CONFDIR/../hists_configs/stau2018_signal_hist_unc.json",
+    
+    // There are many histograms in output data, for prediction we need only one 
+    // the load on histograms transfer one of the biggest bottleneck in the code
+    "cuts_to_histogram" : [
+            "two_loose_jets_final",
+            "ht_cut"
+        ]
+
+}
+                     

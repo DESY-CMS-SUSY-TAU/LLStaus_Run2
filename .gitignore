@@ -22,3 +22,16 @@ soft/*
 
 # Analysis output extension
 *.coffea
+
+Analysis/output_*
+Analysis/mykytaua.cc
+Analysis/runinfo
+Analysis/.job_wrapper_failure
+
+# Some specific temprory code
+
+Analysis/jets_skims/
+Analysis/mprofile_*
+Analysis/outputs
+Analysis/pybind11-demo
+Analysis/configs/data

@@ -9,60 +9,9 @@ ROOT.gROOT.SetBatch(True)
 
 from pepper import Config
 import utils.utils as utils
+from utils.utils import *
 from utils.hist_rebin import TH3Histogram, th3_to_cumulative
 ROOT.gInterpreter.Declare('#include "utils/histogram2d.cpp"')
-
-def OverflowIntegralTHN(hist_th3):
-    # Calculate integral of all TH3/TH2/TH1 histogram bins including overflow bins
-    Integral = 0
-    if hist_th3.GetDimension() == 1:
-        for i in range(0, hist_th3.GetNbinsX()+2):
-            Integral += hist_th3.GetBinContent(i)
-        return Integral
-    elif hist_th3.GetDimension() == 2:
-        for i in range(0, hist_th3.GetNbinsX()+2):
-            for j in range(0, hist_th3.GetNbinsY()+2):
-                Integral += hist_th3.GetBinContent(i, j)
-        return Integral
-    elif hist_th3.GetDimension() == 3:
-        for i in range(0, hist_th3.GetNbinsX()+2):
-            for j in range(0, hist_th3.GetNbinsY()+2):
-                for k in range(0, hist_th3.GetNbinsZ()+2):
-                    Integral += hist_th3.GetBinContent(i, j, k)
-        return Integral
-    else:
-        raise ValueError("Wrong dimension of histogram")
-
-def duplicate_uf_of_bins(hist_th2, NOF=False, NUF=False):
-    n_bins_x = hist_th2.GetNbinsX()
-    n_bins_y = hist_th2.GetNbinsY()
-    for bin_y in range(1, n_bins_y + 1):
-        # underflow
-        if hist_th2.GetBinContent(0, bin_y) == 0.0 and not NUF:
-            content = hist_th2.GetBinContent(1, bin_y)
-            err = hist_th2.GetBinError(1, bin_y)
-            hist_th2.SetBinContent(0, bin_y, content)
-            hist_th2.SetBinError(0, bin_y, err)
-        # overflow
-        if hist_th2.GetBinContent(n_bins_x+1, bin_y) == 0.0 and not NOF:
-            content = hist_th2.GetBinContent(n_bins_x, bin_y)
-            err = hist_th2.GetBinError(n_bins_x, bin_y)
-            hist_th2.SetBinContent(n_bins_x + 1, bin_y, content)
-            hist_th2.SetBinError(n_bins_x + 1, bin_y, err)
-    for bin_x in range(0, n_bins_x + 2):
-        # underflow
-        if hist_th2.GetBinContent(bin_x, 0) == 0.0 and not NUF:
-            content = hist_th2.GetBinContent(bin_x, 1)
-            err = hist_th2.GetBinError(bin_x, 1)
-            hist_th2.SetBinContent(bin_x, 0, content)
-            hist_th2.SetBinError(bin_x, 0, err)
-        # overflow
-        if hist_th2.GetBinContent(bin_x, n_bins_y + 1) == 0.0 and not NOF:
-            content = hist_th2.GetBinContent(bin_x, n_bins_y)
-            err = hist_th2.GetBinError(bin_x, n_bins_y)
-            hist_th2.SetBinContent(bin_x, n_bins_y + 1, content)
-            hist_th2.SetBinError(bin_x, n_bins_y + 1, err)
-
 
 parser = ArgumentParser(
     description="The following script calculate fake rate for stau analysis.")
@@ -116,7 +65,10 @@ if config["fake_rate"]["mode"] == "ratio":
             # Accumulate the dataset for the particular data group as specified in config "Labels".
             for _idx, _histogram_data in enumerate(config["Labels"][_group_name]):
                 print("File:",file_path)
-                open_tag = _histogram_data+region[1]+"/hist"
+                if config["include_systematics"]:
+                    open_tag = _histogram_data+"/nominal"+region[1]+"/hist"
+                else:
+                    open_tag = _histogram_data+region[1]+"/hist"
                 # open_tag = _histogram_data+region[1]
                 print("Open:",open_tag)
                 hist = file.Get(open_tag)
@@ -154,8 +106,9 @@ if config["fake_rate"]["mode"] == "ratio":
                         hist.Scale(config["luminosity"])
                     else:
                         # N = cutflow[_histogram_data]["all"]["NanDrop"] #After Nan dropper
-                        N = cutflow[_histogram_data]["all"]["Before cuts"]
+                        N = cutflow[_histogram_data]["all"]["BeforeCuts"]
                         hist.Scale( (crosssections[_histogram_data] * config["luminosity"]) / N)
+                        print(_group_name, "integral:", hist.Integral())
 
                         
                 if hist_fake[name] is None:
@@ -168,6 +121,8 @@ if config["fake_rate"]["mode"] == "ratio":
     nominator = config["fake_rate"]["nominator"][0]
     denominator = config["fake_rate"]["denominator"][0]
 
+    print(hist_fake)
+
     print("Integral pre-rebin nom:", OverflowIntegralTHN(hist_fake["nom"]))
     print("Integral pre-rebin den:", OverflowIntegralTHN(hist_fake["denom"]))
     print("Divide histogram:")
@@ -177,6 +132,7 @@ if config["fake_rate"]["mode"] == "ratio":
     denominator_th3_hist = denominator_th3.get_rebinned_histogram()
     print("Integral post-rebin nom:", OverflowIntegralTHN(nominator_th3_hist))
     print("Integral post-rebin den:", OverflowIntegralTHN(denominator_th3_hist))
+    print("Inclusice fake rate:", nominator_th3_hist.Integral()/denominator_th3_hist.Integral())
     fake_sf = nominator_th3_hist.Clone()
     fake_sf.SetDirectory(0)
     fake_sf.Divide(denominator_th3_hist)
@@ -204,6 +160,9 @@ if config["fake_rate"]["mode"] == "ratio":
         # if hist_projection_nom[-1].GetDimension() == 1:
         #     hist_projection_nom[-1].Print("all")
         #     hist_projection_den[-1].Print("all")
+        # print(hist_projection_nom.Print("all"))
+        # print(hist_projection_den.Print("all"))
+
         if rebin_non_unifor:
             assert(isinstance(rebin_non_unifor, dict))
             assert("y_axis" in rebin_non_unifor)
@@ -218,7 +177,7 @@ if config["fake_rate"]["mode"] == "ratio":
             for i in range(len(x_axis)):
                 nom_nonunif.add_x_binning_by_index(i, np.array(x_axis[i], dtype=np.double))
                 den_nonunif.add_x_binning_by_index(i, np.array(x_axis[i], dtype=np.double))
-            
+                
             try:
                 nom_nonunif.th2d_add(hist_projection_nom)
                 den_nonunif.th2d_add(hist_projection_den)
@@ -229,10 +188,19 @@ if config["fake_rate"]["mode"] == "ratio":
                 del den_nonunif
                 exit()
                 
-            nom_nonunif.divide(den_nonunif)
+            nom_nonunif.divide(den_nonunif, "B", True)
+            # nom_nonunif.divide(den_nonunif, "B", False)
             weight_hist = nom_nonunif.get_weights_th2d_simpl("hist_weight","hist_weight")
-            
             duplicate_uf_of_bins(weight_hist, NUF=bool(config["fake_rate"]["NOF"]), NOF=bool(config["fake_rate"]["NOF"]))
+            
+            # print("~~~~~~~~~~~~~~ Nominator:")
+            # nom_nonunif.print("")
+            # print("~~~~~~~~~~~~~~ Denominator:")
+            # den_nonunif.print("")
+            # print("~~~~~~~~~~~~~~ Ratio:")
+            # nom_nonunif.print("")
+            print("~~~~~~~~~~~~~~ Ratio with filled overflow/underflow bins:")
+            weight_hist.Print("all")
             
             output = ROOT.TFile(args.outdir+f"/fake_rate_{name}.root", "RECREATE")
             weight_hist.SetName(f"fake_rate_{name}")
@@ -244,7 +212,9 @@ if config["fake_rate"]["mode"] == "ratio":
             del weight_hist
 
         else:
-            hist_projection_nom.Divide(hist_projection_den)
+            hist_projection_nom.Divide(hist_projection_nom, hist_projection_den, 1, 1, "B")
+            # print("~~~~~~~~~~~~~~ Ratio:")
+            # hist_projection_nom.Print("all")
             output = ROOT.TFile(args.outdir+f"/fake_rate_{name}.root", "RECREATE")
             hist_projection_nom.SetName(f"fake_rate_{name}")
             hist_projection_nom.Write()

@@ -8,10 +8,12 @@ import numba as nb
 import coffea
 import uproot
 import pepper
+import logging
 
 from coffea.nanoevents import NanoAODSchema
 # np.set_printoptions(threshold=np.inf)
 
+logger = logging.getLogger(__name__)
 
 class Processor(pepper.ProcessorBasicPhysics):
     # We use the ConfigTTbarLL instead of its base Config, to use some of its
@@ -38,9 +40,13 @@ class Processor(pepper.ProcessorBasicPhysics):
         if "muon_sf" not in config or len(config["muon_sf"]) == 0:
             logger.warning("No muon scale factors specified")
 
-        if "single_mu_trigger_sfs" not in config or\
-            len(config["single_mu_trigger_sfs"]) == 0:
+        if "muon_sf_trigger" not in config or \
+            len(config["muon_sf_trigger"]) == 0:
             logger.warning("No single muon trigger scale factors specified")
+
+        if "DY_ZptLO_weights" not in config:
+            logger.warning("No DY Zpt/mass reweighting specified")
+
 
         # It is not recommended to put anything as member variable into a
         # a Processor because the Processor instance is sent as raw bytes
@@ -59,6 +65,28 @@ class Processor(pepper.ProcessorBasicPhysics):
             self.process_flav_study(selector, dsname, is_mc, filler)
             return
         
+        if is_mc and ( dsname.startswith("WJetsToLNu") or \
+                    dsname.startswith("W1JetsToLNu") or \
+                    dsname.startswith("W2JetsToLNu") or \
+                    dsname.startswith("W3JetsToLNu") or \
+                    dsname.startswith("W4JetsToLNu") ):
+            selector.systematics["weight"] = \
+                ak.full_like(selector.systematics["weight"], 1.0)
+            selector.add_cut("reset_weight", lambda data: ak.Array(np.ones(len(data))))
+            # return # to calculate number of events
+            selector.add_cut("W jet reweighting",
+                partial(self.do_w_jet_reweighting))
+        
+        if is_mc and ( dsname.startswith("DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                    dsname.startswith("DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                    dsname.startswith("DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                    dsname.startswith("DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+                    dsname.startswith("DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") ):
+            selector.add_cut("DY jet reweighting",
+                partial(self.do_dy_jet_reweighting))
+            
+        # return
+        
         # Triggers
         pos_triggers, neg_triggers = pepper.misc.get_trigger_paths_for(
             dsname, is_mc, self.config["dataset_trigger_map"],
@@ -69,30 +97,27 @@ class Processor(pepper.ProcessorBasicPhysics):
         if is_mc and "pileup_reweighting" in self.config:
             selector.add_cut("Pileup reweighting", partial(
                 self.do_pileup_reweighting, dsname))
-        
-        if is_mc and ( dsname.startswith("WJetsToLNu") or \
-                    dsname.startswith("W1JetsToLNu") or \
-                    dsname.startswith("W2JetsToLNu") or \
-                    dsname.startswith("W3JetsToLNu") or \
-                    dsname.startswith("W4JetsToLNu") ):
-            selector.systematics["weight"] = \
-                ak.full_like(selector.systematics["weight"], 1.0)
-            selector.add_cut("W jet reweighting",
-                partial(self.do_w_jet_reweighting))
 
         # HEM 15/16 failure (2018)
-        # if self.config["year"] == "2018ul":
-        selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+        if self.config["year"] == "ul2018":
+            selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+            
+        if is_mc and self.config["year"] in ("2016", "2017", "ul2016pre",
+                                        "ul2016post", "ul2017"):
+            selector.add_cut("L1Prefiring", self.add_l1_prefiring_weights)
 
         # MET cut
         selector.add_cut("MET", self.MET_cut)
+        
+        # PV cut
+        selector.add_cut("PV", lambda data: data["PV"].npvsGood > 0)
 
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
         
         # one tight tag muon
-        selector.set_column("muon_tag", self.muons_tag) 
+        selector.set_column("Muon_tag", self.muons_tag) 
         selector.add_cut("single_muon_tag", self.single_muon_tag_cut)
-        
+        selector.add_cut("Lead_pass_trigger", self.lead_pass_trigger)
         selector.add_cut("muon_sfs", partial(self.get_muon_sfs, is_mc=is_mc))
         
         # veto all loose muons
@@ -104,13 +129,18 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.add_cut("loose_electron_veto", self.loose_electron_veto_cut)
         
         # mt of muon and pt_miss
-        selector.set_column("mt_muon", partial(self.mt, name="muon_tag"))
+        selector.set_column("mt_muon", partial(self.mt, name="Muon_tag"))
         selector.add_cut("mt_muon", self.mt_muon_cut)
         
+        if is_mc:
+            selector.set_column("sum_ll_gen", self.sum_ll_gen)
+        selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
+
         # add cuts and selections on the jets
         selector.set_column("Jet_select", self.jet_selection)
+        selector.add_cut("has_more_two_jets", self.has_more_two_jets)
         selector.set_column("Jet_select", self.getloose_jets)
-
+        # return
         selector.set_column("PfCands", self.pfcand_valid)
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
@@ -124,6 +154,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
         selector.add_cut("dphi_min_cut", self.dphi_min_cut)
         selector.set_column("mt2_j1_j2_MET", self.get_mt2)
+        selector.set_column("binning_schema", self.binning_schema)
         
         # Tagger part for calculating scale factors
         # Scale factors should be calculated -
@@ -138,6 +169,46 @@ class Processor(pepper.ProcessorBasicPhysics):
         # selector.add_cut("two_tight_jets", self.has_two_jets)        
     
     @zero_handler
+    def sum_ll_gen(self, data):
+        part = data["GenPart"]
+        part = part[ part.hasFlags("isLastCopy")
+                & (part.hasFlags("fromHardProcess")
+                & ((abs(part["pdgId"]) == 11) 
+                | (abs(part["pdgId"]) == 13)
+                | (abs(part["pdgId"]) == 12)
+                | (abs(part["pdgId"]) == 14)
+                | (abs(part["pdgId"]) == 15)
+                | (abs(part["pdgId"]) == 16)))
+                | (part.hasFlags("isDirectHardProcessTauDecayProduct"))
+        ]
+        sum_p4 = part.sum(axis=1) # sum over all particles in event
+        return sum_p4
+
+    @zero_handler
+    def get_dy_gen_sfs(self, data, is_mc, dsname):
+        weight = np.ones(len(data))
+        # The weights are taken from the following repository:
+        # https://github.com/cms-tau-pog/TauFW/tree/master/PicoProducer/data/zpt
+        if is_mc and (
+            dsname.startswith("DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8") or \
+            dsname.startswith("DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8")):
+            z_boson = data["sum_ll_gen"]
+            dy_gen_sfs = self.config["DY_ZptLO_weights"](mass=z_boson.mass, pt=z_boson.pt)
+            weight *= ak.to_numpy(dy_gen_sfs)
+            return weight
+        else:
+            return weight
+
+    @zero_handler
+    def has_more_two_jets(self, data):
+        jets = data["Jet_select"]
+        return ak.num(jets) >= 2
+    
+    @zero_handler
     def HEM_veto(self, data, is_mc):
         weight = np.ones(len(data), dtype=np.float32)
         jets = data["Jet"]
@@ -148,36 +219,47 @@ class Processor(pepper.ProcessorBasicPhysics):
         if is_mc:
             weight[in_hem] = (1-0.66)
         else:
-            weight[in_hem] = 0.0
-        return weight   
+            issue_period = (data.run >= 319077)
+            weight[in_hem & issue_period] = 0.0
+        return weight
+    
+    @zero_handler
+    def lead_pass_trigger(self, data):
+        lead_muons = data["Muon_tag"][:,:1]
+        trig_muons = data["TrigObj"]
+        trig_muons = trig_muons[
+            (abs(trig_muons.id) == 13)
+            & (trig_muons.filterBits >= 8)
+        ]
+        matches, dRlist = lead_muons.nearest(trig_muons, return_metric=True, threshold=0.2)
+        has_matched = ~ak.is_none(matches, axis=1)
+        return has_matched[:,0] # since lead_muons has form: [ [muon1], [muon2], ....]
     
     @zero_handler
     def get_muon_sfs(self, data, is_mc):
         weight = np.ones(len(data))
         if is_mc:
-            id_iso_sfs, systematics = self.muon_id_iso_sfs(data)
+            muons = data["Muon_tag"]
+            id_iso_sfs, systematics = \
+                self.muon_sfs(muons, sfs_name_config="muon_sf")
             weight *= ak.to_numpy(id_iso_sfs)
-            mu_trigger_sfs = self.apply_mu_trigger_sfs(data) # systematics are not implemented yet
+            muon_leading = muons[:,:1] # trigger_sfs are applied only to leading muon
+            mu_trigger_sfs, systematics_trig = \
+                self.muon_sfs(muon_leading, sfs_name_config="muon_sf_trigger")
             weight *= ak.to_numpy(mu_trigger_sfs)
+            systematics.update(systematics_trig)
             return weight, systematics
         else:
             return weight
 
-    def apply_mu_trigger_sfs(self, data):
-        weight = np.ones(len(data))
-        # Single muon trigger efficiency applied for leading muon
-        muon = ak.firsts(data["Muon"])
-        sfs = self.config["single_mu_trigger_sfs"][0](pt=muon.pt, abseta=abs(muon.eta))
-        return weight * sfs
-
-    def muon_id_iso_sfs(self, data):
+    def muon_sfs(self, muons, sfs_name_config = "muon_sf"):
         """Compute identification and isolation scale factors for
-           leptons (electrons and muons)."""
-        muons = data["Muon"]
-        weight = np.ones(len(data))
+           leptons (electrons and muons). Also possible
+           to use for muon trigger scale factors."""
+        weight = np.ones(len(muons))
         systematics = {}
         # Muon identification and isolation efficiency
-        for i, sffunc in enumerate(self.config["muon_sf"]):
+        for i, sffunc in enumerate(self.config[sfs_name_config]):
             params = {}
             for dimlabel in sffunc.dimlabels:
                 if dimlabel == "abseta":
@@ -185,7 +267,7 @@ class Processor(pepper.ProcessorBasicPhysics):
                 else:
                     params[dimlabel] = getattr(muons, dimlabel)
             central = ak.prod(sffunc(**params), axis=1)
-            key = f"muonsf{i}"
+            key = f"{sfs_name_config}{i}"
             if self.config["compute_systematics"]:
                 if ("split_muon_uncertainty" not in self.config
                         or not self.config["split_muon_uncertainty"]):
@@ -209,12 +291,18 @@ class Processor(pepper.ProcessorBasicPhysics):
         return weights
 
     @zero_handler
+    def do_dy_jet_reweighting(self, data):
+        njet = data["LHE"]["Njets"]
+        weights = self.config["DY_jet_reweight"][njet]
+        return weights
+
+    @zero_handler
     def MET_cut(self, data):
         return data["MET"].pt > self.config["MET_pt"]
     
     @zero_handler
     def single_muon_tag_cut(self, data):
-        return ak.num(data["muon_tag"])==1
+        return ak.num(data["Muon_tag"])==1
     
     @zero_handler
     def loose_muon_veto_cut(self, data):
@@ -272,8 +360,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         ele = data["Electron"]
         is_good = (
             (ele.pt > self.config["elec_veto_pt"])
-            & (ele.eta < self.config["elec_veto_eta_min"])
-            & (ele.eta > self.config["elec_veto_eta_max"])
+            & (ele.eta < self.config["elec_veto_eta_max"])
+            & (ele.eta > self.config["elec_veto_eta_min"])
             & (ele[self.config["elec_veto"]] == 1)
             & (ele[self.config["elec_ID"]] == 1)
             )
@@ -288,7 +376,7 @@ class Processor(pepper.ProcessorBasicPhysics):
             & (self.config["jet_pt_min"] < jets.pt)
             & (jets.jetId >= self.config["jet_jetId"] )
             )]
-        matches_h, dRlist = jets.nearest(data["muon_tag"], return_metric=True, threshold=self.config["tag_muon_veto_dR"])
+        matches_h, dRlist = jets.nearest(data["Muon_tag"], return_metric=True, threshold=self.config["tag_muon_veto_dR"])
         isoJets = jets[ak.is_none(matches_h, axis=-1)]
         return isoJets
     
@@ -472,6 +560,7 @@ class Processor(pepper.ProcessorBasicPhysics):
         # the weight for this will be saved saparetly to have one weight per event
         tight_wp = self.config["score_pass"].index(self.config["tight_thr"])
         
+        # print("yield_bin0to1", yield_bin0to1)
         return {"yield_bin0to1" : weight*yield_bin0to1,
                 "yield_bin1to2" : weight*yield_bin1to2,
                 "yield_bin0to2" : weight*yield_bin0to2,
@@ -581,6 +670,28 @@ class Processor(pepper.ProcessorBasicPhysics):
     @zero_handler
     def dphi_min_cut(self, data):
         return abs(data["dphi_jet1_jet2"]) > self.config["dphi_j1j2"]
+
+    @zero_handler
+    def binning_schema(self, data):
+        jets = data["Jet_select"]
+        # declear variables for binning
+        met = data["MET"].pt
+        jet2_pt = jets[:,1].pt
+        mt2 = data["mt2_j1_j2_MET"]
+        # create empty binning
+        bins = np.full((len(met)), np.nan)
+        B1 = (jet2_pt < 50) & (met >= 250)
+        B2 = (jet2_pt < 50) & (met < 250) & (mt2 < 100)
+        B3 = (jet2_pt < 50) & (met < 250) & (mt2 >= 100)
+        B4 = (jet2_pt >= 50) & (jet2_pt < 100)
+        B5 = (jet2_pt >= 100)
+        bins[B1] = 1
+        bins[B2] = 2
+        bins[B3] = 3
+        bins[B4] = 4
+        bins[B5] = 5
+
+        return bins
 
     # Gen Study -------------------------------------------------------------------------
     

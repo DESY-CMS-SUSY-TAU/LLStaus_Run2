@@ -1,0 +1,202 @@
+{
+    "year": "ul2016post",
+    "file_mode": "local",
+    "xrootddomain": "xrootd-cms.infn.it",
+    "bad_file_paths": "$CONFDIR/../nano_v11_bad-pnfs-files.json",
+    "datadir": "configs/data_UL/ul2016post",
+    "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD/2016_postVFP/",
+    "rng_seed_file": "$CONFDIR/../seed.txt",
+    "compute_systematics": false,
+    // "lumimask": "",
+    "luminosity": 16.8, //2016post
+    "crosssections": "$CONFDIR/../crosssections.json",
+    "apply_met_filters": true,
+    "predict_yield" : false,
+    "flavour_fake_rate_study" : false, // all other analysis tools will be disabled
+    "exp_datasets": {
+        "SingleMuon": [
+            "$STOREDIR/../SingleMuon/crab_SingleMuon_Run2016F_UL_postVFP/240518_032437/*/*.root",
+            "$STOREDIR/../SingleMuon/crab_SingleMuon_Run2016G_UL_postVFP/240518_032447/*/*.root",
+            "$STOREDIR/../SingleMuon/crab_SingleMuon_Run2016H_UL_postVFP/240518_032456/*/*.root",
+            ]
+    },
+    "mc_datasets": {
+
+        // "QCD_Pt_15to30_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_30to50_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_50to80_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_80to120_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_120to170_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_170to300_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_300to470_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_470to600_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_600to800_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_800to1000_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+        // "QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8" : [ "$STOREDIR/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/*/*/*/*.root", ],
+
+        "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_WJetsToLNu/240528_162702/*/*.root" ],
+        "W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W1JetsToLNu/240528_162711/*/*.root" ],
+        "W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W2JetsToLNu/240528_162719/*/*.root" ],
+        "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W3JetsToLNu/240528_162728/*/*.root" ],
+        "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/crab_W4JetsToLNu/240528_162736/*/*.root" ],
+
+        "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-10to50/*/*/*.root" ],
+        "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M-50/*/*/*.root" ],
+        "DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DY1JetsToLL_M-50_MatchEWPDG20/*/*/*.root" ],
+        "DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DY2JetsToLL_M-50_MatchEWPDG20/*/*/*.root" ],
+        "DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DY3JetsToLL_M-50_MatchEWPDG20/*/*/*.root" ],
+        "DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8" : [ "$STOREDIR/DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DY4JetsToLL_M-50_MatchEWPDG20/*/*/*.root" ],
+        
+        "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root", ],
+        "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root", ],
+        "ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [ "$STOREDIR/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/*/*/*/*.root", ],
+        "ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8" : [ "$STOREDIR/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/*/*/*/*.root", ],
+  
+        "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root", ],
+        "TTToHadronic_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root", ],
+        "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8" : [ "$STOREDIR/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/*/*/*/*.root", ],
+        
+        "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8" : [ "$STOREDIR/TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/*/*/*/*.root", ],
+        "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8" : [ "$STOREDIR/TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/*/*/*/*.root", ],
+        "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8" : [ "$STOREDIR/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/*/*/*/*.root", ],
+        "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8" : [ "$STOREDIR/TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8/*/*/*/*.root", ],
+
+        "WW_TuneCP5_13TeV-pythia8": ["$STOREDIR/WW_TuneCP5_13TeV-pythia8/*/*/*/*.root"],
+        "WZ_TuneCP5_13TeV-pythia8": ["$STOREDIR/WZ_TuneCP5_13TeV-pythia8/*/*/*/*.root"],
+        "ZZ_TuneCP5_13TeV-pythia8": ["$STOREDIR/ZZ_TuneCP5_13TeV-pythia8/*/*/*/*.root"],
+
+        "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8" : ["$STOREDIR/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/*/*/*/*.root",],
+        "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8" : ["$STOREDIR/WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8/*/*/*/*.root",],
+        
+    },
+    "dataset_for_systematics": {
+    },
+    "dataset_trigger_order": [
+        "SingleMuon",
+    ],
+    "dataset_trigger_map": {
+        "SingleMuon": [
+            "HLT_IsoMu24",
+            "HLT_IsoTkMu24",
+            "HLT_Mu50",
+            "HLT_TkMu50"
+        ]
+    },
+
+    "pileup_reweighting": "$DATADIR/pileup.root",
+    "muon_sf": [
+        [
+            "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root",
+            "NUM_TightID_DEN_TrackerMuons_abseta_pt",
+            ["abseta", "pt"]
+        ],
+        [
+            "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2016_UL_ISO.root",
+            "NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt",
+            ["abseta", "pt"]
+        ]
+    ],
+    "muon_sf_trigger": [
+        [
+            "$DATADIR/Efficiencies_muon_generalTracks_Z_Run2016_UL_SingleMuonTriggers.root",
+            "NUM_IsoMu24_or_IsoTkMu24_or_Mu50_or_TkMu50_DEN_CutBasedIdTight_and_PFIsoTight_abseta_pt",
+            ["abseta", "pt"]
+        ]
+    ],
+    "DY_ZptLO_weights": [
+        "$DATADIR/zptmass_weights_UL2016_postVFP.root",
+        "zptmass_weight",
+        ["pt", "mass"]
+    ],
+    "DY_jet_reweight": [
+        // Njets: [0, 1, 2, 3, 4]
+        [
+            0.07560534397,
+            0.02406417026,
+            0.01824861416,
+            0.009450711274,
+            0.009774552179
+        ]
+    ],
+    "W_jet_reweight": [
+        // Njets: [0, 1, 2, 3, 4]
+        [
+            0.7451208949,
+            0.1853491653,
+            0.1087623192,
+            0.04921532605,
+            0.08218258422
+        ]
+    ],
+
+    "jet_fake_rate" : [
+        "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/2016/output_wjet_2016postVFP/wjet_v2_fake/fake_rate_ext/fake_rate_jet_dxy_pt.root",
+        "fake_rate_jet_dxy_pt",
+        ["jet_pt", "jet_dxy"]
+    ],
+
+    // tag muon:
+    "muon_pt_min"   :  28,
+    "muon_eta_min"  : -2.4,
+    "muon_eta_max"  :  2.4,
+    "muon_ID"       :  "tightId",
+    "muon_pfIsoId"  : 4, // tight: >= 4
+    "muon_absdxy"   : 0.2,
+    "muon_absdz"    : 0.5,
+
+    // veto electron:
+    "elec_veto_pt"        :  20,
+    "elec_veto_eta_min"   : -2.4,
+    "elec_veto_eta_max"   :  2.4,
+    "elec_veto"           : "convVeto",
+    "elec_ID"             : "mvaIso_WPL",
+
+    // veto muon:
+    "muon_veto_pt_min"   :  20,
+    "muon_veto_eta_min"  : -2.4,
+    "muon_veto_eta_max"  :  2.4,
+    "muon_veto_ID"       :  "looseId",
+    "muon_veto_pfIsoId"  : 2, // loose: >= 2
+
+    // MET cut
+    "MET_pt"             : 50,
+
+    // mt muon
+    "mt_muon_min"        : 60,
+    "mt_muon_max"        : 120,
+
+    // jet selection
+    "jet_pt_min"   :  30,
+    "jet_eta_min"  : -2.1,
+    "jet_eta_max"  :  2.1,
+    "jet_jetId"    :  6, // tight lepton veto
+    "tag_muon_veto_dR" :  0.4,
+    "jet_dxy_min"  : 0.5, // cm
+    "dphi_j1j2"    : 0.5,
+
+    // pfCand selection:
+    "pfcand_pt"         : 1.0,
+    "pfcand_eta_min"    : -2.4,
+    "pfcand_eta_max"    : 2.4,
+    "track"             : "hasTrackDetails",
+
+    // Tagger part
+    // "score_pass" : [0.05, 0.1, 0.15, 0.2, 0.25, 0.30, 0.35, 0.40, 0.45, 0.5, 0.95, 0.9900, 0.9972, 0.9996],
+    "score_pass" : [0.05, 0.9900],
+    "loose_thr" : 0.05,
+    "tight_thr" : 0.9900,
+
+    "hists": "$CONFDIR/../hists_configs/wjets_hist.json",
+
+    "cuts_to_histogram" : [
+        "two_loose_jets_final",
+        "has_more_two_jets",
+        "mt_muon",
+        "muon_sfs",
+        "dy_gen_sfs"
+    ]
+}

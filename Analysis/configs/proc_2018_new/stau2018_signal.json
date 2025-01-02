@@ -1,0 +1,216 @@
+{
+
+    "year": "ul2018",
+    "file_mode": "local",
+    "xrootddomain": "xrootd-cms.infn.it",
+    "bad_file_paths": "$CONFDIR/../nano_v11_bad-pnfs-files.json",
+    "datadir": "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/configs/data/ul2018",
+    "store": "/pnfs/desy.de/cms/tier2/store/user/sobhatta/LongLivedStaus/NanoAOD",
+    "rng_seed_file": "$CONFDIR/seed.txt",
+    "compute_systematics": true,
+    "lumimask": "$CONFDIR/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt",
+    "luminosity": 59.74,
+    "crosssections": "$CONFDIR/crosssections.json",
+    "apply_met_filters": true,
+    "dxy_cut_study": false,
+    "stau_properties_study": false,
+    "exp_datasets": {
+        // "DATA_MET": [
+        //     "$STOREDIR/MET/crab_MET_2018A_UL/230415_105803/*/*.root",
+        //     "$STOREDIR/MET/crab_MET_2018B_UL/230415_105809/*/*.root",
+        //     "$STOREDIR/MET/crab_MET_2018C_UL/230415_105814/*/*.root",
+        //     "$STOREDIR/MET/crab_MET_2018D_UL/230414_182515/*/*.root"
+        // ]
+
+    },
+    "mc_datasets": {
+
+        // // OFICIAL SIGNALS
+        
+        // "SMS-TStauStau_MStau-100_ctau-0p01mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_0p01mm_mLSP_1/231218_144016/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-0p05mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_0p05mm_mLSP_1/231218_144022/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-0p1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_0p1mm_mLSP_1/231218_144010/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-0p5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_0p5mm_mLSP_1/231218_144029/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-10000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_10000mm_mLSP_1/231218_144114/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-1000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_1000mm_mLSP_1/231218_144108/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_100mm_mLSP_1/231218_144102/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-10mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_10mm_mLSP_1/231218_144048/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_1mm_mLSP_1/231218_144035/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-50mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_50mm_mLSP_1/231218_144055/*/*.root"],
+        // "SMS-TStauStau_MStau-100_ctau-5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-100_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_100_ctau_5mm_mLSP_1/231218_144041/*/*.root"],
+
+        // "SMS-TStauStau_MStau-200_ctau-0p01mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_0p01mm_mLSP_1/231218_144451/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-0p05mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_0p05mm_mLSP_1/231218_144504/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-0p1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_0p1mm_mLSP_1/231218_144458/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-0p5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_0p5mm_mLSP_1/231218_144510/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-10000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_10000mm_mLSP_1/231218_144555/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-1000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_1000mm_mLSP_1/231218_144548/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_100mm_mLSP_1/231218_144542/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-10mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_10mm_mLSP_1/231218_144529/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_1mm_mLSP_1/231218_144517/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-50mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_50mm_mLSP_1/231218_144536/*/*.root"],
+        // "SMS-TStauStau_MStau-200_ctau-5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-200_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_200_ctau_5mm_mLSP_1/231218_144523/*/*.root"],
+
+        // "SMS-TStauStau_MStau-300_ctau-0p01mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_0p01mm_mLSP_1/231218_144916/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-0p05mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_0p05mm_mLSP_1/231218_144930/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-0p1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_0p1mm_mLSP_1/231218_144923/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-0p5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_0p5mm_mLSP_1/231218_144936/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-10000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_10000mm_mLSP_1/231218_145021/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-1000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_1000mm_mLSP_1/231218_145015/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_100mm_mLSP_1/231218_145008/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-10mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_10mm_mLSP_1/231218_144955/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_1mm_mLSP_1/231218_144943/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-50mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_50mm_mLSP_1/231218_145002/*/*.root"],
+        // "SMS-TStauStau_MStau-300_ctau-5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-300_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_300_ctau_5mm_mLSP_1/231218_144949/*/*.root"],
+
+        // "SMS-TStauStau_MStau-250_ctau-0p01mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_0p01mm_mLSP_1/231218_144706/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-0p05mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_0p05mm_mLSP_1/231218_144719/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-0p1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_0p1mm_mLSP_1/231218_144713/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-0p5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_0p5mm_mLSP_1/231218_144726/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-1000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_1000mm_mLSP_1/231218_144804/*/*.root"],
+        "SMS-TStauStau_MStau-250_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_100mm_mLSP_1/231218_144758/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-10mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_10mm_mLSP_1/231218_144745/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_1mm_mLSP_1/231218_144732/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-50mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_50mm_mLSP_1/231218_144751/*/*.root"],
+        // "SMS-TStauStau_MStau-250_ctau-5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-250_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_250_ctau_5mm_mLSP_1/231218_144739/*/*.root"],
+
+        // "SMS-TStauStau_MStau-400_ctau-0p01mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_0p01mm_mLSP_1/231218_145138/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-0p05mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_0p05mm_mLSP_1/231218_145151/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-0p1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_0p1mm_mLSP_1/231218_153831/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-0p5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_0p5mm_mLSP_1/231218_145158/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-10000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_10000mm_mLSP_1/231218_145248/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-1000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_1000mm_mLSP_1/231218_145240/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_100mm_mLSP_1/231218_153857/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-10mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_10mm_mLSP_1/231218_153817/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_1mm_mLSP_1/231218_145205/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-50mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_50mm_mLSP_1/231218_145227/*/*.root"],
+        // "SMS-TStauStau_MStau-400_ctau-5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-400_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_400_ctau_5mm_mLSP_1/231218_145213/*/*.root"],
+
+        // "SMS-TStauStau_MStau-500_ctau-0p01mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_0p01mm_mLSP_1/231218_145410/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-0p05mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_0p05mm_mLSP_1/231218_145417/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-0p1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_0p1mm_mLSP_1/231218_145404/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-0p5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_0p5mm_mLSP_1/231218_145424/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-10000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_10000mm_mLSP_1/231218_145511/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-1000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_1000mm_mLSP_1/231218_145504/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_100mm_mLSP_1/231218_145458/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-10mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_10mm_mLSP_1/231218_145444/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_1mm_mLSP_1/231218_145430/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-50mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_50mm_mLSP_1/231218_145451/*/*.root"],
+        // "SMS-TStauStau_MStau-500_ctau-5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-500_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_500_ctau_5mm_mLSP_1/231218_145437/*/*.root"],
+
+        // "SMS-TStauStau_MStau-600_ctau-0p01mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-600_ctau-0p01mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_600_ctau_0p01mm_mLSP_1/231218_145628/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-0p05mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-600_ctau-0p05mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_600_ctau_0p05mm_mLSP_1/231218_145649/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-0p1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-600_ctau-0p1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_600_ctau_0p1mm_mLSP_1/231218_145635/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-0p5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-600_ctau-0p5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_600_ctau_0p5mm_mLSP_1/231218_145643/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-10000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-600_ctau-10000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_600_ctau_10000mm_mLSP_1/231218_145739/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-1000mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-600_ctau-1000mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_600_ctau_1000mm_mLSP_1/231218_145732/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-100mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-600_ctau-100mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_600_ctau_100mm_mLSP_1/231218_145725/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-10mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-600_ctau-10mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_600_ctau_10mm_mLSP_1/231218_145710/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-1mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-600_ctau-1mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_600_ctau_1mm_mLSP_1/231218_145656/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-50mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-600_ctau-50mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_600_ctau_50mm_mLSP_1/231218_145718/*/*.root"],
+        // "SMS-TStauStau_MStau-600_ctau-5mm_mLSP-1": ["$STOREDIR/Stau_2018UL/SMS-TStauStau_MStau-600_ctau-5mm_mLSP-1_TuneCP5_13TeV-madgraphMLM-pythia8/crab_SMS_TStauStau_MStau_600_ctau_5mm_mLSP_1/231218_145703/*/*.root"],
+
+    },
+    "pileup_reweighting": "$DATADIR/pileup.root",
+    "DY_lo_sfs": [
+        "$DATADIR/hist_zptmass_weight_nom_2018.root",
+        "hist_zptmass_weight_nom",
+        ["mass", "pt"]
+    ],
+    "MET_trigger_sfs": [
+        "$DATADIR/trigger-eff-sfs_MET.root",
+        "h1_sf",
+        ["pt"]
+    ],
+    "DY_jet_reweight": [
+        // Njets: [0, 1, 2, 3, 4]
+        [  
+            0.0812335727642246,
+            0.0176155683054349,
+            0.0136231900177429,
+            0.0072127496418802,
+            0.00786746026143814
+        ]
+    ],
+    "W_jet_reweight": [
+        // Njets: [0, 1, 2, 3, 4]
+        [
+            0.747227241113348,
+            0.187506782185615,
+            0.122313368332312,
+            0.0700485945835121,
+            0.0612378446670939
+        ]
+    ],
+    "dataset_for_systematics": {
+    },
+    "dataset_trigger_order": [
+        "DATA_MET"
+    ],
+    "dataset_trigger_map": {
+        "DATA_MET": [
+            "HLT_PFMET120_PFMHT120_IDTight",
+            "HLT_PFMET130_PFMHT130_IDTight",
+            "HLT_PFMET140_PFMHT140_IDTight"
+        ]
+    },
+
+    // data-driven n-pass yield prediction:
+    "jet_fake_rate" : [
+        "/nfs/dust/cms/user/mykytaua/softLLSTAU/LLStaus_Run2/Analysis/output_iteration_4/2018/output_wjet/wjet_fake_v1/fake_rate_ext/fake_rate_jet_dxy_pt.root",
+        "fake_rate_jet_dxy_pt",
+        ["jet_pt", "jet_dxy"]
+    ],
+    "predict_yield" : true,
+
+    "skim_path" : "/afs/desy.de/user/m/mykytaua/nfscms/softLLSTAU/LLStaus_Run2/Analysis/jets_skims",
+
+    // muon veto
+    "muon_veto_pt_min"   :  20,
+    "muon_veto_eta_min"  : -2.4,
+    "muon_veto_eta_max"  :  2.4,
+    "muon_veto_ID"       :  "looseId",
+    "muon_veto_pfIsoId"  :  2, // loose: >= 2
+
+    // ele veto
+    "elec_veto_pt"        :  20,
+    "elec_veto_eta_min"   : -2.4,
+    "elec_veto_eta_max"   :  2.4,
+    "elec_veto"           : "convVeto",
+    "elec_ID"             : "mvaIso_WPL",
+    
+    // reco Tau Jet:
+    "jet_pt_min"   :  30,
+    "jet_eta_min"  : -2.1,
+    "jet_eta_max"  :  2.1,
+    "jet_jetId"    :  6, // tight lepton veto
+    "jet_dxy_min"  :  0.5, // cm
+    
+    // pfCand selection:
+    "pfcand_pt"         : 1.0,
+    "pfcand_eta_min"    : -2.4,
+    "pfcand_eta_max"    : 2.4,
+    "track"             : "hasTrackDetails",
+
+    // MET cut
+    "MET_cut"   : 120,
+    
+    // deltaphi between jets
+    "dphi_j1j2" : 0.5, // >=0.5
+
+    // Tagger part
+    "score_pass" : [0.05, 0.99],
+    "loose_thr" : 0.05,
+    "tight_thr" : 0.99,
+
+    // "hists": "$CONFDIR/stau2018_signal_stau_hist.json",
+    // "hists": "$CONFDIR/stau2018_signal_hist.json",
+    "hists": "$CONFDIR/../hists_configs/stau2018_signal_hist_unc.json",
+    
+    // There are many histograms in output data, for prediction we need only one 
+    // the load on histograms transfer one of the biggest bottleneck in the code
+    "cuts_to_histogram" : [
+            "two_loose_jets_final",
+            "two_tight_jets"
+        ]
+}

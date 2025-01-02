@@ -20,10 +20,15 @@ ROOT.gROOT.SetBatch(True)
 import numpy as np
 
 import utils.utils as utils
-# import utils.geometry_utils as geometry_utils_jit
+import utils.geometry_utils as geometry_utils_jit
 import utils.geometry_utils
 
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
+
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+logger = logging.getLogger()
 
 def conv_to_root(coffea_hist, name):
     w, data = coffea_hist.to_boost().to_numpy()
@@ -35,6 +40,12 @@ def conv_to_root(coffea_hist, name):
 def stand_arr(array):
     return ak.fill_none( ak.flatten(array), -1)
 
+def transverse_length(gen_particle):
+    perent = gen_particle.parent
+    return np.sqrt( (perent.vertexX-gen_particle.vertexX)**2 +
+                    (perent.vertexY-gen_particle.vertexY)**2
+                    )
+    
 
 class JetdR2D(object):
 
@@ -82,15 +93,15 @@ class JetdR2D(object):
         # objects["dRTauSTau"] = objects["genSUSYTaus"].delta_r(objects["genTau"])
         objects["dR_STau_Tau"] = objects["genSUSYTaus"].nearest(objects["genTau"], return_metric=True, threshold=None)[1]
         objects["dR_STau_Jet"] = objects["genSUSYTaus"].nearest(objects["jets"], 
-            #metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2),
+            # return_metric=True, metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2))[1]
             return_metric=True, threshold=None)[1]
         
         objects['dR_STau_lostTrack'] = objects["genSUSYTaus"].nearest(events.LostTrack, return_metric=True, threshold=None)[1]
         objects['dR_STau_pfCand'] = objects["genSUSYTaus"].nearest(events.PFCandidate, return_metric=True, threshold=None)[1]
 
         objects["dR_Tau_STau"] = objects["genTau"].nearest(objects["genSUSYTaus"], return_metric=True, threshold=None)[1]
-        objects["dR_Tau_Jet"]  = objects["genTau"].nearest(objects["jets"], 
-            #metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2),
+        objects["dR_Tau_Jet"]  = objects["genTau"].nearest(objects["jets"],
+            # return_metric=True, metric = lambda v1, v2: geometry_utils_jit.coffea_nearest_metric_deltaR_shiftVertex(v1s = v1, v2s = v2))[1]
             return_metric=True, threshold=None)[1]
 
         objects["dR_STau_Tau"] = ak.flatten(objects["dR_STau_Tau"])
@@ -175,6 +186,14 @@ class EfficiencyStudy(object):
             # coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
             coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
         )
+        
+        hists["gen_jet_pt_reco_id"] = coffea.hist.Hist(
+            "Events",
+            coffea.hist.Cat("dataset", "Dataset"),
+            coffea.hist.Bin("gen_tau_pt", "efficiency", np.array(setups.gen_jet_pt)),
+            # coffea.hist.Bin("Lxy","Lxy", *setups.Lxy_bins)
+            coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+        )
 
         hists["gen_jet_pt_reco"] = coffea.hist.Hist(
             "Events",
@@ -232,21 +251,31 @@ class EfficiencyStudy(object):
     @staticmethod
     def process_events(out, objects, events):
         
-        # genTaus that have matching reco tau
+        # logger.info(objects["genTau"].fields)
+        # if "transverse_length" in objects["genTau"].fields:
+        #     logger.info("transverse_length exists")
+        # else:
+        #     logger.info("transverse_length does not exist")
 
         hpsTaus = objects["genTau"].nearest(objects["hpsTaus"], return_metric=False, threshold=0.4)
         objects["match_genTau_to_recoTau"] = objects["genTau"][(~ak.is_none(hpsTaus.energy,-1))]
 
+        # make sure that the genTau is matched to the reco tau within pt resolution
+
         out["gen_tau_pt"].fill(
             dataset = events.metadata["dataset"],
             gen_tau_pt = stand_arr( objects["genTau"].pt ),
-            Lxy = stand_arr( objects["genTau"].parent.vertexRho ),
+            Lxy = stand_arr( objects["genTau"].transverse_length ),
             )
-        
+
+        # hpsTaus_near = hpsTaus[(~ak.is_none(hpsTaus.energy,-1))]
+        # match_genTau_to_recoTau_pt_match = objects["match_genTau_to_recoTau"][ abs(objects["match_genTau_to_recoTau"].pt - hpsTaus_near.pt) < 0.1*objects["match_genTau_to_recoTau"].pt ]
         out["gen_tau_pt_reco"].fill(
             dataset = events.metadata["dataset"],
             gen_tau_pt = stand_arr( objects["match_genTau_to_recoTau"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_recoTau"].parent.vertexRho ),
+            Lxy = stand_arr( objects["match_genTau_to_recoTau"].transverse_length )
+            # gen_tau_pt = stand_arr( match_genTau_to_recoTau_pt_match.pt ),
+            # Lxy = stand_arr( match_genTau_to_recoTau_pt_match.transverse_length )
             )
         
         genJets = objects["genTau"].nearest(objects["genJets"], return_metric=False, threshold=0.4)
@@ -255,8 +284,10 @@ class EfficiencyStudy(object):
         out["gen_jet_pt"].fill(
             dataset = events.metadata["dataset"],
             gen_tau_pt = stand_arr( objects["match_genTau_to_genJet"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_genJet"].parent.vertexRho ),
+            Lxy = stand_arr( objects["match_genTau_to_genJet"].transverse_length ),
             )
+        
+        
         
         jets = objects["genTau"].nearest(objects["jets"], return_metric=False, threshold=0.4)
         objects["match_genTau_to_recoJet"] = objects["genTau"][(~ak.is_none(jets.energy,-1))]
@@ -264,7 +295,19 @@ class EfficiencyStudy(object):
         out["gen_jet_pt_reco"].fill(
             dataset = events.metadata["dataset"],
             gen_tau_pt = stand_arr( objects["match_genTau_to_recoJet"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_recoJet"].parent.vertexRho ),
+            Lxy = stand_arr( objects["match_genTau_to_recoJet"].transverse_length ),
+            )
+        
+        #take the jets that matched to the genTaus and also pass the jetId
+        objects["match_genTau_to_recoJet_id"] = objects["genTau"][
+                ((~ak.is_none(jets.energy,-1)) & (jets.jetId >= 2))
+            ]
+        
+        # fill the hist
+        out["gen_jet_pt_reco_id"].fill(
+            dataset = events.metadata["dataset"],
+            gen_tau_pt = stand_arr( objects["match_genTau_to_recoJet_id"].pt ),
+            Lxy = stand_arr( objects["match_genTau_to_recoJet_id"].transverse_length ),
             )
         
         objects["match_recoJet_to_genTau"] = jets[(~ak.is_none(jets.energy,-1))]
@@ -273,14 +316,14 @@ class EfficiencyStudy(object):
             dataset = events.metadata["dataset"],
             pt_ratio = stand_arr( objects["match_recoJet_to_genTau"].pt /objects["match_genTau_to_recoJet"].pt  ),
             pt_gen = stand_arr( objects["match_genTau_to_recoJet"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_recoJet"].parent.vertexRho ),
+            Lxy = stand_arr( objects["match_genTau_to_recoJet"].transverse_length ),
             )
 
         out["pt_resolution_visTau"].fill(
             dataset = events.metadata["dataset"],
             pt_resolution = stand_arr( (objects["match_recoJet_to_genTau"].pt - objects["match_genTau_to_recoJet"].pt) /objects["match_genTau_to_recoJet"].pt  ),
             pt_gen = stand_arr( objects["match_genTau_to_recoJet"].pt ),
-            Lxy = stand_arr( objects["match_genTau_to_recoJet"].parent.vertexRho ),
+            Lxy = stand_arr( objects["match_genTau_to_recoJet"].transverse_length ),
         )
         
         
@@ -451,7 +494,7 @@ class JetMatching(coffea.processor.ProcessorABC):
         events[self.collections.GenVisTaus.name, "vertexX"] = events.GenPart.vertexX[events[self.collections.GenVisTaus.name].genPartIdxMother]
         events[self.collections.GenVisTaus.name, "vertexY"] = events.GenPart.vertexY[events[self.collections.GenVisTaus.name].genPartIdxMother]
         events[self.collections.GenVisTaus.name, "vertexZ"] = events.GenPart.vertexZ[events[self.collections.GenVisTaus.name].genPartIdxMother]
-
+        events[self.collections.GenVisTaus.name, "vertexRho"] = events.GenPart.vertexRho[events[self.collections.GenVisTaus.name].genPartIdxMother]
         # First way of finding pairs
         # objects["genTau"] = events.GenVisTau[
         #     abs(events.GenVisTau.parent.parent.parent.pdgId) == 1000015
@@ -465,6 +508,8 @@ class JetMatching(coffea.processor.ProcessorABC):
         
         objects["genTau","disp"] = objects["genTau"].parent.vertexRho
         objects["genSUSYTaus","disp"] = objects["genSUSYTaus"].children[:,:,0].vertexRho
+        tr_length = transverse_length( objects["genTau"].parent )
+        objects["genTau"] = ak.with_field(objects["genTau"], tr_length, "transverse_length")
 
         events[self.collections.Jets.name,"px"] = events[self.collections.Jets.name].x
         events[self.collections.Jets.name,"py"] = events[self.collections.Jets.name].y
@@ -534,7 +579,7 @@ def regionStudy(cfg: DictConfig) -> None:
         ),
         
         executor = coffea.processor.futures_executor,
-        executor_args = {"schema": mySchema, "workers": 20},
+        executor_args = {"schema": mySchema, "workers": 10},
     )
 
     import matplotlib.pyplot as plt
@@ -553,7 +598,8 @@ def regionStudy(cfg: DictConfig) -> None:
             for Lxy_slice in cfg.bin_setups.Lxy_slice:
          
                 dR_STau_Jet = result_JetMatching["dR_STau_Jet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                ax = coffea.hist.plot2d(dR_STau_Jet, xaxis='dR_STau_Jet', patch_opts={"norm":colors.LogNorm()})
+                # ax = coffea.hist.plot2d(dR_STau_Jet, xaxis='dR_STau_Jet', patch_opts={"norm":colors.LogNorm()})
+                ax = coffea.hist.plot2d(dR_STau_Jet, xaxis='dR_STau_Jet')
                 ax.set_title(f'dR(STau, {cfg.collections.Jets.name}) ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
                 ax.figure.set_dpi(72)
                 ax.figure.tight_layout()
@@ -562,7 +608,8 @@ def regionStudy(cfg: DictConfig) -> None:
                 matplotlib.pyplot.close(ax.figure)
 
                 dR_Tau_Jet = result_JetMatching["dR_Tau_Jet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                ax = coffea.hist.plot2d(dR_Tau_Jet, xaxis='dR_Tau_Jet', patch_opts={"norm":colors.LogNorm()})
+                # ax = coffea.hist.plot2d(dR_Tau_Jet, xaxis='dR_Tau_Jet', patch_opts={"norm":colors.LogNorm()})
+                ax = coffea.hist.plot2d(dR_Tau_Jet, xaxis='dR_Tau_Jet')
                 ax.set_title(f'dR(Tau, {cfg.collections.Jets.name}) ({dataset}) Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
                 ax.figure.set_dpi(72)
                 ax.figure.tight_layout()
@@ -571,7 +618,8 @@ def regionStudy(cfg: DictConfig) -> None:
                 matplotlib.pyplot.close(ax.figure)
 
                 dR_STau_Track = result_JetMatching["dR_STau_Track"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                ax = coffea.hist.plot2d(dR_STau_Track, xaxis='dR_STau_lostTrack', patch_opts={"norm":colors.LogNorm()})
+                # ax = coffea.hist.plot2d(dR_STau_Track, xaxis='dR_STau_lostTrack', patch_opts={"norm":colors.LogNorm()})
+                ax = coffea.hist.plot2d(dR_STau_Track, xaxis='dR_STau_lostTrack')
                 ax.set_title(f'dR(Tau, lostTrack) ({dataset}) Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
                 ax.figure.set_dpi(72)
                 ax.figure.tight_layout()
@@ -580,7 +628,8 @@ def regionStudy(cfg: DictConfig) -> None:
                 matplotlib.pyplot.close(ax.figure)
 
                 dR_STau_pfCand = result_JetMatching["dR_STau_pfCand"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                ax = coffea.hist.plot2d(dR_STau_pfCand, xaxis='dR_STau_pfCand', patch_opts={"norm":colors.LogNorm()})
+                # ax = coffea.hist.plot2d(dR_STau_pfCand, xaxis='dR_STau_pfCand', patch_opts={"norm":colors.LogNorm()})
+                ax = coffea.hist.plot2d(dR_STau_pfCand, xaxis='dR_STau_pfCand')
                 ax.set_title(f'dR(Tau, pfCand) ({dataset}) Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
                 ax.figure.set_dpi(72)
                 ax.figure.tight_layout()
@@ -655,6 +704,26 @@ def regionStudy(cfg: DictConfig) -> None:
                     legendheightscale = 1.0,
                     lumiText = "2018 (13 TeV)"
                 )
+
+
+            # Do the dR_STau_pfCand vs Lxy 2D plot inclusive for Lxy
+            # hists["dR_STau_pfCand"] = coffea.hist.Hist(
+            #     "Events",
+            #     coffea.hist.Cat("dataset", "Dataset"),
+            #     coffea.hist.Bin("dR_STau_Jet", "dR(STau,Jet)", *setups.dR_bins),
+            #     coffea.hist.Bin("dR_STau_pfCand","dR(STau,pfCand)", *setups.dR_bins),
+            #     coffea.hist.Bin("Lxy","Lxy", np.array(setups.Lxy_bins))
+            #     # coffea.hist.Bin("Lxy","Lxy", setups["rho_bins"])
+            # )
+            dR_STau_pfCand = result_JetMatching["dR_STau_pfCand"].integrate("dataset",dataset).integrate("dR_STau_Jet")
+            ax = coffea.hist.plot2d(dR_STau_pfCand, xaxis='Lxy', patch_opts={"norm":colors.LogNorm()})
+            ax.set_title(f'dR(Tau, pfCand)')
+            ax.figure.set_dpi(72)
+            ax.figure.tight_layout()
+            ax.figure.savefig(path_pfCand+f'/LxyInclusive_dR_STau_pfCand_dataset_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png')
+            # ax.figure.savefig(path_pfCand+f'/dR_STau_pfCand_dataset_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.pdf')
+            matplotlib.pyplot.close(ax.figure)
+
                 
 
     if 'efficiency_study' in cfg.mode:
@@ -664,139 +733,256 @@ def regionStudy(cfg: DictConfig) -> None:
 
         for dataset in samples:
             
-            for Lxy_slice in cfg.eff_setups.Lxy_slice:
+            # For each Lxy range
+            # for Lxy_slice in cfg.eff_setups.Lxy_slice:
                 
-                hist_gen_jet_pt = result_JetMatching["gen_jet_pt"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                hist_gen_jet_pt_reco = result_JetMatching["gen_jet_pt_reco"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                hist_gen_tau_pt = result_JetMatching["gen_tau_pt"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                hist_gen_tau_pt_reco = result_JetMatching["gen_tau_pt_reco"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+            #     hist_gen_jet_pt = result_JetMatching["gen_jet_pt"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+            #     hist_gen_jet_pt_reco = result_JetMatching["gen_jet_pt_reco"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+            #     hist_gen_tau_pt = result_JetMatching["gen_tau_pt"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+            #     hist_gen_tau_pt_reco = result_JetMatching["gen_tau_pt_reco"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
                 
-                hist_gen_jet_pt = conv_to_root(hist_gen_jet_pt, f'gen_jet_pt_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
-                hist_gen_jet_pt_reco = conv_to_root(hist_gen_jet_pt_reco, f'gen_jet_pt_reco_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
-                hist_gen_tau_pt = conv_to_root(hist_gen_tau_pt, f'gen_tau_pt_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
-                hist_gen_tau_pt_reco = conv_to_root(hist_gen_tau_pt_reco, f'gen_tau_pt_reco_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
+            #     hist_gen_jet_pt = conv_to_root(hist_gen_jet_pt, f'gen_jet_pt_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
+            #     hist_gen_jet_pt_reco = conv_to_root(hist_gen_jet_pt_reco, f'gen_jet_pt_reco_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
+            #     hist_gen_tau_pt = conv_to_root(hist_gen_tau_pt, f'gen_tau_pt_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
+            #     hist_gen_tau_pt_reco = conv_to_root(hist_gen_tau_pt_reco, f'gen_tau_pt_reco_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
 
-                hist_gen_jet_pt_ratio = hist_gen_jet_pt.Clone()
-                hist_gen_jet_pt_reco_ratio = hist_gen_jet_pt_reco.Clone()
-                hist_gen_tau_pt_reco_ratio= hist_gen_tau_pt_reco.Clone()
+            #     hist_gen_jet_pt_ratio = hist_gen_jet_pt.Clone()
+            #     hist_gen_jet_pt_reco_ratio = hist_gen_jet_pt_reco.Clone()
+            #     hist_gen_tau_pt_reco_ratio= hist_gen_tau_pt_reco.Clone()
                 
-                hist_gen_jet_pt_ratio.Divide(hist_gen_tau_pt)
-                hist_gen_jet_pt_reco_ratio.Divide(hist_gen_tau_pt)
-                hist_gen_tau_pt_reco_ratio.Divide(hist_gen_tau_pt)
+            #     hist_gen_jet_pt_ratio.Divide(hist_gen_tau_pt)
+            #     hist_gen_jet_pt_reco_ratio.Divide(hist_gen_tau_pt)
+            #     hist_gen_tau_pt_reco_ratio.Divide(hist_gen_tau_pt)
 
-                hist_gen_jet_pt_ratio.SetLineColor(9)
-                hist_gen_jet_pt_ratio.SetLineWidth(2)
-                hist_gen_jet_pt_ratio.SetMarkerColor(2)
-                hist_gen_jet_pt_ratio.SetMarkerSize(0)
-                hist_gen_jet_pt_ratio.SetTitle("genJet/genTau (dR<0.4)")
+            #     hist_gen_jet_pt_ratio.SetLineColor(9)
+            #     hist_gen_jet_pt_ratio.SetLineWidth(2)
+            #     hist_gen_jet_pt_ratio.SetMarkerColor(2)
+            #     hist_gen_jet_pt_ratio.SetMarkerSize(0)
+            #     hist_gen_jet_pt_ratio.SetTitle("genJet/genTau (dR<0.4)")
 
-                hist_gen_jet_pt_reco_ratio.SetLineColor(8)
-                hist_gen_jet_pt_reco_ratio.SetLineWidth(2)
-                hist_gen_jet_pt_reco_ratio.SetMarkerColor(3)
-                hist_gen_jet_pt_reco_ratio.SetMarkerSize(0)
-                hist_gen_jet_pt_reco_ratio.SetTitle("recoJet/genTau (dR<0.4)")
+            #     hist_gen_jet_pt_reco_ratio.SetLineColor(8)
+            #     hist_gen_jet_pt_reco_ratio.SetLineWidth(2)
+            #     hist_gen_jet_pt_reco_ratio.SetMarkerColor(3)
+            #     hist_gen_jet_pt_reco_ratio.SetMarkerSize(0)
+            #     hist_gen_jet_pt_reco_ratio.SetTitle("recoJet/genTau (dR<0.4)")
                 
-                hist_gen_tau_pt_reco_ratio.SetLineColor(46)
-                hist_gen_tau_pt_reco_ratio.SetLineWidth(2)
-                hist_gen_tau_pt_reco_ratio.SetMarkerColor(3)
-                hist_gen_tau_pt_reco_ratio.SetMarkerSize(0)
-                hist_gen_tau_pt_reco_ratio.SetTitle("recoTau/genTau (dR<0.4)")
+            #     hist_gen_tau_pt_reco_ratio.SetLineColor(46)
+            #     hist_gen_tau_pt_reco_ratio.SetLineWidth(2)
+            #     hist_gen_tau_pt_reco_ratio.SetMarkerColor(3)
+            #     hist_gen_tau_pt_reco_ratio.SetMarkerSize(0)
+            #     hist_gen_tau_pt_reco_ratio.SetTitle("recoTau/genTau (dR<0.4)")
                 
-                outfile = path_jet+f'/ratio_pt_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png'
+            #     outfile = path_jet+f'/ratio_pt_{dataset}_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.pdf'
                 
-                utils.utils.root_plot1D(
-                    # l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
-                    l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio ],
-                    outfile = outfile,
-                    xrange = [10, 1010],
-                    yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.5*hist_gen_jet_pt_ratio.GetMaximum()),
-                    logx = True, logy = False,
-                    ytitle = "Efficiency",
-                    xtitle = "p_{T}(#tau_{vis}) GeV",
-                    centertitlex = True, centertitley = True,
-                    centerlabelx = False, centerlabely = False,
-                    gridx = True, gridy = True,
-                    ndivisionsx = None,
-                    stackdrawopt = "nostack",
-                    legendpos = "UL",
-                    legendtitle = f"Lxy: {Lxy_slice[0]}-{Lxy_slice[1]} cm",
-                    legendncol = 1,
-                    #legendtextsize = 0.04,
-                    legendwidthscale = 1.0,
-                    legendheightscale = 1.0,
-                    lumiText = "2018 (13 TeV)"
-                )
+            #     utils.utils.root_plot1D(
+            #         # l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
+            #         l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio ],
+            #         outfile = outfile,
+            #         xrange = [10, 1010],
+            #         yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.5*hist_gen_jet_pt_ratio.GetMaximum()),
+            #         logx = True, logy = False,
+            #         ytitle = "Efficiency",
+            #         xtitle = "p_{T}(#tau_{vis}) GeV",
+            #         centertitlex = True, centertitley = True,
+            #         centerlabelx = False, centerlabely = False,
+            #         gridx = True, gridy = True,
+            #         ndivisionsx = None,
+            #         stackdrawopt = "nostack",
+            #         legendpos = "UL",
+            #         legendtitle = f"Lxy: {Lxy_slice[0]}-{Lxy_slice[1]} cm",
+            #         legendncol = 1,
+            #         #legendtextsize = 0.04,
+            #         legendwidthscale = 1.0,
+            #         legendheightscale = 1.0,
+            #         CMSextraText = "Simulation",
+            #         lumiText = "2018 (13 TeV)"
+            #     )
+                
+            # Inclusivelly for all Lxy range
+            hist_gen_jet_pt = result_JetMatching["gen_jet_pt"].integrate("dataset",dataset).integrate("Lxy")
+            hist_gen_jet_pt_reco = result_JetMatching["gen_jet_pt_reco"].integrate("dataset",dataset).integrate("Lxy")
+            hist_gen_tau_pt = result_JetMatching["gen_tau_pt"].integrate("dataset",dataset).integrate("Lxy")
+            hist_gen_tau_pt_reco = result_JetMatching["gen_tau_pt_reco"].integrate("dataset",dataset).integrate("Lxy")
+            hist_gen_jet_pt_id = result_JetMatching["gen_jet_pt_reco_id"].integrate("dataset",dataset).integrate("Lxy")
+            
+            hist_gen_jet_pt = conv_to_root(hist_gen_jet_pt, f'gen_jet_pt_{dataset})')
+            hist_gen_jet_pt_reco = conv_to_root(hist_gen_jet_pt_reco, f'gen_jet_pt_reco_{dataset})')
+            hist_gen_tau_pt = conv_to_root(hist_gen_tau_pt, f'gen_tau_pt_{dataset})')
+            hist_gen_tau_pt_reco = conv_to_root(hist_gen_tau_pt_reco, f'gen_tau_pt_reco_{dataset})')
+            hist_gen_jet_pt_id = conv_to_root(hist_gen_jet_pt_id, f'gen_jet_pt_id_{dataset})')
+
+            hist_gen_jet_pt_ratio = hist_gen_jet_pt.Clone()
+            hist_gen_jet_pt_reco_ratio = hist_gen_jet_pt_reco.Clone()
+            hist_gen_tau_pt_reco_ratio= hist_gen_tau_pt_reco.Clone()
+            hist_gen_jet_pt_id_ratio = hist_gen_jet_pt_id.Clone()
+            
+            hist_gen_jet_pt_ratio.Divide(hist_gen_jet_pt_ratio, hist_gen_tau_pt, 1.0, 1.0, "B")
+            hist_gen_jet_pt_reco_ratio.Divide(hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt, 1.0, 1.0, "B")
+            hist_gen_tau_pt_reco_ratio.Divide(hist_gen_tau_pt_reco_ratio, hist_gen_tau_pt, 1.0, 1.0, "B")
+            hist_gen_jet_pt_id_ratio.Divide(hist_gen_jet_pt_id_ratio, hist_gen_jet_pt_reco, 1.0, 1.0, "B")
+
+            hist_gen_jet_pt_ratio.SetLineColor(9)
+            hist_gen_jet_pt_ratio.SetLineWidth(3)
+            hist_gen_jet_pt_ratio.SetMarkerColor(3)
+            hist_gen_jet_pt_ratio.SetMarkerSize(0)
+            hist_gen_jet_pt_ratio.SetTitle("gen-jet / gen-tau")
+
+            hist_gen_jet_pt_reco_ratio.SetLineColor(8)
+            hist_gen_jet_pt_reco_ratio.SetLineWidth(3)
+            hist_gen_jet_pt_reco_ratio.SetMarkerColor(3)
+            hist_gen_jet_pt_reco_ratio.SetMarkerSize(0)
+            hist_gen_jet_pt_reco_ratio.SetTitle("reco-jet / gen-tau")
+            
+            hist_gen_tau_pt_reco_ratio.SetLineColor(46)
+            hist_gen_tau_pt_reco_ratio.SetLineWidth(3)
+            hist_gen_tau_pt_reco_ratio.SetMarkerColor(3)
+            hist_gen_tau_pt_reco_ratio.SetMarkerSize(0)
+            hist_gen_tau_pt_reco_ratio.SetTitle("reco-tau / gen-tau")
+            
+            hist_gen_jet_pt_id_ratio.SetLineColor(9)
+            hist_gen_jet_pt_id_ratio.SetLineWidth(3)
+            hist_gen_jet_pt_id_ratio.SetMarkerColor(3)
+            hist_gen_jet_pt_id_ratio.SetMarkerSize(0)
+            hist_gen_jet_pt_id_ratio.SetTitle("id-jet / reco-jet")
+            
+            outfile = path_jet+f'/ratio_pt_{dataset}_allLxy.png'
+            # plot withih jet reco and ID
+            utils.utils.root_plot1D(
+                # l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
+                l_hist = [hist_gen_jet_pt_id_ratio, hist_gen_jet_pt_reco_ratio ],
+                outfile = outfile,
+                xrange = [10, 1010],
+                yrange = (0, hist_gen_jet_pt_id_ratio.GetMaximum()+0.5*hist_gen_jet_pt_id_ratio.GetMaximum()),
+                logx = True, logy = False,
+                ytitle = "Efficiency",
+                xtitle = "p_{T} of #tau_{vis} GeV",
+                centertitlex = True, centertitley = True,
+                centerlabelx = False, centerlabely = False,
+                gridx = True, gridy = True,
+                ndivisionsx = None,
+                stackdrawopt = "Enostack",
+                legendpos = "UL",
+                # legendtitle = f"Lxy: {Lxy_slice[0]}-{Lxy_slice[1]} cm",
+                legendncol = 1,
+                legendtextsize = 0.04,
+                #legendtextsize = 0.04,
+                legendwidthscale = 1.0,
+                legendheightscale = 1.0,
+                CMSextraText = "Simulation",
+                lumiText = dataset
+            )
 
         path_jet = cfg.output+"/eff_study/Lxy"
         os.makedirs(path_jet, exist_ok=True)
 
         for dataset in samples:
 
-            for dataset in samples:
+            hist_gen_jet_pt = result_JetMatching["gen_jet_pt"].integrate("dataset",dataset).integrate("gen_tau_pt")
+            hist_gen_jet_pt_reco = result_JetMatching["gen_jet_pt_reco"].integrate("dataset",dataset).integrate("gen_tau_pt")
+            hist_gen_tau_pt = result_JetMatching["gen_tau_pt"].integrate("dataset",dataset).integrate("gen_tau_pt")
+            hist_gen_tau_pt_reco = result_JetMatching["gen_tau_pt_reco"].integrate("dataset",dataset).integrate("gen_tau_pt")
+            hist_gen_jet_pt_id = result_JetMatching["gen_jet_pt_reco_id"].integrate("dataset",dataset).integrate("gen_tau_pt")
+            
+            hist_gen_jet_pt = conv_to_root(hist_gen_jet_pt, f'gen_jet_Lxy')
+            hist_gen_jet_pt.Rebin(1)
+            hist_gen_jet_pt_reco = conv_to_root(hist_gen_jet_pt_reco, f'gen_jet_reco_Lxy')
+            hist_gen_jet_pt_reco.Rebin(1)
+            hist_gen_tau_pt = conv_to_root(hist_gen_tau_pt, f'gen_tau_Lxy')
+            hist_gen_tau_pt.Rebin(1)
+            hist_gen_tau_pt_reco = conv_to_root(hist_gen_tau_pt_reco, f'gen_tau_reco_Lxy')
+            hist_gen_tau_pt_reco.Rebin(1)
+            hist_gen_jet_pt_id = conv_to_root(hist_gen_jet_pt_id, f'gen_jet_pt_id_{dataset})')
+            hist_gen_jet_pt_id.Rebin(1  )
 
-                hist_gen_jet_pt = result_JetMatching["gen_jet_pt"].integrate("dataset",dataset).integrate("gen_tau_pt")
-                hist_gen_jet_pt_reco = result_JetMatching["gen_jet_pt_reco"].integrate("dataset",dataset).integrate("gen_tau_pt")
-                hist_gen_tau_pt = result_JetMatching["gen_tau_pt"].integrate("dataset",dataset).integrate("gen_tau_pt")
-                hist_gen_tau_pt_reco = result_JetMatching["gen_tau_pt_reco"].integrate("dataset",dataset).integrate("gen_tau_pt")
-                
-                hist_gen_jet_pt = conv_to_root(hist_gen_jet_pt, f'gen_jet_Lxy')
-                hist_gen_jet_pt.Rebin(1)
-                hist_gen_jet_pt_reco = conv_to_root(hist_gen_jet_pt_reco, f'gen_jet_reco_Lxy')
-                hist_gen_jet_pt_reco.Rebin(1)
-                hist_gen_tau_pt = conv_to_root(hist_gen_tau_pt, f'gen_tau_Lxy')
-                hist_gen_tau_pt.Rebin(1)
-                hist_gen_tau_pt_reco = conv_to_root(hist_gen_tau_pt_reco, f'gen_tau_reco_Lxy')
-                hist_gen_tau_pt_reco.Rebin(1)
+            hist_gen_jet_pt_ratio = hist_gen_jet_pt.Clone()
+            hist_gen_jet_pt_reco_ratio = hist_gen_jet_pt_reco.Clone()
+            hist_gen_tau_pt_reco_ratio = hist_gen_tau_pt_reco.Clone()
+            hist_gen_jet_pt_id_ratio = hist_gen_jet_pt_id.Clone()
 
-                hist_gen_jet_pt_ratio = hist_gen_jet_pt.Clone()
-                hist_gen_jet_pt_reco_ratio = hist_gen_jet_pt_reco.Clone()
-                hist_gen_tau_pt_reco_ratio = hist_gen_tau_pt_reco.Clone()
+            hist_gen_jet_pt_ratio.Divide(hist_gen_jet_pt_ratio, hist_gen_tau_pt, 1, 1, "B")
+            hist_gen_jet_pt_reco_ratio.Divide(hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt, 1, 1, "B")
+            hist_gen_tau_pt_reco_ratio.Divide(hist_gen_tau_pt_reco_ratio, hist_gen_tau_pt, 1, 1, "B")
+            hist_gen_jet_pt_id_ratio.Divide(hist_gen_jet_pt_id_ratio, hist_gen_jet_pt_reco, 1.0, 1.0, "B")
 
-                hist_gen_jet_pt_ratio.Divide(hist_gen_tau_pt)
-                hist_gen_jet_pt_reco_ratio.Divide(hist_gen_tau_pt)
-                hist_gen_tau_pt_reco_ratio.Divide(hist_gen_tau_pt)
+            hist_gen_jet_pt_ratio.SetLineColor(9)
+            hist_gen_jet_pt_ratio.SetLineWidth(3)
+            hist_gen_jet_pt_ratio.SetMarkerColor(2)
+            hist_gen_jet_pt_ratio.SetMarkerSize(0)
+            hist_gen_jet_pt_ratio.SetTitle("generator-jet / generator-tau")
 
-                hist_gen_jet_pt_ratio.SetLineColor(9)
-                hist_gen_jet_pt_ratio.SetLineWidth(2)
-                hist_gen_jet_pt_ratio.SetMarkerColor(2)
-                hist_gen_jet_pt_ratio.SetMarkerSize(0)
-                hist_gen_jet_pt_ratio.SetTitle("genJet/genTau (dR<0.4)")
-
-                hist_gen_jet_pt_reco_ratio.SetLineColor(8)
-                hist_gen_jet_pt_reco_ratio.SetLineWidth(2)
-                hist_gen_jet_pt_reco_ratio.SetMarkerColor(3)
-                hist_gen_jet_pt_reco_ratio.SetMarkerSize(0)
-                hist_gen_jet_pt_reco_ratio.SetTitle("recoJet/genTau (dR<0.4)")
-                
-                hist_gen_tau_pt_reco_ratio.SetLineColor(46)
-                hist_gen_tau_pt_reco_ratio.SetLineWidth(2)
-                hist_gen_tau_pt_reco_ratio.SetMarkerColor(3)
-                hist_gen_tau_pt_reco_ratio.SetMarkerSize(0)
-                hist_gen_tau_pt_reco_ratio.SetTitle("recoTau/genTau (dR<0.4)")
-                
-                outfile = path_jet+f'/ratio_Lxy_{dataset}.png'
-                
-                utils.utils.root_plot1D(
-                    l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
-                    outfile = outfile,
-                    xrange = [0.0001, 110],
-                    yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.5*hist_gen_jet_pt_ratio.GetMaximum()),
-                    logx = True, logy = False,
-                    ytitle = "Efficiency",
-                    xtitle = "Lxy(#tau_{vis}) cm",
-                    centertitlex = True, centertitley = True,
-                    centerlabelx = False, centerlabely = False,
-                    gridx = True, gridy = True,
-                    ndivisionsx = None,
-                    stackdrawopt = "nostack",
-                    legendpos = "UL",
-                    legendtitle = f"",
-                    legendncol = 1,
-                    #legendtextsize = 0.04,
-                    legendwidthscale = 1.0,
-                    legendheightscale = 1.0,
-                    lumiText = "2018 (13 TeV)"
-                )
+            hist_gen_jet_pt_reco_ratio.SetLineColor(8)
+            hist_gen_jet_pt_reco_ratio.SetLineWidth(3)
+            hist_gen_jet_pt_reco_ratio.SetMarkerColor(3)
+            hist_gen_jet_pt_reco_ratio.SetMarkerSize(0)
+            hist_gen_jet_pt_reco_ratio.SetTitle("reconstructed-jet (AK4) / generator-tau")
+            
+            hist_gen_tau_pt_reco_ratio.SetLineColor(46)
+            hist_gen_tau_pt_reco_ratio.SetLineWidth(3)
+            hist_gen_tau_pt_reco_ratio.SetMarkerColor(3)
+            hist_gen_tau_pt_reco_ratio.SetMarkerSize(0)
+            hist_gen_tau_pt_reco_ratio.SetTitle("reconstructed-tau (HPS) / generator-tau")
+            
+            hist_gen_jet_pt_id_ratio.SetLineColor(9)
+            hist_gen_jet_pt_id_ratio.SetLineWidth(3)
+            hist_gen_jet_pt_id_ratio.SetMarkerColor(2)
+            hist_gen_jet_pt_id_ratio.SetMarkerSize(0)
+            hist_gen_jet_pt_id_ratio.SetTitle("identified-jet / reconstructed-jet")
+            
+            outfile = path_jet+f'/ratio_Lxy_{dataset}.png'
+            xmin,xmax = cfg.eff_setups.Lxy_bins[1],cfg.eff_setups.Lxy_bins[-1]
+            # print("ranges", xmin, xmax)
+            utils.utils.root_plot1D(
+                # l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
+                l_hist = [hist_gen_jet_pt_id_ratio, hist_gen_jet_pt_reco_ratio],
+                outfile = outfile,
+                xrange = [xmin,xmax],
+                yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.5*hist_gen_jet_pt_ratio.GetMaximum()),
+                logx = True, logy = False,
+                ytitle = "Efficiency",
+                xtitle = "generator-level L_{xy} of #tau_{h} [cm]",
+                centertitlex = True, centertitley = True,
+                centerlabelx = False, centerlabely = False,
+                gridx = True, gridy = True,
+                ndivisionsx = None,
+                stackdrawopt = "Enostack",
+                legendpos = "UL",
+                # legendtitle = f"",
+                legendncol = 1,
+                legendtextsize = 0.04,
+                legendwidthscale = 1.0,
+                legendheightscale = 1.0,
+                lumiText = "(13 TeV)",
+                legendtitle = dataset,
+                CMSextraText = "Simulation Preliminary",
+                # lumiText = dataset
+            )
+            
+            outfile = path_jet+f'/ratio_withTau_Lxy_{dataset}.png'
+            utils.utils.root_plot1D(
+                # l_hist = [hist_gen_jet_pt_ratio, hist_gen_jet_pt_reco_ratio, hist_gen_tau_pt_reco_ratio],
+                l_hist = [hist_gen_tau_pt_reco_ratio, hist_gen_jet_pt_reco_ratio],
+                outfile = outfile,
+                xrange = [xmin,xmax],
+                yrange = (0, hist_gen_jet_pt_ratio.GetMaximum()+0.5*hist_gen_jet_pt_ratio.GetMaximum()),
+                logx = True, logy = False,
+                ytitle = "Efficiency",
+                xtitle = "generator-level L_{xy} of #tau_{h} [cm]",
+                centertitlex = True, centertitley = True,
+                centerlabelx = False, centerlabely = False,
+                gridx = True, gridy = True,
+                ndivisionsx = None,
+                stackdrawopt = "Enostack",
+                legendpos = "UL",
+                # legendtitle = f"",
+                legendncol = 1,
+                legendtextsize = 0.04,
+                legendwidthscale = 1.0,
+                legendheightscale = 1.0,
+                lumiText = "(13 TeV)",
+                legendtitle = dataset,
+                CMSextraText = "Simulation Preliminary",
+                # lumiText = dataset
+            )
 
 
         # path_jet = cfg.output+"/eff_study/ratio_E"
@@ -890,58 +1076,111 @@ def regionStudy(cfg: DictConfig) -> None:
 
         for dataset in samples:
             
-            for Lxy_slice in cfg.eff_setups.Lxy_slice:
+            # for Lxy_slice in cfg.eff_setups.Lxy_slice:
 
-                # hist_pt_ratio_genJet = result_JetMatching["pt_ratio_genJet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                # ax = coffea.hist.plot2d(hist_pt_ratio_genJet, xaxis='pt_gen', patch_opts={"norm":colors.LogNorm()})
-                # ax.set_title(f'pt_reco/pt_genJet ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
-                # ax.figure.set_dpi(72)
-                # ax.figure.tight_layout()
-                # ax.figure.savefig(path_res+f'/pt_ratio_genJet_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png')
-                # matplotlib.pyplot.close(ax.figure)
-
-
-                hist_pt_ratio_visTau = result_JetMatching["pt_ratio_visTau"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
-                ax = coffea.hist.plot2d(hist_pt_ratio_visTau, xaxis='pt_gen', patch_opts={"norm":colors.LogNorm()})
-                ax.set_title(f'pt_reco/pt_visTau ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
-                ax.figure.set_dpi(72)
-                ax.figure.tight_layout()
-                ax.figure.savefig(path_res+f'/pt_ratio_visTau_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png')
-                matplotlib.pyplot.close(ax.figure)
+            #     # hist_pt_ratio_genJet = result_JetMatching["pt_ratio_genJet"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+            #     # ax = coffea.hist.plot2d(hist_pt_ratio_genJet, xaxis='pt_gen', patch_opts={"norm":colors.LogNorm()})
+            #     # ax.set_title(f'pt_reco/pt_genJet ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
+            #     # ax.figure.set_dpi(72)
+            #     # ax.figure.tight_layout()
+            #     # ax.figure.savefig(path_res+f'/pt_ratio_genJet_{dataset})_Lxy_{Lxy_slice[0]}-{Lxy_slice[1]}.png')
+            #     # matplotlib.pyplot.close(ax.figure)
 
 
-                hist_visTau_resolution = result_JetMatching["pt_resolution_visTau"].integrate("dataset",dataset).integrate("pt_gen").integrate("Lxy",int_range=slice(*Lxy_slice))
-                hist_visTau_resolution = conv_to_root(hist_visTau_resolution, f'visTau_resolution_pt_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
+            #     hist_pt_ratio_visTau = result_JetMatching["pt_ratio_visTau"].integrate("dataset",dataset).integrate("Lxy",int_range=slice(*Lxy_slice))
+            #     # ax = coffea.hist.plot2d(hist_pt_ratio_visTau, xaxis='pt_gen', patch_opts={"norm":colors.LogNorm()})
+            #     ax = coffea.hist.plot2d(hist_pt_ratio_visTau, xaxis='pt_gen')
+            #     ax.set_title(f'pt_reco/pt_visTau ({dataset}) Lxy({Lxy_slice[0]}-{Lxy_slice[1]})')
+            #     ax.figure.set_dpi(72)
+            #     ax.figure.tight_layout()
+            #     ax.figure.savefig(path_res+f'/pt_ratio_visTau_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png')
+            #     matplotlib.pyplot.close(ax.figure)
 
-                hist_visTau_resolution.SetLineColor(2)
-                hist_visTau_resolution.SetLineWidth(2)
-                hist_visTau_resolution.SetMarkerColor(2)
-                hist_visTau_resolution.SetMarkerSize(0)
-                hist_visTau_resolution.SetTitle("pt_resolution")
 
-                outfile3 = path_res+f'/pt_resolution_visTau_{dataset}_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.png'
+            #     hist_visTau_resolution = result_JetMatching["pt_resolution_visTau"].integrate("dataset",dataset).integrate("pt_gen").integrate("Lxy",int_range=slice(*Lxy_slice))
+            #     hist_visTau_resolution = conv_to_root(hist_visTau_resolution, f'visTau_resolution_pt_{dataset})_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}')
 
-                utils.utils.root_plot1D(
-                    l_hist = [hist_visTau_resolution],
-                    outfile = outfile3,
-                    xrange = [cfg.eff_setups.pt_resolution[1], cfg.eff_setups.pt_resolution[2]],
-                    yrange = (1, hist_visTau_resolution.GetMaximum()+0.05*hist_visTau_resolution.GetMaximum()),
-                    logx = False, logy = True,
-                    ytitle = "arb. units",
-                    xtitle = "pt(recoJet)-pt(#tau_{vis}) / pt(#tau_{vis})",
-                    centertitlex = True, centertitley = True,
-                    centerlabelx = False, centerlabely = False,
-                    gridx = True, gridy = True,
-                    ndivisionsx = None,
-                    stackdrawopt = "nostack",
-                    legendpos = "UR",
-                    legendtitle = f"Lxy: {Lxy_slice[0]}-{Lxy_slice[1]} cm",
-                    legendncol = 1,
-                    #legendtextsize = 0.04,
-                    legendwidthscale = 0.7,
-                    legendheightscale = 0.7,
-                    lumiText = "2018 (13 TeV)"
-                )
+            #     hist_visTau_resolution.SetLineColor(2)
+            #     hist_visTau_resolution.SetLineWidth(2)
+            #     hist_visTau_resolution.SetMarkerColor(2)
+            #     hist_visTau_resolution.SetMarkerSize(0)
+            #     hist_visTau_resolution.SetTitle("pt_resolution")
+
+            #     outfile3 = path_res+f'/pt_resolution_visTau_{dataset}_Lxy={Lxy_slice[0]}_{Lxy_slice[1]}.pdf'
+
+            #     utils.utils.root_plot1D(
+            #         l_hist = [hist_visTau_resolution],
+            #         outfile = outfile3,
+            #         xrange = [cfg.eff_setups.pt_resolution[1], cfg.eff_setups.pt_resolution[2]],
+            #         yrange = (1, hist_visTau_resolution.GetMaximum()+0.05*hist_visTau_resolution.GetMaximum()),
+            #         logx = False, logy = True,
+            #         ytitle = "arb. units",
+            #         xtitle = "pt(recoJet)-pt(#tau_{vis}) / pt(#tau_{vis})",
+            #         centertitlex = True, centertitley = True,
+            #         centerlabelx = False, centerlabely = False,
+            #         gridx = True, gridy = True,
+            #         ndivisionsx = None,
+            #         stackdrawopt = "nostack",
+            #         legendpos = "UR",
+            #         legendtitle = f"Lxy: {Lxy_slice[0]}-{Lxy_slice[1]} cm",
+            #         legendncol = 1,
+            #         #legendtextsize = 0.04,
+            #         legendwidthscale = 0.7,
+            #         legendheightscale = 0.7,
+            #         CMSextraText = "Simulation",
+            #         lumiText = "2018 (13 TeV)"
+            #     )
+
+            #inclusive for all Lxy
+            hist_pt_ratio_visTau = result_JetMatching["pt_ratio_visTau"].integrate("dataset",dataset).integrate("Lxy")
+            ax = coffea.hist.plot2d(hist_pt_ratio_visTau, xaxis='pt_gen', patch_opts={"norm":colors.LogNorm()})
+            # ax = coffea.hist.plot2d(hist_pt_ratio_visTau, xaxis='pt_gen')
+            ax.set_title(f'pt_reco/pt_visTau ({dataset})')
+            ax.figure.set_dpi(72)
+            ax.figure.tight_layout()
+            ax.figure.savefig(path_res+f'/pt_ratio_visTau_{dataset}).png')
+            matplotlib.pyplot.close(ax.figure)
+
+
+            hist_visTau_resolution = result_JetMatching["pt_resolution_visTau"].integrate("dataset",dataset).integrate("pt_gen").integrate("Lxy")
+            hist_visTau_resolution = conv_to_root(hist_visTau_resolution, f'visTau_resolution_pt_{dataset})')
+            
+            hist_visTau_resolution.Scale(1.0/hist_visTau_resolution.Integral())
+
+            hist_visTau_resolution.SetLineColor(2)
+            hist_visTau_resolution.SetLineWidth(2)
+            hist_visTau_resolution.SetMarkerColor(2)
+            hist_visTau_resolution.SetMarkerSize(0)
+            hist_visTau_resolution.SetTitle("pt_resolution")
+
+            outfile3 = path_res+f'/pt_resolution_visTau_{dataset}.png'
+
+            utils.utils.root_plot1D(
+                l_hist = [hist_visTau_resolution],
+                outfile = outfile3,
+                xrange = [cfg.eff_setups.pt_resolution[1], cfg.eff_setups.pt_resolution[2]],
+                yrange = (1, hist_visTau_resolution.GetMaximum()+0.05*hist_visTau_resolution.GetMaximum()),
+                logx = False, logy = True,
+                ytitle = "arb. units",
+                xtitle = "p_{T}-p_{T}(#tau_{vis}) / p_{T}(#tau_{vis})",
+                centertitlex = True, centertitley = True,
+                centerlabelx = False, centerlabely = False,
+                gridx = True, gridy = True,
+                ndivisionsx = None,
+                stackdrawopt = "nostack",
+                draw_legend = False,
+                legendpos = "UR",
+                # legendtitle = f"Lxy: {Lxy_slice[0]}-{Lxy_slice[1]} cm",
+                legendncol = 1,
+                #legendtextsize = 0.04,
+                legendwidthscale = 0.7,
+                legendheightscale = 0.7,
+                CMSextraText = "Simulation",
+                # lumiText = "2018 (13 TeV)"
+                lumiText = dataset
+            )
+            
+            
 
 if __name__ == "__main__":
 

@@ -15,7 +15,7 @@ class Histogram_2D{
     ~Histogram_2D();
 
     void th2d_add (TH2D*);
-    void divide   (const Histogram_2D& histo);
+    void divide(const Histogram_2D& histo, const std::string& option, const bool);
     void reset();
 
     void add_x_binning_by_index(const int index, const std::vector<double> xaxis);
@@ -28,6 +28,7 @@ class Histogram_2D{
     std::shared_ptr<TH2D> get_weights_th2d_simpl(const char* name, const char* title);
   private:
     int find_bin_by_value_(const double& y);
+    void extrapolate_zero_bins(TH1D* histo);
 
     std::string name_;
 
@@ -147,7 +148,129 @@ void Histogram_2D::th2d_add (TH2D* histo){
   }
 }
 
-void Histogram_2D::divide(const Histogram_2D& histo){
+// void Histogram_2D::extrapolate_zero_bins(TH1D* histo) { // based on density (should be used for the counts)
+//     for (int i = 1; i <= histo->GetNbinsX(); ++i) {
+//         if (histo->GetBinContent(i) == 0) {
+//             double lower_density = 0;
+//             double upper_density = 0;
+//             double lower_distance = 0;
+//             double upper_distance = 0;
+//             double lower_error = 0;
+//             double upper_error = 0;
+//             int count = 0;
+//             std::cout << "Extrapolating bin " << i << " " << histo->GetBinContent(i) << std::endl;
+//             // Check previous bin
+//             if (i > 1) {
+//                 double prev_content = histo->GetBinContent(i - 1);
+//                 double prev_width = histo->GetBinWidth(i - 1);
+//                 if (prev_content != 0) {
+//                     lower_density = prev_content / prev_width;
+//                     lower_distance = std::abs(histo->GetBinCenter(i) - histo->GetBinCenter(i - 1));
+//                     std::cout << "Lower distance: " << lower_distance << std::endl;
+//                     std::cout << "Lower density: " << lower_density << std::endl;
+//                     lower_error = histo->GetBinError(i - 1) / prev_width;
+//                     ++count;
+//                 }
+//             }
+
+//             // Check next bin
+//             if (i < histo->GetNbinsX()) {
+//                 double next_content = histo->GetBinContent(i + 1);
+//                 double next_width = histo->GetBinWidth(i + 1);
+//                 if (next_content != 0) {
+//                     upper_density = next_content / next_width;
+//                     upper_distance = std::abs(histo->GetBinCenter(i) - histo->GetBinCenter(i + 1));
+//                     std::cout << "Upper distance: " << upper_distance << std::endl;
+//                     std::cout << "Upper density: " << upper_density << std::endl;
+//                     upper_error = histo->GetBinError(i + 1) / next_width;
+//                     ++count;
+//                 }
+//             }
+
+//             if (count > 0) {
+//                 double weighted_mean_density = 0;
+//                 double weighted_error = 0;
+//                 double bin_width = histo->GetBinWidth(i);
+
+//                 if (lower_distance != 0 && upper_distance != 0) {
+//                     double total_distance = lower_distance + upper_distance;
+//                     weighted_mean_density = (lower_density * upper_distance + upper_density * lower_distance) / total_distance;
+//                     weighted_error = std::sqrt(
+//                         std::pow((upper_distance / total_distance) * lower_error, 2) +
+//                         std::pow((lower_distance / total_distance) * upper_error, 2)
+//                     );
+//                 } else if (lower_distance != 0) {
+//                     weighted_mean_density = lower_density;
+//                     weighted_error = lower_error;
+//                 } else if (upper_distance != 0) {
+//                     weighted_mean_density = upper_density;
+//                     weighted_error = upper_error;
+//                 }
+
+//                 double real_count = weighted_mean_density * bin_width;
+//                 histo->SetBinContent(i, real_count);
+
+//                 // Calculate uncertainty as the propagated error
+//                 double uncertainty = weighted_error * bin_width;
+//                 histo->SetBinError(i, uncertainty);
+//                 std::cout << "Extrapolated bin " << i << " with content " << real_count << " and uncertainty " << uncertainty << std::endl;
+//             }
+//         }
+//     }
+// }
+
+void Histogram_2D::extrapolate_zero_bins(TH1D* histo) {
+    for (int i = 1; i <= histo->GetNbinsX(); ++i) {
+        if (histo->GetBinContent(i) == 0) {
+            double lower_value = 0;
+            double upper_value = 0;
+            double lower_error = 0;
+            double upper_error = 0;
+            int count = 0;
+
+            // Check previous bin
+            if (i > 1) {
+                double prev_content = histo->GetBinContent(i - 1);
+                if (prev_content != 0) {
+                    lower_value = prev_content;
+                    lower_error = histo->GetBinError(i - 1);
+                    ++count;
+                }
+            }
+
+            // Check next bin
+            if (i < histo->GetNbinsX()) {
+                double next_content = histo->GetBinContent(i + 1);
+                if (next_content != 0) {
+                    upper_value = next_content;
+                    upper_error = histo->GetBinError(i + 1);
+                    ++count;
+                }
+            }
+
+            if (count > 0) {
+                double mean_value = 0;
+                double mean_error = 0;
+
+                if (count == 2) {
+                    mean_value = (lower_value + upper_value) / 2.0;
+                    mean_error = std::sqrt(std::pow(lower_error, 2) + std::pow(upper_error, 2)) / 2.0;
+                } else if (lower_value != 0) {
+                    mean_value = lower_value;
+                    mean_error = lower_error;
+                } else if (upper_value != 0) {
+                    mean_value = upper_value;
+                    mean_error = upper_error;
+                }
+
+                histo->SetBinContent(i, mean_value);
+                histo->SetBinError(i, mean_error);
+            }
+        }
+    }
+}
+
+void Histogram_2D::divide(const Histogram_2D& histo, const std::string& option, const bool extrapolate){
   auto check_axis = [] (const std::vector<double>& axis1, const std::vector<double>& axis2){
     return axis1 == axis2;
   };
@@ -171,7 +294,15 @@ void Histogram_2D::divide(const Histogram_2D& histo){
       throw std::logic_error("Invalid x-axis binning found for denominator in y bin n. "+std::to_string(iy)+" for Histogram_2D "+histo.name_);
     }
 
-    (*thisxhisto).Divide(xhisto);
+    if (option == "B"){
+      (*thisxhisto).Divide(thisxhisto, xhisto, 1.0, 1.0, "B");
+    } else {
+      (*thisxhisto).Divide(thisxhisto, xhisto, 1.0, 1.0);
+    }
+
+    if (extrapolate && iy != 0 && iy != yaxis_content_.size()-1){
+        extrapolate_zero_bins(thisxhisto);
+    }
   }
 }
 

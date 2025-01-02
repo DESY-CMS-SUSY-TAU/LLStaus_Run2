@@ -48,57 +48,57 @@ if True:
     # names_pt = [20, 30, 40, 50, 70, 120, 1000]
     # names_dxy = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.0, 4.0, 10.0, 16.0, 20.0, 30.0, 50.0]
     # names_flav = [1, 4, 5, 6, 15, 16, 21, 22, 25]
-    names_flav = ["u/d/s", "c/b", 6, "tau", 16, "g", 22]
+    # names_flav = ["u/d/s", "c/b", 6, "tau", 16, "g", 22]
     #"jet_flav" : [1, 4, 6, 15, 16, 21, 22],
 
-    output_name = "fake_WJets_gen_vs_data_pt_"
+    output_name = "fake_mc_wjets_vs_data_dxy_"
     # tree_name = "fake_rate_jet_prob_dxy"
     # jet_score_bins = [2,3,4,5,6,7,8] 
     # jet_pt_bins = [1,2,3,4,5,6,7]
     # jet_flav_bins = [1, 2, 3, 5, 7]
-    jet_flav_bins = [1, 2, 4, 6]
+    # jet_flav_bins = [1, 2, 4, 6]
 
     # tree_name = "fake_rate_jet_flav_jet_pt_jet_dxy"
     # tree_name2  = "fake_rate_eta_jet_pt_jet_dxy"
     # tree_name = "fake_rate_jet_flav_dxy"
-    tree_name = "fake_rate_jet_flav_pt"
     # tree_name2 = "fake_rate_jet_eta_pt"
-    # tree_name2 = "fake_rate_jet_dxy"
-    tree_name2 = "fake_rate_jet_pt"
+    tree_name = "fake_rate_jet_dxy"
+    tree_name2 = "fake_rate_jet_dxy"
 
     # print(list(itertools.product(jet_score_bins, jet_pt_bins)))
 
     # for jet_score_bin, jet_pt_bin in list(itertools.product(jet_score_bins, jet_pt_bins)):
     # for jet_score_bin in jet_score_bins:
-    hist_data = []
-    for i, jet_flav_bin in enumerate(jet_flav_bins):
+    # hist_data = []
+    # for i, jet_flav_bin in enumerate(jet_flav_bins):
         # for jet_pt_bin in jet_pt_bins:
-        file = ROOT.TFile.Open(str(args.hist1[1]), 'read')
+    file = ROOT.TFile.Open(str(args.hist1[1]), 'read')
         # hist_data = file.Get(data).ProjectionY("hist1",jet_score_bin, jet_score_bin,
         #                                        jet_dxy_bin, jet_dxy_bin)
-        # hist_data = file.Get(tree_name).ProjectionZ("hist1",jet_flav_bin, jet_flav_bin,
-        #                                                     jet_pt_bin, jet_pt_bin)
-        # hist_data = file.Get(tree_name).ProjectionX("hist1",jet_flav_bin, jet_flav_bin)
-        # hist_data.SetDirectory(0)
-        # hist_data.SetMarkerStyle(22)
-        # hist_data.SetMarkerSize(1)
-        # hist_data.SetMarkerColor(46)
-        # hist_data.SetLineColor(46)
-        # hist_data.SetFillColor(0)
-        # hist_data.SetLineWidth(2)
-        # hist_data.SetTitle(args.hist1[0])
-        # print(hist_data)
-        hist_data.append(file.Get(tree_name).ProjectionX("hist1",jet_flav_bin, jet_flav_bin))
-        hist_data[-1].SetDirectory(0)
-        hist_data[-1].SetMarkerStyle(22)
-        hist_data[-1].SetMarkerSize(1)
-        hist_data[-1].SetMarkerColor(ColorIterator(i, 10))
-        hist_data[-1].SetLineColor(ColorIterator(i, 10))
-        hist_data[-1].SetFillColor(0)
-        hist_data[-1].SetLineWidth(2)
-        # hist_data[-1].SetTitle(args.hist1[0])
-        flav_bin_name = str(names_flav[jet_flav_bin-1]).replace(".", "p")
-        hist_data[-1].SetTitle(f"flav={flav_bin_name}")
+    # hist_data = file.Get(tree_name).ProjectionZ("hist1",jet_flav_bin, jet_flav_bin,
+    #                                                     jet_pt_bin, jet_pt_bin)
+    # hist_data = file.Get(tree_name).ProjectionX("hist1",jet_flav_bin, jet_flav_bin)
+    hist_data = file.Get(tree_name2)
+    hist_data.SetDirectory(0)
+    hist_data.SetMarkerStyle(22)
+    hist_data.SetMarkerSize(1)
+    hist_data.SetMarkerColor(4)
+    hist_data.SetLineColor(4)
+    hist_data.SetFillColor(0)
+    hist_data.SetLineWidth(2)
+    hist_data.SetTitle(args.hist1[0])
+    print(hist_data)
+        # hist_data.append(file.Get(tree_name).ProjectionX("hist1",jet_flav_bin, jet_flav_bin))
+        # hist_data[-1].SetDirectory(0)
+        # hist_data[-1].SetMarkerStyle(22)
+        # hist_data[-1].SetMarkerSize(1)
+        # hist_data[-1].SetMarkerColor(ColorIterator(i, 10))
+        # hist_data[-1].SetLineColor(ColorIterator(i, 10))
+        # hist_data[-1].SetFillColor(0)
+        # hist_data[-1].SetLineWidth(2)
+        # # hist_data[-1].SetTitle(args.hist1[0])
+        # flav_bin_name = str(names_flav[jet_flav_bin-1]).replace(".", "p")
+        # hist_data[-1].SetTitle(f"flav={flav_bin_name}")
 
     file_data = ROOT.TFile.Open(str(args.hist2[1]), 'read')
     # hist_prediction = file_data.Get(tree_name2).ProjectionZ("hist2",1, 1,
@@ -109,8 +109,8 @@ if True:
     hist_prediction.SetDirectory(0)
     hist_prediction.SetMarkerStyle(21)
     hist_prediction.SetMarkerSize(1)
-    hist_prediction.SetMarkerColor(30)
-    hist_prediction.SetLineColor(30)
+    hist_prediction.SetMarkerColor(2)
+    hist_prediction.SetLineColor(2)
     hist_prediction.SetFillColor(0)
     hist_prediction.SetLineWidth(2)
     hist_prediction.SetTitle(args.hist2[0])
@@ -126,23 +126,23 @@ if True:
         # score_bin_name = str(names_score[jet_score_bin-1]).replace(".", "p")
     # flav_bin_name = str(names_flav[jet_flav_bin-1]).replace(".", "p")
     # pt_bin_name = str(names_pt[jet_pt_bin-1]).replace(".", "p")
-    flav_bin_name = "all"
+    # flav_bin_name = "all"
     pt_bin_name = "incl"
     root_plot1D(
         l_hist = [hist_prediction],
-        l_hist_overlay = hist_data,
-        outfile = args.outdir + "/" + output_name + f'flav{flav_bin_name}_pt{pt_bin_name}.' + args.ext,
+        l_hist_overlay = [hist_data],
+        outfile = args.outdir + "/" + output_name + f'pt{pt_bin_name}.' + args.ext,
         xrange = [hist_prediction.GetXaxis().GetXmin(), hist_prediction.GetXaxis().GetXmax()],
         yrange = (0.001,  10*max(hist_prediction.GetMaximum(), hist_prediction.GetMaximum())),
         # yrange = (0.0, 0.2),
         logx = True, logy = True,
         logx_ratio = True, logy_ratio = False,
         include_overflow = False,
-        xtitle = "Jet pt (GeV)",
-        # xtitle = "Jet dxy (cm)",
+        # xtitle = "Jet pt (GeV)",
+        xtitle = "Jet  d_{xy} (cm)",
         ytitle = "Fake rate",
-        xtitle_ratio = "Jet pt (GeV)",
-        # xtitle_ratio = "Jet dxy (cm)",
+        # xtitle_ratio = "Jet pt (GeV)",
+        xtitle_ratio = "Jet d_{xy} (cm)",
         ytitle_ratio = "ratio",
         centertitlex = True, centertitley = True,
         centerlabelx = False, centerlabely = False,
@@ -151,11 +151,11 @@ if True:
         stackdrawopt = "nostack",
         # normilize = True,
         normilize_overlay = False,
-        legendpos = "UR",
+        legendpos = "UL",
         legendtitle = f"",
         legendncol = 2,
         legendtextsize = 0.055,
-        legendwidthscale = 1.0,
+        legendwidthscale = 2.0,
         legendheightscale = 3.0,
         lumiText = "2018 (13 TeV)",
         signal_to_background_ratio = True,
