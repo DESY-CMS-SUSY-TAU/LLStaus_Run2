@@ -15,9 +15,13 @@ import numpy as np
 import mt2
 import numba as nb
 import coffea
+import logging
 import os
+from copy import copy
 
 from coffea.nanoevents import NanoAODSchema
+
+logger = logging.getLogger(__name__)
 
 class Processor(pepper.ProcessorBasicPhysics):
     # We use the ConfigTTbarLL instead of its base Config, to use some of its
@@ -39,19 +43,19 @@ class Processor(pepper.ProcessorBasicPhysics):
         super().__init__(config, eventdir)
 
         if "pileup_reweighting" not in config:
-            logger.warning("No pileup reweigthing specified")
+            logger.error("No pileup reweigthing specified")
             
-        if "DY_lo_sfs" not in config:
-            logger.warning("No DY k-factor specified")
+        if "DY_ZptLO_weights" not in config:
+            logger.error("No DY k-factor specified")
             
         if "MET_trigger_sfs" not in config:
-            logger.warning("No MET trigger scale factors specified")
+            logger.error("No MET trigger scale factors specified")
 
         if "DY_jet_reweight" not in config or len(config["DY_jet_reweight"]) == 0:
-            logger.warning("No DY jet-binned sample stitching is specified")
+            logger.error("No DY jet-binned sample stitching is specified")
             
         if "W_jet_reweight" not in config or len(config["W_jet_reweight"]) == 0:
-            logger.warning("No WjetsToLNu jet-binned sample stitching is specified")
+            logger.error("No WjetsToLNu jet-binned sample stitching is specified")
 
         if "jet_fake_rate" not in config and len(config["jet_fake_rate"]) == 0:
             self.predict_jet_fakes = False
@@ -59,7 +63,35 @@ class Processor(pepper.ProcessorBasicPhysics):
         else:
             self.predict_jet_fakes = config["predict_yield"]
 
-    def process_selection(self, selector, dsname, is_mc, filler):
+        if "jet_veto_map" not in config:
+            logger.error("No jet veto map is specified")
+
+        if ("jet_uncertainty" not in config and config["compute_systematics"]):
+            logger.warning("No jet uncertainty specified")
+
+        if ("jet_resolution" not in config or "jet_ressf" not in config):
+            logger.warning("No jet resolution or no jet resolution scale "
+                           "factor specified. This is necessary for "
+                           "smearing, even if not computing systematics")
+        if "jet_correction_mc" not in config and (
+                ("jet_resolution" in config and "jet_ressf" in config) or
+                ("reapply_jec" in config and config["reapply_jec"])):
+            raise pepper.config.ConfigError(
+                "Need jet_correction_mc for propagating jet "
+                "smearing/variation to MET or because reapply_jec is true")
+        if ("jet_correction_data" not in config and "reapply_jec" in config
+                and config["reapply_jec"]):
+            raise pepper.config.ConfigError(
+                "Need jet_correction_data because reapply_jec is true")
+            
+        if config["propagate_eff_factors"] and "signal_eff_factors" in config:
+            self.propagate_eff_factors = True
+        else:
+            self.propagate_eff_factors = False
+
+    def process_selection(self, selector, dsname, is_mc, filler,):
+        
+        era = self.get_era(selector.data, is_mc)
 
         if self.config["stau_properties_study"]:
             assert dsname.startswith("SMS-TStauStau")
@@ -82,7 +114,6 @@ class Processor(pepper.ProcessorBasicPhysics):
                     dsname.startswith("DY4JetsToLL_M-50") ):
             selector.add_cut("DY jet reweighting",
                 partial(self.do_dy_jet_reweighting))
-        
         if is_mc and ( dsname.startswith("WJetsToLNu") or \
                     dsname.startswith("W1JetsToLNu") or \
                     dsname.startswith("W2JetsToLNu") or \
@@ -97,113 +128,134 @@ class Processor(pepper.ProcessorBasicPhysics):
             selector.add_cut("Pileup reweighting", partial(
                 self.do_pileup_reweighting, dsname))
         
-        if is_mc:
-            selector.add_cut("MET_trigger_sfs", self.MET_trigger_sfs)
-        
-        # HEM 15/16 failure (2018)
-        if self.config["year"] == "ul2018":
-            selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
-
         if is_mc and self.config["year"] in ("2016", "2017", "ul2016pre",
                                         "ul2016post", "ul2017"):
             selector.add_cut("L1Prefiring", self.add_l1_prefiring_weights)
 
         selector.add_cut("MET filters", partial(self.met_filters, is_mc))
-
-        # MET cut
-        selector.add_cut("MET", self.MET_cut)
         
         # PV cut
         selector.add_cut("PV", lambda data: data["PV"].npvsGood > 0)
         
         # lepton selection
+        logger.debug(f"Running lepton veto")
         selector.set_column("Muon", self.select_muons)
         selector.set_column("Electron", self.select_electrons)
         selector.add_cut("muon_veto", self.muon_veto)
         selector.add_cut("elec_veto", self.elec_veto)
-    
-        selector.set_column("Jet_select", self.jet_selection)
+
+        # Z-pt/mass reweighting for DY (taken from TauPOG workflow)
+        logger.debug(f"Applying DY ZptLO weights")
+        if is_mc and dsname.startswith("DY"):
+            selector.set_column("sum_ll_gen", self.sum_ll_gen)
+        selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
+
+        # adding:
+        # 1) renormalization and factorization scale
+        # 2) Parton shower scale uncertainties
+        # 3) PDF uncertainties
+        if self.config["compute_systematics"] and is_mc:
+            self.add_generator_uncertainies(dsname, selector)
+
+        # Fill "Lepton" column with empty array because all events with leptons are droped
+        selector.set_column("Lepton", lambda data: ak.Array([[]] * len(data)))
+
+        if (is_mc and self.config["compute_systematics"] 
+            and dsname not in self.config["dataset_for_systematics"]):
+            if hasattr(filler, "sys_overwrite"):
+                assert filler.sys_overwrite is None
+            variargs = self.get_jetmet_variation_args()
+            logger.debug(f"Running jetmet variations: {variargs}")
+            for variarg in variargs:
+                selector_copy = copy(selector)
+                filler.sys_overwrite = variarg.name
+                self.process_selection_jet_part(selector_copy, is_mc,
+                                                variarg, dsname, filler, era)
+                filler.sys_overwrite = None
+
+        # Do normal, no-variation run
+        self.process_selection_jet_part(selector, is_mc,
+                                        self.get_jetmet_nominal_arg(),
+                                        dsname, filler, era)
+
+
+    def process_selection_jet_part(self, selector, is_mc, variation, dsname, filler, era):
+        """Part of the selection that needs to be repeated for
+        every systematic variation done for the jet energy correction,
+        resultion and for MET"""
+        logger.debug(f"Running jet_part with variation {variation.name}")
+        reapply_jec = ("reapply_jec" in self.config
+                       and self.config["reapply_jec"])
+        selector.set_multiple_columns(partial(
+            self.compute_jet_factors, is_mc, reapply_jec, variation.junc,
+            variation.jer, selector.rng))
+
+        selector.set_column("OrigJet", selector.data["Jet"])
+        # this "Jet" jets are not used for MET, only for further selection steps ->
+        # this is not needed but in order to keep the same structure as in the original code
+        selector.set_column("Jet", partial(self.build_jet_column, is_mc))
+
+        # if "jet_puid_sf" in self.config and is_mc:
+        #     selector.add_cut("JetPUIdSFs", self.jet_puid_sfs)
+        # selector.set_column("Jet", self.jets_with_puid)
+
+        smear_met = "smear_met" in self.config and self.config["smear_met"]
+        selector.set_column("OrigMet", selector.data["MET"])
+        selector.set_column(
+            "MET", partial(self.build_met_column, is_mc, variation.junc,
+                           variation.jer if smear_met else None, selector.rng,
+                           era, variation=variation.met))
+
+        selector.add_cut("MET", self.MET_cut)
+        if is_mc: # which MET we use? -> the original scale factors were computed with OrigMet
+            selector.add_cut("MET_trigger_sfs", partial(self.MET_trigger_sfs,
+                                                        met_name="OrigMet"))
+
+        # HEM 15/16 failure (2018)
+        if self.config["year"] == "ul2018":
+            selector.add_cut("HEM_veto", partial(self.HEM_veto, is_mc=is_mc))
+
+        selector.add_cut("jet_veto", partial(self.jet_veto, jet_name="Jet"))
+
+        selector.set_column("Jet_select", partial(self.jet_selection, from_collection="Jet"))
+        
+        # define jets and HT variables (HT will not be redefined after changing Jet_select)
         if self.config["dxy_cut_study"]:
             self.dxy_cut_study(selector, dsname, is_mc)
             return
 
         selector.set_column("Jet_select", self.getloose_jets)
-        # selector.set_column("Jet_tau", partial(self.jet_tau, is_mc=is_mc))
-        # selector.add_cut("loose_jets_defined", lambda data: np.ones(len(data)))
-        # selector.add_cut("loose_jets_defined2", lambda data: np.ones(len(data)))
         selector.set_column("PfCands", self.pfcand_valid)
         selector.set_column("Jet_lead_pfcand", partial(self.get_matched_pfCands, match_object="Jet_select", dR=0.4))
         selector.set_column("Jet_select", self.set_jet_dxy)
-
-        selector.add_cut("after_define_dxy",
-                         lambda data: ak.Array(np.ones(len(data)))
-                         )
         selector.add_cut("two_loose_jets", self.has_two_jets)
-        # selector.add_cut("has_small_dxy", self.has_small_dxy)
-        # selector.add_cut("b_tagged_jet_cut", self.b_tagged_jet_cut)
-        
-        if is_mc and dsname.startswith("DY"):
-            selector.set_column("sum_ll_gen", self.sum_ll_gen)
-        selector.add_cut("dy_gen_sfs", partial(self.get_dy_gen_sfs, is_mc=is_mc, dsname=dsname))
 
         selector.set_column("sum_jj", self.sum_jj)
         selector.set_multiple_columns(self.missing_energy)
         selector.set_multiple_columns(self.mt_jets)
         selector.set_column("dphi_jet1_jet2", self.dphi_jet1_jet2)
         selector.set_column("dr_jet1_jet2", self.dr_jet1_jet2)
+
         selector.add_cut("dphi_min_cut", self.dphi_min_cut)
         selector.set_column("mt2_j1_j2_MET", self.get_mt2)
         selector.set_column("binning_schema", self.binning_schema)
-        
-        # selector.add_cut("skim_jets", self.skim_jets)
         
         # Tagger part for calculating scale factors
         # Scale factors should be calculated -
         # before cuts on the number of the jets
         selector.set_multiple_columns(self.set_njets_pass)
+        if self.config["compute_systematics"] and is_mc and self.propagate_eff_factors:
+            selector.add_cut("signal_eff_sfs", partial(self.signal_eff_unc, dsname=dsname))
         # selector.set_multiple_columns(self.set_njets_pass_finebin)
-        # if self.config["predict_yield"] and not is_mc:
-        if self.config["predict_yield"]:
+        if self.config["predict_yield"] and not is_mc:
             selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
         
-        # Jets that match to tau
-        # selector.set_column("Jet_tau", partial(self.jet_tau, is_mc=is_mc))
-        # Falvour study of the jets
-        # selector.set_multiple_columns(self.gen_lep)
-        # selector.set_column("Jet_select_flav", self.jet_updated_flavour)
-        
-        # Selection of the jet is performed only for two leading jets:
-        selector.add_cut("two_loose_jets_final",
-                         lambda data: ak.Array(np.ones(len(data)))
-                         )
-        
-        # Prediction should be done in following state <->
-        
         ## Dummy basemark to have cut where regions were not categories yet
-        ## The following is categorisation is done for MC stusy
-        # selector.add_cut("two_loose_jets_final2", self.has_two_jets)
-        # selector.set_cat("control_region", {"RT0", "RT1", "RT2"})
+        # selector.set_cat("control_region", {"RT0", "RT1", "RT2", "INC"})
         # selector.set_multiple_columns(partial(self.categories_bins))
-        
-        # selector.add_cut("two_loose_jets_final3", self.has_two_jets)
-        # selector.set_column("Jet_select", self.gettight_jets)
-        # selector.add_cut("two_tight_jets", self.has_two_jets)       
-        
-        # # 1. Leading jet is selected by pt
-        # selector.add_cut("point", self.b_tagged_jet_cut) # dummy cut to make sure correct Jet_select is used
-        # selector.set_column("Jet_select", self.jet_lead)
-        # selector.set_multiple_columns(self.set_njets_pass)
-        # if self.config["predict_yield"]:
-        #     selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
-        # selector.add_cut("redefine_jets_lead2pt", self.b_tagged_jet_cut)
-        
-        # # 2. Leading jet is selected by tagging score
-        # selector.add_cut("point2", self.b_tagged_jet_cut) # dummy cut to make sure correct Jet_select is used
-        # selector.set_column("Jet_select", self.jet_lead_score)
-        # selector.set_multiple_columns(self.set_njets_pass)
-        # if self.config["predict_yield"]:
-        #     selector.set_multiple_columns(partial(self.predict_yield, weight=selector.systematics["weight"]))
-        # selector.add_cut("redefine_jets_lead2prob", self.b_tagged_jet_cut)
+        selector.add_cut("two_loose_jets_final", lambda data: ak.Array(np.ones(len(data))))
+        selector.add_cut("ht_cut", self.ht_cut)
+
 
     def dxy_cut_study(self, selector, dsname, is_mc):
         
@@ -237,6 +289,19 @@ class Processor(pepper.ProcessorBasicPhysics):
         selector.set_column("Jet_select", self.set_jet_dxy)
         selector.add_cut("checkpoint", lambda data: np.ones(len(data)))
 
+    @zero_handler
+    def ht_cut(self, data):
+        return data["HT_valid"] > 150
+
+    @zero_handler
+    def jet_veto(self, data, jet_name):
+        # mask events with at least one jet in veto map (might be too tight)
+        jets = data[jet_name]
+        config = self.config["jet_veto_map"]
+        mask_per_jet = config(eta=jets.eta, phi=jets.phi)
+        mask = ak.any(mask_per_jet, axis=-1)
+        return ~mask
+
     def gen_vis_tau(self, data):
         tau = data.GenVisTau
         # define trevel distance and transverse travel distance of GenVisTau
@@ -266,14 +331,18 @@ class Processor(pepper.ProcessorBasicPhysics):
 
     def categories_bins(self, data):
         if len(data) == 0:
-            return {"RT0": ak.Array([]), "RT1":ak.Array([]), "RT2":ak.Array([])}
+            return {
+                "RT0": ak.Array([]),
+                "RT1":ak.Array([]),
+                "RT2":ak.Array([]),
+                "INC":ak.Array([])}
         jets = data["Jet_select"]
         jets = jets[(jets.disTauTag_score1 >= self.config["tight_thr"])]
         n_tight = ak.num(jets)
         RT0 = (n_tight == 0)
         RT1 = (n_tight == 1)
         RT2 = (n_tight == 2)
-        return {"RT0":RT0, "RT1":RT1, "RT2":RT2}
+        return {"RT0":RT0, "RT1":RT1, "RT2":RT2, "INC":np.ones(len(data))}
 
     @zero_handler
     def sum_ll_gen(self, data):
@@ -330,10 +399,18 @@ class Processor(pepper.ProcessorBasicPhysics):
         return np.ones(len(data))
     
     @zero_handler
-    def MET_trigger_sfs(self, data):
-        met_pt = data["MET"].pt
-        sfs = self.config["MET_trigger_sfs"](pt=met_pt)
-        return sfs
+    def MET_trigger_sfs(self, data, met_name="MET"):
+        met_pt = data[met_name].pt
+        scale_factors = self.config["MET_trigger_sfs"]
+        sfs = scale_factors(pt=met_pt)
+        systematics = {}
+        if self.config["compute_systematics"]:
+            sfs_up = scale_factors(variation="up", pt=met_pt)
+            sfs_down = scale_factors(variation="down", pt=met_pt)
+            # ratio of the up/down to nominal and for 120-250 GeV - 2x stat. unc. of the MET_trigger_sfs is used, for > 250 - 1x stat. unc.
+            systematics["MET_trigger_sfs_up"] = ak.where(met_pt > 250, sfs_up / sfs, 2 * sfs_up / sfs)
+            systematics["MET_trigger_sfs_down"] = ak.where(met_pt > 250, sfs_down / sfs, 2 * sfs_down / sfs)
+        return sfs, systematics
     
     @zero_handler
     def HEM_veto(self, data, is_mc):
@@ -514,8 +591,8 @@ class Processor(pepper.ProcessorBasicPhysics):
         return ak.num(data["Electron"]) == 0
 
     @zero_handler
-    def jet_selection(self, data):
-        jets = data["Jet"]
+    def jet_selection(self, data, from_collection="Jet"):
+        jets = data[from_collection]
         jets = jets[(
             (self.config["jet_eta_min"] < jets.eta)
             & (jets.eta < self.config["jet_eta_max"])
@@ -672,6 +749,29 @@ class Processor(pepper.ProcessorBasicPhysics):
             "n_pass_finebin" : n_pass,
             "n_pass_score_bin_finebin" : ak.local_index(n_pass, axis=1),
         }
+    
+    @zero_handler
+    def signal_eff_unc(self, data, dsname):
+        weights = np.ones(len(data))
+        if not dsname.startswith("SMS-TStauStau"):
+            return weights
+        else:
+            factor = self.config["signal_eff_factors"]
+            systematics = {}
+            RT1 = data["tight_bin1"]
+            RT2 = data["tight_bin2"]
+            weights[RT1] = factor["central"]
+            weights[RT2] = factor["central"]**2
+            if self.config["compute_systematics"]:
+                weights_up = np.ones(len(data))
+                weights_up[RT1] = factor["up"]
+                weights_up[RT2] = factor["up"]**2
+                weights_down = np.ones(len(data))
+                weights_down[RT1] = factor["down"]
+                weights_down[RT2] = factor["down"]**2
+                systematics["signal_eff_unc_up"] = weights_up / weights
+                systematics["signal_eff_unc_down"] = weights_down / weights
+            return weights, systematics               
 
     @zero_handler
     def predict_yield(self, data, weight=None):
